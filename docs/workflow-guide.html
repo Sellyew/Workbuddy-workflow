@@ -2374,7 +2374,11 @@ window.Quarto = {
   <li><a href="#agent-anatomy" id="toc-agent-anatomy" class="nav-link" data-scroll-target="#agent-anatomy"><span class="header-section-number">2.4.1</span> Agent Anatomy</a></li>
   </ul></li>
   <li><a href="#settings-permissions-and-hooks" id="toc-settings-permissions-and-hooks" class="nav-link" data-scroll-target="#settings-permissions-and-hooks"><span class="header-section-number">2.5</span> Settings — Permissions and Hooks</a></li>
-  <li><a href="#memory-cross-session-persistence" id="toc-memory-cross-session-persistence" class="nav-link" data-scroll-target="#memory-cross-session-persistence"><span class="header-section-number">2.6</span> Memory — Cross-Session Persistence</a></li>
+  <li><a href="#memory-cross-session-persistence" id="toc-memory-cross-session-persistence" class="nav-link" data-scroll-target="#memory-cross-session-persistence"><span class="header-section-number">2.6</span> Memory — Cross-Session Persistence</a>
+  <ul class="collapse">
+  <li><a href="#plans-compression-resistant-task-memory" id="toc-plans-compression-resistant-task-memory" class="nav-link" data-scroll-target="#plans-compression-resistant-task-memory"><span class="header-section-number">2.6.1</span> Plans — Compression-Resistant Task Memory</a></li>
+  <li><a href="#session-logs-why-not-just-what-history" id="toc-session-logs-why-not-just-what-history" class="nav-link" data-scroll-target="#session-logs-why-not-just-what-history"><span class="header-section-number">2.6.2</span> Session Logs — Why-Not-Just-What History</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#sec-setup" id="toc-sec-setup" class="nav-link" data-scroll-target="#sec-setup"><span class="header-section-number">3</span> Setting Up Your Project</a>
   <ul class="collapse">
@@ -2409,6 +2413,13 @@ window.Quarto = {
   <li><a href="#pattern-4-multi-agent-review" id="toc-pattern-4-multi-agent-review" class="nav-link" data-scroll-target="#pattern-4-multi-agent-review"><span class="header-section-number">6.4</span> Pattern 4: Multi-Agent Review</a></li>
   <li><a href="#pattern-5-self-improvement-loop" id="toc-pattern-5-self-improvement-loop" class="nav-link" data-scroll-target="#pattern-5-self-improvement-loop"><span class="header-section-number">6.5</span> Pattern 5: Self-Improvement Loop</a></li>
   <li><a href="#pattern-6-devils-advocate" id="toc-pattern-6-devils-advocate" class="nav-link" data-scroll-target="#pattern-6-devils-advocate"><span class="header-section-number">6.6</span> Pattern 6: Devil’s Advocate</a></li>
+  <li><a href="#pattern-7-plan-first-development" id="toc-pattern-7-plan-first-development" class="nav-link" data-scroll-target="#pattern-7-plan-first-development"><span class="header-section-number">6.7</span> Pattern 7: Plan-First Development</a>
+  <ul class="collapse">
+  <li><a href="#why-planning-matters" id="toc-why-planning-matters" class="nav-link" data-scroll-target="#why-planning-matters"><span class="header-section-number">6.7.1</span> Why Planning Matters</a></li>
+  <li><a href="#the-protocol" id="toc-the-protocol" class="nav-link" data-scroll-target="#the-protocol"><span class="header-section-number">6.7.2</span> The Protocol</a></li>
+  <li><a href="#context-preservation-never-clear" id="toc-context-preservation-never-clear" class="nav-link" data-scroll-target="#context-preservation-never-clear"><span class="header-section-number">6.7.3</span> Context Preservation: Never /clear</a></li>
+  <li><a href="#session-logging" id="toc-session-logging" class="nav-link" data-scroll-target="#session-logging"><span class="header-section-number">6.7.4</span> Session Logging</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">7</span> Customizing for Your Domain</a>
   <ul class="collapse">
@@ -2766,7 +2777,22 @@ window.Quarto = {
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:r-code</span><span class="co">]</span> Package X drops obs silently when covariate is missing</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:citation</span><span class="co">]</span> Post-LASSO is Belloni (2013), NOT Belloni (2014)</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:workflow</span><span class="co">]</span> Every Beamer edit must auto-sync to Quarto</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="plans-compression-resistant-task-memory" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="plans-compression-resistant-task-memory"><span class="header-section-number">2.6.1</span> Plans — Compression-Resistant Task Memory</h3>
+<p>While MEMORY.md stores long-lived project facts, <strong>plans</strong> store task-specific strategy. Every non-trivial plan is saved to <code>quality_reports/plans/</code> with a timestamp. This means:</p>
+<ul>
+<li>Plans survive auto-compression (they are on disk, not just in context)</li>
+<li>Plans survive session boundaries (readable in any future session)</li>
+<li>Plans create an audit trail of design decisions</li>
+</ul>
+<p>See Pattern 7 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
+</section>
+<section id="session-logs-why-not-just-what-history" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="session-logs-why-not-just-what-history"><span class="header-section-number">2.6.2</span> Session Logs — Why-Not-Just-What History</h3>
+<p>Git commits record what changed, but not <em>why</em>. Session logs fill this gap. Claude writes to <code>quality_reports/session_logs/</code> at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning <em>as it happens</em>, before auto-compression can discard it.</p>
+<p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 7 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 <hr>
+</section>
 </section>
 </section>
 <section id="sec-setup" class="level1" data-number="3">
@@ -3222,7 +3248,101 @@ Phase 4: Only then extend
 <li>Missing intuition before formalism</li>
 <li>Cognitive load issues</li>
 </ul>
+</section>
+<section id="pattern-7-plan-first-development" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="pattern-7-plan-first-development"><span class="header-section-number">6.7</span> Pattern 7: Plan-First Development</h2>
+<p>The plan-first pattern ensures that non-trivial tasks begin with thinking, not typing.</p>
+<section id="why-planning-matters" class="level3" data-number="6.7.1">
+<h3 data-number="6.7.1" class="anchored" data-anchor-id="why-planning-matters"><span class="header-section-number">6.7.1</span> Why Planning Matters</h3>
+<p>The most common failure mode in AI-assisted development is not bad code — it is solving the wrong problem, or solving the right problem in a fragile order. Plan-first development forces an explicit design step before any file is touched.</p>
+<p>Without a plan:</p>
+<ul>
+<li>Claude starts editing immediately, discovers a dependency on slide 3 that changes the approach, and has to undo work</li>
+<li>Context compression discards the reasoning behind a design choice, and Claude makes a contradictory decision later</li>
+<li>The user and Claude have different mental models of what “done” looks like</li>
+</ul>
+<p>With a plan:</p>
+<ul>
+<li>The approach is agreed upon before any edits happen</li>
+<li>The plan is saved to disk, so it survives compression and session boundaries</li>
+<li>Implementation has a checklist to follow, reducing drift</li>
+</ul>
+</section>
+<section id="the-protocol" class="level3" data-number="6.7.2">
+<h3 data-number="6.7.2" class="anchored" data-anchor-id="the-protocol"><span class="header-section-number">6.7.2</span> The Protocol</h3>
+<pre><code>Non-trivial task arrives
+  │
+  ├── Step 1: Enter Plan Mode (EnterPlanMode)
+  ├── Step 2: Draft plan (approach, files, verification)
+  ├── Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
+  ├── Step 4: Present plan to user
+  ├── Step 5: User approves (or revises)
+  ├── Step 6: Save initial session log (capture context while fresh)
+  ├── Step 7: Implement with plan as checklist
+  └── Step 8: Update session log + plan status to COMPLETED</code></pre>
+</section>
+<section id="context-preservation-never-clear" class="level3" data-number="6.7.3">
+<h3 data-number="6.7.3" class="anchored" data-anchor-id="context-preservation-never-clear"><span class="header-section-number">6.7.3</span> Context Preservation: Never /clear</h3>
+<p>An important companion to plan-first development is context preservation. Claude Code has two ways to free context space:</p>
+<ul>
+<li><strong><code>/clear</code></strong> — destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.</li>
+<li><strong>Auto-compression</strong> — Claude Code automatically compresses the conversation when it gets long. It keeps the most important context and discards redundant detail. This is graceful degradation.</li>
+</ul>
+<p>The rule is simple: <strong>never use <code>/clear</code></strong>. Let auto-compression do its job. And as a safety net, always save plans and important decisions to files on disk, where they cannot be compressed away.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Recovery After Compression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you notice Claude has lost context after auto-compression, point it to the saved plan file:</p>
+<blockquote class="blockquote">
+<p>“Read <code>quality_reports/plans/2026-02-06_translate-lecture5.md</code> — that’s our current plan.”</p>
+</blockquote>
+<p>Because the plan is on disk, recovery is instant.</p>
+</div>
+</div>
+<p>Combined with the <code>[LEARN]</code> tag system from <a href="#pattern-5-self-improvement-loop">Pattern 5</a>, plans and context preservation form a complete memory layer: plans save task strategy, <code>[LEARN]</code> tags save corrections, and auto-compression keeps the conversation manageable without losing what matters.</p>
+</section>
+<section id="session-logging" class="level3" data-number="6.7.4">
+<h3 data-number="6.7.4" class="anchored" data-anchor-id="session-logging"><span class="header-section-number">6.7.4</span> Session Logging</h3>
+<p>Session logs (<code>quality_reports/session_logs/YYYY-MM-DD_description.md</code>) are a running record of <em>why</em> things happened. They have <strong>three distinct behaviors</strong>, each solving a different problem:</p>
+<p><strong>After plan approval</strong> — create the log with the goal, plan summary, and rationale for the chosen approach (including rejected alternatives). This captures decisions while context is richest. If you wait, auto-compression may discard the reasoning.</p>
+<p><strong>During implementation</strong> — append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.</p>
+<p><strong>At session end</strong> — add a final section with what was accomplished, open questions, and unresolved issues.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Git Records What, Session Logs Record Why
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A commit message says “Update Lecture 5 TikZ diagrams.” A session log says “Redesigned the TWFE decomposition diagram because the DA challenge revealed students couldn’t trace the path from weights to bias. Considered a table format but chose a flow diagram because it shows directionality.”</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Why Incremental Logging Matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The post-plan log is a special case — it fires once, right after approval. But the <em>incremental</em> logging during implementation is what truly protects you. A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they’re already on disk.</p>
+</div>
+</div>
+<p>Claude writes all three log entries automatically — no need to ask.</p>
 <hr>
+</section>
 </section>
 </section>
 <section id="sec-customize" class="level1" data-number="7">
@@ -3232,23 +3352,23 @@ Phase 4: Only then extend
 <p>The knowledge base (<code>.claude/rules/knowledge-base-template.md</code>) is the most domain-specific component. It has three sections:</p>
 <section id="notation-registry" class="level3" data-number="7.1.1">
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="notation-registry"><span class="header-section-number">7.1.1</span> Notation Registry</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="applications-database" class="level3" data-number="7.1.2">
 <h3 data-number="7.1.2" class="anchored" data-anchor-id="applications-database"><span class="header-section-number">7.1.2</span> Applications Database</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="validated-design-principles" class="level3" data-number="7.1.3">
 <h3 data-number="7.1.3" class="anchored" data-anchor-id="validated-design-principles"><span class="header-section-number">7.1.3</span> Validated Design Principles</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="step-2-create-your-domain-reviewer" class="level2" data-number="7.2">
@@ -3267,7 +3387,7 @@ Phase 4: Only then extend
 <section id="step-4-add-project-specific-skills" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="step-4-add-project-specific-skills"><span class="header-section-number">7.4</span> Step 4: Add Project-Specific Skills</h2>
 <p>If you have recurring workflows, create new skills:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then create <code>SKILL.md</code> with YAML frontmatter + step-by-step instructions.</p>
 </section>
 <section id="tips-from-6-sessions-of-iteration" class="level2" data-number="7.5">
@@ -3509,6 +3629,11 @@ Phase 4: Only then extend
 <td>Knowledge Base</td>
 <td><code>.claude/rules/knowledge-base-template.md</code></td>
 <td>Domain notation template</td>
+</tr>
+<tr class="even">
+<td>Plan-First Workflow</td>
+<td><code>.claude/rules/plan-first-workflow.md</code></td>
+<td>Plan mode, plan saving, context preservation, session logging</td>
 </tr>
 </tbody>
 </table>

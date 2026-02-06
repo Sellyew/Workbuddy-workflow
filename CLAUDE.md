@@ -79,6 +79,8 @@ This repository is designed for multi-platform collaboration using:
 │   ├── sync_to_docs.sh               # Renders Quarto & syncs to docs/
 │   └── R/                             # R scripts for figures and analysis
 ├── quality_reports/                    # Review agent reports (auto-generated)
+│   ├── plans/                         # Saved implementation plans
+│   └── session_logs/                  # Session history and decision logs
 └── master_supporting_docs/            # Supporting materials
     ├── supporting_papers/             # Academic papers (auto-split into chunks)
     └── supporting_slides/             # Existing slides to upgrade
@@ -103,6 +105,31 @@ Claude serves as your **collaborative partner**, not a fully autonomous agent:
 - **Reference validation** — every citation and claim verified for accuracy
 - **Aesthetic excellence** — all slides should be visually compelling
 - **Understanding > speed** — getting it right matters more than getting it fast
+
+### Plan-First Approach
+
+For any non-trivial task, Claude enters **plan mode first** before writing code:
+
+1. **Plan** — draft an approach, list files to modify, identify risks
+2. **Save** — write the plan to `quality_reports/plans/` so it survives context compression
+3. **Review** — present the plan and wait for your approval
+4. **Implement** — only then begin making changes
+
+See `.claude/rules/plan-first-workflow.md` for the full protocol.
+
+> **Never use `/clear`.** Rely on auto-compression to manage long conversations. `/clear` destroys all context; auto-compression preserves what matters.
+
+### Continuous Learning with [LEARN] Tags
+
+When Claude makes a mistake or you correct a misconception, tag the correction:
+
+```
+[LEARN:notation] T_t = 1{t=2} is deterministic → use T_i ∈ {1,2}
+[LEARN:citation] Post-LASSO is Belloni (2013), NOT Belloni (2014)
+[LEARN:r-code] Package X: ALWAYS include intercept in design matrix
+```
+
+These corrections persist in `MEMORY.md` across sessions and prevent the same mistake from recurring.
 
 ---
 
@@ -270,16 +297,19 @@ Start each session with:
 Claude, please:
 1. Read CLAUDE.MD to understand our workflow
 2. Check recent git commits to see what changed
-3. Look at the lecture/slides we're working on
-4. State what you understand our goals to be
+3. Check quality_reports/plans/ for any in-progress plans
+4. Check quality_reports/session_logs/ for the most recent session log
+5. Look at the lecture/slides we're working on
+6. State what you understand our goals to be
 ```
 
 ### Session End Protocol
 
 Before ending a session:
-1. Commit significant changes with descriptive messages
-2. Update CLAUDE.MD if workflow changed
-3. Note any unresolved questions
+1. Save a session log to `quality_reports/session_logs/YYYY-MM-DD_description.md`
+2. Commit significant changes with descriptive messages
+3. Update CLAUDE.MD if workflow changed
+4. Note any unresolved questions in the session log
 
 ---
 
