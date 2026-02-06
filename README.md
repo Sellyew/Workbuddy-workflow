@@ -111,6 +111,7 @@ If it compiles, your setup is working.
 | `no-pause-beamer` | No overlay commands in Beamer |
 | `replication-protocol` | Replicate original results before extending |
 | `knowledge-base-template` | Notation/application/design principle registry |
+| `plan-first-workflow` | Plan mode for non-trivial tasks + context preservation |
 
 ---
 
@@ -156,6 +157,24 @@ Instead of one general-purpose reviewer, use focused agents:
 - The **domain-reviewer** only looks at field-specific correctness
 
 Each agent is better at its narrow task than a generalist would be.
+
+### Plan-First Workflow
+
+Non-trivial tasks start in **plan mode** before any files are touched:
+1. **Plan** — draft approach, list files to modify, identify risks
+2. **Save** — persist the plan to `quality_reports/plans/` (survives context compression)
+3. **Review** — present to user for approval
+4. **Implement** — execute with the plan as a checklist
+
+Companion rule: **never use `/clear`**. Rely on auto-compression for context management — it preserves important context gracefully, while `/clear` destroys everything.
+
+### Continuous Learning
+
+Every correction gets tagged with `[LEARN:tag]` format and persists in MEMORY.md across sessions. This prevents Claude from repeating the same mistakes.
+
+### Session Logging
+
+At the end of every substantive session, Claude automatically saves a session log to `quality_reports/session_logs/`. Logs capture what was accomplished, key decisions and their rationale, and open questions for next time. Git records *what* changed; session logs record *why*.
 
 ---
 
