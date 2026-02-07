@@ -23,7 +23,7 @@ A task is "non-trivial" if it involves:
 4. **Present to user** — explain the plan and wait for approval
 5. **Only after approval** — exit plan mode
 6. **Immediately save initial session log** — capture the goal, plan summary, and key context while it's fresh (see Rule 5)
-7. **Implement** — begin work, referencing the saved plan to stay on track
+7. **Implement via orchestrator** — the orchestrator protocol takes over (see `orchestrator-protocol.md`): implement → verify → review → fix → score → present results
 
 ### What a Good Plan Includes
 

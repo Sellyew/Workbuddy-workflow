@@ -2392,9 +2392,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#why-specialized-agents-beat-one-size-fits-all" id="toc-why-specialized-agents-beat-one-size-fits-all" class="nav-link" data-scroll-target="#why-specialized-agents-beat-one-size-fits-all"><span class="header-section-number">4.1</span> Why Specialized Agents Beat One-Size-Fits-All</a></li>
   <li><a href="#the-adversarial-pattern-critic-fixer" id="toc-the-adversarial-pattern-critic-fixer" class="nav-link" data-scroll-target="#the-adversarial-pattern-critic-fixer"><span class="header-section-number">4.2</span> The Adversarial Pattern: Critic + Fixer</a></li>
-  <li><a href="#creating-your-own-domain-reviewer" id="toc-creating-your-own-domain-reviewer" class="nav-link" data-scroll-target="#creating-your-own-domain-reviewer"><span class="header-section-number">4.3</span> Creating Your Own Domain Reviewer</a>
+  <li><a href="#the-orchestrator-coordinating-agents-automatically" id="toc-the-orchestrator-coordinating-agents-automatically" class="nav-link" data-scroll-target="#the-orchestrator-coordinating-agents-automatically"><span class="header-section-number">4.3</span> The Orchestrator: Coordinating Agents Automatically</a></li>
+  <li><a href="#creating-your-own-domain-reviewer" id="toc-creating-your-own-domain-reviewer" class="nav-link" data-scroll-target="#creating-your-own-domain-reviewer"><span class="header-section-number">4.4</span> Creating Your Own Domain Reviewer</a>
   <ul class="collapse">
-  <li><a href="#the-5-lens-framework" id="toc-the-5-lens-framework" class="nav-link" data-scroll-target="#the-5-lens-framework"><span class="header-section-number">4.3.1</span> The 5-Lens Framework</a></li>
+  <li><a href="#the-5-lens-framework" id="toc-the-5-lens-framework" class="nav-link" data-scroll-target="#the-5-lens-framework"><span class="header-section-number">4.4.1</span> The 5-Lens Framework</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-quality" id="toc-sec-quality" class="nav-link" data-scroll-target="#sec-quality"><span class="header-section-number">5</span> Quality Gates &amp; Verification</a>
@@ -2407,19 +2408,27 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-patterns" id="toc-sec-patterns" class="nav-link" data-scroll-target="#sec-patterns"><span class="header-section-number">6</span> Workflow Patterns</a>
   <ul class="collapse">
-  <li><a href="#pattern-1-creating-a-new-lecture" id="toc-pattern-1-creating-a-new-lecture" class="nav-link" data-scroll-target="#pattern-1-creating-a-new-lecture"><span class="header-section-number">6.1</span> Pattern 1: Creating a New Lecture</a></li>
-  <li><a href="#pattern-2-translating-beamer-to-quarto" id="toc-pattern-2-translating-beamer-to-quarto" class="nav-link" data-scroll-target="#pattern-2-translating-beamer-to-quarto"><span class="header-section-number">6.2</span> Pattern 2: Translating Beamer to Quarto</a></li>
-  <li><a href="#pattern-3-replication-first-coding" id="toc-pattern-3-replication-first-coding" class="nav-link" data-scroll-target="#pattern-3-replication-first-coding"><span class="header-section-number">6.3</span> Pattern 3: Replication-First Coding</a></li>
-  <li><a href="#pattern-4-multi-agent-review" id="toc-pattern-4-multi-agent-review" class="nav-link" data-scroll-target="#pattern-4-multi-agent-review"><span class="header-section-number">6.4</span> Pattern 4: Multi-Agent Review</a></li>
-  <li><a href="#pattern-5-self-improvement-loop" id="toc-pattern-5-self-improvement-loop" class="nav-link" data-scroll-target="#pattern-5-self-improvement-loop"><span class="header-section-number">6.5</span> Pattern 5: Self-Improvement Loop</a></li>
-  <li><a href="#pattern-6-devils-advocate" id="toc-pattern-6-devils-advocate" class="nav-link" data-scroll-target="#pattern-6-devils-advocate"><span class="header-section-number">6.6</span> Pattern 6: Devil’s Advocate</a></li>
-  <li><a href="#pattern-7-plan-first-development" id="toc-pattern-7-plan-first-development" class="nav-link" data-scroll-target="#pattern-7-plan-first-development"><span class="header-section-number">6.7</span> Pattern 7: Plan-First Development</a>
+  <li><a href="#pattern-1-plan-first-development" id="toc-pattern-1-plan-first-development" class="nav-link" data-scroll-target="#pattern-1-plan-first-development"><span class="header-section-number">6.1</span> Pattern 1: Plan-First Development</a>
   <ul class="collapse">
-  <li><a href="#why-planning-matters" id="toc-why-planning-matters" class="nav-link" data-scroll-target="#why-planning-matters"><span class="header-section-number">6.7.1</span> Why Planning Matters</a></li>
-  <li><a href="#the-protocol" id="toc-the-protocol" class="nav-link" data-scroll-target="#the-protocol"><span class="header-section-number">6.7.2</span> The Protocol</a></li>
-  <li><a href="#context-preservation-never-clear" id="toc-context-preservation-never-clear" class="nav-link" data-scroll-target="#context-preservation-never-clear"><span class="header-section-number">6.7.3</span> Context Preservation: Never /clear</a></li>
-  <li><a href="#session-logging" id="toc-session-logging" class="nav-link" data-scroll-target="#session-logging"><span class="header-section-number">6.7.4</span> Session Logging</a></li>
+  <li><a href="#why-planning-matters" id="toc-why-planning-matters" class="nav-link" data-scroll-target="#why-planning-matters"><span class="header-section-number">6.1.1</span> Why Planning Matters</a></li>
+  <li><a href="#the-protocol" id="toc-the-protocol" class="nav-link" data-scroll-target="#the-protocol"><span class="header-section-number">6.1.2</span> The Protocol</a></li>
+  <li><a href="#context-preservation-never-clear" id="toc-context-preservation-never-clear" class="nav-link" data-scroll-target="#context-preservation-never-clear"><span class="header-section-number">6.1.3</span> Context Preservation: Never /clear</a></li>
+  <li><a href="#session-logging" id="toc-session-logging" class="nav-link" data-scroll-target="#session-logging"><span class="header-section-number">6.1.4</span> Session Logging</a></li>
   </ul></li>
+  <li><a href="#pattern-2-contractor-mode-orchestrator" id="toc-pattern-2-contractor-mode-orchestrator" class="nav-link" data-scroll-target="#pattern-2-contractor-mode-orchestrator"><span class="header-section-number">6.2</span> Pattern 2: Contractor Mode (Orchestrator)</a>
+  <ul class="collapse">
+  <li><a href="#the-mental-model" id="toc-the-mental-model" class="nav-link" data-scroll-target="#the-mental-model"><span class="header-section-number">6.2.1</span> The Mental Model</a></li>
+  <li><a href="#the-loop" id="toc-the-loop" class="nav-link" data-scroll-target="#the-loop"><span class="header-section-number">6.2.2</span> The Loop</a></li>
+  <li><a href="#agent-selection" id="toc-agent-selection" class="nav-link" data-scroll-target="#agent-selection"><span class="header-section-number">6.2.3</span> Agent Selection</a></li>
+  <li><a href="#just-do-it-mode" id="toc-just-do-it-mode" class="nav-link" data-scroll-target="#just-do-it-mode"><span class="header-section-number">6.2.4</span> “Just Do It” Mode</a></li>
+  <li><a href="#relationship-to-existing-skills" id="toc-relationship-to-existing-skills" class="nav-link" data-scroll-target="#relationship-to-existing-skills"><span class="header-section-number">6.2.5</span> Relationship to Existing Skills</a></li>
+  </ul></li>
+  <li><a href="#pattern-3-creating-a-new-lecture" id="toc-pattern-3-creating-a-new-lecture" class="nav-link" data-scroll-target="#pattern-3-creating-a-new-lecture"><span class="header-section-number">6.3</span> Pattern 3: Creating a New Lecture</a></li>
+  <li><a href="#pattern-4-translating-beamer-to-quarto" id="toc-pattern-4-translating-beamer-to-quarto" class="nav-link" data-scroll-target="#pattern-4-translating-beamer-to-quarto"><span class="header-section-number">6.4</span> Pattern 4: Translating Beamer to Quarto</a></li>
+  <li><a href="#pattern-5-replication-first-coding" id="toc-pattern-5-replication-first-coding" class="nav-link" data-scroll-target="#pattern-5-replication-first-coding"><span class="header-section-number">6.5</span> Pattern 5: Replication-First Coding</a></li>
+  <li><a href="#pattern-6-multi-agent-review" id="toc-pattern-6-multi-agent-review" class="nav-link" data-scroll-target="#pattern-6-multi-agent-review"><span class="header-section-number">6.6</span> Pattern 6: Multi-Agent Review</a></li>
+  <li><a href="#pattern-7-self-improvement-loop" id="toc-pattern-7-self-improvement-loop" class="nav-link" data-scroll-target="#pattern-7-self-improvement-loop"><span class="header-section-number">6.7</span> Pattern 7: Self-Improvement Loop</a></li>
+  <li><a href="#pattern-8-devils-advocate" id="toc-pattern-8-devils-advocate" class="nav-link" data-scroll-target="#pattern-8-devils-advocate"><span class="header-section-number">6.8</span> Pattern 8: Devil’s Advocate</a></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">7</span> Customizing for Your Domain</a>
   <ul class="collapse">
@@ -2785,12 +2794,12 @@ window.Quarto = {
 <li>Plans survive session boundaries (readable in any future session)</li>
 <li>Plans create an audit trail of design decisions</li>
 </ul>
-<p>See Pattern 7 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
+<p>See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 </section>
 <section id="session-logs-why-not-just-what-history" class="level3" data-number="2.6.2">
 <h3 data-number="2.6.2" class="anchored" data-anchor-id="session-logs-why-not-just-what-history"><span class="header-section-number">2.6.2</span> Session Logs — Why-Not-Just-What History</h3>
 <p>Git commits record what changed, but not <em>why</em>. Session logs fill this gap. Claude writes to <code>quality_reports/session_logs/</code> at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning <em>as it happens</em>, before auto-compression can discard it.</p>
-<p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 7 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
+<p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 <hr>
 </section>
 </section>
@@ -2966,11 +2975,17 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 </section>
-<section id="creating-your-own-domain-reviewer" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="creating-your-own-domain-reviewer"><span class="header-section-number">4.3</span> Creating Your Own Domain Reviewer</h2>
+<section id="the-orchestrator-coordinating-agents-automatically" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="the-orchestrator-coordinating-agents-automatically"><span class="header-section-number">4.3</span> The Orchestrator: Coordinating Agents Automatically</h2>
+<p>Individual agents are specialists. Skills like <code>/slide-excellence</code> and <code>/qa-quarto</code> coordinate a few agents for specific tasks. But in day-to-day work, you should not have to think about which agents to run. That is the orchestrator’s job.</p>
+<p>The <strong>orchestrator protocol</strong> (<code>.claude/rules/orchestrator-protocol.md</code>) is an auto-loaded rule that activates after any plan is approved. It implements the plan, runs the verifier, selects review agents based on file types, applies fixes, re-verifies, and scores against quality gates. It loops until the score meets threshold or max rounds are exhausted.</p>
+<p>You never invoke the orchestrator manually — it is the default mode of operation for any non-trivial task. Skills remain available for standalone use (e.g., <code>/proofread</code> for a quick grammar check), but the orchestrator handles the full lifecycle automatically. See <a href="#pattern-2-contractor-mode-orchestrator">Pattern 2</a> for the complete workflow.</p>
+</section>
+<section id="creating-your-own-domain-reviewer" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="creating-your-own-domain-reviewer"><span class="header-section-number">4.4</span> Creating Your Own Domain Reviewer</h2>
 <p>The template includes <code>domain-reviewer.md</code> — a skeleton for building a substance reviewer specific to your field.</p>
-<section id="the-5-lens-framework" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="the-5-lens-framework"><span class="header-section-number">4.3.1</span> The 5-Lens Framework</h3>
+<section id="the-5-lens-framework" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="the-5-lens-framework"><span class="header-section-number">4.4.1</span> The 5-Lens Framework</h3>
 <p>Every domain can benefit from these five review lenses:</p>
 <table class="caption-top table">
 <colgroup>
@@ -3150,110 +3165,12 @@ APPROVED   NEEDS WORK
 </section>
 <section id="sec-patterns" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Workflow Patterns</h1>
-<section id="pattern-1-creating-a-new-lecture" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="pattern-1-creating-a-new-lecture"><span class="header-section-number">6.1</span> Pattern 1: Creating a New Lecture</h2>
-<pre><code>/create-lecture
-  │
-  ├── Phase 1: Gather materials (papers, outlines)
-  ├── Phase 2: Design slide structure
-  ├── Phase 3: Draft Beamer slides
-  ├── Phase 4: Generate R figures
-  ├── Phase 5: Polish and verify
-  │     ├── /substance-review (domain correctness)
-  │     ├── /proofread (grammar/typos)
-  │     └── /visual-audit (layout)
-  └── Phase 6: Deploy
-        ├── /translate-to-quarto (optional)
-        └── /deploy</code></pre>
-</section>
-<section id="pattern-2-translating-beamer-to-quarto" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="pattern-2-translating-beamer-to-quarto"><span class="header-section-number">6.2</span> Pattern 2: Translating Beamer to Quarto</h2>
-<pre><code>/translate-to-quarto Lecture5_Topic.tex
-  │
-  ├── Phase 1-3: Environment mapping + content translation
-  ├── Phase 4-5: Figure conversion (TikZ → SVG)
-  ├── Phase 6-7: Interactive charts (ggplot → plotly)
-  ├── Phase 8-9: Render + verify
-  └── Phase 10-11: /qa-quarto adversarial QA
-        ├── Critic: finds issues
-        ├── Fixer: applies fixes
-        ├── Critic: re-audits
-        └── ... (until APPROVED or 5 rounds)</code></pre>
-</section>
-<section id="pattern-3-replication-first-coding" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="pattern-3-replication-first-coding"><span class="header-section-number">6.3</span> Pattern 3: Replication-First Coding</h2>
-<p>When working with papers that have replication packages:</p>
-<pre><code>Phase 1: Inventory original code
-  └── Record &quot;gold standard&quot; numbers (Table X, Column Y = Z.ZZ)
-
-Phase 2: Translate (e.g., Stata → R)
-  └── Match original specification EXACTLY (same covariates, same clustering)
-
-Phase 3: Verify match
-  └── Compare every target: paper value vs. our value
-  └── Tolerance: &lt; 0.01 for estimates, &lt; 0.05 for SEs
-  └── If mismatch: STOP. Investigate before proceeding.
-
-Phase 4: Only then extend
-  └── New estimators, new specifications, course-specific figures</code></pre>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Never Skip Replication
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In one course, we discovered that a widely-used R package silently produced <strong>incorrect estimates</strong> due to a subtle specification issue. This bug was caught 3 times in different scripts. Without the replication-first protocol, these wrong numbers would have been taught to PhD students.</p>
-</div>
-</div>
-</section>
-<section id="pattern-4-multi-agent-review" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="pattern-4-multi-agent-review"><span class="header-section-number">6.4</span> Pattern 4: Multi-Agent Review</h2>
-<p>The <code>/slide-excellence</code> skill runs up to 6 agents in parallel:</p>
-<pre><code>/slide-excellence Lecture5_Topic.tex
-  │
-  ├── Agent 1: Visual Audit (slide-auditor)
-  ├── Agent 2: Pedagogical Review (pedagogy-reviewer)
-  ├── Agent 3: Proofreading (proofreader)
-  ├── Agent 4: TikZ Review (tikz-reviewer, if applicable)
-  ├── Agent 5: Content Parity (if Quarto version exists)
-  └── Agent 6: Substance Review (domain-reviewer)
-  │
-  └── Synthesize: Combined quality score + prioritized fix list</code></pre>
-</section>
-<section id="pattern-5-self-improvement-loop" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="pattern-5-self-improvement-loop"><span class="header-section-number">6.5</span> Pattern 5: Self-Improvement Loop</h2>
-<p>Every correction gets tagged for future reference:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Corrections Log</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:notation</span><span class="co">]</span> T_t = 1{t=2} is deterministic → use T_i ∈ {1,2}</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:citation</span><span class="co">]</span> Post-LASSO is Belloni (2013), NOT Belloni (2014)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:r-code</span><span class="co">]</span> Package X: ALWAYS include intercept in design matrix</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:workflow</span><span class="co">]</span> Every Beamer edit must auto-sync to Quarto</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>These tags are searchable and persist in MEMORY.md across sessions. When Claude encounters a similar situation, it checks memory first.</p>
-</section>
-<section id="pattern-6-devils-advocate" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="pattern-6-devils-advocate"><span class="header-section-number">6.6</span> Pattern 6: Devil’s Advocate</h2>
-<p>At any design decision, invoke the Devil’s Advocate:</p>
-<blockquote class="blockquote">
-<p>“Create a Devil’s Advocate. Have it challenge this slide design with 5-7 specific pedagogical questions. Work through each challenge and tell me what survives.”</p>
-</blockquote>
-<p>This catches:</p>
-<ul>
-<li>Unstated assumptions</li>
-<li>Alternative orderings that might work better</li>
-<li>Notation that could confuse students</li>
-<li>Missing intuition before formalism</li>
-<li>Cognitive load issues</li>
-</ul>
-</section>
-<section id="pattern-7-plan-first-development" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="pattern-7-plan-first-development"><span class="header-section-number">6.7</span> Pattern 7: Plan-First Development</h2>
+<p>The first two patterns are <strong>meta-patterns</strong> — they govern how every task flows. Learn these first, then the specific workflows make more sense.</p>
+<section id="pattern-1-plan-first-development" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="pattern-1-plan-first-development"><span class="header-section-number">6.1</span> Pattern 1: Plan-First Development</h2>
 <p>The plan-first pattern ensures that non-trivial tasks begin with thinking, not typing.</p>
-<section id="why-planning-matters" class="level3" data-number="6.7.1">
-<h3 data-number="6.7.1" class="anchored" data-anchor-id="why-planning-matters"><span class="header-section-number">6.7.1</span> Why Planning Matters</h3>
+<section id="why-planning-matters" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="why-planning-matters"><span class="header-section-number">6.1.1</span> Why Planning Matters</h3>
 <p>The most common failure mode in AI-assisted development is not bad code — it is solving the wrong problem, or solving the right problem in a fragile order. Plan-first development forces an explicit design step before any file is touched.</p>
 <p>Without a plan:</p>
 <ul>
@@ -3268,21 +3185,21 @@ Phase 4: Only then extend
 <li>Implementation has a checklist to follow, reducing drift</li>
 </ul>
 </section>
-<section id="the-protocol" class="level3" data-number="6.7.2">
-<h3 data-number="6.7.2" class="anchored" data-anchor-id="the-protocol"><span class="header-section-number">6.7.2</span> The Protocol</h3>
+<section id="the-protocol" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="the-protocol"><span class="header-section-number">6.1.2</span> The Protocol</h3>
 <pre><code>Non-trivial task arrives
-  │
-  ├── Step 1: Enter Plan Mode (EnterPlanMode)
-  ├── Step 2: Draft plan (approach, files, verification)
-  ├── Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
-  ├── Step 4: Present plan to user
-  ├── Step 5: User approves (or revises)
-  ├── Step 6: Save initial session log (capture context while fresh)
-  ├── Step 7: Implement with plan as checklist
-  └── Step 8: Update session log + plan status to COMPLETED</code></pre>
+  |
+  +-- Step 1: Enter Plan Mode (EnterPlanMode)
+  +-- Step 2: Draft plan (approach, files, verification)
+  +-- Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
+  +-- Step 4: Present plan to user
+  +-- Step 5: User approves (or revises)
+  +-- Step 6: Save initial session log (capture context while fresh)
+  +-- Step 7: Orchestrator takes over (see Pattern 2)
+  +-- Step 8: Update session log + plan status to COMPLETED</code></pre>
 </section>
-<section id="context-preservation-never-clear" class="level3" data-number="6.7.3">
-<h3 data-number="6.7.3" class="anchored" data-anchor-id="context-preservation-never-clear"><span class="header-section-number">6.7.3</span> Context Preservation: Never /clear</h3>
+<section id="context-preservation-never-clear" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="context-preservation-never-clear"><span class="header-section-number">6.1.3</span> Context Preservation: Never /clear</h3>
 <p>An important companion to plan-first development is context preservation. Claude Code has two ways to free context space:</p>
 <ul>
 <li><strong><code>/clear</code></strong> — destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.</li>
@@ -3306,10 +3223,10 @@ Phase 4: Only then extend
 <p>Because the plan is on disk, recovery is instant.</p>
 </div>
 </div>
-<p>Combined with the <code>[LEARN]</code> tag system from <a href="#pattern-5-self-improvement-loop">Pattern 5</a>, plans and context preservation form a complete memory layer: plans save task strategy, <code>[LEARN]</code> tags save corrections, and auto-compression keeps the conversation manageable without losing what matters.</p>
+<p>Combined with the <code>[LEARN]</code> tag system from <a href="#pattern-7-self-improvement-loop">Pattern 7</a>, plans and context preservation form a complete memory layer: plans save task strategy, <code>[LEARN]</code> tags save corrections, and auto-compression keeps the conversation manageable without losing what matters.</p>
 </section>
-<section id="session-logging" class="level3" data-number="6.7.4">
-<h3 data-number="6.7.4" class="anchored" data-anchor-id="session-logging"><span class="header-section-number">6.7.4</span> Session Logging</h3>
+<section id="session-logging" class="level3" data-number="6.1.4">
+<h3 data-number="6.1.4" class="anchored" data-anchor-id="session-logging"><span class="header-section-number">6.1.4</span> Session Logging</h3>
 <p>Session logs (<code>quality_reports/session_logs/YYYY-MM-DD_description.md</code>) are a running record of <em>why</em> things happened. They have <strong>three distinct behaviors</strong>, each solving a different problem:</p>
 <p><strong>After plan approval</strong> — create the log with the goal, plan summary, and rationale for the chosen approach (including rejected alternatives). This captures decisions while context is richest. If you wait, auto-compression may discard the reasoning.</p>
 <p><strong>During implementation</strong> — append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.</p>
@@ -3337,12 +3254,232 @@ Phase 4: Only then extend
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The post-plan log is a special case — it fires once, right after approval. But the <em>incremental</em> logging during implementation is what truly protects you. A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they’re already on disk.</p>
+<p>The post-plan log is a special case — it fires once, right after approval. But the <em>incremental</em> logging during implementation is what truly protects you. A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they are already on disk.</p>
 </div>
 </div>
 <p>Claude writes all three log entries automatically — no need to ask.</p>
-<hr>
 </section>
+</section>
+<section id="pattern-2-contractor-mode-orchestrator" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="pattern-2-contractor-mode-orchestrator"><span class="header-section-number">6.2</span> Pattern 2: Contractor Mode (Orchestrator)</h2>
+<p>Once a plan is approved, the orchestrator takes over. It is the natural continuation of Pattern 1: the plan says <em>what</em>, the orchestrator handles <em>how</em> — autonomously.</p>
+<section id="the-mental-model" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="the-mental-model"><span class="header-section-number">6.2.1</span> The Mental Model</h3>
+<p>Think of the orchestrator as a <strong>general contractor</strong>. You are the client. You describe what you want. The plan-first protocol is the blueprint phase. Once you approve the blueprint, the contractor takes over: hires the right specialists (agents), inspects their work (verification), sends them back to fix issues (review-fix loop), and only calls you when the job passes inspection (quality gates).</p>
+</section>
+<section id="the-loop" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="the-loop"><span class="header-section-number">6.2.2</span> The Loop</h3>
+<pre><code>User: &quot;Translate Lecture 5 to Quarto&quot;
+  |
+  |-- Plan-first (Pattern 1): draft plan, save to disk, get approval
+  |
+  |-- User: &quot;Approved&quot;
+  |
+  +-- Orchestrator activates:
+        |
+        Step 1: IMPLEMENT
+        |  Execute plan steps (create QMD, translate content, etc.)
+        |
+        Step 2: VERIFY
+        |  Run verifier: render Quarto, check HTML output
+        |  If render fails -&gt; fix -&gt; re-render
+        |
+        Step 3: REVIEW (agents selected by file type)
+        |  +--- proofreader ------+
+        |  +--- slide-auditor ----+  (parallel)
+        |  +--- pedagogy-reviewer +
+        |  +--- quarto-critic ----+  (needs others first)
+        |
+        Step 4: FIX
+        |  Apply fixes: Critical -&gt; Major -&gt; Minor
+        |  For quarto-critic issues: invoke quarto-fixer
+        |
+        Step 5: RE-VERIFY
+        |  Render again, confirm fixes are clean
+        |
+        Step 6: SCORE
+        |  Apply quality-gates rubric
+        |
+        +-- Score &gt;= 80?
+              YES -&gt; Present summary to user
+              NO  -&gt; Loop to Step 3 (max 5 rounds)</code></pre>
+</section>
+<section id="agent-selection" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="agent-selection"><span class="header-section-number">6.2.3</span> Agent Selection</h3>
+<p>The orchestrator selects agents based on which files were touched:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Files Modified</th>
+<th>Agents Selected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.tex</code> only</td>
+<td>proofreader + slide-auditor + pedagogy-reviewer</td>
+</tr>
+<tr class="even">
+<td><code>.qmd</code> only</td>
+<td>proofreader + slide-auditor + pedagogy-reviewer</td>
+</tr>
+<tr class="odd">
+<td><code>.qmd</code> with matching <code>.tex</code></td>
+<td>Above + quarto-critic (parity check)</td>
+</tr>
+<tr class="even">
+<td><code>.R</code> scripts</td>
+<td>r-reviewer</td>
+</tr>
+<tr class="odd">
+<td>TikZ diagrams present</td>
+<td>tikz-reviewer</td>
+</tr>
+<tr class="even">
+<td>Domain content</td>
+<td>domain-reviewer (if configured)</td>
+</tr>
+<tr class="odd">
+<td>Multiple formats</td>
+<td>verifier for cross-format parity</td>
+</tr>
+</tbody>
+</table>
+<p>Agents that are independent of each other run in parallel. The quarto-critic runs after other agents because it may need their context.</p>
+</section>
+<section id="just-do-it-mode" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="just-do-it-mode"><span class="header-section-number">6.2.4</span> “Just Do It” Mode</h3>
+<p>Sometimes you do not want to approve the final result — you just want it done:</p>
+<blockquote class="blockquote">
+<p>“Translate Lecture 5 to Quarto. Just do it.”</p>
+</blockquote>
+<p>In this mode, the orchestrator still runs the full verify-review-fix loop (quality is non-negotiable), but skips the final approval pause and auto-commits if the score is 80 or above. It still presents the summary so you can see what was done.</p>
+</section>
+<section id="relationship-to-existing-skills" class="level3" data-number="6.2.5">
+<h3 data-number="6.2.5" class="anchored" data-anchor-id="relationship-to-existing-skills"><span class="header-section-number">6.2.5</span> Relationship to Existing Skills</h3>
+<p>The orchestrator does NOT replace skills. It coordinates them:</p>
+<ul>
+<li><code>/qa-quarto</code> remains available as a standalone adversarial QA loop</li>
+<li><code>/slide-excellence</code> remains available for comprehensive multi-agent review</li>
+<li><code>/create-lecture</code> remains available as a guided creation workflow</li>
+</ul>
+<p>The difference: when you invoke a skill directly, it runs its specific workflow. When the orchestrator is active, it decides which agents to invoke based on context. The orchestrator is the default; skills are for targeted use.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>When to Use Skills vs. the Orchestrator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Orchestrator</strong> (automatic): “Translate Lecture 5 to Quarto” — the orchestrator figures out the agents.</p>
+<p><strong>Skill</strong> (explicit): “/qa-quarto Lecture5” — you specifically want the adversarial critic-fixer loop, nothing else.</p>
+<p>Both are valid. The orchestrator is the “I trust you, handle it” path. Skills are the “I know exactly what I want” path.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="pattern-3-creating-a-new-lecture" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="pattern-3-creating-a-new-lecture"><span class="header-section-number">6.3</span> Pattern 3: Creating a New Lecture</h2>
+<pre><code>/create-lecture
+  |
+  +-- Phase 1: Gather materials (papers, outlines)
+  +-- Phase 2: Design slide structure
+  +-- Phase 3: Draft Beamer slides
+  +-- Phase 4: Generate R figures
+  +-- Phase 5: Polish and verify
+  |     +-- /substance-review (domain correctness)
+  |     +-- /proofread (grammar/typos)
+  |     +-- /visual-audit (layout)
+  +-- Phase 6: Deploy
+        +-- /translate-to-quarto (optional)
+        +-- /deploy</code></pre>
+</section>
+<section id="pattern-4-translating-beamer-to-quarto" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="pattern-4-translating-beamer-to-quarto"><span class="header-section-number">6.4</span> Pattern 4: Translating Beamer to Quarto</h2>
+<pre><code>/translate-to-quarto Lecture5_Topic.tex
+  |
+  +-- Phase 1-3: Environment mapping + content translation
+  +-- Phase 4-5: Figure conversion (TikZ -&gt; SVG)
+  +-- Phase 6-7: Interactive charts (ggplot -&gt; plotly)
+  +-- Phase 8-9: Render + verify
+  +-- Phase 10-11: /qa-quarto adversarial QA
+        +-- Critic: finds issues
+        +-- Fixer: applies fixes
+        +-- Critic: re-audits
+        +-- ... (until APPROVED or 5 rounds)</code></pre>
+</section>
+<section id="pattern-5-replication-first-coding" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="pattern-5-replication-first-coding"><span class="header-section-number">6.5</span> Pattern 5: Replication-First Coding</h2>
+<p>When working with papers that have replication packages:</p>
+<pre><code>Phase 1: Inventory original code
+  +-- Record &quot;gold standard&quot; numbers (Table X, Column Y = Z.ZZ)
+
+Phase 2: Translate (e.g., Stata -&gt; R)
+  +-- Match original specification EXACTLY (same covariates, same clustering)
+
+Phase 3: Verify match
+  +-- Compare every target: paper value vs. our value
+  +-- Tolerance: &lt; 0.01 for estimates, &lt; 0.05 for SEs
+  +-- If mismatch: STOP. Investigate before proceeding.
+
+Phase 4: Only then extend
+  +-- New estimators, new specifications, course-specific figures</code></pre>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Never Skip Replication
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In one course, we discovered that a widely-used R package silently produced <strong>incorrect estimates</strong> due to a subtle specification issue. This bug was caught 3 times in different scripts. Without the replication-first protocol, these wrong numbers would have been taught to PhD students.</p>
+</div>
+</div>
+</section>
+<section id="pattern-6-multi-agent-review" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="pattern-6-multi-agent-review"><span class="header-section-number">6.6</span> Pattern 6: Multi-Agent Review</h2>
+<p>The <code>/slide-excellence</code> skill runs up to 6 agents in parallel:</p>
+<pre><code>/slide-excellence Lecture5_Topic.tex
+  |
+  +-- Agent 1: Visual Audit (slide-auditor)
+  +-- Agent 2: Pedagogical Review (pedagogy-reviewer)
+  +-- Agent 3: Proofreading (proofreader)
+  +-- Agent 4: TikZ Review (tikz-reviewer, if applicable)
+  +-- Agent 5: Content Parity (if Quarto version exists)
+  +-- Agent 6: Substance Review (domain-reviewer)
+  |
+  +-- Synthesize: Combined quality score + prioritized fix list</code></pre>
+</section>
+<section id="pattern-7-self-improvement-loop" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="pattern-7-self-improvement-loop"><span class="header-section-number">6.7</span> Pattern 7: Self-Improvement Loop</h2>
+<p>Every correction gets tagged for future reference:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Corrections Log</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:notation</span><span class="co">]</span> T_t = 1{t=2} is deterministic -&gt; use T_i in {1,2}</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:citation</span><span class="co">]</span> Post-LASSO is Belloni (2013), NOT Belloni (2014)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:r-code</span><span class="co">]</span> Package X: ALWAYS include intercept in design matrix</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:workflow</span><span class="co">]</span> Every Beamer edit must auto-sync to Quarto</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>These tags are searchable and persist in MEMORY.md across sessions. When Claude encounters a similar situation, it checks memory first.</p>
+</section>
+<section id="pattern-8-devils-advocate" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="pattern-8-devils-advocate"><span class="header-section-number">6.8</span> Pattern 8: Devil’s Advocate</h2>
+<p>At any design decision, invoke the Devil’s Advocate:</p>
+<blockquote class="blockquote">
+<p>“Create a Devil’s Advocate. Have it challenge this slide design with 5-7 specific pedagogical questions. Work through each challenge and tell me what survives.”</p>
+</blockquote>
+<p>This catches:</p>
+<ul>
+<li>Unstated assumptions</li>
+<li>Alternative orderings that might work better</li>
+<li>Notation that could confuse students</li>
+<li>Missing intuition before formalism</li>
+<li>Cognitive load issues</li>
+</ul>
+<hr>
 </section>
 </section>
 <section id="sec-customize" class="level1" data-number="7">
@@ -3352,23 +3489,23 @@ Phase 4: Only then extend
 <p>The knowledge base (<code>.claude/rules/knowledge-base-template.md</code>) is the most domain-specific component. It has three sections:</p>
 <section id="notation-registry" class="level3" data-number="7.1.1">
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="notation-registry"><span class="header-section-number">7.1.1</span> Notation Registry</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="applications-database" class="level3" data-number="7.1.2">
 <h3 data-number="7.1.2" class="anchored" data-anchor-id="applications-database"><span class="header-section-number">7.1.2</span> Applications Database</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="validated-design-principles" class="level3" data-number="7.1.3">
 <h3 data-number="7.1.3" class="anchored" data-anchor-id="validated-design-principles"><span class="header-section-number">7.1.3</span> Validated Design Principles</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="step-2-create-your-domain-reviewer" class="level2" data-number="7.2">
@@ -3387,7 +3524,7 @@ Phase 4: Only then extend
 <section id="step-4-add-project-specific-skills" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="step-4-add-project-specific-skills"><span class="header-section-number">7.4</span> Step 4: Add Project-Specific Skills</h2>
 <p>If you have recurring workflows, create new skills:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then create <code>SKILL.md</code> with YAML frontmatter + step-by-step instructions.</p>
 </section>
 <section id="tips-from-6-sessions-of-iteration" class="level2" data-number="7.5">
@@ -3634,6 +3771,11 @@ Phase 4: Only then extend
 <td>Plan-First Workflow</td>
 <td><code>.claude/rules/plan-first-workflow.md</code></td>
 <td>Plan mode, plan saving, context preservation, session logging</td>
+</tr>
+<tr class="odd">
+<td>Orchestrator Protocol</td>
+<td><code>.claude/rules/orchestrator-protocol.md</code></td>
+<td>Contractor mode: autonomous implement-verify-review-fix loop</td>
 </tr>
 </tbody>
 </table>

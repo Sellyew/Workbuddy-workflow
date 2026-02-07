@@ -119,6 +119,12 @@ See `.claude/rules/plan-first-workflow.md` for the full protocol.
 
 > **Never use `/clear`.** Rely on auto-compression to manage long conversations. `/clear` destroys all context; auto-compression preserves what matters.
 
+### Contractor Mode (Orchestrator)
+
+After a plan is approved, Claude operates in **contractor mode**: implement, verify, review with agents, fix issues, and re-verify — all autonomously. The user sees a summary when the work meets quality standards or review rounds are exhausted. See `.claude/rules/orchestrator-protocol.md`.
+
+When you say "just do it", the orchestrator skips the final approval pause and auto-commits if the score is 80+.
+
 ### Continuous Learning with [LEARN] Tags
 
 When Claude makes a mistake or you correct a misconception, tag the correction:
