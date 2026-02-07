@@ -4,7 +4,7 @@
 
 **Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
 
-A ready-to-fork starter kit for academics using [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **LaTeX/Beamer + R + Quarto**. Contains a complete multi-agent infrastructure — specialized reviewers, quality gates, adversarial QA loops, and automated workflows — extracted and genericized from a production PhD course.
+A ready-to-fork starter kit for academics using [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course.
 
 ---
 
@@ -12,12 +12,11 @@ A ready-to-fork starter kit for academics using [Claude Code](https://docs.anthr
 
 This repository provides the **transportable infrastructure** behind a Claude Code workflow used to develop 6 complete PhD lecture decks (800+ slides) with:
 
-- 10 specialized agents (proofreader, slide auditor, pedagogy reviewer, R code reviewer, TikZ critic, adversarial QA, and more)
-- 13 slash-command skills (`/compile-latex`, `/proofread`, `/translate-to-quarto`, `/qa-quarto`, etc.)
-- 12 context-aware rules (quality gates, notation consistency, auto-sync, orchestrator protocol)
-- Quality scoring with commit/PR/excellence thresholds (80/90/95)
-- Adversarial critic-fixer QA loops that catch errors humans miss
-- Automated Beamer-to-Quarto translation workflow
+- **Contractor-mode orchestrator** — you describe the task; Claude plans, implements, reviews with agents, fixes issues, and re-verifies until quality gates pass
+- **Adversarial critic-fixer loops** — two agents check each other's work across up to 5 rounds, catching errors humans miss
+- **Quality scoring** with commit/PR/excellence thresholds (80/90/95) — nothing ships below 80
+- **Automated Beamer-to-Quarto translation** with TikZ-to-SVG and ggplot-to-plotly conversion
+- 10 specialized agents, 13 slash commands, 12 auto-loaded rules
 
 All domain-specific content has been replaced with `[PLACEHOLDER]` markers and `<!-- Customize -->` comments so you can adapt it to your field.
 

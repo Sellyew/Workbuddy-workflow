@@ -251,3 +251,91 @@ hr {
     color: $gold;
   }
 }
+
+// ── Responsive: tablets and small screens ──
+@media (max-width: 991.98px) {
+  // Remove the custom grid override so Quarto's default responsive grid takes over
+  body:not(.floating):not(.docked) .page-columns.toc-left {
+    grid-template-columns: none !important;
+    display: block !important;
+  }
+
+  body {
+    font-size: 1.05rem;
+  }
+
+  .quarto-title .title {
+    font-size: 1.8em;
+  }
+
+  h1, .h1 {
+    font-size: 1.4em;
+  }
+
+  h2, .h2 {
+    font-size: 1.15em;
+  }
+
+  // Let tables scroll horizontally instead of overflowing
+  .table-responsive,
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Pre blocks: ensure horizontal scroll
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+// ── Responsive: phones ──
+@media (max-width: 575.98px) {
+  body {
+    font-size: 1rem;
+    padding: 0 0.5em;
+  }
+
+  .quarto-title .title {
+    font-size: 1.5em;
+  }
+
+  .quarto-title .subtitle {
+    font-size: 0.9em;
+  }
+
+  h1, .h1 {
+    font-size: 1.3em;
+  }
+
+  h2, .h2 {
+    font-size: 1.1em;
+  }
+
+  #TOC a {
+    font-size: 0.95em;
+    padding: 0.5em 0;
+  }
+
+  .table thead th {
+    font-size: 0.8em;
+    padding: 0.5em 0.6em;
+  }
+
+  .table tbody td {
+    font-size: 0.85em;
+    padding: 0.4em 0.6em;
+  }
+
+  .callout {
+    margin: 1em 0;
+    padding: 0.5em;
+  }
+
+  blockquote {
+    padding: 0.5em 0.8em;
+    margin: 0.8em 0;
+  }
+}

@@ -40,48 +40,254 @@ If you've ever built lecture slides, you know the pain:
 - **Review is manual and exhausting.** You proofread 140 slides by hand. You miss a typo in an equation. A student catches it during lecture.
 - **No one checks the math.** Grammar checkers catch "teh" but not a flipped sign in a decomposition theorem.
 
-This workflow solves all of these problems by turning Claude Code into a **multi-agent academic production system**.
+This workflow solves all of these problems. You describe what you want --- "translate Lecture 5 to Quarto" or "create a new lecture on synthetic control" --- and Claude handles the rest: plans the approach, implements it, runs specialized reviewers, fixes issues, verifies quality, and presents results. Like a contractor who manages the entire job.
 
 ## What Makes Claude Code Different
 
-Claude Code is a **CLI tool** that runs on your computer with full access to your file system, terminal, and git. Here's what that enables:
+Claude Code is a **CLI tool** that runs on your computer with full access to your file system, terminal, and git. Here is what that enables:
 
 | Capability | What It Means for You |
 |-----------|----------------------|
 | Read & edit your files | Surgical edits to `.tex`, `.qmd`, `.R` files in place |
-| Run shell commands | Compile LaTeX, run R scripts, render Quarto — directly |
-| Access git history | Commits, PRs, branches — all from the conversation |
+| Run shell commands | Compile LaTeX, run R scripts, render Quarto --- directly |
+| Access git history | Commits, PRs, branches --- all from the conversation |
 | Persistent memory | CLAUDE.md + MEMORY.md survive across sessions |
-| Multi-agent workflows | Specialized agents for proofreading, layout, pedagogy, code review |
-| Quality gates | Automated scoring that blocks bad commits |
+| Orchestrator mode | Claude autonomously plans, implements, reviews, fixes, and verifies |
+| Multi-agent workflows | 10 specialized agents for proofreading, layout, pedagogy, code review |
+| Quality gates | Automated scoring --- nothing ships below 80/100 |
 
 ::: {.callout-tip}
 ## Case Study: Econ 730 at Emory
 
-This workflow was developed over 6+ sessions building a PhD course on Causal Panel Data. The result: 6 complete lectures (140+ slides each), with Beamer + Quarto versions, interactive Plotly charts, TikZ diagrams, and R replication scripts — all reviewed by 11 specialized agents across 5 quality dimensions.
+This workflow was developed over 6+ sessions building a PhD course on Causal Panel Data. The result: 6 complete lectures (140+ slides each), with Beamer + Quarto versions, interactive Plotly charts, TikZ diagrams, and R replication scripts --- all managed by the orchestrator and reviewed by 10 specialized agents across 5 quality dimensions.
 :::
+
+---
+
+# The System in Action {#sec-system}
+
+Before diving into configuration details, here is what the system actually *does*. This section shows the three core mechanisms that make the workflow powerful: specialized agents, adversarial QA, and automatic quality scoring.
+
+## Why Specialized Agents Beat One-Size-Fits-All
+
+Consider proofreading a 140-slide lecture deck. You could ask Claude:
+
+> "Review these slides for grammar, layout, math correctness, code quality, and pedagogical flow."
+
+Claude will skim everything and catch some issues. But it will miss:
+
+- The equation on slide 42 where a subscript changed from $m_t^{d=0}$ to $m_t^0$
+- The TikZ diagram where two labels overlap at presentation resolution
+- The R script that uses `k=10` covariates but the slide says `k=5`
+
+Now compare with specialized agents:
+
+| Agent | Focus | What It Catches |
+|-------|-------|-----------------|
+| `proofreader` | Grammar only | "principle" vs "principal" |
+| `slide-auditor` | Layout only | Text overflow on slide 37 |
+| `pedagogy-reviewer` | Flow only | Missing framing sentence before Theorem 3.1 |
+| `r-reviewer` | Code only | Missing `set.seed()` |
+| `domain-reviewer` | Substance | Slide says 10,000 MC reps, code runs 1,000 |
+
+Each agent reads the same file but examines a different dimension with full attention. The `/slide-excellence` skill runs them all in parallel.
+
+## The Adversarial Pattern: Critic + Fixer
+
+The single most powerful pattern in this system is the **adversarial QA loop**:
+
+```
++------------------+
+|  quarto-critic   |  "I found 12 issues. 3 Critical."
+|  (READ-ONLY)     |
++--------+---------+
+         |
+    +----v----+
+    | Verdict |
+    +----+----+
+     /       \
+APPROVED   NEEDS WORK
+    |          |
+  Done    +----v---------+
+          | quarto-fixer |  "Fixed 12/12 issues."
+          | (READ-WRITE) |
+          +----+---------+
+               |
+          +----v----------+
+          | quarto-critic |  "Re-audit: 2 remaining."
+          | (Round 2)     |
+          +----+----------+
+               |
+          ... (up to 5 rounds)
+```
+
+**Why it works:** The critic can't fix files (read-only), so it has no incentive to downplay issues. The fixer can't approve itself (the critic re-audits). This prevents the common failure of Claude saying "looks good" about its own work.
+
+::: {.callout-tip}
+## Real Example
+
+In Econ 730 Lecture 6, the critic caught that the Quarto version used `\cdots` (a placeholder) where the Beamer version had the full Hajek weight formula. The fixer replaced it. On re-audit, the critic found 8 more instances of missing `(X)` arguments on outcome models. After 4 rounds, the Quarto slides matched the Beamer source exactly.
+:::
+
+## The Orchestrator: Coordinating Agents Automatically
+
+Individual agents are specialists. Skills like `/slide-excellence` and `/qa-quarto` coordinate a few agents for specific tasks. But in day-to-day work, you should not have to think about which agents to run. That is the orchestrator's job.
+
+The **orchestrator protocol** (`.claude/rules/orchestrator-protocol.md`) is an auto-loaded rule that activates after any plan is approved. It implements the plan, runs the verifier, selects review agents based on file types, applies fixes, re-verifies, and scores against quality gates. It loops until the score meets threshold or max rounds are exhausted.
+
+You never invoke the orchestrator manually --- it is the default mode of operation for any non-trivial task. Skills remain available for standalone use (e.g., `/proofread` for a quick grammar check), but the orchestrator handles the full lifecycle automatically. See [Pattern 2](#pattern-2-contractor-mode-orchestrator) for the complete workflow.
+
+## Quality Scoring: The 80/90/95 System {#sec-quality}
+
+Every file gets a quality score from 0 to 100:
+
+| Score | Threshold | Meaning | Action |
+|-------|-----------|---------|--------|
+| **80+** | Commit | Safe to save progress | `git commit` allowed |
+| **90+** | PR | Ready for deployment | `gh pr create` encouraged |
+| **95+** | Excellence | Exceptional quality | Aspirational target |
+| **< 80** | Blocked | Critical issues exist | Must fix before committing |
+
+### How Scores Are Calculated
+
+Points are deducted for issues:
+
+| Issue | Deduction | Why Critical |
+|-------|-----------|-------------|
+| Equation overflow | -20 | Math cut off = unusable |
+| Broken citation | -15 | Academic integrity |
+| Equation typo | -10 | Teaches wrong content |
+| Text overflow | -5 | Content cut off |
+| Label overlap | -5 | Diagram illegible |
+| Notation inconsistency | -3 | Student confusion |
+
+### The Stop Hook: Mandatory Verification
+
+The `.claude/settings.json` includes a Stop hook that runs at the end of every task:
+
+> "Did Claude verify its output? If the task modified .tex, .qmd, .R, or .svg files and verification was NOT performed, block completion."
+
+This means Claude **cannot** say "done" without actually compiling, rendering, or otherwise verifying the output.
+
+::: {.callout-warning}
+## Don't Disable the Stop Hook
+
+It's tempting to remove the hook for speed. Don't. In Econ 730, the hook caught unverified TikZ diagrams that would have deployed with overlapping labels, broken SVGs in Quarto slides that wouldn't display, and R scripts with missing intercept terms that produced silently wrong estimates.
+:::
+
+## Creating Your Own Domain Reviewer
+
+The template includes `domain-reviewer.md` --- a skeleton for building a substance reviewer specific to your field.
+
+### The 5-Lens Framework
+
+Every domain can benefit from these five review lenses:
+
+| Lens | What It Checks | Example (Economics) | Example (Physics) |
+|------|---------------|--------------------|--------------------|
+| **Assumption Audit** | Are stated assumptions sufficient? | Is overlap required for ATT? | Is the adiabatic approximation valid here? |
+| **Derivation Check** | Does the math check out? | Do decomposition terms sum? | Do the units balance? |
+| **Citation Fidelity** | Do slides match cited papers? | Is the theorem from the right paper? | Is the experimental setup correctly described? |
+| **Code-Theory Alignment** | Does code implement the formula? | R script matches the slide equation? | Simulation parameters match theory? |
+| **Logic Chain** | Does the reasoning flow? | Can a PhD student follow backwards? | Are prerequisites established? |
+
+To customize, open `.claude/agents/domain-reviewer.md` and fill in:
+
+1. Your domain's common assumption types
+2. Typical derivation patterns to verify
+3. Key papers and their correct attributions
+4. Code-theory alignment checks for your tools
+5. Logic chain requirements for your audience
+
+---
+
+# Setting Up Your Project {#sec-setup}
+
+## Step 1: Fork the Template
+
+```bash
+# Clone the template
+git clone https://github.com/pedrohcgs/claude-code-my-workflow.git my-project
+cd my-project
+
+# Remove template git history and start fresh
+rm -rf .git
+git init
+git add -A
+git commit -m "Initial project from claude-code-academic-workflow template"
+```
+
+## Step 2: Customize CLAUDE.md
+
+Open `CLAUDE.md` and replace all `[BRACKETED PLACEHOLDERS]`:
+
+1. **Project name and institution**
+2. **Folder structure** (adjust to your layout)
+3. **Current project state** (your lectures/papers)
+4. **Beamer environments** (your custom LaTeX environments)
+5. **CSS classes** (your Quarto theme classes)
+
+## Step 3: Create Your Knowledge Base
+
+Open `.claude/rules/knowledge-base-template.md` and fill in:
+
+1. **Notation registry** --- every symbol you use, where it's introduced, and anti-patterns
+2. **Applications database** --- datasets, papers, and R packages you reference
+3. **Design principles** --- what you've approved and what you've overridden
+
+::: {.callout-tip}
+## Start Small
+
+You don't need to fill everything in upfront. Start with 5-10 notation entries and add more as you develop lectures. The template shows the format --- just follow the pattern.
+:::
+
+## Step 4: Configure Permissions
+
+Review `.claude/settings.json`. The template includes permissions for:
+
+- Git operations (status, commit, push, PR)
+- LaTeX compilation (xelatex, bibtex, latexmk)
+- Quarto rendering
+- R script execution
+- Utility scripts
+
+Add any additional tools you use (e.g., `python3`, `julia`, `pandoc`).
+
+## Step 5: Test It
+
+```bash
+# Test 1: Can Claude compile LaTeX?
+# In Claude Code, type:
+/compile-latex MyFirstLecture
+
+# Test 2: Can Claude proofread?
+/proofread Slides/MyFirstLecture.tex
+
+# Test 3: Does the quality score work?
+python scripts/quality_score.py Quarto/MyFile.qmd
+```
 
 ---
 
 # The Building Blocks {#sec-blocks}
 
-Claude Code's power comes from five configuration layers that work together. Think of them as the operating system for your academic project.
+Now that you have seen what the system does, here is how it is configured. Claude Code's power comes from five configuration layers that work together. Think of them as the operating system for your academic project.
 
-## CLAUDE.md — Your Project's Brain
+## CLAUDE.md --- Your Project's Brain
 
 `CLAUDE.md` is the single most important file. Claude reads it at the start of every session. It contains:
 
-- **Project overview** — what you're building and why
-- **Folder structure** — where everything lives
-- **Available tools** — what slash commands and agents exist
-- **Design principles** — visual, pedagogical, and technical standards
-- **Current state** — which lectures are done, what's in progress
-- **Workflow rules** — how to compile, deploy, commit
+- **Project overview** --- what you're building and why
+- **Folder structure** --- where everything lives
+- **Available tools** --- what slash commands and agents exist
+- **Design principles** --- visual, pedagogical, and technical standards
+- **Current state** --- which lectures are done, what's in progress
+- **Workflow rules** --- how to compile, deploy, commit
 
 ```markdown
-# CLAUDE.MD — My Course Development
+# CLAUDE.MD --- My Course Development
 
-**Project:** Econ 730 — Causal Panel Data
+**Project:** Econ 730 --- Causal Panel Data
 **Institution:** Emory University
 
 ## Quick Reference
@@ -98,18 +304,19 @@ Claude Code's power comes from five configuration layers that work together. Thi
 CLAUDE.md is Claude's **persistent memory**. If it's not in CLAUDE.md, Claude will forget it next session. Every design decision, naming convention, and workflow rule should be documented here.
 :::
 
-## Rules — Domain Knowledge That Auto-Loads
+## Rules --- Domain Knowledge That Auto-Loads
 
 Rules are markdown files in `.claude/rules/` that Claude loads automatically based on context. They encode your project's standards:
 
 ```
 .claude/rules/
-├── verification-protocol.md    # "Always verify output before reporting done"
-├── quality-gates.md            # "Score must be 80+ to commit"
-├── r-code-conventions.md       # "Always use set.seed(), never hardcode paths"
-├── tikz-visual-quality.md      # "No label overlaps, consistent colors"
-├── beamer-quarto-sync.md       # "Every Beamer edit must sync to Quarto"
-└── knowledge-base-template.md  # Your domain notation and conventions
++-- verification-protocol.md    # "Always verify output before reporting done"
++-- quality-gates.md            # "Score must be 80+ to commit"
++-- orchestrator-protocol.md    # "After plan approval, run the full loop"
++-- r-code-conventions.md       # "Always use set.seed(), never hardcode paths"
++-- tikz-visual-quality.md      # "No label overlaps, consistent colors"
++-- beamer-quarto-sync.md       # "Every Beamer edit must sync to Quarto"
++-- knowledge-base-template.md  # Your domain notation and conventions
 ```
 
 **Why rules matter:** Without them, Claude will use generic defaults. With them, Claude follows *your* standards consistently across sessions.
@@ -132,7 +339,7 @@ Every R script MUST have:
 - Save results to RDS, not print to console
 ```
 
-## Skills — Reusable Slash Commands
+## Skills --- Reusable Slash Commands
 
 Skills are multi-step workflows invoked with `/command`. Each skill lives in `.claude/skills/[name]/SKILL.md`:
 
@@ -165,22 +372,22 @@ argument-hint: "[filename without .tex extension]"
 | `/slide-excellence` | Full multi-agent review | Before major milestones |
 | `/create-lecture` | New lecture from scratch | Starting a new topic |
 
-## Agents — Specialized Reviewers
+## Agents --- Specialized Reviewers
 
 Agents are the real power of this system. Each agent is an expert in one dimension of quality:
 
 ```
 .claude/agents/
-├── proofreader.md        # Grammar, typos, consistency
-├── slide-auditor.md      # Visual layout, overflow, spacing
-├── pedagogy-reviewer.md  # Narrative arc, notation clarity, pacing
-├── r-reviewer.md         # R code quality and reproducibility
-├── tikz-reviewer.md      # TikZ diagram visual quality
-├── quarto-critic.md      # Adversarial Quarto vs Beamer comparison
-├── quarto-fixer.md       # Applies critic's fixes
-├── beamer-translator.md  # Beamer → Quarto translation
-├── verifier.md           # Task completion verification
-└── domain-reviewer.md    # YOUR domain-specific substance review
++-- proofreader.md        # Grammar, typos, consistency
++-- slide-auditor.md      # Visual layout, overflow, spacing
++-- pedagogy-reviewer.md  # Narrative arc, notation clarity, pacing
++-- r-reviewer.md         # R code quality and reproducibility
++-- tikz-reviewer.md      # TikZ diagram visual quality
++-- quarto-critic.md      # Adversarial Quarto vs Beamer comparison
++-- quarto-fixer.md       # Applies critic's fixes
++-- beamer-translator.md  # Beamer -> Quarto translation
++-- verifier.md           # Task completion verification
++-- domain-reviewer.md    # YOUR domain-specific substance review
 ```
 
 ### Agent Anatomy
@@ -219,7 +426,7 @@ Save findings to: quality_reports/[FILENAME]_report.md
 A single Claude prompt trying to check grammar, layout, math, and code simultaneously will do a mediocre job at all of them. Specialized agents focus on one dimension and do it thoroughly. The `/slide-excellence` skill runs them all in parallel, then synthesizes results.
 :::
 
-## Settings — Permissions and Hooks
+## Settings --- Permissions and Hooks
 
 `.claude/settings.json` controls what Claude is allowed to do:
 
@@ -247,9 +454,9 @@ A single Claude prompt trying to check grammar, layout, math, and code simultane
 }
 ```
 
-The **Stop hook** is crucial — it runs at the end of every task and blocks completion if Claude didn't verify its output. This prevents the common failure mode of "it compiled but I didn't check if it looks right."
+The **Stop hook** is crucial --- it runs at the end of every task and blocks completion if Claude didn't verify its output. This prevents the common failure mode of "it compiled but I didn't check if it looks right."
 
-## Memory — Cross-Session Persistence
+## Memory --- Cross-Session Persistence
 
 Claude Code has an auto-memory system at `~/.claude/projects/[project]/memory/MEMORY.md`. This file persists across sessions and is loaded into every conversation.
 
@@ -271,7 +478,7 @@ Use it for:
 - [LEARN:workflow] Every Beamer edit must auto-sync to Quarto
 ```
 
-### Plans — Compression-Resistant Task Memory
+### Plans --- Compression-Resistant Task Memory
 
 While MEMORY.md stores long-lived project facts, **plans** store task-specific strategy. Every non-trivial plan is saved to `quality_reports/plans/` with a timestamp. This means:
 
@@ -281,218 +488,11 @@ While MEMORY.md stores long-lived project facts, **plans** store task-specific s
 
 See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
-### Session Logs — Why-Not-Just-What History
+### Session Logs --- Why-Not-Just-What History
 
 Git commits record what changed, but not *why*. Session logs fill this gap. Claude writes to `quality_reports/session_logs/` at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning *as it happens*, before auto-compression can discard it.
 
 New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
-
----
-
-# Setting Up Your Project {#sec-setup}
-
-## Step 1: Fork the Template
-
-```bash
-# Clone the template
-git clone https://github.com/pedrohcgs/claude-code-my-workflow.git my-project
-cd my-project
-
-# Remove template git history and start fresh
-rm -rf .git
-git init
-git add -A
-git commit -m "Initial project from claude-code-academic-workflow template"
-```
-
-## Step 2: Customize CLAUDE.md
-
-Open `CLAUDE.md` and replace all `[BRACKETED PLACEHOLDERS]`:
-
-1. **Project name and institution**
-2. **Folder structure** (adjust to your layout)
-3. **Current project state** (your lectures/papers)
-4. **Beamer environments** (your custom LaTeX environments)
-5. **CSS classes** (your Quarto theme classes)
-
-## Step 3: Create Your Knowledge Base
-
-Open `.claude/rules/knowledge-base-template.md` and fill in:
-
-1. **Notation registry** — every symbol you use, where it's introduced, and anti-patterns
-2. **Applications database** — datasets, papers, and R packages you reference
-3. **Design principles** — what you've approved and what you've overridden
-
-::: {.callout-tip}
-## Start Small
-
-You don't need to fill everything in upfront. Start with 5-10 notation entries and add more as you develop lectures. The template shows the format — just follow the pattern.
-:::
-
-## Step 4: Configure Permissions
-
-Review `.claude/settings.json`. The template includes permissions for:
-
-- Git operations (status, commit, push, PR)
-- LaTeX compilation (xelatex, bibtex, latexmk)
-- Quarto rendering
-- R script execution
-- Utility scripts
-
-Add any additional tools you use (e.g., `python3`, `julia`, `pandoc`).
-
-## Step 5: Test It
-
-```bash
-# Test 1: Can Claude compile LaTeX?
-# In Claude Code, type:
-/compile-latex MyFirstLecture
-
-# Test 2: Can Claude proofread?
-/proofread Slides/MyFirstLecture.tex
-
-# Test 3: Does the quality score work?
-python scripts/quality_score.py Quarto/MyFile.qmd
-```
-
----
-
-# The Agent Ecosystem {#sec-agents}
-
-## Why Specialized Agents Beat One-Size-Fits-All
-
-Consider proofreading a 140-slide lecture deck. You could ask Claude:
-
-> "Review these slides for grammar, layout, math correctness, code quality, and pedagogical flow."
-
-Claude will skim everything and catch some issues. But it will miss:
-
-- The equation on slide 42 where a subscript changed from $m_t^{d=0}$ to $m_t^0$
-- The TikZ diagram where two labels overlap at presentation resolution
-- The R script that uses `k=10` covariates but the slide says `k=5`
-
-Now compare with specialized agents:
-
-| Agent | Focus | What It Catches |
-|-------|-------|-----------------|
-| `proofreader` | Grammar only | "principle" vs "principal" |
-| `slide-auditor` | Layout only | Text overflow on slide 37 |
-| `pedagogy-reviewer` | Flow only | Missing framing sentence before Theorem 3.1 |
-| `r-reviewer` | Code only | Missing `set.seed()` |
-| `domain-reviewer` | Substance | Slide says 10,000 MC reps, code runs 1,000 |
-
-Each agent reads the same file but examines a different dimension with full attention. The `/slide-excellence` skill runs them all in parallel.
-
-## The Adversarial Pattern: Critic + Fixer
-
-The single most powerful pattern in this system is the **adversarial QA loop**:
-
-```
-┌──────────────────┐
-│  quarto-critic   │  "I found 12 issues. 3 Critical."
-│  (READ-ONLY)     │
-└────────┬─────────┘
-         │
-    ┌────▼────┐
-    │ Verdict │
-    └────┬────┘
-     /       \
-APPROVED   NEEDS WORK
-    │          │
-  Done    ┌────▼─────────┐
-          │ quarto-fixer │  "Fixed 12/12 issues."
-          │ (READ-WRITE) │
-          └────┬─────────┘
-               │
-          ┌────▼──────────┐
-          │ quarto-critic │  "Re-audit: 2 remaining."
-          │ (Round 2)     │
-          └────┬──────────┘
-               │
-          ... (up to 5 rounds)
-```
-
-**Why it works:** The critic can't fix files (read-only), so it has no incentive to downplay issues. The fixer can't approve itself (the critic re-audits). This prevents the common failure of Claude saying "looks good" about its own work.
-
-::: {.callout-tip}
-## Real Example
-
-In Econ 730 Lecture 6, the critic caught that the Quarto version used `\cdots` (a placeholder) where the Beamer version had the full Hajek weight formula. The fixer replaced it. On re-audit, the critic found 8 more instances of missing `(X)` arguments on outcome models. After 4 rounds, the Quarto slides matched the Beamer source exactly.
-:::
-
-## The Orchestrator: Coordinating Agents Automatically
-
-Individual agents are specialists. Skills like `/slide-excellence` and `/qa-quarto` coordinate a few agents for specific tasks. But in day-to-day work, you should not have to think about which agents to run. That is the orchestrator's job.
-
-The **orchestrator protocol** (`.claude/rules/orchestrator-protocol.md`) is an auto-loaded rule that activates after any plan is approved. It implements the plan, runs the verifier, selects review agents based on file types, applies fixes, re-verifies, and scores against quality gates. It loops until the score meets threshold or max rounds are exhausted.
-
-You never invoke the orchestrator manually --- it is the default mode of operation for any non-trivial task. Skills remain available for standalone use (e.g., `/proofread` for a quick grammar check), but the orchestrator handles the full lifecycle automatically. See [Pattern 2](#pattern-2-contractor-mode-orchestrator) for the complete workflow.
-
-## Creating Your Own Domain Reviewer
-
-The template includes `domain-reviewer.md` — a skeleton for building a substance reviewer specific to your field.
-
-### The 5-Lens Framework
-
-Every domain can benefit from these five review lenses:
-
-| Lens | What It Checks | Example (Economics) | Example (Physics) |
-|------|---------------|--------------------|--------------------|
-| **Assumption Audit** | Are stated assumptions sufficient? | Is overlap required for ATT? | Is the adiabatic approximation valid here? |
-| **Derivation Check** | Does the math check out? | Do decomposition terms sum? | Do the units balance? |
-| **Citation Fidelity** | Do slides match cited papers? | Is the theorem from the right paper? | Is the experimental setup correctly described? |
-| **Code-Theory Alignment** | Does code implement the formula? | R script matches the slide equation? | Simulation parameters match theory? |
-| **Logic Chain** | Does the reasoning flow? | Can a PhD student follow backwards? | Are prerequisites established? |
-
-To customize, open `.claude/agents/domain-reviewer.md` and fill in:
-
-1. Your domain's common assumption types
-2. Typical derivation patterns to verify
-3. Key papers and their correct attributions
-4. Code-theory alignment checks for your tools
-5. Logic chain requirements for your audience
-
----
-
-# Quality Gates & Verification {#sec-quality}
-
-## The 80/90/95 Scoring System
-
-Every file gets a quality score from 0 to 100:
-
-| Score | Threshold | Meaning | Action |
-|-------|-----------|---------|--------|
-| **80+** | Commit | Safe to save progress | `git commit` allowed |
-| **90+** | PR | Ready for deployment | `gh pr create` encouraged |
-| **95+** | Excellence | Exceptional quality | Aspirational target |
-| **< 80** | Blocked | Critical issues exist | Must fix before committing |
-
-### How Scores Are Calculated
-
-Points are deducted for issues:
-
-| Issue | Deduction | Why Critical |
-|-------|-----------|-------------|
-| Equation overflow | -20 | Math cut off = unusable |
-| Broken citation | -15 | Academic integrity |
-| Equation typo | -10 | Teaches wrong content |
-| Text overflow | -5 | Content cut off |
-| Label overlap | -5 | Diagram illegible |
-| Notation inconsistency | -3 | Student confusion |
-
-### The Stop Hook: Mandatory Verification
-
-The `.claude/settings.json` includes a Stop hook that runs at the end of every task:
-
-> "Did Claude verify its output? If the task modified .tex, .qmd, .R, or .svg files and verification was NOT performed, block completion."
-
-This means Claude **cannot** say "done" without actually compiling, rendering, or otherwise verifying the output.
-
-::: {.callout-warning}
-## Don't Disable the Stop Hook
-
-It's tempting to remove the hook for speed. Don't. In Econ 730, the hook caught unverified TikZ diagrams that would have deployed with overlapping labels, broken SVGs in Quarto slides that wouldn't display, and R scripts with missing intercept terms that produced silently wrong estimates.
-:::
 
 ---
 
