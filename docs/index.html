@@ -110,6 +110,54 @@
       font-size: 0.85em;
       color: #999;
     }
+
+    /* ── Responsive: tablets ── */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1rem;
+        padding: 1.5em 1em;
+      }
+
+      h1 { font-size: 1.6em; }
+      h2 { font-size: 1.1em; }
+
+      pre {
+        font-size: 0.78em;
+        padding: 0.9em 1em;
+      }
+    }
+
+    /* ── Responsive: phones ── */
+    @media (max-width: 480px) {
+      body {
+        font-size: 1rem;
+        padding: 1.2em 0.8em;
+        line-height: 1.6;
+      }
+
+      h1 { font-size: 1.4em; }
+
+      .guide-btn {
+        display: block;
+        text-align: center;
+        padding: 0.7em 1em;
+      }
+
+      pre {
+        font-size: 0.72em;
+        padding: 0.8em;
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
+
+      .overview-list li {
+        padding: 0.6em 0;
+      }
+
+      .overview-list .desc {
+        font-size: 0.85em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -118,10 +166,10 @@
   <div class="byline">Pedro H. C. Sant'Anna &middot; Emory University</div>
 
   <div class="wip">
-    <strong>Work in progress.</strong> This is not a polished guide for everyone. It's mostly a summary of how I've been using Claude Code for academic work &mdash; creating lecture slides, writing R scripts, managing Beamer-to-Quarto workflows. I keep learning new things, and as I do, I keep updating these files. This is just a way for me to share what I've figured out with friends and colleagues.
+    <strong>Work in progress.</strong> This summarizes how I use Claude Code for academic work &mdash; lecture slides, R scripts, Beamer-to-Quarto pipelines. I keep learning and updating these files. Sharing what I've figured out so far with friends and colleagues.
   </div>
 
-  <p>This is a starter kit for academics using <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a> with LaTeX/Beamer, R, and Quarto. It contains a multi-agent infrastructure &mdash; specialized reviewers, quality gates, adversarial QA loops, and automated workflows &mdash; that I extracted and genericized from a PhD course I developed (Econ 730 at Emory, 6 lectures, 800+ slides).</p>
+  <p>A starter kit for academics using <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a> with LaTeX/Beamer, R, and Quarto. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results &mdash; like a contractor who handles the entire job. Extracted from a PhD course I developed (Econ 730 at Emory, 6 lectures, 800+ slides).</p>
 
   <p>
     <a class="guide-btn" href="workflow-guide.html">Read the full guide</a>
@@ -130,16 +178,16 @@
   <h2>What's in the template</h2>
 
   <ul class="overview-list">
+    <li><strong>Contractor mode orchestrator</strong> <span class="desc">&mdash; you describe the task; Claude autonomously plans, implements, reviews with agents, fixes issues, and re-verifies until quality gates pass</span></li>
+    <li><strong>Adversarial critic-fixer loop</strong> <span class="desc">&mdash; two agents that check each other's work across up to 5 rounds &mdash; the critic can't fix, the fixer can't approve</span></li>
+    <li><strong>Quality scoring</strong> <span class="desc">&mdash; every file scored 0&ndash;100; nothing ships below 80; PRs require 90+</span></li>
+    <li><strong>Beamer &rarr; Quarto pipeline</strong> <span class="desc">&mdash; 11-phase translation with TikZ-to-SVG and ggplot-to-plotly conversion</span></li>
     <li><strong>10 specialized agents</strong> <span class="desc">&mdash; proofreader, slide auditor, pedagogy reviewer, R reviewer, TikZ critic, domain reviewer, adversarial QA pair, translator, verifier</span></li>
-    <li><strong>13 slash commands</strong> <span class="desc">&mdash; <code>/compile-latex</code>, <code>/proofread</code>, <code>/deploy</code>, <code>/qa-quarto</code>, <code>/translate-to-quarto</code>, and more</span></li>
-    <li><strong>12 auto-loaded rules</strong> <span class="desc">&mdash; quality gates, notation consistency, R conventions, verification protocol, replication-first coding</span></li>
-    <li><strong>Quality scoring</strong> <span class="desc">&mdash; 80/90/95 thresholds for commit, PR, and excellence</span></li>
-    <li><strong>Adversarial critic-fixer loop</strong> <span class="desc">&mdash; two agents that check each other's work across up to 5 rounds</span></li>
-    <li><strong>Beamer &rarr; Quarto pipeline</strong> <span class="desc">&mdash; 11-phase translation with TikZ-to-SVG and ggplot-to-plotly</span></li>
+    <li><strong>13 slash commands</strong> <span class="desc">&mdash; <code>/compile-latex</code>, <code>/proofread</code>, <code>/deploy</code>, <code>/qa-quarto</code>, <code>/slide-excellence</code>, <code>/create-lecture</code>, and more</span></li>
+    <li><strong>12 auto-loaded rules</strong> <span class="desc">&mdash; quality gates, orchestrator protocol, notation consistency, R conventions, verification protocol, replication-first coding</span></li>
     <li><strong>Plan-first workflow</strong> <span class="desc">&mdash; non-trivial tasks start in plan mode; plans saved to disk survive context compression; never <code>/clear</code></span></li>
-    <li><strong>Contractor mode orchestrator</strong> <span class="desc">&mdash; after plan approval, autonomously implements, verifies, reviews with agents, fixes issues, and re-verifies until quality gates pass</span></li>
     <li><strong>Continuous learning</strong> <span class="desc">&mdash; <code>[LEARN:tag]</code> corrections persist in MEMORY.md across sessions, preventing repeated mistakes</span></li>
-    <li><strong>Automatic session logs</strong> <span class="desc">&mdash; Claude saves what was done, key decisions, and open questions at the end of every session</span></li>
+    <li><strong>Automatic session logs</strong> <span class="desc">&mdash; Claude saves what was done, key decisions, and open questions &mdash; incrementally, not just at session end</span></li>
   </ul>
 
   <h2>Getting started</h2>
