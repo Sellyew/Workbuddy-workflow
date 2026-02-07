@@ -279,13 +279,13 @@ While MEMORY.md stores long-lived project facts, **plans** store task-specific s
 - Plans survive session boundaries (readable in any future session)
 - Plans create an audit trail of design decisions
 
-See Pattern 7 in [Workflow Patterns](#sec-patterns) for the full protocol.
+See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
 ### Session Logs — Why-Not-Just-What History
 
 Git commits record what changed, but not *why*. Session logs fill this gap. Claude writes to `quality_reports/session_logs/` at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning *as it happens*, before auto-compression can discard it.
 
-New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 7 in [Workflow Patterns](#sec-patterns) for the full protocol.
+New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
 ---
 
@@ -420,6 +420,14 @@ APPROVED   NEEDS WORK
 In Econ 730 Lecture 6, the critic caught that the Quarto version used `\cdots` (a placeholder) where the Beamer version had the full Hajek weight formula. The fixer replaced it. On re-audit, the critic found 8 more instances of missing `(X)` arguments on outcome models. After 4 rounds, the Quarto slides matched the Beamer source exactly.
 :::
 
+## The Orchestrator: Coordinating Agents Automatically
+
+Individual agents are specialists. Skills like `/slide-excellence` and `/qa-quarto` coordinate a few agents for specific tasks. But in day-to-day work, you should not have to think about which agents to run. That is the orchestrator's job.
+
+The **orchestrator protocol** (`.claude/rules/orchestrator-protocol.md`) is an auto-loaded rule that activates after any plan is approved. It implements the plan, runs the verifier, selects review agents based on file types, applies fixes, re-verifies, and scores against quality gates. It loops until the score meets threshold or max rounds are exhausted.
+
+You never invoke the orchestrator manually --- it is the default mode of operation for any non-trivial task. Skills remain available for standalone use (e.g., `/proofread` for a quick grammar check), but the orchestrator handles the full lifecycle automatically. See [Pattern 2](#pattern-2-contractor-mode-orchestrator) for the complete workflow.
+
 ## Creating Your Own Domain Reviewer
 
 The template includes `domain-reviewer.md` — a skeleton for building a substance reviewer specific to your field.
@@ -490,118 +498,15 @@ It's tempting to remove the hook for speed. Don't. In Econ 730, the hook caught 
 
 # Workflow Patterns {#sec-patterns}
 
-## Pattern 1: Creating a New Lecture
+The first two patterns are **meta-patterns** --- they govern how every task flows. Learn these first, then the specific workflows make more sense.
 
-```
-/create-lecture
-  │
-  ├── Phase 1: Gather materials (papers, outlines)
-  ├── Phase 2: Design slide structure
-  ├── Phase 3: Draft Beamer slides
-  ├── Phase 4: Generate R figures
-  ├── Phase 5: Polish and verify
-  │     ├── /substance-review (domain correctness)
-  │     ├── /proofread (grammar/typos)
-  │     └── /visual-audit (layout)
-  └── Phase 6: Deploy
-        ├── /translate-to-quarto (optional)
-        └── /deploy
-```
-
-## Pattern 2: Translating Beamer to Quarto
-
-```
-/translate-to-quarto Lecture5_Topic.tex
-  │
-  ├── Phase 1-3: Environment mapping + content translation
-  ├── Phase 4-5: Figure conversion (TikZ → SVG)
-  ├── Phase 6-7: Interactive charts (ggplot → plotly)
-  ├── Phase 8-9: Render + verify
-  └── Phase 10-11: /qa-quarto adversarial QA
-        ├── Critic: finds issues
-        ├── Fixer: applies fixes
-        ├── Critic: re-audits
-        └── ... (until APPROVED or 5 rounds)
-```
-
-## Pattern 3: Replication-First Coding
-
-When working with papers that have replication packages:
-
-```
-Phase 1: Inventory original code
-  └── Record "gold standard" numbers (Table X, Column Y = Z.ZZ)
-
-Phase 2: Translate (e.g., Stata → R)
-  └── Match original specification EXACTLY (same covariates, same clustering)
-
-Phase 3: Verify match
-  └── Compare every target: paper value vs. our value
-  └── Tolerance: < 0.01 for estimates, < 0.05 for SEs
-  └── If mismatch: STOP. Investigate before proceeding.
-
-Phase 4: Only then extend
-  └── New estimators, new specifications, course-specific figures
-```
-
-::: {.callout-important}
-## Never Skip Replication
-
-In one course, we discovered that a widely-used R package silently produced **incorrect estimates** due to a subtle specification issue. This bug was caught 3 times in different scripts. Without the replication-first protocol, these wrong numbers would have been taught to PhD students.
-:::
-
-## Pattern 4: Multi-Agent Review
-
-The `/slide-excellence` skill runs up to 6 agents in parallel:
-
-```
-/slide-excellence Lecture5_Topic.tex
-  │
-  ├── Agent 1: Visual Audit (slide-auditor)
-  ├── Agent 2: Pedagogical Review (pedagogy-reviewer)
-  ├── Agent 3: Proofreading (proofreader)
-  ├── Agent 4: TikZ Review (tikz-reviewer, if applicable)
-  ├── Agent 5: Content Parity (if Quarto version exists)
-  └── Agent 6: Substance Review (domain-reviewer)
-  │
-  └── Synthesize: Combined quality score + prioritized fix list
-```
-
-## Pattern 5: Self-Improvement Loop
-
-Every correction gets tagged for future reference:
-
-```markdown
-## Corrections Log
-- [LEARN:notation] T_t = 1{t=2} is deterministic → use T_i ∈ {1,2}
-- [LEARN:citation] Post-LASSO is Belloni (2013), NOT Belloni (2014)
-- [LEARN:r-code] Package X: ALWAYS include intercept in design matrix
-- [LEARN:workflow] Every Beamer edit must auto-sync to Quarto
-```
-
-These tags are searchable and persist in MEMORY.md across sessions. When Claude encounters a similar situation, it checks memory first.
-
-## Pattern 6: Devil's Advocate
-
-At any design decision, invoke the Devil's Advocate:
-
-> "Create a Devil's Advocate. Have it challenge this slide design with 5-7 specific pedagogical questions. Work through each challenge and tell me what survives."
-
-This catches:
-
-- Unstated assumptions
-- Alternative orderings that might work better
-- Notation that could confuse students
-- Missing intuition before formalism
-- Cognitive load issues
-
-## Pattern 7: Plan-First Development
+## Pattern 1: Plan-First Development {#pattern-1-plan-first-development}
 
 The plan-first pattern ensures that non-trivial tasks begin with thinking, not typing.
 
 ### Why Planning Matters
 
-The most common failure mode in AI-assisted development is not bad code — it is solving the wrong problem, or solving the right problem in a fragile order. Plan-first development forces an explicit design step before any file is touched.
+The most common failure mode in AI-assisted development is not bad code --- it is solving the wrong problem, or solving the right problem in a fragile order. Plan-first development forces an explicit design step before any file is touched.
 
 Without a plan:
 
@@ -619,23 +524,23 @@ With a plan:
 
 ```
 Non-trivial task arrives
-  │
-  ├── Step 1: Enter Plan Mode (EnterPlanMode)
-  ├── Step 2: Draft plan (approach, files, verification)
-  ├── Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
-  ├── Step 4: Present plan to user
-  ├── Step 5: User approves (or revises)
-  ├── Step 6: Save initial session log (capture context while fresh)
-  ├── Step 7: Implement with plan as checklist
-  └── Step 8: Update session log + plan status to COMPLETED
+  |
+  +-- Step 1: Enter Plan Mode (EnterPlanMode)
+  +-- Step 2: Draft plan (approach, files, verification)
+  +-- Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
+  +-- Step 4: Present plan to user
+  +-- Step 5: User approves (or revises)
+  +-- Step 6: Save initial session log (capture context while fresh)
+  +-- Step 7: Orchestrator takes over (see Pattern 2)
+  +-- Step 8: Update session log + plan status to COMPLETED
 ```
 
 ### Context Preservation: Never /clear
 
 An important companion to plan-first development is context preservation. Claude Code has two ways to free context space:
 
-- **`/clear`** — destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.
-- **Auto-compression** — Claude Code automatically compresses the conversation when it gets long. It keeps the most important context and discards redundant detail. This is graceful degradation.
+- **`/clear`** --- destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.
+- **Auto-compression** --- Claude Code automatically compresses the conversation when it gets long. It keeps the most important context and discards redundant detail. This is graceful degradation.
 
 The rule is simple: **never use `/clear`**. Let auto-compression do its job. And as a safety net, always save plans and important decisions to files on disk, where they cannot be compressed away.
 
@@ -644,22 +549,22 @@ The rule is simple: **never use `/clear`**. Let auto-compression do its job. And
 
 If you notice Claude has lost context after auto-compression, point it to the saved plan file:
 
-> "Read `quality_reports/plans/2026-02-06_translate-lecture5.md` — that's our current plan."
+> "Read `quality_reports/plans/2026-02-06_translate-lecture5.md` --- that's our current plan."
 
 Because the plan is on disk, recovery is instant.
 :::
 
-Combined with the `[LEARN]` tag system from [Pattern 5](#pattern-5-self-improvement-loop), plans and context preservation form a complete memory layer: plans save task strategy, `[LEARN]` tags save corrections, and auto-compression keeps the conversation manageable without losing what matters.
+Combined with the `[LEARN]` tag system from [Pattern 7](#pattern-7-self-improvement-loop), plans and context preservation form a complete memory layer: plans save task strategy, `[LEARN]` tags save corrections, and auto-compression keeps the conversation manageable without losing what matters.
 
 ### Session Logging
 
 Session logs (`quality_reports/session_logs/YYYY-MM-DD_description.md`) are a running record of *why* things happened. They have **three distinct behaviors**, each solving a different problem:
 
-**After plan approval** — create the log with the goal, plan summary, and rationale for the chosen approach (including rejected alternatives). This captures decisions while context is richest. If you wait, auto-compression may discard the reasoning.
+**After plan approval** --- create the log with the goal, plan summary, and rationale for the chosen approach (including rejected alternatives). This captures decisions while context is richest. If you wait, auto-compression may discard the reasoning.
 
-**During implementation** — append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.
+**During implementation** --- append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.
 
-**At session end** — add a final section with what was accomplished, open questions, and unresolved issues.
+**At session end** --- add a final section with what was accomplished, open questions, and unresolved issues.
 
 ::: {.callout-note}
 ## Git Records What, Session Logs Record Why
@@ -670,10 +575,206 @@ A commit message says "Update Lecture 5 TikZ diagrams." A session log says "Rede
 ::: {.callout-important}
 ## Why Incremental Logging Matters
 
-The post-plan log is a special case — it fires once, right after approval. But the *incremental* logging during implementation is what truly protects you. A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they're already on disk.
+The post-plan log is a special case --- it fires once, right after approval. But the *incremental* logging during implementation is what truly protects you. A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them --- they are already on disk.
 :::
 
-Claude writes all three log entries automatically — no need to ask.
+Claude writes all three log entries automatically --- no need to ask.
+
+## Pattern 2: Contractor Mode (Orchestrator) {#pattern-2-contractor-mode-orchestrator}
+
+Once a plan is approved, the orchestrator takes over. It is the natural continuation of Pattern 1: the plan says *what*, the orchestrator handles *how* --- autonomously.
+
+### The Mental Model
+
+Think of the orchestrator as a **general contractor**. You are the client. You describe what you want. The plan-first protocol is the blueprint phase. Once you approve the blueprint, the contractor takes over: hires the right specialists (agents), inspects their work (verification), sends them back to fix issues (review-fix loop), and only calls you when the job passes inspection (quality gates).
+
+### The Loop
+
+```
+User: "Translate Lecture 5 to Quarto"
+  |
+  |-- Plan-first (Pattern 1): draft plan, save to disk, get approval
+  |
+  |-- User: "Approved"
+  |
+  +-- Orchestrator activates:
+        |
+        Step 1: IMPLEMENT
+        |  Execute plan steps (create QMD, translate content, etc.)
+        |
+        Step 2: VERIFY
+        |  Run verifier: render Quarto, check HTML output
+        |  If render fails -> fix -> re-render
+        |
+        Step 3: REVIEW (agents selected by file type)
+        |  +--- proofreader ------+
+        |  +--- slide-auditor ----+  (parallel)
+        |  +--- pedagogy-reviewer +
+        |  +--- quarto-critic ----+  (needs others first)
+        |
+        Step 4: FIX
+        |  Apply fixes: Critical -> Major -> Minor
+        |  For quarto-critic issues: invoke quarto-fixer
+        |
+        Step 5: RE-VERIFY
+        |  Render again, confirm fixes are clean
+        |
+        Step 6: SCORE
+        |  Apply quality-gates rubric
+        |
+        +-- Score >= 80?
+              YES -> Present summary to user
+              NO  -> Loop to Step 3 (max 5 rounds)
+```
+
+### Agent Selection
+
+The orchestrator selects agents based on which files were touched:
+
+| Files Modified | Agents Selected |
+|---------------|----------------|
+| `.tex` only | proofreader + slide-auditor + pedagogy-reviewer |
+| `.qmd` only | proofreader + slide-auditor + pedagogy-reviewer |
+| `.qmd` with matching `.tex` | Above + quarto-critic (parity check) |
+| `.R` scripts | r-reviewer |
+| TikZ diagrams present | tikz-reviewer |
+| Domain content | domain-reviewer (if configured) |
+| Multiple formats | verifier for cross-format parity |
+
+Agents that are independent of each other run in parallel. The quarto-critic runs after other agents because it may need their context.
+
+### "Just Do It" Mode
+
+Sometimes you do not want to approve the final result --- you just want it done:
+
+> "Translate Lecture 5 to Quarto. Just do it."
+
+In this mode, the orchestrator still runs the full verify-review-fix loop (quality is non-negotiable), but skips the final approval pause and auto-commits if the score is 80 or above. It still presents the summary so you can see what was done.
+
+### Relationship to Existing Skills
+
+The orchestrator does NOT replace skills. It coordinates them:
+
+- `/qa-quarto` remains available as a standalone adversarial QA loop
+- `/slide-excellence` remains available for comprehensive multi-agent review
+- `/create-lecture` remains available as a guided creation workflow
+
+The difference: when you invoke a skill directly, it runs its specific workflow. When the orchestrator is active, it decides which agents to invoke based on context. The orchestrator is the default; skills are for targeted use.
+
+::: {.callout-tip}
+## When to Use Skills vs. the Orchestrator
+
+**Orchestrator** (automatic): "Translate Lecture 5 to Quarto" --- the orchestrator figures out the agents.
+
+**Skill** (explicit): "/qa-quarto Lecture5" --- you specifically want the adversarial critic-fixer loop, nothing else.
+
+Both are valid. The orchestrator is the "I trust you, handle it" path. Skills are the "I know exactly what I want" path.
+:::
+
+## Pattern 3: Creating a New Lecture
+
+```
+/create-lecture
+  |
+  +-- Phase 1: Gather materials (papers, outlines)
+  +-- Phase 2: Design slide structure
+  +-- Phase 3: Draft Beamer slides
+  +-- Phase 4: Generate R figures
+  +-- Phase 5: Polish and verify
+  |     +-- /substance-review (domain correctness)
+  |     +-- /proofread (grammar/typos)
+  |     +-- /visual-audit (layout)
+  +-- Phase 6: Deploy
+        +-- /translate-to-quarto (optional)
+        +-- /deploy
+```
+
+## Pattern 4: Translating Beamer to Quarto
+
+```
+/translate-to-quarto Lecture5_Topic.tex
+  |
+  +-- Phase 1-3: Environment mapping + content translation
+  +-- Phase 4-5: Figure conversion (TikZ -> SVG)
+  +-- Phase 6-7: Interactive charts (ggplot -> plotly)
+  +-- Phase 8-9: Render + verify
+  +-- Phase 10-11: /qa-quarto adversarial QA
+        +-- Critic: finds issues
+        +-- Fixer: applies fixes
+        +-- Critic: re-audits
+        +-- ... (until APPROVED or 5 rounds)
+```
+
+## Pattern 5: Replication-First Coding
+
+When working with papers that have replication packages:
+
+```
+Phase 1: Inventory original code
+  +-- Record "gold standard" numbers (Table X, Column Y = Z.ZZ)
+
+Phase 2: Translate (e.g., Stata -> R)
+  +-- Match original specification EXACTLY (same covariates, same clustering)
+
+Phase 3: Verify match
+  +-- Compare every target: paper value vs. our value
+  +-- Tolerance: < 0.01 for estimates, < 0.05 for SEs
+  +-- If mismatch: STOP. Investigate before proceeding.
+
+Phase 4: Only then extend
+  +-- New estimators, new specifications, course-specific figures
+```
+
+::: {.callout-important}
+## Never Skip Replication
+
+In one course, we discovered that a widely-used R package silently produced **incorrect estimates** due to a subtle specification issue. This bug was caught 3 times in different scripts. Without the replication-first protocol, these wrong numbers would have been taught to PhD students.
+:::
+
+## Pattern 6: Multi-Agent Review
+
+The `/slide-excellence` skill runs up to 6 agents in parallel:
+
+```
+/slide-excellence Lecture5_Topic.tex
+  |
+  +-- Agent 1: Visual Audit (slide-auditor)
+  +-- Agent 2: Pedagogical Review (pedagogy-reviewer)
+  +-- Agent 3: Proofreading (proofreader)
+  +-- Agent 4: TikZ Review (tikz-reviewer, if applicable)
+  +-- Agent 5: Content Parity (if Quarto version exists)
+  +-- Agent 6: Substance Review (domain-reviewer)
+  |
+  +-- Synthesize: Combined quality score + prioritized fix list
+```
+
+## Pattern 7: Self-Improvement Loop {#pattern-7-self-improvement-loop}
+
+Every correction gets tagged for future reference:
+
+```markdown
+## Corrections Log
+- [LEARN:notation] T_t = 1{t=2} is deterministic -> use T_i in {1,2}
+- [LEARN:citation] Post-LASSO is Belloni (2013), NOT Belloni (2014)
+- [LEARN:r-code] Package X: ALWAYS include intercept in design matrix
+- [LEARN:workflow] Every Beamer edit must auto-sync to Quarto
+```
+
+These tags are searchable and persist in MEMORY.md across sessions. When Claude encounters a similar situation, it checks memory first.
+
+## Pattern 8: Devil's Advocate
+
+At any design decision, invoke the Devil's Advocate:
+
+> "Create a Devil's Advocate. Have it challenge this slide design with 5-7 specific pedagogical questions. Work through each challenge and tell me what survives."
+
+This catches:
+
+- Unstated assumptions
+- Alternative orderings that might work better
+- Notation that could confuse students
+- Missing intuition before formalism
+- Cognitive load issues
 
 ---
 
@@ -794,3 +895,4 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 | Replication Protocol | `.claude/rules/replication-protocol.md` | Replicate-first workflow |
 | Knowledge Base | `.claude/rules/knowledge-base-template.md` | Domain notation template |
 | Plan-First Workflow | `.claude/rules/plan-first-workflow.md` | Plan mode, plan saving, context preservation, session logging |
+| Orchestrator Protocol | `.claude/rules/orchestrator-protocol.md` | Contractor mode: autonomous implement-verify-review-fix loop |

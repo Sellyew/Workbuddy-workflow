@@ -14,7 +14,7 @@ This repository provides the **transportable infrastructure** behind a Claude Co
 
 - 10 specialized agents (proofreader, slide auditor, pedagogy reviewer, R code reviewer, TikZ critic, adversarial QA, and more)
 - 13 slash-command skills (`/compile-latex`, `/proofread`, `/translate-to-quarto`, `/qa-quarto`, etc.)
-- 11 context-aware rules (quality gates, notation consistency, auto-sync, replication protocol)
+- 12 context-aware rules (quality gates, notation consistency, auto-sync, orchestrator protocol)
 - Quality scoring with commit/PR/excellence thresholds (80/90/95)
 - Adversarial critic-fixer QA loops that catch errors humans miss
 - Automated Beamer-to-Quarto translation workflow
@@ -112,6 +112,7 @@ If it compiles, your setup is working.
 | `replication-protocol` | Replicate original results before extending |
 | `knowledge-base-template` | Notation/application/design principle registry |
 | `plan-first-workflow` | Plan mode for non-trivial tasks + context preservation |
+| `orchestrator-protocol` | Contractor mode: autonomous implement → verify → review → fix loop |
 
 ---
 
@@ -132,14 +133,27 @@ It covers:
 
 ## Key Patterns
 
-### The Adversarial Critic-Fixer Loop
+### Plan-First Workflow
 
-The most powerful pattern in this workflow. Two agents work in opposition:
-1. **Critic** reads both Beamer and Quarto, produces harsh findings
-2. **Fixer** implements exactly what the critic found
-3. Repeat until the critic says "APPROVED" (or 5 rounds max)
+Non-trivial tasks start in **plan mode** before any files are touched:
+1. **Plan** — draft approach, list files to modify, identify risks
+2. **Save** — persist the plan to `quality_reports/plans/` (survives context compression)
+3. **Review** — present to user for approval
+4. **Implement** — orchestrator takes over (see below)
 
-This catches notation inconsistencies, overflow, missing content, and visual regressions that single-pass review misses.
+Companion rule: **never use `/clear`**. Rely on auto-compression for context management — it preserves important context gracefully, while `/clear` destroys everything.
+
+### Contractor Mode (Orchestrator)
+
+After plan approval, the orchestrator takes over autonomously:
+1. **Implement** the plan steps
+2. **Verify** — compile, render, check outputs
+3. **Review** — select agents by file type (.tex gets proofreader + slide-auditor + pedagogy-reviewer; .qmd adds quarto-critic; .R gets r-reviewer)
+4. **Fix** — apply fixes from reviews (critical first)
+5. **Re-verify** and **score** against quality gates
+6. Loop up to 5 rounds until score meets threshold, then present summary
+
+When the user says "just do it", the orchestrator also auto-commits at score >= 80.
 
 ### Quality Gates
 
@@ -158,15 +172,14 @@ Instead of one general-purpose reviewer, use focused agents:
 
 Each agent is better at its narrow task than a generalist would be.
 
-### Plan-First Workflow
+### The Adversarial Critic-Fixer Loop
 
-Non-trivial tasks start in **plan mode** before any files are touched:
-1. **Plan** — draft approach, list files to modify, identify risks
-2. **Save** — persist the plan to `quality_reports/plans/` (survives context compression)
-3. **Review** — present to user for approval
-4. **Implement** — execute with the plan as a checklist
+Two agents work in opposition:
+1. **Critic** reads both Beamer and Quarto, produces harsh findings
+2. **Fixer** implements exactly what the critic found
+3. Repeat until the critic says "APPROVED" (or 5 rounds max)
 
-Companion rule: **never use `/clear`**. Rely on auto-compression for context management — it preserves important context gracefully, while `/clear` destroys everything.
+This catches notation inconsistencies, overflow, missing content, and visual regressions that single-pass review misses.
 
 ### Continuous Learning
 
