@@ -303,10 +303,11 @@ Start each session with:
 Claude, please:
 1. Read CLAUDE.MD to understand our workflow
 2. Check recent git commits to see what changed
-3. Check quality_reports/plans/ for any in-progress plans
-4. Check quality_reports/session_logs/ for the most recent session log
-5. Look at the lecture/slides we're working on
-6. State what you understand our goals to be
+3. Check MEMORY.md for learned corrections from past sessions
+4. Check quality_reports/plans/ for any in-progress plans
+5. Check quality_reports/session_logs/ for the most recent session log
+6. Look at the lecture/slides we're working on
+7. State what you understand our goals to be
 ```
 
 ### Session End Protocol

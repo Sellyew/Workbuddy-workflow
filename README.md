@@ -184,9 +184,13 @@ This catches notation inconsistencies, overflow, missing content, and visual reg
 
 Every correction gets tagged with `[LEARN:tag]` format and persists in MEMORY.md across sessions. This prevents Claude from repeating the same mistakes.
 
-### Session Logging
+### Session Logging (with Automated Reminders)
 
-At the end of every substantive session, Claude automatically saves a session log to `quality_reports/session_logs/`. Logs capture what was accomplished, key decisions and their rationale, and open questions for next time. Git records *what* changed; session logs record *why*.
+Claude saves session logs to `quality_reports/session_logs/`. A **Stop hook** (`scripts/log-reminder.py`) fires after every response and tracks how many responses have passed since the log was last updated. After a threshold, it blocks Claude from stopping until the log is updated. Git records *what* changed; session logs record *why*.
+
+### Beamer-Quarto Sync Hook
+
+A **PostToolUse hook** fires whenever Claude edits a `.tex` file in `Slides/`, automatically reminding it to sync the corresponding `.qmd` file. This enforces the single-source-of-truth principle without manual oversight.
 
 ---
 

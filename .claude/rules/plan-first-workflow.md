@@ -18,6 +18,7 @@ A task is "non-trivial" if it involves:
 ### The Plan-First Protocol
 
 1. **Enter Plan Mode** — use `EnterPlanMode` to switch to planning
+1.5. **Check institutional memory** — read `MEMORY.md` for any `[LEARN]` entries relevant to this task
 2. **Draft the plan** — outline what will change, which files are affected, and in what order
 3. **Save the plan** — write it to `quality_reports/plans/` (see Rule 2)
 4. **Present to user** — explain the plan and wait for approval
