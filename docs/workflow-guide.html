@@ -2400,7 +2400,8 @@ window.Quarto = {
   <li><a href="#memory-cross-session-persistence" id="toc-memory-cross-session-persistence" class="nav-link" data-scroll-target="#memory-cross-session-persistence"><span class="header-section-number">4.6</span> Memory — Cross-Session Persistence</a>
   <ul class="collapse">
   <li><a href="#plans-compression-resistant-task-memory" id="toc-plans-compression-resistant-task-memory" class="nav-link" data-scroll-target="#plans-compression-resistant-task-memory"><span class="header-section-number">4.6.1</span> Plans — Compression-Resistant Task Memory</a></li>
-  <li><a href="#session-logs-why-not-just-what-history" id="toc-session-logs-why-not-just-what-history" class="nav-link" data-scroll-target="#session-logs-why-not-just-what-history"><span class="header-section-number">4.6.2</span> Session Logs — Why-Not-Just-What History</a></li>
+  <li><a href="#session-logs-why-not-just-what-history-with-automated-reminders" id="toc-session-logs-why-not-just-what-history-with-automated-reminders" class="nav-link" data-scroll-target="#session-logs-why-not-just-what-history-with-automated-reminders"><span class="header-section-number">4.6.2</span> Session Logs — Why-Not-Just-What History (with Automated Reminders)</a></li>
+  <li><a href="#hooks-automated-enforcement" id="toc-hooks-automated-enforcement" class="nav-link" data-scroll-target="#hooks-automated-enforcement"><span class="header-section-number">4.6.3</span> Hooks — Automated Enforcement</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-patterns" id="toc-sec-patterns" class="nav-link" data-scroll-target="#sec-patterns"><span class="header-section-number">5</span> Workflow Patterns</a>
@@ -2445,6 +2446,7 @@ window.Quarto = {
   <li><a href="#all-agents" id="toc-all-agents" class="nav-link" data-scroll-target="#all-agents"><span class="header-section-number">7.1</span> All Agents</a></li>
   <li><a href="#all-skills" id="toc-all-skills" class="nav-link" data-scroll-target="#all-skills"><span class="header-section-number">7.2</span> All Skills</a></li>
   <li><a href="#all-rules" id="toc-all-rules" class="nav-link" data-scroll-target="#all-rules"><span class="header-section-number">7.3</span> All Rules</a></li>
+  <li><a href="#hooks" id="toc-hooks" class="nav-link" data-scroll-target="#hooks"><span class="header-section-number">7.4</span> Hooks</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -3154,10 +3156,47 @@ APPROVED   NEEDS WORK
 </ul>
 <p>See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 </section>
-<section id="session-logs-why-not-just-what-history" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="session-logs-why-not-just-what-history"><span class="header-section-number">4.6.2</span> Session Logs — Why-Not-Just-What History</h3>
+<section id="session-logs-why-not-just-what-history-with-automated-reminders" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="session-logs-why-not-just-what-history-with-automated-reminders"><span class="header-section-number">4.6.2</span> Session Logs — Why-Not-Just-What History (with Automated Reminders)</h3>
 <p>Git commits record what changed, but not <em>why</em>. Session logs fill this gap. Claude writes to <code>quality_reports/session_logs/</code> at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning <em>as it happens</em>, before auto-compression can discard it.</p>
+<p>Because relying on instructions alone is fragile (Claude forgets during long sessions), a <strong>Stop hook</strong> (<code>scripts/log-reminder.py</code>) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.</p>
 <p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
+</section>
+<section id="hooks-automated-enforcement" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="hooks-automated-enforcement"><span class="header-section-number">4.6.3</span> Hooks — Automated Enforcement</h3>
+<p>The session log reminder above is one example of a broader pattern: using <strong>hooks</strong> to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in <code>.claude/settings.json</code> and fire every time, regardless of context state. The template includes three:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hook</th>
+<th>Type</th>
+<th>What It Enforces</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Verification check</td>
+<td>Stop (prompt)</td>
+<td>All outputs verified before completion</td>
+</tr>
+<tr class="even">
+<td>Session log reminder</td>
+<td>Stop (command)</td>
+<td>Session log updated regularly</td>
+</tr>
+<tr class="odd">
+<td>Beamer-Quarto sync</td>
+<td>PostToolUse (prompt)</td>
+<td>Every .tex edit synced to .qmd</td>
+</tr>
+</tbody>
+</table>
+<p>Stop hooks fire after every response; PostToolUse hooks fire after a tool (like Edit or Write) runs. See the <a href="#sec-appendix">Appendix</a> for configuration details.</p>
 <hr>
 </section>
 </section>
@@ -3775,6 +3814,35 @@ Phase 4: Only then extend
 <td>Orchestrator Protocol</td>
 <td><code>.claude/rules/orchestrator-protocol.md</code></td>
 <td>Contractor mode: autonomous implement-verify-review-fix loop</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hooks" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="hooks"><span class="header-section-number">7.4</span> Hooks</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Hook</th>
+<th>Type</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Verification check</td>
+<td>Stop (prompt)</td>
+<td><code>.claude/settings.json</code></td>
+</tr>
+<tr class="even">
+<td>Session log reminder</td>
+<td>Stop (command)</td>
+<td><code>scripts/log-reminder.py</code></td>
+</tr>
+<tr class="odd">
+<td>Beamer-Quarto sync</td>
+<td>PostToolUse (prompt)</td>
+<td><code>.claude/settings.json</code></td>
 </tr>
 </tbody>
 </table>

@@ -488,11 +488,25 @@ While MEMORY.md stores long-lived project facts, **plans** store task-specific s
 
 See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
-### Session Logs --- Why-Not-Just-What History
+### Session Logs --- Why-Not-Just-What History (with Automated Reminders)
 
 Git commits record what changed, but not *why*. Session logs fill this gap. Claude writes to `quality_reports/session_logs/` at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning *as it happens*, before auto-compression can discard it.
 
+Because relying on instructions alone is fragile (Claude forgets during long sessions), a **Stop hook** (`scripts/log-reminder.py`) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.
+
 New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
+
+### Hooks --- Automated Enforcement
+
+The session log reminder above is one example of a broader pattern: using **hooks** to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in `.claude/settings.json` and fire every time, regardless of context state. The template includes three:
+
+| Hook | Type | What It Enforces |
+|------|------|-----------------|
+| Verification check | Stop (prompt) | All outputs verified before completion |
+| Session log reminder | Stop (command) | Session log updated regularly |
+| Beamer-Quarto sync | PostToolUse (prompt) | Every .tex edit synced to .qmd |
+
+Stop hooks fire after every response; PostToolUse hooks fire after a tool (like Edit or Write) runs. See the [Appendix](#sec-appendix) for configuration details.
 
 ---
 
@@ -896,3 +910,11 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 | Knowledge Base | `.claude/rules/knowledge-base-template.md` | Domain notation template |
 | Plan-First Workflow | `.claude/rules/plan-first-workflow.md` | Plan mode, plan saving, context preservation, session logging |
 | Orchestrator Protocol | `.claude/rules/orchestrator-protocol.md` | Contractor mode: autonomous implement-verify-review-fix loop |
+
+## Hooks
+
+| Hook | Type | Configuration |
+|------|------|--------------|
+| Verification check | Stop (prompt) | `.claude/settings.json` |
+| Session log reminder | Stop (command) | `scripts/log-reminder.py` |
+| Beamer-Quarto sync | PostToolUse (prompt) | `.claude/settings.json` |
