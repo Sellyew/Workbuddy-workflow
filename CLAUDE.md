@@ -32,6 +32,7 @@
 | `/validate-bib` | Cross-reference citations vs bibliography file |
 | `/devils-advocate` | Challenge slide design with pedagogical questions |
 | `/create-lecture` | Full lecture creation workflow |
+| `/commit [message]` | Stage, commit, create PR, and merge to main |
 
 **Agents** (available for delegation): `proofreader`, `slide-auditor`, `pedagogy-reviewer`, `r-reviewer`, `tikz-reviewer`, `beamer-translator`, `quarto-critic`, `quarto-fixer`, `verifier`, `domain-reviewer`
 
