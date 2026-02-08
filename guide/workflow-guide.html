@@ -3668,11 +3668,12 @@ Phase 4: Only then extend
 </section>
 <section id="how-it-works" class="level3" data-number="5.9.2">
 <h3 data-number="5.9.2" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">5.9.2</span> How It Works</h3>
-<p>You do not need to manage this manually. The orchestrator already runs independent review agents in parallel (see Pattern 2). But you can also request parallelism explicitly:</p>
+<p>You do not need to manage this manually. The orchestrator recognizes independent subtasks in a plan and spawns parallel agents automatically — both during implementation (Step 1) and review (Step 3). For example, if your plan says “read three papers and extract key results,” the orchestrator will spawn 3 agents, one per paper, without you asking.</p>
+<p>You can also request parallelism explicitly:</p>
 <blockquote class="blockquote">
 <p>“Read these three papers in parallel. For each, extract the key identification assumption, the main estimator, and whether they have a replication package. Summarize in a table.”</p>
 </blockquote>
-<p>Claude will spawn up to 3 Task agents, each processing one paper simultaneously, then synthesize the results.</p>
+<p>Either way, Claude spawns up to 3 Task agents, each processing one paper simultaneously, then synthesizes the results.</p>
 </section>
 <section id="practical-limits" class="level3" data-number="5.9.3">
 <h3 data-number="5.9.3" class="anchored" data-anchor-id="practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</h3>
