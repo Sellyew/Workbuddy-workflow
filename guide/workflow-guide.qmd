@@ -834,11 +834,13 @@ Claude Code can spawn **multiple agents simultaneously** using the Task tool. Th
 
 ### How It Works
 
-You do not need to manage this manually. The orchestrator already runs independent review agents in parallel (see Pattern 2). But you can also request parallelism explicitly:
+You do not need to manage this manually. The orchestrator recognizes independent subtasks in a plan and spawns parallel agents automatically --- both during implementation (Step 1) and review (Step 3). For example, if your plan says "read three papers and extract key results," the orchestrator will spawn 3 agents, one per paper, without you asking.
+
+You can also request parallelism explicitly:
 
 > "Read these three papers in parallel. For each, extract the key identification assumption, the main estimator, and whether they have a replication package. Summarize in a table."
 
-Claude will spawn up to 3 Task agents, each processing one paper simultaneously, then synthesize the results.
+Either way, Claude spawns up to 3 Task agents, each processing one paper simultaneously, then synthesizes the results.
 
 ### Practical Limits
 
