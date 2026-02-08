@@ -367,6 +367,7 @@ argument-hint: "[filename without .tex extension]"
 | `/qa-quarto` | Adversarial Quarto QA | After translating Beamer to Quarto |
 | `/slide-excellence` | Full multi-agent review | Before major milestones |
 | `/create-lecture` | New lecture from scratch | Starting a new topic |
+| `/commit` | Stage, commit, PR, merge | After any completed task |
 
 ## Agents --- Specialized Reviewers
 
@@ -818,6 +819,39 @@ This catches:
 - Missing intuition before formalism
 - Cognitive load issues
 
+## Pattern 9: Parallel Agents for Research Tasks
+
+Claude Code can spawn **multiple agents simultaneously** using the Task tool. This is not limited to review --- you can use it for any research or analysis task where independent subtasks can run at the same time.
+
+### When to Use Parallel Agents
+
+| Scenario | Sequential (slow) | Parallel (fast) |
+|----------|-------------------|-----------------|
+| Reviewing a lecture | Run proofreader, then auditor, then pedagogy | Run all 3 simultaneously |
+| Analyzing 3 papers for a new lecture | Read paper 1, then 2, then 3 | Spawn 3 agents, each reading one paper |
+| Generating figures | Create plot 1, then plot 2, then plot 3 | Spawn agents for independent plots |
+| Comparing estimators | Run simulation 1, then 2, then 3 | Spawn agents for each simulation |
+
+### How It Works
+
+You do not need to manage this manually. The orchestrator already runs independent review agents in parallel (see Pattern 2). But you can also request parallelism explicitly:
+
+> "Read these three papers in parallel. For each, extract the key identification assumption, the main estimator, and whether they have a replication package. Summarize in a table."
+
+Claude will spawn up to 3 Task agents, each processing one paper simultaneously, then synthesize the results.
+
+### Practical Limits
+
+- **3 agents** is the sweet spot. More than that increases overhead without proportional speedup.
+- Agents are **independent** --- they cannot see each other's work. If task B depends on task A's output, they must run sequentially.
+- Each agent consumes its own context window. For very large files, sequential processing may be more reliable.
+
+::: {.callout-tip}
+## Cost-Conscious Parallelism
+
+Parallel agents multiply token usage. For cost-sensitive tasks, run the expensive work (Opus agents) sequentially and the cheap work (Sonnet agents) in parallel. The orchestrator already does this: it runs Sonnet-level reviewers in parallel, then the Opus-level critic sequentially.
+:::
+
 ---
 
 # Customizing for Your Domain {#sec-customize}
@@ -920,6 +954,7 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 | `/validate-bib` | `.claude/skills/validate-bib/` | Bibliography validation |
 | `/devils-advocate` | `.claude/skills/devils-advocate/` | Design challenge questions |
 | `/create-lecture` | `.claude/skills/create-lecture/` | Full lecture creation |
+| `/commit` | `.claude/skills/commit/` | Stage, commit, PR, and merge |
 
 ## All Rules
 

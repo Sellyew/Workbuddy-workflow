@@ -2429,6 +2429,12 @@ window.Quarto = {
   <li><a href="#pattern-6-multi-agent-review" id="toc-pattern-6-multi-agent-review" class="nav-link" data-scroll-target="#pattern-6-multi-agent-review"><span class="header-section-number">5.6</span> Pattern 6: Multi-Agent Review</a></li>
   <li><a href="#pattern-7-self-improvement-loop" id="toc-pattern-7-self-improvement-loop" class="nav-link" data-scroll-target="#pattern-7-self-improvement-loop"><span class="header-section-number">5.7</span> Pattern 7: Self-Improvement Loop</a></li>
   <li><a href="#pattern-8-devils-advocate" id="toc-pattern-8-devils-advocate" class="nav-link" data-scroll-target="#pattern-8-devils-advocate"><span class="header-section-number">5.8</span> Pattern 8: Devil’s Advocate</a></li>
+  <li><a href="#pattern-9-parallel-agents-for-research-tasks" id="toc-pattern-9-parallel-agents-for-research-tasks" class="nav-link" data-scroll-target="#pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9</span> Pattern 9: Parallel Agents for Research Tasks</a>
+  <ul class="collapse">
+  <li><a href="#when-to-use-parallel-agents" id="toc-when-to-use-parallel-agents" class="nav-link" data-scroll-target="#when-to-use-parallel-agents"><span class="header-section-number">5.9.1</span> When to Use Parallel Agents</a></li>
+  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works"><span class="header-section-number">5.9.2</span> How It Works</a></li>
+  <li><a href="#practical-limits" id="toc-practical-limits" class="nav-link" data-scroll-target="#practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">6</span> Customizing for Your Domain</a>
   <ul class="collapse">
@@ -3046,6 +3052,11 @@ APPROVED   NEEDS WORK
 <td>New lecture from scratch</td>
 <td>Starting a new topic</td>
 </tr>
+<tr class="odd">
+<td><code>/commit</code></td>
+<td>Stage, commit, PR, merge</td>
+<td>After any completed task</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -3612,7 +3623,79 @@ Phase 4: Only then extend
 <li>Missing intuition before formalism</li>
 <li>Cognitive load issues</li>
 </ul>
+</section>
+<section id="pattern-9-parallel-agents-for-research-tasks" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9</span> Pattern 9: Parallel Agents for Research Tasks</h2>
+<p>Claude Code can spawn <strong>multiple agents simultaneously</strong> using the Task tool. This is not limited to review — you can use it for any research or analysis task where independent subtasks can run at the same time.</p>
+<section id="when-to-use-parallel-agents" class="level3" data-number="5.9.1">
+<h3 data-number="5.9.1" class="anchored" data-anchor-id="when-to-use-parallel-agents"><span class="header-section-number">5.9.1</span> When to Use Parallel Agents</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 41%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Sequential (slow)</th>
+<th>Parallel (fast)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Reviewing a lecture</td>
+<td>Run proofreader, then auditor, then pedagogy</td>
+<td>Run all 3 simultaneously</td>
+</tr>
+<tr class="even">
+<td>Analyzing 3 papers for a new lecture</td>
+<td>Read paper 1, then 2, then 3</td>
+<td>Spawn 3 agents, each reading one paper</td>
+</tr>
+<tr class="odd">
+<td>Generating figures</td>
+<td>Create plot 1, then plot 2, then plot 3</td>
+<td>Spawn agents for independent plots</td>
+</tr>
+<tr class="even">
+<td>Comparing estimators</td>
+<td>Run simulation 1, then 2, then 3</td>
+<td>Spawn agents for each simulation</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-it-works" class="level3" data-number="5.9.2">
+<h3 data-number="5.9.2" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">5.9.2</span> How It Works</h3>
+<p>You do not need to manage this manually. The orchestrator already runs independent review agents in parallel (see Pattern 2). But you can also request parallelism explicitly:</p>
+<blockquote class="blockquote">
+<p>“Read these three papers in parallel. For each, extract the key identification assumption, the main estimator, and whether they have a replication package. Summarize in a table.”</p>
+</blockquote>
+<p>Claude will spawn up to 3 Task agents, each processing one paper simultaneously, then synthesize the results.</p>
+</section>
+<section id="practical-limits" class="level3" data-number="5.9.3">
+<h3 data-number="5.9.3" class="anchored" data-anchor-id="practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</h3>
+<ul>
+<li><strong>3 agents</strong> is the sweet spot. More than that increases overhead without proportional speedup.</li>
+<li>Agents are <strong>independent</strong> — they cannot see each other’s work. If task B depends on task A’s output, they must run sequentially.</li>
+<li>Each agent consumes its own context window. For very large files, sequential processing may be more reliable.</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Cost-Conscious Parallelism
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Parallel agents multiply token usage. For cost-sensitive tasks, run the expensive work (Opus agents) sequentially and the cheap work (Sonnet agents) in parallel. The orchestrator already does this: it runs Sonnet-level reviewers in parallel, then the Opus-level critic sequentially.</p>
+</div>
+</div>
 <hr>
+</section>
 </section>
 </section>
 <section id="sec-customize" class="level1" data-number="6">
@@ -3825,6 +3908,11 @@ Phase 4: Only then extend
 <td><code>/create-lecture</code></td>
 <td><code>.claude/skills/create-lecture/</code></td>
 <td>Full lecture creation</td>
+</tr>
+<tr class="even">
+<td><code>/commit</code></td>
+<td><code>.claude/skills/commit/</code></td>
+<td>Stage, commit, PR, and merge</td>
 </tr>
 </tbody>
 </table>
