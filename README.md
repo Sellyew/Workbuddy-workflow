@@ -176,8 +176,8 @@ For a comprehensive walkthrough of the entire workflow, read the **[full guide](
 
 It covers:
 1. **Why This Workflow Exists** — the problem and the vision
-2. **The System in Action** — what a session looks like, before and after
-3. **Setting Up Your Project** — step-by-step from fork to first compile, plus a starter prompt
+2. **Getting Started** — fork, paste one prompt, and Claude sets up the rest
+3. **The System in Action** — specialized agents, adversarial QA, quality scoring
 4. **The Building Blocks** — CLAUDE.md, rules, skills, agents, hooks, memory
 5. **Workflow Patterns** — lecture creation, translation, replication, multi-agent review, research exploration
 6. **Customizing for Your Domain** — creating your own reviewers and knowledge bases

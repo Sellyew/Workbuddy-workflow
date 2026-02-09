@@ -70,9 +70,84 @@ This guide describes the full system --- 10 agents, 19 skills, 17 rules. That is
 
 ---
 
+# Getting Started {#sec-setup}
+
+You need two things: fork the repo, and paste a prompt. Claude handles everything else.
+
+## Step 1: Fork & Clone
+
+```bash
+# Fork this repo on GitHub (click "Fork" on the repo page), then:
+git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
+cd my-project
+```
+
+Replace `YOUR_USERNAME` with your GitHub username.
+
+## Step 2: Start Claude Code and Paste This Prompt {#sec-first-session}
+
+Open your terminal in the project directory, run `claude`, and paste the following. Fill in the **bolded placeholders** with your project details:
+
+::: {.callout-tip appearance="simple"}
+## Starter Prompt
+
+I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2--3 sentences --- what you're building, who it's for, what tools you use (e.g., LaTeX/Beamer, R, Quarto).]**
+
+I want our collaboration to be structured, precise, and rigorous --- even if it takes more time. When creating visuals, everything must be polished and publication-ready. I don't want to repeat myself, so our workflow should be smart about remembering decisions and learning from corrections.
+
+I've set up the Claude Code academic workflow (forked from `pedrohcgs/claude-code-my-workflow`). The configuration files are already in this repo (`.claude/`, `CLAUDE.md`, templates, scripts). Please read them, understand the workflow, and then **update all configuration files to fit my project** --- fill in placeholders in `CLAUDE.md`, adjust rules if needed, and propose any customizations specific to my use case.
+
+After that, use the plan-first workflow for all non-trivial tasks. Once I approve a plan, switch to contractor mode --- coordinate everything autonomously and only come back to me when there's ambiguity or a decision to make. For our first few sessions, check in with me a bit more often so I can learn how the workflow operates.
+
+Enter plan mode and start by adapting the workflow configuration for this project.
+:::
+
+**What this does:** Claude will read `CLAUDE.md` and all the rules, fill in your project name, institution, Beamer environments, CSS classes, and project state table, then propose any rule adjustments for your specific use case. You approve the plan, and Claude handles the rest. From there, you just describe what you want to build.
+
+## Optional: Manual Setup
+
+If you prefer to configure things yourself instead of letting Claude handle it:
+
+::: {.callout-note collapse="true"}
+## Manual Configuration Steps (click to expand)
+
+**Customize CLAUDE.md** --- Open `CLAUDE.md` and replace all `[BRACKETED PLACEHOLDERS]`:
+
+1. **Project name and institution**
+2. **Folder structure** (adjust to your layout)
+3. **Current project state** (your lectures/papers)
+4. **Beamer environments** (your custom LaTeX environments)
+5. **CSS classes** (your Quarto theme classes)
+
+**Create your knowledge base** --- Open `.claude/rules/knowledge-base-template.md` and fill in:
+
+1. **Notation registry** --- every symbol you use, where it's introduced, and anti-patterns
+2. **Applications database** --- datasets, papers, and R packages you reference
+3. **Design principles** --- what you've approved and what you've overridden
+
+**Configure permissions** --- Review `.claude/settings.json`. The template includes permissions for git, LaTeX, Quarto, R, and utility scripts. Add any additional tools you use.
+
+**Test it:**
+
+```bash
+# In Claude Code, type:
+/compile-latex MyFirstLecture
+/proofread Slides/MyFirstLecture.tex
+python scripts/quality_score.py Slides/MyFirstLecture.tex
+```
+:::
+
+::: {.callout-tip}
+## Start Small
+
+You don't need to fill everything in upfront. Start with 5--10 notation entries and add more as you develop lectures. The starter prompt will set up the essentials --- you can always refine later.
+:::
+
+---
+
 # The System in Action {#sec-system}
 
-Before diving into configuration details, here is what the system actually *does*. This section shows the three core mechanisms that make the workflow powerful: specialized agents, adversarial QA, and automatic quality scoring.
+Now that you're set up, here is what the system actually *does*. This section shows the three core mechanisms that make the workflow powerful: specialized agents, adversarial QA, and automatic quality scoring.
 
 ## Why Specialized Agents Beat One-Size-Fits-All
 
@@ -203,93 +278,9 @@ To customize, open `.claude/agents/domain-reviewer.md` and fill in:
 
 ---
 
-# Setting Up Your Project {#sec-setup}
-
-## Step 1: Fork & Clone
-
-```bash
-# Fork this repo on GitHub (click "Fork" on the repo page), then:
-git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
-cd my-project
-```
-
-Replace `YOUR_USERNAME` with your GitHub username.
-
-## Step 2: Customize CLAUDE.md
-
-Open `CLAUDE.md` and replace all `[BRACKETED PLACEHOLDERS]`:
-
-1. **Project name and institution**
-2. **Folder structure** (adjust to your layout)
-3. **Current project state** (your lectures/papers)
-4. **Beamer environments** (your custom LaTeX environments)
-5. **CSS classes** (your Quarto theme classes)
-
-## Step 3: Create Your Knowledge Base
-
-Open `.claude/rules/knowledge-base-template.md` and fill in:
-
-1. **Notation registry** --- every symbol you use, where it's introduced, and anti-patterns
-2. **Applications database** --- datasets, papers, and R packages you reference
-3. **Design principles** --- what you've approved and what you've overridden
-
-::: {.callout-tip}
-## Start Small
-
-You don't need to fill everything in upfront. Start with 5-10 notation entries and add more as you develop lectures. The template shows the format --- just follow the pattern.
-:::
-
-## Step 4: Configure Permissions
-
-Review `.claude/settings.json`. The template includes permissions for:
-
-- Git operations (status, commit, push, PR)
-- LaTeX compilation (xelatex, bibtex, latexmk)
-- Quarto rendering
-- R script execution
-- Utility scripts
-
-Add any additional tools you use (e.g., `python3`, `julia`, `pandoc`).
-
-## Step 5: Test It
-
-```bash
-# Test 1: Can Claude compile LaTeX?
-# In Claude Code, type:
-/compile-latex MyFirstLecture
-
-# Test 2: Can Claude proofread?
-/proofread Slides/MyFirstLecture.tex
-
-# Test 3: Does the quality score work?
-python scripts/quality_score.py Slides/MyFirstLecture.tex
-```
-
-## Your First Session {#sec-first-session}
-
-Once the setup tests pass, start your first real session by giving Claude a prompt like this. Copy it, fill in the **bolded placeholders**, and paste it into Claude Code:
-
-::: {.callout-tip appearance="simple"}
-## Starter Prompt
-
-I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2--3 sentences --- what you're building, who it's for, what tools you use (e.g., LaTeX/Beamer, R, Quarto).]**
-
-I want our collaboration to be structured, precise, and rigorous --- even if it takes more time. When creating visuals, everything must be polished and publication-ready. I don't want to repeat myself, so our workflow should be smart about remembering decisions and learning from corrections.
-
-I've set up the Claude Code academic workflow (forked from `pedrohcgs/claude-code-my-workflow`). The configuration files are already in this repo (`.claude/`, `CLAUDE.md`, templates, scripts). Please read them, understand the workflow, and then **update all configuration files to fit my project** --- fill in placeholders in `CLAUDE.md`, adjust rules if needed, and propose any customizations specific to my use case.
-
-After that, use the plan-first workflow for all non-trivial tasks. Once I approve a plan, switch to contractor mode --- coordinate everything autonomously and only come back to me when there's ambiguity or a decision to make. For our first few sessions, check in with me a bit more often so I can learn how the workflow operates.
-
-Enter plan mode and start by adapting the workflow configuration for this project.
-:::
-
-**What this does:** Claude will read `CLAUDE.md` and all the rules, fill in your project name, institution, Beamer environments, CSS classes, and project state table, then propose any rule adjustments for your specific use case. You approve the plan, and Claude handles the rest. From there, you just describe what you want to build.
-
----
-
 # The Building Blocks {#sec-blocks}
 
-Now that you have seen what the system does, here is how it is configured. Claude Code's power comes from five configuration layers that work together. Think of them as the operating system for your academic project.
+Now that you're up and running, here is how the system is configured under the hood. Claude Code's power comes from five configuration layers that work together. Think of them as the operating system for your academic project. Understanding these layers helps you customize the workflow and debug when things go wrong.
 
 ## CLAUDE.md --- Your Project's Constitution
 
