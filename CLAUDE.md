@@ -96,24 +96,32 @@ python scripts/quality_score.py Quarto/file.qmd
 
 ---
 
-<!-- CUSTOMIZE: Add your Beamer environments and CSS classes below -->
+<!-- CUSTOMIZE: Replace the example entries below with your own
+     Beamer environments and Quarto CSS classes. These are examples
+     from the original project — delete them and add yours. -->
 
 ## Beamer Custom Environments
 
-| Environment | Effect | Use Case |
-|-------------|--------|----------|
+| Environment       | Effect        | Use Case       |
+|-------------------|---------------|----------------|
+| `[your-env]`      | [Description] | [When to use]  |
+
+<!-- Example entries (delete and replace with yours):
 | `keybox` | Gold background box | Key points |
 | `highlightbox` | Gold left-accent box | Highlights |
-| `methodbox` | Blue left-accent box | Technical methods |
 | `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
+-->
 
 ## Quarto CSS Classes
 
-| Class | Effect | Use Case |
-|-------|--------|----------|
+| Class              | Effect        | Use Case       |
+|--------------------|---------------|----------------|
+| `[.your-class]`    | [Description] | [When to use]  |
+
+<!-- Example entries (delete and replace with yours):
 | `.smaller` | 85% font | Dense content slides |
 | `.positive` | Green bold | Good annotations |
-| `.negative` | Red bold | Problematic annotations |
+-->
 
 ---
 

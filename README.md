@@ -4,7 +4,7 @@
 
 **Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
 
-A ready-to-fork starter kit for academics using [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course.
+A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course.
 
 ---
 
@@ -29,7 +29,7 @@ All domain-specific content has been replaced with `[PLACEHOLDER]` markers and `
 
 | Tool | Required For | Install |
 |------|-------------|---------|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Everything | `npm install -g @anthropic-ai/claude-code` |
+| [Claude Code](https://code.claude.com/docs/en/overview) | Everything | `npm install -g @anthropic-ai/claude-code` |
 | XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
 | [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
 | R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
@@ -45,10 +45,12 @@ Not all tools are needed — install only what your project uses. Claude Code is
 ### 1. Fork & Clone
 
 ```bash
-# Fork this repo on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git
-cd claude-code-my-workflow
+# Fork this repo on GitHub (click "Fork" on the repo page), then:
+git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
+cd my-project
 ```
+
+Replace `YOUR_USERNAME` with your GitHub username.
 
 ### 2. Customize CLAUDE.md
 
@@ -256,8 +258,8 @@ Claude saves session logs to `quality_reports/session_logs/`. A lightweight **St
 
 ## Additional Resources
 
-- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
-- [Writing a Good CLAUDE.md](https://docs.anthropic.com/en/docs/claude-code/memory) — official guidance on project memory
+- [Claude Code Documentation](https://code.claude.com/docs/en/overview)
+- [Writing a Good CLAUDE.md](https://code.claude.com/docs/en/memory) — official guidance on project memory
 
 ---
 
