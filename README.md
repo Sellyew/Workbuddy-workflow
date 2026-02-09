@@ -4,39 +4,7 @@
 
 **Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
 
-A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course.
-
----
-
-## What This Is
-
-This repository provides the **transportable infrastructure** behind a Claude Code workflow used to develop 6 complete PhD lecture decks (800+ slides) with:
-
-- **Contractor-mode orchestrator** — you describe the task; Claude plans, implements, reviews with agents, fixes issues, and re-verifies until quality gates pass
-- **Adversarial critic-fixer loops** — two agents check each other's work across up to 5 rounds, catching errors humans miss
-- **Quality scoring** with commit/PR/excellence thresholds (80/90/95) — nothing ships below 80
-- **Automated Beamer-to-Quarto translation** with TikZ-to-SVG and ggplot-to-plotly conversion
-- **Research exploration workflow** with structured sandbox, fast-track prototyping, and simplified orchestrator
-- **Research skills** — `/lit-review`, `/research-ideation`, `/interview-me`, `/review-paper`, `/data-analysis`
-- **Smart hooks** — desktop notifications, file protection, pre-compaction context snapshots
-- 10 specialized agents, 19 slash commands, 17 context-aware rules (3 always-on + 14 path-scoped)
-
-All domain-specific content has been replaced with `[PLACEHOLDER]` markers and `<!-- Customize -->` comments so you can adapt it to your field.
-
----
-
-## Prerequisites
-
-| Tool | Required For | Install |
-|------|-------------|---------|
-| [Claude Code](https://code.claude.com/docs/en/overview) | Everything | `npm install -g @anthropic-ai/claude-code` |
-| XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
-| [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
-| R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
-| pdf2svg | TikZ to SVG | `brew install pdf2svg` (macOS) |
-| [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
-
-Not all tools are needed — install only what your project uses. Claude Code is the only hard requirement.
+A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course (6 lectures, 800+ slides).
 
 ---
 
@@ -52,35 +20,79 @@ cd my-project
 
 Replace `YOUR_USERNAME` with your GitHub username.
 
-### 2. Customize CLAUDE.md
-
-Open `CLAUDE.md` and fill in:
-- Your course name, institution, and instructor name
-- Your folder structure (or keep the default)
-- Your design principles and preferences
-
-**Tip:** Keep CLAUDE.md under ~150 lines for best results — Claude reliably follows ~150 custom instructions. Move detailed instructions into `.claude/rules/` files with `paths:` frontmatter so they only load when relevant.
-
-### 3. Create Your Knowledge Base
-
-Open `.claude/rules/knowledge-base-template.md` and start filling in:
-- Your notation conventions
-- Your lecture progression
-- Your running examples/applications
-
-### 4. Test It
+### 2. Start Claude Code and Paste This Prompt
 
 ```bash
-# Create a simple test .tex file in Slides/, then:
-claude  # Start Claude Code
-# Type: /compile-latex Slides/test.tex
+claude
 ```
 
-If it compiles, your setup is working.
+Then paste the following, filling in your project details:
+
+> I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2–3 sentences — what you're building, who it's for, what tools you use.]**
+>
+> I want our collaboration to be structured, precise, and rigorous. When creating visuals, everything must be polished and publication-ready.
+>
+> I've set up the Claude Code academic workflow (forked from `pedrohcgs/claude-code-my-workflow`). The configuration files are already in this repo. Please read them, understand the workflow, and then **update all configuration files to fit my project** — fill in placeholders in `CLAUDE.md`, adjust rules if needed, and propose any customizations specific to my use case.
+>
+> After that, use the plan-first workflow for all non-trivial tasks. Once I approve a plan, switch to contractor mode — coordinate everything autonomously and only come back to me when there's ambiguity or a decision to make.
+>
+> Enter plan mode and start by adapting the workflow configuration for this project.
+
+**What this does:** Claude reads all the configuration files, fills in your project name, institution, and preferences, then enters contractor mode — planning, implementing, reviewing, and verifying autonomously. You approve the plan and Claude handles the rest.
+
+**Prefer to configure manually?** See the [full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-setup) for step-by-step manual setup instructions.
+
+---
+
+## How It Works
+
+### Contractor Mode
+
+You describe a task. Claude plans the approach, implements it, runs specialized review agents, fixes issues, re-verifies, and scores against quality gates — all autonomously. You see a summary when the work meets quality standards. Say "just do it" and it auto-commits too.
+
+### Specialized Agents
+
+Instead of one general-purpose reviewer, 10 focused agents each check one dimension:
+
+- **proofreader** — grammar/typos
+- **slide-auditor** — visual layout
+- **pedagogy-reviewer** — teaching quality
+- **r-reviewer** — R code quality
+- **domain-reviewer** — field-specific correctness (template — customize for your field)
+
+Each is better at its narrow task than a generalist would be. The `/slide-excellence` skill runs them all in parallel.
+
+### Adversarial QA
+
+Two agents work in opposition: the **critic** reads both Beamer and Quarto and produces harsh findings. The **fixer** implements exactly what the critic found. They loop until the critic says "APPROVED" (or 5 rounds max). This catches errors that single-pass review misses.
+
+### Quality Gates
+
+Every file gets a score (0–100). Scores below threshold block the action:
+- **80** — commit threshold
+- **90** — PR threshold
+- **95** — excellence (aspirational)
+
+---
+
+## The Guide
+
+For a comprehensive walkthrough, read the **[full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html)** (or see the [source](guide/workflow-guide.qmd)).
+
+It covers:
+1. **Why This Workflow Exists** — the problem and the vision
+2. **Getting Started** — fork, paste one prompt, and Claude sets up the rest
+3. **The System in Action** — specialized agents, adversarial QA, quality scoring
+4. **The Building Blocks** — CLAUDE.md, rules, skills, agents, hooks, memory
+5. **Workflow Patterns** — lecture creation, translation, replication, multi-agent review, research exploration
+6. **Customizing for Your Domain** — creating your own reviewers and knowledge bases
 
 ---
 
 ## What's Included
+
+<details>
+<summary><strong>10 agents, 19 skills, 17 rules, 4 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -123,8 +135,6 @@ If it compiles, your setup is working.
 
 ### Research Workflow
 
-Features for research projects (papers, simulations, empirical analysis):
-
 | Feature | What It Does |
 |---------|-------------|
 | Exploration folder | Structured `explorations/` sandbox with graduate/archive lifecycle |
@@ -137,7 +147,7 @@ Features for research projects (papers, simulations, empirical analysis):
 
 ### Rules (`.claude/rules/`)
 
-Rules use path-scoped loading: **always-on** rules load every session (~100 lines total); **path-scoped** rules load only when Claude works on matching files. This keeps context lean — Claude follows ~150 instructions reliably, so less is more.
+Rules use path-scoped loading: **always-on** rules load every session (~100 lines total); **path-scoped** rules load only when Claude works on matching files. Claude follows ~150 instructions reliably, so less is more.
 
 **Always-on** (no `paths:` frontmatter — load every session):
 
@@ -168,79 +178,22 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 
 **Templates** (`templates/`) — reference formats for session logs, quality reports, and exploration READMEs. Not auto-loaded.
 
----
-
-## The Guide
-
-For a comprehensive walkthrough of the entire workflow, read the **[full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html)** (or see the [source](guide/workflow-guide.qmd)).
-
-It covers:
-1. **Why This Workflow Exists** — the problem and the vision
-2. **Getting Started** — fork, paste one prompt, and Claude sets up the rest
-3. **The System in Action** — specialized agents, adversarial QA, quality scoring
-4. **The Building Blocks** — CLAUDE.md, rules, skills, agents, hooks, memory
-5. **Workflow Patterns** — lecture creation, translation, replication, multi-agent review, research exploration
-6. **Customizing for Your Domain** — creating your own reviewers and knowledge bases
+</details>
 
 ---
 
-## Key Patterns
+## Prerequisites
 
-### Plan-First Workflow
+| Tool | Required For | Install |
+|------|-------------|---------|
+| [Claude Code](https://code.claude.com/docs/en/overview) | Everything | `npm install -g @anthropic-ai/claude-code` |
+| XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
+| [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
+| R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
+| pdf2svg | TikZ to SVG | `brew install pdf2svg` (macOS) |
+| [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
 
-Non-trivial tasks start in **plan mode** before any files are touched:
-1. **Plan** — draft approach, list files to modify, identify risks
-2. **Save** — persist the plan to `quality_reports/plans/` (survives context compression)
-3. **Review** — present to user for approval
-4. **Implement** — orchestrator takes over (see below)
-
-Companion rule: **avoid `/clear`** — prefer auto-compression for context management. Use `/clear` only when context is genuinely polluted. Always save important context to disk first.
-
-### Contractor Mode (Orchestrator)
-
-After plan approval, the orchestrator takes over autonomously:
-1. **Implement** the plan steps
-2. **Verify** — compile, render, check outputs
-3. **Review** — select agents by file type (.tex gets proofreader + slide-auditor + pedagogy-reviewer; .qmd adds quarto-critic; .R gets r-reviewer)
-4. **Fix** — apply fixes from reviews (critical first)
-5. **Re-verify** and **score** against quality gates
-6. Loop up to 5 rounds until score meets threshold, then present summary
-
-When the user says "just do it", the orchestrator also auto-commits at score >= 80.
-
-### Quality Gates
-
-Every file gets a score (0-100). Scores below threshold block the action:
-- **80** — commit threshold (blocks `git commit` if below)
-- **90** — PR threshold (warns if below)
-- **95** — excellence (aspirational target)
-
-### Progressive Agent Specialization
-
-Instead of one general-purpose reviewer, use focused agents:
-- The **proofreader** only looks at grammar/typos
-- The **slide-auditor** only looks at visual layout
-- The **pedagogy-reviewer** only looks at teaching quality
-- The **domain-reviewer** only looks at field-specific correctness
-
-Each agent is better at its narrow task than a generalist would be.
-
-### The Adversarial Critic-Fixer Loop
-
-Two agents work in opposition:
-1. **Critic** reads both Beamer and Quarto, produces harsh findings
-2. **Fixer** implements exactly what the critic found
-3. Repeat until the critic says "APPROVED" (or 5 rounds max)
-
-This catches notation inconsistencies, overflow, missing content, and visual regressions that single-pass review misses.
-
-### Continuous Learning
-
-Every correction gets tagged with `[LEARN:tag]` format and persists in MEMORY.md across sessions. This prevents Claude from repeating the same mistakes.
-
-### Session Logging (with Automated Reminders)
-
-Claude saves session logs to `quality_reports/session_logs/`. A lightweight **Stop hook** (`scripts/log-reminder.py`) tracks how many responses have passed since the log was last updated. After a threshold, it reminds Claude to update the log. Git records *what* changed; session logs record *why*.
+Not all tools are needed — install only what your project uses. Claude Code is the only hard requirement.
 
 ---
 

@@ -2427,22 +2427,12 @@ window.Quarto = {
   <li><a href="#pattern-6-multi-agent-review" id="toc-pattern-6-multi-agent-review" class="nav-link" data-scroll-target="#pattern-6-multi-agent-review"><span class="header-section-number">5.6</span> Pattern 6: Multi-Agent Review</a></li>
   <li><a href="#pattern-7-self-improvement-loop" id="toc-pattern-7-self-improvement-loop" class="nav-link" data-scroll-target="#pattern-7-self-improvement-loop"><span class="header-section-number">5.7</span> Pattern 7: Self-Improvement Loop</a></li>
   <li><a href="#pattern-8-devils-advocate" id="toc-pattern-8-devils-advocate" class="nav-link" data-scroll-target="#pattern-8-devils-advocate"><span class="header-section-number">5.8</span> Pattern 8: Devil’s Advocate</a></li>
-  <li><a href="#pattern-9-parallel-agents-for-research-tasks" id="toc-pattern-9-parallel-agents-for-research-tasks" class="nav-link" data-scroll-target="#pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9</span> Pattern 9: Parallel Agents for Research Tasks</a>
+  <li><a href="#sec-research-workflows" id="toc-sec-research-workflows" class="nav-link" data-scroll-target="#sec-research-workflows"><span class="header-section-number">5.9</span> Research Workflows</a>
   <ul class="collapse">
-  <li><a href="#when-to-use-parallel-agents" id="toc-when-to-use-parallel-agents" class="nav-link" data-scroll-target="#when-to-use-parallel-agents"><span class="header-section-number">5.9.1</span> When to Use Parallel Agents</a></li>
-  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works"><span class="header-section-number">5.9.2</span> How It Works</a></li>
-  <li><a href="#practical-limits" id="toc-practical-limits" class="nav-link" data-scroll-target="#practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</a></li>
+  <li><a href="#pattern-9-parallel-agents-for-research-tasks" id="toc-pattern-9-parallel-agents-for-research-tasks" class="nav-link" data-scroll-target="#pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9.1</span> Pattern 9: Parallel Agents for Research Tasks</a></li>
+  <li><a href="#pattern-10-exploration" id="toc-pattern-10-exploration" class="nav-link" data-scroll-target="#pattern-10-exploration"><span class="header-section-number">5.9.2</span> Pattern 10: Research Exploration Workflow</a></li>
+  <li><a href="#pattern-11-research-skills" id="toc-pattern-11-research-skills" class="nav-link" data-scroll-target="#pattern-11-research-skills"><span class="header-section-number">5.9.3</span> Pattern 11: Research Skills</a></li>
   </ul></li>
-  <li><a href="#pattern-10-exploration" id="toc-pattern-10-exploration" class="nav-link" data-scroll-target="#pattern-10-exploration"><span class="header-section-number">5.10</span> Pattern 10: Research Exploration Workflow</a>
-  <ul class="collapse">
-  <li><a href="#the-problem-1" id="toc-the-problem-1" class="nav-link" data-scroll-target="#the-problem-1"><span class="header-section-number">5.10.1</span> The Problem</a></li>
-  <li><a href="#the-solution-exploration-folder" id="toc-the-solution-exploration-folder" class="nav-link" data-scroll-target="#the-solution-exploration-folder"><span class="header-section-number">5.10.2</span> The Solution: Exploration Folder</a></li>
-  <li><a href="#fast-track-vs.-plan-first" id="toc-fast-track-vs.-plan-first" class="nav-link" data-scroll-target="#fast-track-vs.-plan-first"><span class="header-section-number">5.10.3</span> Fast-Track vs. Plan-First</a></li>
-  <li><a href="#the-lifecycle" id="toc-the-lifecycle" class="nav-link" data-scroll-target="#the-lifecycle"><span class="header-section-number">5.10.4</span> The Lifecycle</a></li>
-  <li><a href="#simplified-orchestrator-for-research" id="toc-simplified-orchestrator-for-research" class="nav-link" data-scroll-target="#simplified-orchestrator-for-research"><span class="header-section-number">5.10.5</span> Simplified Orchestrator for Research</a></li>
-  <li><a href="#merge-only-quality-reporting" id="toc-merge-only-quality-reporting" class="nav-link" data-scroll-target="#merge-only-quality-reporting"><span class="header-section-number">5.10.6</span> Merge-Only Quality Reporting</a></li>
-  </ul></li>
-  <li><a href="#pattern-11-research-skills" id="toc-pattern-11-research-skills" class="nav-link" data-scroll-target="#pattern-11-research-skills"><span class="header-section-number">5.11</span> Pattern 11: Research Skills</a></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">6</span> Customizing for Your Domain</a>
   <ul class="collapse">
@@ -2678,7 +2668,7 @@ window.Quarto = {
 </section>
 <section id="sec-system" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> The System in Action</h1>
-<p>Now that you’re set up, here is what the system actually <em>does</em>. This section shows the three core mechanisms that make the workflow powerful: specialized agents, adversarial QA, and automatic quality scoring.</p>
+<p>With setup covered, here is what the system actually <em>does</em>. This section walks through the three core mechanisms that make the workflow powerful: specialized agents, adversarial QA, and automatic quality scoring.</p>
 <section id="why-specialized-agents-beat-one-size-fits-all" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="why-specialized-agents-beat-one-size-fits-all"><span class="header-section-number">3.1</span> Why Specialized Agents Beat One-Size-Fits-All</h2>
 <p>Consider proofreading a 140-slide lecture deck. You could ask Claude:</p>
@@ -2957,7 +2947,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="sec-blocks" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> The Building Blocks</h1>
-<p>Now that you’re up and running, here is how the system is configured under the hood. Claude Code’s power comes from five configuration layers that work together. Think of them as the operating system for your academic project. Understanding these layers helps you customize the workflow and debug when things go wrong.</p>
+<p>Understanding the configuration layers helps you customize the workflow and debug when things go wrong. Claude Code’s power comes from five configuration layers that work together — think of them as the operating system for your academic project.</p>
 <section id="claude.md-your-projects-constitution" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="claude.md-your-projects-constitution"><span class="header-section-number">4.1</span> CLAUDE.md — Your Project’s Constitution</h2>
 <p><code>CLAUDE.md</code> is the single most important file. Claude reads it at the start of every session. But here is the critical insight: <strong>Claude reliably follows about 100–150 custom instructions.</strong> Your system prompt already uses ~50, leaving ~100–150 for your project. CLAUDE.md and always-on rules share this budget.</p>
@@ -3623,6 +3613,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="pattern-3-creating-a-new-lecture" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="pattern-3-creating-a-new-lecture"><span class="header-section-number">5.3</span> Pattern 3: Creating a New Lecture</h2>
+<p>The <code>/create-lecture</code> skill guides you through a structured lecture creation workflow — from gathering source material to deploying polished slides:</p>
 <pre><code>/create-lecture
   |
   +-- Phase 1: Gather materials (papers, outlines)
@@ -3639,6 +3630,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="pattern-4-translating-beamer-to-quarto" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="pattern-4-translating-beamer-to-quarto"><span class="header-section-number">5.4</span> Pattern 4: Translating Beamer to Quarto</h2>
+<p>Translation preserves all content while adapting format, converting TikZ to SVG and ggplot to interactive Plotly charts:</p>
 <pre><code>/translate-to-quarto Lecture5_Topic.tex
   |
   +-- Phase 1-3: Environment mapping + content translation
@@ -3720,11 +3712,14 @@ Phase 4: Only then extend
 <li>Cognitive load issues</li>
 </ul>
 </section>
-<section id="pattern-9-parallel-agents-for-research-tasks" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9</span> Pattern 9: Parallel Agents for Research Tasks</h2>
+<section id="sec-research-workflows" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="sec-research-workflows"><span class="header-section-number">5.9</span> Research Workflows</h2>
+<p>Patterns 1–8 apply to course materials (slides, LaTeX, Quarto). The next three patterns are designed for <strong>research projects</strong> — papers, simulations, and empirical analysis — where the rhythm is different: ideas are uncertain, experiments may fail, and code is often written to answer a question rather than to ship.</p>
+<section id="pattern-9-parallel-agents-for-research-tasks" class="level3" data-number="5.9.1">
+<h3 data-number="5.9.1" class="anchored" data-anchor-id="pattern-9-parallel-agents-for-research-tasks"><span class="header-section-number">5.9.1</span> Pattern 9: Parallel Agents for Research Tasks</h3>
 <p>Claude Code can spawn <strong>multiple agents simultaneously</strong> using the Task tool. This is not limited to review — you can use it for any research or analysis task where independent subtasks can run at the same time.</p>
-<section id="when-to-use-parallel-agents" class="level3" data-number="5.9.1">
-<h3 data-number="5.9.1" class="anchored" data-anchor-id="when-to-use-parallel-agents"><span class="header-section-number">5.9.1</span> When to Use Parallel Agents</h3>
+<section id="when-to-use-parallel-agents" class="level4" data-number="5.9.1.1">
+<h4 data-number="5.9.1.1" class="anchored" data-anchor-id="when-to-use-parallel-agents"><span class="header-section-number">5.9.1.1</span> When to Use Parallel Agents</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 21%">
@@ -3762,8 +3757,8 @@ Phase 4: Only then extend
 </tbody>
 </table>
 </section>
-<section id="how-it-works" class="level3" data-number="5.9.2">
-<h3 data-number="5.9.2" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">5.9.2</span> How It Works</h3>
+<section id="how-it-works" class="level4" data-number="5.9.1.2">
+<h4 data-number="5.9.1.2" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">5.9.1.2</span> How It Works</h4>
 <p>You do not need to manage this manually. The orchestrator recognizes independent subtasks in a plan and spawns parallel agents automatically — both during implementation (Step 1) and review (Step 3). For example, if your plan says “read three papers and extract key results,” the orchestrator will spawn 3 agents, one per paper, without you asking.</p>
 <p>You can also request parallelism explicitly:</p>
 <blockquote class="blockquote">
@@ -3771,8 +3766,8 @@ Phase 4: Only then extend
 </blockquote>
 <p>Either way, Claude spawns up to 3 Task agents, each processing one paper simultaneously, then synthesizes the results.</p>
 </section>
-<section id="practical-limits" class="level3" data-number="5.9.3">
-<h3 data-number="5.9.3" class="anchored" data-anchor-id="practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</h3>
+<section id="practical-limits" class="level4" data-number="5.9.1.3">
+<h4 data-number="5.9.1.3" class="anchored" data-anchor-id="practical-limits"><span class="header-section-number">5.9.1.3</span> Practical Limits</h4>
 <ul>
 <li><strong>3 agents</strong> is the sweet spot. More than that increases overhead without proportional speedup.</li>
 <li>Agents are <strong>independent</strong> — they cannot see each other’s work. If task B depends on task A’s output, they must run sequentially.</li>
@@ -3793,15 +3788,15 @@ Phase 4: Only then extend
 </div>
 </section>
 </section>
-<section id="pattern-10-exploration" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="pattern-10-exploration"><span class="header-section-number">5.10</span> Pattern 10: Research Exploration Workflow</h2>
-<p>Research projects need a different rhythm than course materials. Ideas are uncertain, experiments may fail, and code is often written to answer a question, not to ship. The <strong>exploration workflow</strong> provides a structured sandbox for this kind of work.</p>
-<section id="the-problem-1" class="level3" data-number="5.10.1">
-<h3 data-number="5.10.1" class="anchored" data-anchor-id="the-problem-1"><span class="header-section-number">5.10.1</span> The Problem</h3>
+<section id="pattern-10-exploration" class="level3" data-number="5.9.2">
+<h3 data-number="5.9.2" class="anchored" data-anchor-id="pattern-10-exploration"><span class="header-section-number">5.9.2</span> Pattern 10: Research Exploration Workflow</h3>
+<p>The <strong>exploration workflow</strong> provides a structured sandbox for experimental work.</p>
+<section id="the-problem-1" class="level4" data-number="5.9.2.1">
+<h4 data-number="5.9.2.1" class="anchored" data-anchor-id="the-problem-1"><span class="header-section-number">5.9.2.1</span> The Problem</h4>
 <p>Without structure, experimental code scatters across the repository: analysis scripts in <code>scripts/</code>, test files in root, comparison documents in <code>quality_reports/</code>. After a week of exploration, the repo is cluttered with files that may or may not be useful, and nobody remembers which version was the good one.</p>
 </section>
-<section id="the-solution-exploration-folder" class="level3" data-number="5.10.2">
-<h3 data-number="5.10.2" class="anchored" data-anchor-id="the-solution-exploration-folder"><span class="header-section-number">5.10.2</span> The Solution: Exploration Folder</h3>
+<section id="the-solution-exploration-folder" class="level4" data-number="5.9.2.2">
+<h4 data-number="5.9.2.2" class="anchored" data-anchor-id="the-solution-exploration-folder"><span class="header-section-number">5.9.2.2</span> The Solution: Exploration Folder</h4>
 <p>All experimental work goes into <code>explorations/</code> first:</p>
 <pre><code>explorations/
 ├── [active-project]/
@@ -3813,8 +3808,8 @@ Phase 4: Only then extend
     ├── completed_[name]/   # Graduated to production
     └── abandoned_[name]/   # Documented why stopped</code></pre>
 </section>
-<section id="fast-track-vs.-plan-first" class="level3" data-number="5.10.3">
-<h3 data-number="5.10.3" class="anchored" data-anchor-id="fast-track-vs.-plan-first"><span class="header-section-number">5.10.3</span> Fast-Track vs. Plan-First</h3>
+<section id="fast-track-vs.-plan-first" class="level4" data-number="5.9.2.3">
+<h4 data-number="5.9.2.3" class="anchored" data-anchor-id="fast-track-vs.-plan-first"><span class="header-section-number">5.9.2.3</span> Fast-Track vs. Plan-First</h4>
 <p>The decision tree is simple:</p>
 <table class="caption-top table">
 <thead>
@@ -3844,8 +3839,8 @@ Phase 4: Only then extend
 </table>
 <p>Fast-Track explorations skip formal planning. Instead, a 2-minute <strong>research value check</strong> gates the work: “Does this improve the paper/slides/analysis?” If the answer is “maybe”, explore. If “no”, skip. If “yes”, use Plan-First rigor.</p>
 </section>
-<section id="the-lifecycle" class="level3" data-number="5.10.4">
-<h3 data-number="5.10.4" class="anchored" data-anchor-id="the-lifecycle"><span class="header-section-number">5.10.4</span> The Lifecycle</h3>
+<section id="the-lifecycle" class="level4" data-number="5.9.2.4">
+<h4 data-number="5.9.2.4" class="anchored" data-anchor-id="the-lifecycle"><span class="header-section-number">5.9.2.4</span> The Lifecycle</h4>
 <pre><code>Research value check (2 min)
   ↓
 Create explorations/[project]/ (5 min)
@@ -3858,17 +3853,17 @@ Decision point (1-2 hours):
   └── Abandon → Archive with brief explanation</code></pre>
 <p>The <strong>kill switch</strong> is explicit: at any point, you can stop, archive with a one-paragraph explanation, and move on. No guilt, no sunk cost. See <code>.claude/rules/exploration-folder-protocol.md</code> and <code>.claude/rules/exploration-fast-track.md</code> for the full protocols.</p>
 </section>
-<section id="simplified-orchestrator-for-research" class="level3" data-number="5.10.5">
-<h3 data-number="5.10.5" class="anchored" data-anchor-id="simplified-orchestrator-for-research"><span class="header-section-number">5.10.5</span> Simplified Orchestrator for Research</h3>
+<section id="simplified-orchestrator-for-research" class="level4" data-number="5.9.2.5">
+<h4 data-number="5.9.2.5" class="anchored" data-anchor-id="simplified-orchestrator-for-research"><span class="header-section-number">5.9.2.5</span> Simplified Orchestrator for Research</h4>
 <p>The full orchestrator (Pattern 2) is designed for course materials with multi-agent review loops. For research projects, the <strong>simple variant</strong> strips this down to: implement → verify → score → done. No multi-round reviews, no parallel agent spawning. This lives in its own path-scoped rule (<code>.claude/rules/orchestrator-research.md</code>) that loads only when working on R scripts or explorations.</p>
 </section>
-<section id="merge-only-quality-reporting" class="level3" data-number="5.10.6">
-<h3 data-number="5.10.6" class="anchored" data-anchor-id="merge-only-quality-reporting"><span class="header-section-number">5.10.6</span> Merge-Only Quality Reporting</h3>
+<section id="merge-only-quality-reporting" class="level4" data-number="5.9.2.6">
+<h4 data-number="5.9.2.6" class="anchored" data-anchor-id="merge-only-quality-reporting"><span class="header-section-number">5.9.2.6</span> Merge-Only Quality Reporting</h4>
 <p>In research projects, commits are frequent and incremental. Generating a quality report for each commit creates noise. Instead, quality reports are generated <strong>only at merge time</strong> — a permanent snapshot of what was merged and why. Session logs capture the ongoing reasoning. See <code>.claude/rules/session-logging.md</code>.</p>
 </section>
 </section>
-<section id="pattern-11-research-skills" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="pattern-11-research-skills"><span class="header-section-number">5.11</span> Pattern 11: Research Skills</h2>
+<section id="pattern-11-research-skills" class="level3" data-number="5.9.3">
+<h3 data-number="5.9.3" class="anchored" data-anchor-id="pattern-11-research-skills"><span class="header-section-number">5.9.3</span> Pattern 11: Research Skills</h3>
 <p>Five skills support the research workflow beyond slide development:</p>
 <table class="caption-top table">
 <colgroup>
@@ -3926,6 +3921,7 @@ Decision point (1-2 hours):
 </div>
 </div>
 <hr>
+</section>
 </section>
 </section>
 <section id="sec-customize" class="level1" data-number="6">
