@@ -2378,7 +2378,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-setup" id="toc-sec-setup" class="nav-link" data-scroll-target="#sec-setup"><span class="header-section-number">3</span> Setting Up Your Project</a>
   <ul class="collapse">
-  <li><a href="#step-1-fork-the-template" id="toc-step-1-fork-the-template" class="nav-link" data-scroll-target="#step-1-fork-the-template"><span class="header-section-number">3.1</span> Step 1: Fork the Template</a></li>
+  <li><a href="#step-1-fork-clone" id="toc-step-1-fork-clone" class="nav-link" data-scroll-target="#step-1-fork-clone"><span class="header-section-number">3.1</span> Step 1: Fork &amp; Clone</a></li>
   <li><a href="#step-2-customize-claude.md" id="toc-step-2-customize-claude.md" class="nav-link" data-scroll-target="#step-2-customize-claude.md"><span class="header-section-number">3.2</span> Step 2: Customize CLAUDE.md</a></li>
   <li><a href="#step-3-create-your-knowledge-base" id="toc-step-3-create-your-knowledge-base" class="nav-link" data-scroll-target="#step-3-create-your-knowledge-base"><span class="header-section-number">3.3</span> Step 3: Create Your Knowledge Base</a></li>
   <li><a href="#step-4-configure-permissions" id="toc-step-4-configure-permissions" class="nav-link" data-scroll-target="#step-4-configure-permissions"><span class="header-section-number">3.4</span> Step 4: Configure Permissions</a></li>
@@ -2874,17 +2874,12 @@ APPROVED   NEEDS WORK
 </section>
 <section id="sec-setup" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Setting Up Your Project</h1>
-<section id="step-1-fork-the-template" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="step-1-fork-the-template"><span class="header-section-number">3.1</span> Step 1: Fork the Template</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone the template</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/pedrohcgs/claude-code-my-workflow.git my-project</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-project</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove template git history and start fresh</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> .git</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add <span class="at">-A</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;Initial project from claude-code-academic-workflow template&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="step-1-fork-clone" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="step-1-fork-clone"><span class="header-section-number">3.1</span> Step 1: Fork &amp; Clone</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fork this repo on GitHub (click &quot;Fork&quot; on the repo page), then:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-project</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Replace <code>YOUR_USERNAME</code> with your GitHub username.</p>
 </section>
 <section id="step-2-customize-claude.md" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="step-2-customize-claude.md"><span class="header-section-number">3.2</span> Step 2: Customize CLAUDE.md</h2>

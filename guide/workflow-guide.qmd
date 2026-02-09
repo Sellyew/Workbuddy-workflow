@@ -205,19 +205,15 @@ To customize, open `.claude/agents/domain-reviewer.md` and fill in:
 
 # Setting Up Your Project {#sec-setup}
 
-## Step 1: Fork the Template
+## Step 1: Fork & Clone
 
 ```bash
-# Clone the template
-git clone https://github.com/pedrohcgs/claude-code-my-workflow.git my-project
+# Fork this repo on GitHub (click "Fork" on the repo page), then:
+git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
 cd my-project
-
-# Remove template git history and start fresh
-rm -rf .git
-git init
-git add -A
-git commit -m "Initial project from claude-code-academic-workflow template"
 ```
+
+Replace `YOUR_USERNAME` with your GitHub username.
 
 ## Step 2: Customize CLAUDE.md
 
