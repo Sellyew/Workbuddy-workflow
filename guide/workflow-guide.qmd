@@ -578,14 +578,14 @@ Non-trivial task arrives
   +-- Step 8: Update session log + plan status to COMPLETED
 ```
 
-### Context Preservation: Never /clear
+### Context Preservation: Prefer Auto-Compression
 
 An important companion to plan-first development is context preservation. Claude Code has two ways to free context space:
 
 - **`/clear`** --- destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.
 - **Auto-compression** --- Claude Code automatically compresses the conversation when it gets long. It keeps the most important context and discards redundant detail. This is graceful degradation.
 
-The rule is simple: **never use `/clear`**. Let auto-compression do its job. And as a safety net, always save plans and important decisions to files on disk, where they cannot be compressed away.
+The rule: **avoid `/clear`** --- prefer auto-compression. Use `/clear` only when context is genuinely polluted (e.g., a large irrelevant file was read by mistake, or you explored the wrong branch). Always save important context to disk first. As a safety net, plans and important decisions live in files on disk, where they cannot be compressed away.
 
 ::: {.callout-tip}
 ## Recovery After Compression
@@ -724,7 +724,7 @@ Both are valid. The orchestrator is the "I trust you, handle it" path. Skills ar
   +-- Phase 3: Draft Beamer slides
   +-- Phase 4: Generate R figures
   +-- Phase 5: Polish and verify
-  |     +-- /substance-review (domain correctness)
+  |     +-- /slide-excellence (domain + visual + pedagogy)
   |     +-- /proofread (grammar/typos)
   |     +-- /visual-audit (layout)
   +-- Phase 6: Deploy

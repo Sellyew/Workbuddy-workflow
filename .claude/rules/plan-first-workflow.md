@@ -101,15 +101,21 @@ quality_reports/plans/
 
 ---
 
-## Rule 3: Never /clear — Rely on Auto-Compression
+## Rule 3: Prefer Auto-Compression Over /clear
 
-**NEVER use `/clear` to reset the conversation. Use auto-compression instead.**
+**Avoid `/clear` — prefer auto-compression for context management.**
 
 ### Why This Matters
 
-- `/clear` is a **nuclear option** — it destroys ALL context, including design decisions, corrections, and the mental model of the project
+- `/clear` destroys ALL context — design decisions, corrections, and the mental model of the project
 - Auto-compression is **graceful degradation** — Claude Code's built-in compression preserves the most important context while freeing space
 - Saved plans (Rule 2) provide a **safety net** — even if compression loses details, the plan file on disk has the full strategy
+
+### When /clear IS Appropriate
+
+- Context is genuinely polluted (e.g., a large irrelevant file was read by mistake)
+- You explored the wrong branch and want a clean start
+- **Always save important context to disk BEFORE clearing**
 
 ### What to Do When Context Gets Long
 

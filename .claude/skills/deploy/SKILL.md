@@ -3,6 +3,7 @@ name: deploy
 description: Render Quarto slides and sync to docs/ for GitHub Pages deployment. Use when deploying lecture slides after making changes.
 disable-model-invocation: true
 argument-hint: "[LectureN or 'all']"
+allowed-tools: ["Read", "Bash"]
 ---
 
 # Deploy Slides to GitHub Pages

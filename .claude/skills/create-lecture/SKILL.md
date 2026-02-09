@@ -3,6 +3,7 @@ name: create-lecture
 description: Create a new Beamer lecture from papers, existing slides, R scripts, and other materials. Guides the content creation process with notation consistency, pedagogical patterns, and collaborative iteration.
 disable-model-invocation: true
 argument-hint: "[Topic name, e.g., 'Synthetic Control' or 'Regression Discontinuity']"
+allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task"]
 ---
 
 # Lecture Creation Workflow
