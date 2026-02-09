@@ -3,6 +3,7 @@ name: pedagogy-review
 description: Run holistic pedagogical review on lecture slides. Checks narrative arc, student prerequisites, worked examples, notation clarity, and deck pacing.
 disable-model-invocation: true
 argument-hint: "[QMD or TEX filename]"
+allowed-tools: ["Read", "Grep", "Glob", "Write", "Task"]
 ---
 
 # Pedagogical Review of Lecture Slides

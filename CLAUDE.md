@@ -118,7 +118,7 @@ For any non-trivial task, Claude enters **plan mode first** before writing code:
 
 See `.claude/rules/plan-first-workflow.md` for the full protocol.
 
-> **Never use `/clear`.** Rely on auto-compression to manage long conversations. `/clear` destroys all context; auto-compression preserves what matters.
+> **Avoid `/clear`** — prefer auto-compression for context management. Use `/clear` only when context is genuinely polluted (e.g., large irrelevant file read). Always save important context to disk first.
 
 ### Contractor Mode (Orchestrator)
 

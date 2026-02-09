@@ -187,4 +187,4 @@ After replication is verified (all targets PASS):
 
 - **`/create-lecture` Phase 4:** When replication packages are provided, follow this protocol before creating figures
 - **`/review-r`:** The r-reviewer agent checks for replication-related issues (DGP match, correct estimand)
-- **`/substance-review`:** The domain reviewer checks code-theory alignment
+- **Domain reviewer agent:** Checks code-theory alignment (run via `/slide-excellence` or directly)

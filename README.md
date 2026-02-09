@@ -17,9 +17,24 @@ This repository provides the **transportable infrastructure** behind a Claude Co
 - **Quality scoring** with commit/PR/excellence thresholds (80/90/95) — nothing ships below 80
 - **Automated Beamer-to-Quarto translation** with TikZ-to-SVG and ggplot-to-plotly conversion
 - **Research exploration workflow** with structured sandbox, fast-track prototyping, and simplified orchestrator
-- 10 specialized agents, 14 slash commands, 15 auto-loaded rules
+- 10 specialized agents, 14 slash commands, 16 auto-loaded rules
 
 All domain-specific content has been replaced with `[PLACEHOLDER]` markers and `<!-- Customize -->` comments so you can adapt it to your field.
+
+---
+
+## Prerequisites
+
+| Tool | Required For | Install |
+|------|-------------|---------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Everything | `npm install -g @anthropic-ai/claude-code` |
+| XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
+| [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
+| R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
+| pdf2svg | TikZ to SVG | `brew install pdf2svg` (macOS) |
+| [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
+
+Not all tools are needed — install only what your project uses. Claude Code is the only hard requirement.
 
 ---
 
@@ -158,7 +173,7 @@ Non-trivial tasks start in **plan mode** before any files are touched:
 3. **Review** — present to user for approval
 4. **Implement** — orchestrator takes over (see below)
 
-Companion rule: **never use `/clear`**. Rely on auto-compression for context management — it preserves important context gracefully, while `/clear` destroys everything.
+Companion rule: **avoid `/clear`** — prefer auto-compression for context management. Use `/clear` only when context is genuinely polluted. Always save important context to disk first.
 
 ### Contractor Mode (Orchestrator)
 

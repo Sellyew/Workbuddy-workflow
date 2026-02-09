@@ -9,6 +9,7 @@ Usage:
     python scripts/quality_score.py Quarto/Lecture6_Topic.qmd
     python scripts/quality_score.py Quarto/Lecture6_Topic.qmd --summary
     python scripts/quality_score.py Quarto/*.qmd
+    python scripts/quality_score.py Slides/Lecture01_Topic.tex
     python scripts/quality_score.py scripts/R/Lecture06_simulations.R
 """
 
@@ -63,6 +64,21 @@ R_SCRIPT_RUBRIC = {
     }
 }
 
+BEAMER_RUBRIC = {
+    'critical': {
+        'compilation_failure': {'points': 100, 'auto_fail': True},
+        'undefined_citation': {'points': 15},
+        'overfull_hbox': {'points': 10},
+    },
+    'major': {
+        'text_overflow': {'points': 5},
+        'notation_inconsistency': {'points': 3},
+    },
+    'minor': {
+        'font_size_reduction': {'points': 1},
+    }
+}
+
 THRESHOLDS = {
     'commit': 80,
     'pr': 90,
@@ -97,28 +113,78 @@ class IssueDetector:
 
     @staticmethod
     def check_equation_overflow(content: str) -> List[int]:
-        """Detect displayed equations that might overflow (crude heuristic)."""
+        """Detect displayed equations with single lines likely to overflow.
+
+        Flags equations only when a SINGLE LINE within a math block exceeds
+        120 characters. Multi-line equations properly broken across lines
+        are not flagged even if the total block is long.
+
+        Checks:
+        - $$ ... $$ blocks (Quarto/LaTeX)
+        - \\begin{equation} ... \\end{equation} blocks
+        - \\begin{align} ... \\end{align} blocks
+        - \\begin{gather} ... \\end{gather} blocks
+        """
         overflows = []
         lines = content.split('\n')
-        in_equation = False
-        equation_start = 0
+        in_math = False
+        math_start = 0
+        math_delim = None  # Track which delimiter opened the block
 
         for i, line in enumerate(lines, 1):
-            if '$$' in line and not in_equation:
-                in_equation = True
-                equation_start = i
-            elif '$$' in line and in_equation:
-                in_equation = False
-                math_content = '\n'.join(lines[equation_start-1:i])
-                if len(math_content) > 100:
-                    overflows.append(equation_start)
+            stripped = line.strip()
+
+            # Check for $$ delimiter (toggle)
+            if '$$' in stripped and math_delim != 'env':
+                if not in_math:
+                    in_math = True
+                    math_start = i
+                    math_delim = '$$'
+                    # Handle single-line $$ ... $$ (both delimiters on same line)
+                    if stripped.count('$$') >= 2:
+                        inner = stripped.split('$$')[1]
+                        if len(inner.strip()) > 120:
+                            overflows.append(i)
+                        in_math = False
+                        math_delim = None
+                    continue
+                else:
+                    in_math = False
+                    math_delim = None
+                    continue
+
+            # Check for \begin{equation/align/gather/...}
+            env_begin = re.match(
+                r'\\begin\{(equation|align|gather|multline|eqnarray)\*?\}', stripped
+            )
+            if env_begin and not in_math:
+                in_math = True
+                math_start = i
+                math_delim = 'env'
+                continue
+
+            # Check for \end{equation/align/gather/...}
+            if re.match(r'\\end\{(equation|align|gather|multline|eqnarray)\*?\}', stripped):
+                in_math = False
+                math_delim = None
+                continue
+
+            # Inside a math block: check individual line length
+            if in_math:
+                # Strip LaTeX comments before measuring
+                code_part = line.split('%')[0] if '%' in line else line
+                if len(code_part.strip()) > 120:
+                    overflows.append(i)
 
         return overflows
 
     @staticmethod
     def check_broken_citations(content: str, bib_file: Path) -> List[str]:
-        """Check for citation keys not in bibliography."""
-        cite_pattern = r'\\citep?\{([^}]+)\}'
+        """Check for LaTeX citation keys not in bibliography.
+
+        Matches \\cite{}, \\citep{}, \\citet{}, \\citeauthor{}, \\citeyear{}, etc.
+        """
+        cite_pattern = r'\\cite[a-z]*\{([^}]+)\}'
         cited_keys = set()
         for match in re.finditer(cite_pattern, content):
             keys = match.group(1).split(',')
@@ -178,6 +244,127 @@ class IssueDetector:
 
         return issues
 
+    @staticmethod
+    def check_latex_syntax(content: str) -> List[Dict]:
+        """Check for common LaTeX syntax issues without compiling.
+
+        Looks for:
+        - Unmatched braces
+        - Unclosed environments
+        - Common typos in commands
+        """
+        issues = []
+        lines = content.split('\n')
+
+        # Track open environments
+        env_stack = []
+        for i, line in enumerate(lines, 1):
+            # Skip comments
+            stripped = line.split('%')[0] if '%' in line else line
+
+            # Check for \begin{env}
+            for match in re.finditer(r'\\begin\{(\w+)\}', stripped):
+                env_stack.append((match.group(1), i))
+
+            # Check for \end{env}
+            for match in re.finditer(r'\\end\{(\w+)\}', stripped):
+                env_name = match.group(1)
+                if env_stack and env_stack[-1][0] == env_name:
+                    env_stack.pop()
+                elif env_stack:
+                    issues.append({
+                        'line': i,
+                        'description': f'Mismatched environment: \\end{{{env_name}}} '
+                                       f'but expected \\end{{{env_stack[-1][0]}}} '
+                                       f'(opened at line {env_stack[-1][1]})',
+                    })
+                else:
+                    issues.append({
+                        'line': i,
+                        'description': f'\\end{{{env_name}}} without matching \\begin',
+                    })
+
+        # Report unclosed environments
+        for env_name, line_num in env_stack:
+            issues.append({
+                'line': line_num,
+                'description': f'Unclosed environment: \\begin{{{env_name}}} never closed',
+            })
+
+        return issues
+
+    @staticmethod
+    def check_overfull_hbox_risk(content: str) -> List[int]:
+        """Detect lines in LaTeX source likely to cause overfull hbox.
+
+        Checks for very long lines inside text and math environments
+        that are likely to overflow the slide width.
+        """
+        issues = []
+        lines = content.split('\n')
+        in_frame = False
+
+        for i, line in enumerate(lines, 1):
+            stripped = line.split('%')[0] if '%' in line else line
+
+            # Track frame environments for context
+            if r'\begin{frame}' in stripped:
+                in_frame = True
+            elif r'\end{frame}' in stripped:
+                in_frame = False
+
+            # Flag very long content lines inside frames
+            # Strip leading whitespace and LaTeX commands for length check
+            if in_frame and len(stripped.strip()) > 120:
+                # Skip lines that are just comments or common long commands
+                if stripped.strip().startswith('%'):
+                    continue
+                # Skip includegraphics, input, and similar path-based commands
+                if re.match(r'\s*\\(includegraphics|input|bibliography|usepackage)', stripped):
+                    continue
+                issues.append(i)
+
+        return issues
+
+    @staticmethod
+    def check_quarto_citations(content: str, bib_file: Path) -> List[str]:
+        """Check Quarto-style citation keys against bibliography.
+
+        Supports patterns: @key, [@key], [@key1; @key2]
+        """
+        cited_keys = set()
+
+        # Pattern 1: [@key] or [@key1; @key2; ...]
+        bracket_pattern = r'\[([^\]]*@[^\]]+)\]'
+        for match in re.finditer(bracket_pattern, content):
+            inner = match.group(1)
+            # Extract individual @key references from within brackets
+            for key_match in re.finditer(r'@([\w:.#$%&\-+?<>~/]+)', inner):
+                cited_keys.add(key_match.group(1))
+
+        # Pattern 2: standalone @key (not inside brackets, not email addresses)
+        # Match @key that is preceded by start-of-line or whitespace or punctuation
+        # but NOT preceded by characters that indicate an email address
+        standalone_pattern = r'(?<![.\w])@([\w:.#$%&\-+?<>~/]+)'
+        for match in re.finditer(standalone_pattern, content):
+            key = match.group(1)
+            # Skip if it looks like a Quarto directive or special syntax
+            if key.startswith('{') or key in ('fig', 'tbl', 'sec', 'eq', 'lst'):
+                continue
+            cited_keys.add(key)
+
+        if not cited_keys:
+            return []
+
+        if not bib_file.exists():
+            return list(cited_keys)
+
+        bib_content = bib_file.read_text(encoding='utf-8')
+        bib_keys = set(re.findall(r'@\w+\{([^,]+),', bib_content))
+
+        broken = cited_keys - bib_keys
+        return list(broken)
+
 # ==============================================================================
 # QUALITY SCORER
 # ==============================================================================
@@ -219,15 +406,20 @@ class QualityScorer:
             self.issues['critical'].append({
                 'type': 'equation_overflow',
                 'description': f'Potential equation overflow at line {line}',
-                'details': 'Equation >100 chars may overflow slide',
+                'details': 'Single equation line >120 chars may overflow slide',
                 'points': 20
             })
             self.score -= 20
 
-        # Check broken citations
+        # Check broken citations (LaTeX-style \cite patterns)
         bib_file = self.filepath.parent.parent / 'Bibliography_base.bib'
         broken_citations = IssueDetector.check_broken_citations(content, bib_file)
-        for key in broken_citations:
+
+        # Also check Quarto-style @key citations
+        quarto_broken = IssueDetector.check_quarto_citations(content, bib_file)
+        # Merge both sets, avoiding duplicates
+        all_broken = set(broken_citations) | set(quarto_broken)
+        for key in all_broken:
             self.issues['critical'].append({
                 'type': 'broken_citation',
                 'description': f'Citation key not in bibliography: {key}',
@@ -290,6 +482,65 @@ class QualityScorer:
                 'type': 'missing_set_seed',
                 'description': 'Missing set.seed() for reproducibility',
                 'details': 'Add set.seed(YYYYMMDD) after library() calls',
+                'points': 10
+            })
+            self.score -= 10
+
+        self.score = max(0, self.score)
+        return self._generate_report()
+
+    def score_beamer(self) -> Dict:
+        """Score Beamer/LaTeX lecture slides."""
+        content = self.filepath.read_text(encoding='utf-8')
+
+        # Check for LaTeX syntax issues (without compiling)
+        syntax_issues = IssueDetector.check_latex_syntax(content)
+        if syntax_issues:
+            # Mismatched environments are treated as compilation risk
+            for issue in syntax_issues:
+                self.issues['critical'].append({
+                    'type': 'compilation_failure',
+                    'description': f'LaTeX syntax issue at line {issue["line"]}',
+                    'details': issue['description'],
+                    'points': 100
+                })
+            self.auto_fail = True
+            self.score = 0
+            return self._generate_report()
+
+        # Check for undefined/broken citations (\cite, \citep, \citet patterns)
+        bib_file = self.filepath.parent.parent / 'Bibliography_base.bib'
+        if not bib_file.exists():
+            # Also check same directory
+            bib_file = self.filepath.parent / 'Bibliography_base.bib'
+        broken_citations = IssueDetector.check_broken_citations(content, bib_file)
+        for key in broken_citations:
+            self.issues['critical'].append({
+                'type': 'undefined_citation',
+                'description': f'Citation key not in bibliography: {key}',
+                'details': 'Add to Bibliography_base.bib or fix key',
+                'points': 15
+            })
+            self.score -= 15
+
+        # Check for lines likely to cause overfull hbox
+        overfull_lines = IssueDetector.check_overfull_hbox_risk(content)
+        for line in overfull_lines:
+            self.issues['critical'].append({
+                'type': 'overfull_hbox',
+                'description': f'Potential overfull hbox at line {line}',
+                'details': 'Line >120 chars inside frame may overflow slide width',
+                'points': 10
+            })
+            self.score -= 10
+
+        # Check equation overflow (same heuristic as Quarto)
+        equation_overflows = IssueDetector.check_equation_overflow(content)
+        for line_num in equation_overflows:
+            self.issues['critical'].append({
+                'type': 'overfull_hbox',
+                'description': f'Potential equation overflow at line {line_num}',
+                'details': 'Single equation line >120 chars likely to overflow',
                 'points': 10
             })
             self.score -= 10
@@ -431,6 +682,9 @@ Examples:
   # Score multiple files
   python scripts/quality_score.py Quarto/*.qmd
 
+  # Score a Beamer/LaTeX file
+  python scripts/quality_score.py Slides/Lecture01_Topic.tex
+
   # Score an R script
   python scripts/quality_score.py scripts/R/Lecture06_simulations.R
 
@@ -475,6 +729,8 @@ Exit Codes:
                 report = scorer.score_quarto()
             elif filepath.suffix == '.R':
                 report = scorer.score_r_script()
+            elif filepath.suffix == '.tex':
+                report = scorer.score_beamer()
             else:
                 print(f"Error: Unsupported file type: {filepath.suffix}")
                 continue

@@ -3,6 +3,7 @@ name: commit
 description: Stage, commit, create PR, and merge to main. Use for the standard commit-PR-merge cycle.
 disable-model-invocation: true
 argument-hint: "[optional: commit message]"
+allowed-tools: ["Bash", "Read", "Glob"]
 ---
 
 # Commit, PR, and Merge
@@ -40,8 +41,6 @@ If `$ARGUMENTS` is provided, use it as the commit message. Otherwise, analyze th
 ```bash
 git commit -m "$(cat <<'EOF'
 <commit message here>
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 EOF
 )"
 ```

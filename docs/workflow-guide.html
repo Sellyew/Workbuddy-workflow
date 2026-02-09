@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -2412,7 +2412,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#why-planning-matters" id="toc-why-planning-matters" class="nav-link" data-scroll-target="#why-planning-matters"><span class="header-section-number">5.1.1</span> Why Planning Matters</a></li>
   <li><a href="#the-protocol" id="toc-the-protocol" class="nav-link" data-scroll-target="#the-protocol"><span class="header-section-number">5.1.2</span> The Protocol</a></li>
-  <li><a href="#context-preservation-never-clear" id="toc-context-preservation-never-clear" class="nav-link" data-scroll-target="#context-preservation-never-clear"><span class="header-section-number">5.1.3</span> Context Preservation: Never /clear</a></li>
+  <li><a href="#context-preservation-prefer-auto-compression" id="toc-context-preservation-prefer-auto-compression" class="nav-link" data-scroll-target="#context-preservation-prefer-auto-compression"><span class="header-section-number">5.1.3</span> Context Preservation: Prefer Auto-Compression</a></li>
   <li><a href="#session-logging" id="toc-session-logging" class="nav-link" data-scroll-target="#session-logging"><span class="header-section-number">5.1.4</span> Session Logging</a></li>
   </ul></li>
   <li><a href="#pattern-2-contractor-mode-orchestrator" id="toc-pattern-2-contractor-mode-orchestrator" class="nav-link" data-scroll-target="#pattern-2-contractor-mode-orchestrator"><span class="header-section-number">5.2</span> Pattern 2: Contractor Mode (Orchestrator)</a>
@@ -2434,6 +2434,15 @@ window.Quarto = {
   <li><a href="#when-to-use-parallel-agents" id="toc-when-to-use-parallel-agents" class="nav-link" data-scroll-target="#when-to-use-parallel-agents"><span class="header-section-number">5.9.1</span> When to Use Parallel Agents</a></li>
   <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works"><span class="header-section-number">5.9.2</span> How It Works</a></li>
   <li><a href="#practical-limits" id="toc-practical-limits" class="nav-link" data-scroll-target="#practical-limits"><span class="header-section-number">5.9.3</span> Practical Limits</a></li>
+  </ul></li>
+  <li><a href="#pattern-10-exploration" id="toc-pattern-10-exploration" class="nav-link" data-scroll-target="#pattern-10-exploration"><span class="header-section-number">5.10</span> Pattern 10: Research Exploration Workflow</a>
+  <ul class="collapse">
+  <li><a href="#the-problem-1" id="toc-the-problem-1" class="nav-link" data-scroll-target="#the-problem-1"><span class="header-section-number">5.10.1</span> The Problem</a></li>
+  <li><a href="#the-solution-exploration-folder" id="toc-the-solution-exploration-folder" class="nav-link" data-scroll-target="#the-solution-exploration-folder"><span class="header-section-number">5.10.2</span> The Solution: Exploration Folder</a></li>
+  <li><a href="#fast-track-vs.-plan-first" id="toc-fast-track-vs.-plan-first" class="nav-link" data-scroll-target="#fast-track-vs.-plan-first"><span class="header-section-number">5.10.3</span> Fast-Track vs. Plan-First</a></li>
+  <li><a href="#the-lifecycle" id="toc-the-lifecycle" class="nav-link" data-scroll-target="#the-lifecycle"><span class="header-section-number">5.10.4</span> The Lifecycle</a></li>
+  <li><a href="#simplified-orchestrator-for-research" id="toc-simplified-orchestrator-for-research" class="nav-link" data-scroll-target="#simplified-orchestrator-for-research"><span class="header-section-number">5.10.5</span> Simplified Orchestrator for Research</a></li>
+  <li><a href="#merge-only-quality-reporting" id="toc-merge-only-quality-reporting" class="nav-link" data-scroll-target="#merge-only-quality-reporting"><span class="header-section-number">5.10.6</span> Merge-Only Quality Reporting</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">6</span> Customizing for Your Domain</a>
@@ -3342,14 +3351,14 @@ APPROVED   NEEDS WORK
   +-- Step 7: Orchestrator takes over (see Pattern 2)
   +-- Step 8: Update session log + plan status to COMPLETED</code></pre>
 </section>
-<section id="context-preservation-never-clear" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="context-preservation-never-clear"><span class="header-section-number">5.1.3</span> Context Preservation: Never /clear</h3>
+<section id="context-preservation-prefer-auto-compression" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="context-preservation-prefer-auto-compression"><span class="header-section-number">5.1.3</span> Context Preservation: Prefer Auto-Compression</h3>
 <p>An important companion to plan-first development is context preservation. Claude Code has two ways to free context space:</p>
 <ul>
 <li><strong><code>/clear</code></strong> — destroys everything. All context, corrections, and reasoning are gone. Starting over from zero.</li>
 <li><strong>Auto-compression</strong> — Claude Code automatically compresses the conversation when it gets long. It keeps the most important context and discards redundant detail. This is graceful degradation.</li>
 </ul>
-<p>The rule is simple: <strong>never use <code>/clear</code></strong>. Let auto-compression do its job. And as a safety net, always save plans and important decisions to files on disk, where they cannot be compressed away.</p>
+<p>The rule: <strong>avoid <code>/clear</code></strong> — prefer auto-compression. Use <code>/clear</code> only when context is genuinely polluted (e.g., a large irrelevant file was read by mistake, or you explored the wrong branch). Always save important context to disk first. As a safety net, plans and important decisions live in files on disk, where they cannot be compressed away.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3534,7 +3543,7 @@ APPROVED   NEEDS WORK
   +-- Phase 3: Draft Beamer slides
   +-- Phase 4: Generate R figures
   +-- Phase 5: Polish and verify
-  |     +-- /substance-review (domain correctness)
+  |     +-- /slide-excellence (domain + visual + pedagogy)
   |     +-- /proofread (grammar/typos)
   |     +-- /visual-audit (layout)
   +-- Phase 6: Deploy
@@ -3695,6 +3704,80 @@ Phase 4: Only then extend
 <p>Parallel agents multiply token usage. For cost-sensitive tasks, run the expensive work (Opus agents) sequentially and the cheap work (Sonnet agents) in parallel. The orchestrator already does this: it runs Sonnet-level reviewers in parallel, then the Opus-level critic sequentially.</p>
 </div>
 </div>
+</section>
+</section>
+<section id="pattern-10-exploration" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="pattern-10-exploration"><span class="header-section-number">5.10</span> Pattern 10: Research Exploration Workflow</h2>
+<p>Research projects need a different rhythm than course materials. Ideas are uncertain, experiments may fail, and code is often written to answer a question, not to ship. The <strong>exploration workflow</strong> provides a structured sandbox for this kind of work.</p>
+<section id="the-problem-1" class="level3" data-number="5.10.1">
+<h3 data-number="5.10.1" class="anchored" data-anchor-id="the-problem-1"><span class="header-section-number">5.10.1</span> The Problem</h3>
+<p>Without structure, experimental code scatters across the repository: analysis scripts in <code>scripts/</code>, test files in root, comparison documents in <code>quality_reports/</code>. After a week of exploration, the repo is cluttered with files that may or may not be useful, and nobody remembers which version was the good one.</p>
+</section>
+<section id="the-solution-exploration-folder" class="level3" data-number="5.10.2">
+<h3 data-number="5.10.2" class="anchored" data-anchor-id="the-solution-exploration-folder"><span class="header-section-number">5.10.2</span> The Solution: Exploration Folder</h3>
+<p>All experimental work goes into <code>explorations/</code> first:</p>
+<pre><code>explorations/
+├── [active-project]/
+│   ├── README.md           # Goal, hypotheses, status
+│   ├── R/                  # Code iterations (_v1, _v2)
+│   ├── scripts/            # Test scripts
+│   └── output/             # Results
+└── ARCHIVE/
+    ├── completed_[name]/   # Graduated to production
+    └── abandoned_[name]/   # Documented why stopped</code></pre>
+</section>
+<section id="fast-track-vs.-plan-first" class="level3" data-number="5.10.3">
+<h3 data-number="5.10.3" class="anchored" data-anchor-id="fast-track-vs.-plan-first"><span class="header-section-number">5.10.3</span> Fast-Track vs. Plan-First</h3>
+<p>The decision tree is simple:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Answer</th>
+<th>Workflow</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“Will this ship?”</td>
+<td>YES</td>
+<td>Plan-First (80/100 quality)</td>
+</tr>
+<tr class="even">
+<td>“Am I testing an idea?”</td>
+<td>YES</td>
+<td>Fast-Track (60/100 quality)</td>
+</tr>
+<tr class="odd">
+<td>“Does this improve the project?”</td>
+<td>NO</td>
+<td>Don’t build it</td>
+</tr>
+</tbody>
+</table>
+<p>Fast-Track explorations skip formal planning. Instead, a 2-minute <strong>research value check</strong> gates the work: “Does this improve the paper/slides/analysis?” If the answer is “maybe”, explore. If “no”, skip. If “yes”, use Plan-First rigor.</p>
+</section>
+<section id="the-lifecycle" class="level3" data-number="5.10.4">
+<h3 data-number="5.10.4" class="anchored" data-anchor-id="the-lifecycle"><span class="header-section-number">5.10.4</span> The Lifecycle</h3>
+<pre><code>Research value check (2 min)
+  ↓
+Create explorations/[project]/ (5 min)
+  ↓
+Code without overhead (60/100 quality)
+  ↓
+Decision point (1-2 hours):
+  ├── Graduate → Move to R/, scripts/, tests/ (upgrade to 80/100)
+  ├── Keep exploring → Stay in explorations/
+  └── Abandon → Archive with brief explanation</code></pre>
+<p>The <strong>kill switch</strong> is explicit: at any point, you can stop, archive with a one-paragraph explanation, and move on. No guilt, no sunk cost. See <code>.claude/rules/exploration-folder-protocol.md</code> and <code>.claude/rules/exploration-fast-track.md</code> for the full protocols.</p>
+</section>
+<section id="simplified-orchestrator-for-research" class="level3" data-number="5.10.5">
+<h3 data-number="5.10.5" class="anchored" data-anchor-id="simplified-orchestrator-for-research"><span class="header-section-number">5.10.5</span> Simplified Orchestrator for Research</h3>
+<p>The full orchestrator (Pattern 2) is designed for course materials with multi-agent review loops. For research projects, the <strong>simple variant</strong> strips this down to: implement → verify → score → done. No multi-round reviews, no parallel agent spawning. See the “Research Project Variant” section in <code>.claude/rules/orchestrator-protocol.md</code>.</p>
+</section>
+<section id="merge-only-quality-reporting" class="level3" data-number="5.10.6">
+<h3 data-number="5.10.6" class="anchored" data-anchor-id="merge-only-quality-reporting"><span class="header-section-number">5.10.6</span> Merge-Only Quality Reporting</h3>
+<p>In research projects, commits are frequent and incremental. Generating a quality report for each commit creates noise. Instead, quality reports are generated <strong>only at merge time</strong> — a permanent snapshot of what was merged and why. Session logs capture the ongoing reasoning. See <code>.claude/rules/session-logging.md</code>.</p>
 <hr>
 </section>
 </section>
@@ -3703,26 +3786,26 @@ Phase 4: Only then extend
 <h1 data-number="6"><span class="header-section-number">6</span> Customizing for Your Domain</h1>
 <section id="step-1-build-your-knowledge-base" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="step-1-build-your-knowledge-base"><span class="header-section-number">6.1</span> Step 1: Build Your Knowledge Base</h2>
-<p>The knowledge base (<code>.claude/rules/knowledge-base-template.md</code>) is the most domain-specific component. It has three sections:</p>
+<p>The knowledge base (<code>.claude/rules/knowledge-base-template.md</code>) is the most domain-specific component. For <strong>courses</strong>, it has sections for notation, lecture progression, applications, and design principles. For <strong>research projects</strong>, Section 5 adds templates for estimand registries, mathematical objects, DGP configurations, tolerance thresholds, and output directory structure.</p>
 <section id="notation-registry" class="level3" data-number="6.1.1">
 <h3 data-number="6.1.1" class="anchored" data-anchor-id="notation-registry"><span class="header-section-number">6.1.1</span> Notation Registry</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="applications-database" class="level3" data-number="6.1.2">
 <h3 data-number="6.1.2" class="anchored" data-anchor-id="applications-database"><span class="header-section-number">6.1.2</span> Applications Database</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="validated-design-principles" class="level3" data-number="6.1.3">
 <h3 data-number="6.1.3" class="anchored" data-anchor-id="validated-design-principles"><span class="header-section-number">6.1.3</span> Validated Design Principles</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="step-2-create-your-domain-reviewer" class="level2" data-number="6.2">
@@ -3741,7 +3824,7 @@ Phase 4: Only then extend
 <section id="step-4-add-project-specific-skills" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="step-4-add-project-specific-skills"><span class="header-section-number">6.4</span> Step 4: Add Project-Specific Skills</h2>
 <p>If you have recurring workflows, create new skills:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then create <code>SKILL.md</code> with YAML frontmatter + step-by-step instructions.</p>
 </section>
 <section id="tips-from-6-sessions-of-iteration" class="level2" data-number="6.5">
@@ -3997,7 +4080,22 @@ Phase 4: Only then extend
 <tr class="odd">
 <td>Orchestrator Protocol</td>
 <td><code>.claude/rules/orchestrator-protocol.md</code></td>
-<td>Contractor mode: autonomous implement-verify-review-fix loop</td>
+<td>Contractor mode: full loop (slides) or simple loop (research)</td>
+</tr>
+<tr class="even">
+<td>Exploration Folder</td>
+<td><code>.claude/rules/exploration-folder-protocol.md</code></td>
+<td>Structured sandbox for experimental work</td>
+</tr>
+<tr class="odd">
+<td>Exploration Fast-Track</td>
+<td><code>.claude/rules/exploration-fast-track.md</code></td>
+<td>Lightweight workflow for explorations (60/100 threshold)</td>
+</tr>
+<tr class="even">
+<td>Session Logging</td>
+<td><code>.claude/rules/session-logging.md</code></td>
+<td>Enhanced logging with structured templates + merge-only reporting</td>
 </tr>
 </tbody>
 </table>
