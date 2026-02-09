@@ -62,6 +62,12 @@ Claude Code is a **CLI tool** that runs on your computer with full access to you
 This workflow was developed over 6+ sessions building a PhD course on Causal Panel Data. The result: 6 complete lectures (140+ slides each), with Beamer + Quarto versions, interactive Plotly charts, TikZ diagrams, and R replication scripts --- all managed by the orchestrator and reviewed by 10 specialized agents across 5 quality dimensions.
 :::
 
+::: {.callout-note}
+## You Don't Need All of This on Day One
+
+This guide describes the full system --- 10 agents, 19 skills, 17 rules. That is the ceiling, not the floor. **Start with just CLAUDE.md and 2--3 skills** (`/compile-latex`, `/proofread`, `/commit`). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you're ready.
+:::
+
 ---
 
 # The System in Action {#sec-system}
@@ -260,8 +266,28 @@ Add any additional tools you use (e.g., `python3`, `julia`, `pandoc`).
 /proofread Slides/MyFirstLecture.tex
 
 # Test 3: Does the quality score work?
-python scripts/quality_score.py Quarto/MyFile.qmd
+python scripts/quality_score.py Slides/MyFirstLecture.tex
 ```
+
+## Your First Session {#sec-first-session}
+
+Once the setup tests pass, start your first real session by giving Claude a prompt like this. Copy it, fill in the **bolded placeholders**, and paste it into Claude Code:
+
+::: {.callout-tip appearance="simple"}
+## Starter Prompt
+
+I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2--3 sentences --- what you're building, who it's for, what tools you use (e.g., LaTeX/Beamer, R, Quarto).]**
+
+I want our collaboration to be structured, precise, and rigorous --- even if it takes more time. When creating visuals, everything must be polished and publication-ready. I don't want to repeat myself, so our workflow should be smart about remembering decisions and learning from corrections.
+
+I've set up the Claude Code academic workflow from `pedrohcgs/claude-code-my-workflow`. The configuration files are already in this repo (`.claude/`, `CLAUDE.md`, templates, scripts). Please read them, understand the workflow, and then **update all configuration files to fit my project** --- fill in placeholders in `CLAUDE.md`, adjust rules if needed, and propose any customizations specific to my use case.
+
+After that, use the plan-first workflow for all non-trivial tasks. Once I approve a plan, switch to contractor mode --- coordinate everything autonomously and only come back to me when there's ambiguity or a decision to make. For our first few sessions, check in with me a bit more often so I can learn how the workflow operates.
+
+Enter plan mode and start by adapting the workflow configuration for this project.
+:::
+
+**What this does:** Claude will read `CLAUDE.md` and all the rules, fill in your project name, institution, Beamer environments, CSS classes, and project state table, then propose any rule adjustments for your specific use case. You approve the plan, and Claude handles the rest. From there, you just describe what you want to build.
 
 ---
 
@@ -269,22 +295,33 @@ python scripts/quality_score.py Quarto/MyFile.qmd
 
 Now that you have seen what the system does, here is how it is configured. Claude Code's power comes from five configuration layers that work together. Think of them as the operating system for your academic project.
 
-## CLAUDE.md --- Your Project's Brain
+## CLAUDE.md --- Your Project's Constitution
 
-`CLAUDE.md` is the single most important file. Claude reads it at the start of every session. It contains:
+`CLAUDE.md` is the single most important file. Claude reads it at the start of every session. But here is the critical insight: **Claude reliably follows about 100--150 custom instructions.** Your system prompt already uses ~50, leaving ~100--150 for your project. CLAUDE.md and always-on rules share this budget.
 
-- **Project overview** --- what you're building and why
+This means CLAUDE.md should be a **slim constitution** --- short directives and pointers, not comprehensive documentation. Aim for ~120 lines:
+
+- **Core principles** --- 4--5 bullets (plan-first, verify-after, quality gates, LEARN tags)
 - **Folder structure** --- where everything lives
-- **Available tools** --- what slash commands and agents exist
-- **Design principles** --- visual, pedagogical, and technical standards
-- **Current state** --- which lectures are done, what's in progress
-- **Workflow rules** --- how to compile, deploy, commit
+- **Commands** --- compilation, deployment, key tools
+- **Customization tables** --- Beamer environments, CSS classes
+- **Current state** --- what's done, what's in progress
+- **Skill quick reference** --- table of available slash commands
+
+Move everything else into `.claude/rules/` files (with path-scoping so they only load when relevant).
 
 ```markdown
 # CLAUDE.MD --- My Course Development
 
 **Project:** Econ 730 --- Causal Panel Data
 **Institution:** Emory University
+
+## Core Principles
+1. **Plan-first** — enter plan mode before non-trivial tasks
+2. **Verify-after** — compile/render and check before reporting done
+3. **Quality gates** — 80 to commit, 90 for PR, 95 for excellence
+4. **LEARN tags** — persist corrections in MEMORY.md
+5. **Single source of truth** — Beamer is authoritative; derive, don't duplicate
 
 ## Quick Reference
 | Command | What It Does |
@@ -295,45 +332,66 @@ Now that you have seen what the system does, here is how it is configured. Claud
 ```
 
 ::: {.callout-important}
-## Key Principle
+## Keep It Lean
 
-CLAUDE.md is Claude's **persistent memory**. If it's not in CLAUDE.md, Claude will forget it next session. Every design decision, naming convention, and workflow rule should be documented here.
+CLAUDE.md loads every session. If it exceeds ~150 lines, Claude starts ignoring rules silently. Put detailed standards in path-scoped rules (`.claude/rules/`) instead --- they only load when Claude works on matching files, so they don't compete for attention.
 :::
 
 ## Rules --- Domain Knowledge That Auto-Loads
 
-Rules are markdown files in `.claude/rules/` that Claude loads automatically based on context. They encode your project's standards:
+Rules are markdown files in `.claude/rules/` that Claude loads automatically. They encode your project's standards. The key design principle is **path-scoping**: rules with a `paths:` YAML frontmatter only load when Claude works on matching files.
+
+**Always-on rules** (no `paths:` frontmatter) load every session. Keep these few and lean:
 
 ```
 .claude/rules/
-+-- verification-protocol.md    # "Always verify output before reporting done"
-+-- quality-gates.md            # "Score must be 80+ to commit"
-+-- orchestrator-protocol.md    # "After plan approval, run the full loop"
-+-- r-code-conventions.md       # "Always use set.seed(), never hardcode paths"
-+-- tikz-visual-quality.md      # "No label overlaps, consistent colors"
-+-- beamer-quarto-sync.md       # "Every Beamer edit must sync to Quarto"
-+-- knowledge-base-template.md  # Your domain notation and conventions
+├── plan-first-workflow.md       # ~35 lines — plan before you build
+├── orchestrator-protocol.md     # ~40 lines — contractor mode loop
+└── session-logging.md           # ~22 lines — three logging triggers
 ```
+
+**Path-scoped rules** load only when relevant:
+
+```
+.claude/rules/
+├── r-code-conventions.md        # paths: ["**/*.R"] — R standards
+├── quality-gates.md             # paths: ["*.tex", "*.qmd", "*.R"] — scoring
+├── verification-protocol.md     # paths: ["*.tex", "*.qmd", "docs/"] — verify before done
+├── replication-protocol.md      # paths: ["scripts/**/*.R"] — replicate first
+├── exploration-folder-protocol.md  # paths: ["explorations/**"] — sandbox rules
+├── orchestrator-research.md     # paths: ["scripts/**/*.R", "explorations/**"] — simple loop
+└── ...14 path-scoped rules total
+```
+
+This design keeps always-on context under ~100 lines while providing rich, domain-specific guidance exactly when Claude needs it.
 
 **Why rules matter:** Without them, Claude will use generic defaults. With them, Claude follows *your* standards consistently across sessions.
 
-### Example: R Code Conventions Rule
+### Example: Path-Scoped R Code Conventions Rule
+
+```yaml
+---
+paths:
+  - "**/*.R"
+  - "Figures/**/*.R"
+  - "scripts/**/*.R"
+---
+```
 
 ```markdown
-# R Code Conventions
+# R Code Standards
 
-## Script Structure
-Every R script MUST have:
-1. Header block (title, author, date, description)
-2. Package loading (grouped by purpose)
-3. Single `set.seed(YYYYMMDD)` for reproducibility
-4. Named sections with `# ---- Section Name ----`
+## Reproducibility
+- set.seed() called ONCE at top (YYYYMMDD format)
+- All packages loaded at top via library()
+- All paths relative to repository root
 
-## Console Output
-- NO decorative banners or progress bars
-- Use `message()` for milestones only
-- Save results to RDS, not print to console
+## Visual Identity
+primary_blue  <- "#012169"
+primary_gold  <- "#f2a900"
 ```
+
+The `paths:` block means this rule only loads when Claude reads or edits an `.R` file. When Claude works on a `.tex` file, this rule doesn't consume any of the instruction budget.
 
 ## Skills --- Reusable Slash Commands
 
@@ -425,20 +483,29 @@ A single Claude prompt trying to check grammar, layout, math, and code simultane
 
 ### Multi-Model Strategy: Cost vs. Quality
 
-Not all agents need the same model. The YAML frontmatter in each agent file specifies which model to use:
+Not all agents need the same model. Each agent file has a `model:` field in its YAML frontmatter. By default, all agents use `model: inherit` (they use whatever model your main session runs). But you can customize this to optimize cost:
 
-| Task Type | Model | Why | Examples |
-|-----------|-------|-----|----------|
+| Task Type | Recommended Model | Why | Examples |
+|-----------|-------------------|-----|----------|
 | Complex translation | `model: opus` | Needs deep understanding of both formats | beamer-translator, quarto-critic |
 | Fast, constrained work | `model: sonnet` | Speed matters more than depth | r-reviewer, quarto-fixer |
 | Default | `model: inherit` | Uses whatever the main session runs | proofreader, slide-auditor |
 
 **The principle:** Use Opus for tasks that require holding two large documents in mind simultaneously (translation, adversarial comparison). Use Sonnet for tasks with clear, bounded scope (fix these 12 issues, check this R script). Let everything else inherit.
 
+To change an agent's model, edit its YAML frontmatter:
+
+```yaml
+---
+name: quarto-critic
+model: opus   # was: inherit
+---
+```
+
 ::: {.callout-tip}
 ## Cost Savings
 
-In a typical Beamer-to-Quarto translation, the critic runs 2--4 rounds on Opus while the fixer runs the same rounds on Sonnet. This saves roughly 40--60% compared to running everything on Opus, with no quality loss on the fixing step.
+If you configure model-per-agent, a typical Beamer-to-Quarto translation runs the critic on Opus (2--4 rounds) while the fixer runs on Sonnet (same rounds). This can save roughly 40--60% compared to running everything on Opus, with no quality loss on the fixing step.
 :::
 
 ## Settings --- Permissions and Hooks
@@ -918,7 +985,7 @@ The **kill switch** is explicit: at any point, you can stop, archive with a one-
 
 ### Simplified Orchestrator for Research
 
-The full orchestrator (Pattern 2) is designed for course materials with multi-agent review loops. For research projects, the **simple variant** strips this down to: implement → verify → score → done. No multi-round reviews, no parallel agent spawning. See the "Research Project Variant" section in `.claude/rules/orchestrator-protocol.md`.
+The full orchestrator (Pattern 2) is designed for course materials with multi-agent review loops. For research projects, the **simple variant** strips this down to: implement → verify → score → done. No multi-round reviews, no parallel agent spawning. This lives in its own path-scoped rule (`.claude/rules/orchestrator-research.md`) that loads only when working on R scripts or explorations.
 
 ### Merge-Only Quality Reporting
 
@@ -949,7 +1016,7 @@ A typical research project might flow: `/research-ideation` (what to study?) →
 
 ## Step 1: Build Your Knowledge Base
 
-The knowledge base (`.claude/rules/knowledge-base-template.md`) is the most domain-specific component. For **courses**, it has sections for notation, lecture progression, applications, and design principles. For **research projects**, Section 5 adds templates for estimand registries, mathematical objects, DGP configurations, tolerance thresholds, and output directory structure.
+The knowledge base (`.claude/rules/knowledge-base-template.md`) is the most domain-specific component. It provides skeleton tables for notation conventions, lecture progression, applications, design principles, anti-patterns, and R code pitfalls. Fill them in as you develop your project --- you don't need everything upfront.
 
 ### Notation Registry
 
@@ -983,7 +1050,7 @@ Copy `.claude/agents/domain-reviewer.md` and customize the 5 lenses for your fie
 
 ## Step 3: Adapt Your Theme
 
-The template includes `emory-clean.scss` as an example Quarto theme. To customize:
+The template includes an example Quarto theme SCSS file. To customize:
 
 1. Change the color palette to your institution's colors
 2. Update CSS class names if needed
@@ -1001,13 +1068,14 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 
 ## Tips from 6+ Sessions of Iteration
 
-1. **Start with CLAUDE.md.** It's the foundation. Spend 30 minutes making it thorough.
-2. **Add rules incrementally.** Don't try to write all rules upfront. Add them when you discover patterns.
-3. **Use the [LEARN] format.** Every correction Pedro made was tagged and persisted. This prevents repeating mistakes.
+1. **Keep CLAUDE.md under 150 lines.** Claude follows ~150 instructions reliably. A 400-line CLAUDE.md means rules get silently ignored. Use path-scoped rules for detailed standards.
+2. **Add rules incrementally.** Don't try to write all rules upfront. Add them when you discover patterns. Use `paths:` frontmatter so they only load when relevant.
+3. **Use the [LEARN] format.** Every correction gets tagged and persisted in MEMORY.md. This prevents repeating mistakes across sessions.
 4. **Trust the adversarial pattern.** The critic-fixer loop catches things you won't. Let it run.
 5. **Verify everything.** The verification rule exists for a reason. Never skip compilation or rendering checks.
 6. **Session logs matter.** Document design decisions, not just what changed. Future-you will thank present-you.
 7. **Devil's Advocate early.** Challenge slide structure before you've built 50 slides on a shaky foundation.
+8. **Progressive disclosure.** Start with CLAUDE.md + 2--3 rules. Add more as your workflow matures. Newcomers should not face 17 rules on day one.
 
 ---
 
@@ -1046,30 +1114,46 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 | `/devils-advocate` | `.claude/skills/devils-advocate/` | Design challenge questions |
 | `/create-lecture` | `.claude/skills/create-lecture/` | Full lecture creation |
 | `/commit` | `.claude/skills/commit/` | Stage, commit, PR, and merge |
+| `/lit-review` | `.claude/skills/lit-review/` | Literature search and synthesis |
+| `/research-ideation` | `.claude/skills/research-ideation/` | Research questions and strategies |
+| `/interview-me` | `.claude/skills/interview-me/` | Interactive research interview |
+| `/review-paper` | `.claude/skills/review-paper/` | Manuscript review |
+| `/data-analysis` | `.claude/skills/data-analysis/` | End-to-end R analysis |
 
 ## All Rules
 
+**Always-on** (load every session):
+
 | Rule | File | Purpose |
 |------|------|---------|
-| Verification Protocol | `.claude/rules/verification-protocol.md` | Task completion checklist |
-| Single Source of Truth | `.claude/rules/single-source-of-truth.md` | No duplication principle |
-| Quality Gates | `.claude/rules/quality-gates.md` | 80/90/95 scoring thresholds |
-| R Code Conventions | `.claude/rules/r-code-conventions.md` | R coding standards |
-| TikZ Quality | `.claude/rules/tikz-visual-quality.md` | Diagram standards |
-| Beamer-Quarto Sync | `.claude/rules/beamer-quarto-sync.md` | Auto-sync rule |
-| PDF Processing | `.claude/rules/pdf-processing.md` | Safe PDF handling |
-| Proofreading Protocol | `.claude/rules/proofreading-protocol.md` | Review workflow |
-| No Pause | `.claude/rules/no-pause-beamer.md` | No overlay commands |
-| Replication Protocol | `.claude/rules/replication-protocol.md` | Replicate-first workflow |
-| Knowledge Base | `.claude/rules/knowledge-base-template.md` | Domain notation template |
-| Plan-First Workflow | `.claude/rules/plan-first-workflow.md` | Plan mode, plan saving, context preservation, session logging |
-| Orchestrator Protocol | `.claude/rules/orchestrator-protocol.md` | Contractor mode: full loop (slides) or simple loop (research) |
-| Exploration Folder | `.claude/rules/exploration-folder-protocol.md` | Structured sandbox for experimental work |
-| Exploration Fast-Track | `.claude/rules/exploration-fast-track.md` | Lightweight workflow for explorations (60/100 threshold) |
-| Session Logging | `.claude/rules/session-logging.md` | Enhanced logging with structured templates + merge-only reporting |
+| Plan-First Workflow | `plan-first-workflow.md` | Plan mode + context preservation |
+| Orchestrator Protocol | `orchestrator-protocol.md` | Contractor mode loop |
+| Session Logging | `session-logging.md` | Three logging triggers |
+
+**Path-scoped** (load only when working on matching files):
+
+| Rule | File | Triggers On |
+|------|------|------------|
+| Verification Protocol | `verification-protocol.md` | `.tex`, `.qmd`, `docs/` |
+| Single Source of Truth | `single-source-of-truth.md` | `Figures/`, `.tex`, `.qmd` |
+| Quality Gates | `quality-gates.md` | `.tex`, `.qmd`, `*.R` |
+| R Code Conventions | `r-code-conventions.md` | `*.R` |
+| TikZ Quality | `tikz-visual-quality.md` | `.tex` |
+| Beamer-Quarto Sync | `beamer-quarto-sync.md` | `.tex`, `.qmd` |
+| PDF Processing | `pdf-processing.md` | `master_supporting_docs/` |
+| Proofreading Protocol | `proofreading-protocol.md` | `.tex`, `.qmd`, `quality_reports/` |
+| No Pause | `no-pause-beamer.md` | `.tex` |
+| Replication Protocol | `replication-protocol.md` | `*.R` |
+| Knowledge Base | `knowledge-base-template.md` | `.tex`, `.qmd`, `*.R` |
+| Orchestrator Research | `orchestrator-research.md` | `*.R`, `explorations/` |
+| Exploration Folder | `exploration-folder-protocol.md` | `explorations/` |
+| Exploration Fast-Track | `exploration-fast-track.md` | `explorations/` |
 
 ## Hooks
 
 | Hook | Type | Configuration |
 |------|------|--------------|
 | Session log reminder | Stop (command) | `scripts/log-reminder.py` |
+| Desktop notification | Notification (command) | `.claude/hooks/notify.sh` |
+| File protection | PreToolUse (command) | `.claude/hooks/protect-files.sh` |
+| Context snapshot | PreCompact (command) | `.claude/hooks/pre-compact.sh` |

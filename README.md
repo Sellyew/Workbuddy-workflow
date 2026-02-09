@@ -19,7 +19,7 @@ This repository provides the **transportable infrastructure** behind a Claude Co
 - **Research exploration workflow** with structured sandbox, fast-track prototyping, and simplified orchestrator
 - **Research skills** — `/lit-review`, `/research-ideation`, `/interview-me`, `/review-paper`, `/data-analysis`
 - **Smart hooks** — desktop notifications, file protection, pre-compaction context snapshots
-- 10 specialized agents, 19 slash commands, 16 auto-loaded rules
+- 10 specialized agents, 19 slash commands, 17 context-aware rules (3 always-on + 14 path-scoped)
 
 All domain-specific content has been replaced with `[PLACEHOLDER]` markers and `<!-- Customize -->` comments so you can adapt it to your field.
 
@@ -57,7 +57,7 @@ Open `CLAUDE.md` and fill in:
 - Your folder structure (or keep the default)
 - Your design principles and preferences
 
-**Tip:** Keep CLAUDE.md under ~150 lines for best results. Move detailed instructions into `.claude/rules/` files instead.
+**Tip:** Keep CLAUDE.md under ~150 lines for best results — Claude reliably follows ~150 custom instructions. Move detailed instructions into `.claude/rules/` files with `paths:` frontmatter so they only load when relevant.
 
 ### 3. Create Your Knowledge Base
 
@@ -135,24 +135,36 @@ Features for research projects (papers, simulations, empirical analysis):
 
 ### Rules (`.claude/rules/`)
 
+Rules use path-scoped loading: **always-on** rules load every session (~100 lines total); **path-scoped** rules load only when Claude works on matching files. This keeps context lean — Claude follows ~150 instructions reliably, so less is more.
+
+**Always-on** (no `paths:` frontmatter — load every session):
+
 | Rule | What It Enforces |
 |------|-----------------|
-| `verification-protocol` | Task completion checklist (compile, verify, report) |
-| `single-source-of-truth` | No content duplication; Beamer is authoritative |
-| `quality-gates` | 80/90/95 scoring + merge-only reporting + tolerance thresholds |
-| `r-code-conventions` | R coding standards + mathematical line-length exception |
-| `tikz-visual-quality` | TikZ diagram visual standards |
-| `beamer-quarto-sync` | Auto-sync every Beamer edit to Quarto |
-| `pdf-processing` | Safe large PDF handling (split, chunk, process) |
-| `proofreading-protocol` | Propose-first, then apply with approval |
-| `no-pause-beamer` | No overlay commands in Beamer |
-| `replication-protocol` | Replicate original results before extending |
-| `knowledge-base-template` | Notation/application registry (course + research variants) |
 | `plan-first-workflow` | Plan mode for non-trivial tasks + context preservation |
-| `orchestrator-protocol` | Contractor mode: full loop (slides) or simple loop (research) |
-| `exploration-folder-protocol` | Structured sandbox for experimental work |
-| `exploration-fast-track` | Lightweight workflow for explorations (60/100 threshold) |
-| `session-logging` | Enhanced logging with structured templates |
+| `orchestrator-protocol` | Contractor mode: implement → verify → review → fix → score |
+| `session-logging` | Three logging triggers: post-plan, incremental, end-of-session |
+
+**Path-scoped** (load only when working on matching files):
+
+| Rule | Triggers On | What It Enforces |
+|------|------------|-----------------|
+| `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
+| `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
+| `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
+| `r-code-conventions` | `*.R` | R coding standards + math line-length exception |
+| `tikz-visual-quality` | `.tex` | TikZ diagram visual standards |
+| `beamer-quarto-sync` | `.tex`, `.qmd` | Auto-sync Beamer edits to Quarto |
+| `pdf-processing` | `master_supporting_docs/` | Safe large PDF handling |
+| `proofreading-protocol` | `.tex`, `.qmd`, `quality_reports/` | Propose-first, then apply with approval |
+| `no-pause-beamer` | `.tex` | No overlay commands in Beamer |
+| `replication-protocol` | `*.R` | Replicate original results before extending |
+| `knowledge-base-template` | `.tex`, `.qmd`, `*.R` | Notation/application registry template |
+| `orchestrator-research` | `*.R`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
+| `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
+| `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
+
+**Templates** (`templates/`) — reference formats for session logs, quality reports, and exploration READMEs. Not auto-loaded.
 
 ---
 
@@ -162,12 +174,11 @@ For a comprehensive walkthrough of the entire workflow, read the **[full guide](
 
 It covers:
 1. **Why This Workflow Exists** — the problem and the vision
-2. **The Building Blocks** — CLAUDE.md, rules, skills, agents, settings, memory
-3. **Setting Up Your Project** — step-by-step from fork to first compile
-4. **The Agent Ecosystem** — why specialized agents beat one-size-fits-all prompts
-5. **Quality Gates & Verification** — the 80/90/95 scoring system
-6. **Workflow Patterns** — lecture creation, translation, replication, multi-agent review, research exploration
-7. **Customizing for Your Domain** — creating your own reviewers and knowledge bases
+2. **The System in Action** — what a session looks like, before and after
+3. **Setting Up Your Project** — step-by-step from fork to first compile, plus a starter prompt
+4. **The Building Blocks** — CLAUDE.md, rules, skills, agents, hooks, memory
+5. **Workflow Patterns** — lecture creation, translation, replication, multi-agent review, research exploration
+6. **Customizing for Your Domain** — creating your own reviewers and knowledge bases
 
 ---
 
@@ -233,9 +244,9 @@ Claude saves session logs to `quality_reports/session_logs/`. A lightweight **St
 
 ## Adapting for Your Field
 
-1. **Fill in the knowledge base** (`.claude/rules/knowledge-base-template.md`) with your notation, applications, and design principles — use Section 5 (Research Project Variant) for papers
+1. **Fill in the knowledge base** (`.claude/rules/knowledge-base-template.md`) with your notation, applications, and design principles
 2. **Customize the domain reviewer** (`.claude/agents/domain-reviewer.md`) with review lenses specific to your field
-3. **Update the color palette** in `Quarto/emory-clean.scss` — change the 3 color variables at the top
+3. **Update the color palette** in your Quarto theme SCSS file — change the color variables at the top
 4. **Add field-specific R pitfalls** to `.claude/rules/r-code-conventions.md`
 5. **Fill in the lecture mapping** in `.claude/rules/beamer-quarto-sync.md`
 6. **Customize the workflow quick reference** (`.claude/WORKFLOW_QUICK_REF.md`) with your non-negotiables and preferences

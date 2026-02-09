@@ -3,15 +3,7 @@ paths:
   - "master_supporting_docs/**"
 ---
 
-# Robust PDF Processing Best Practices
-
-## Why PDFs Can Break the Code
-Large PDFs (>50 pages or >20MB) can cause:
-- Memory overflow errors
-- Token limit exceeded errors
-- Timeout failures during processing
-- Incomplete or corrupted text extraction
-- Session crashes requiring restart
+# Robust PDF Processing
 
 ## The Safe Processing Workflow
 
@@ -54,9 +46,8 @@ done
 
 **If a chunk fails to process:**
 1. Note the problematic chunk (e.g., "Chunk p021-025 failed")
-2. Try splitting it into even smaller pieces (1-2 pages each)
-3. If still failing, skip it and document the gap
-4. Continue with other chunks
+2. Try splitting into 1-2 page pieces
+3. If still failing, skip and document the gap
 
 **If splitting fails:**
 1. Check if Ghostscript is installed: `gs --version`
@@ -65,56 +56,5 @@ done
 
 **If memory/token issues persist:**
 1. Process only 2-3 chunks per session
-2. Use Task tool with Explore agent for large-scale scanning
-3. Focus on specific sections user identifies as most important
+2. Focus on specific sections user identifies as most important
 
-## Performance Optimization
-
-**For very large PDFs (>100 pages):**
-- Split into 3-page chunks instead of 5-page
-- Process only introduction, conclusion, and key sections initially
-- Ask user which sections matter most for slide development
-
-**For slide PDFs:**
-- Beamer/LaTeX slides often have 1 idea per page - 10-page chunks acceptable
-- PowerPoint exports might be image-heavy - stick to 5-page chunks
-- Check file size per chunk, not just page count
-
-**For papers with many figures:**
-- Figures increase PDF file size dramatically
-- A 5-page chunk might be 15MB if figure-heavy
-- Split figure-heavy sections into 2-3 page chunks
-
-## Quick Reference: PDF Processing Commands
-
-```bash
-# Check PDF info
-pdfinfo filename.pdf
-
-# Count pages
-pdfinfo filename.pdf | grep "Pages:" | awk '{print $2}'
-
-# Split with Ghostscript (5-page chunks)
-for i in {0..XX}; do
-  start=$((i*5 + 1))
-  end=$(((i+1)*5))
-  gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER \
-     -dFirstPage=$start -dLastPage=$end \
-     -sOutputFile="folder/name_p$(printf '%03d' $start)-$(printf '%03d' $end).pdf" \
-     filename.pdf
-done
-
-# Alternative: pdftk (if available)
-pdftk filename.pdf burst output folder/name_p%03d.pdf
-
-# Check chunk file sizes
-ls -lh folder/*.pdf
-```
-
-## When to Ask User for Help
-
-Claude should ask the user to:
-1. **Prioritize sections** - "This is a 200-page PDF. Which sections matter most?"
-2. **Provide page ranges** - "Could you identify the key pages covering [topic]?"
-3. **Upload subsections** - "If possible, could you export just the relevant chapter?"
-4. **Clarify focus** - "Should I focus on the theoretical framework or empirical results?"
