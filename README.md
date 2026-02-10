@@ -26,6 +26,8 @@ Replace `YOUR_USERNAME` with your GitHub username.
 claude
 ```
 
+**Using VS Code?** Open the Claude Code panel instead. Everything works the same — see the [full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-setup) for details.
+
 Then paste the following, filling in your project details:
 
 > I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2–3 sentences — what you're building, who it's for, what tools you use.]**

@@ -44,7 +44,7 @@ This workflow solves all of these problems. You describe what you want --- "tran
 
 ## What Makes Claude Code Different
 
-Claude Code is a **CLI tool** that runs on your computer with full access to your file system, terminal, and git. Here is what that enables:
+Claude Code runs on your computer with full access to your file system, terminal, and git. It works as a **CLI tool**, a **VS Code extension**, or through the **Claude Desktop app** --- same capabilities, same configuration, different interface. Here is what that enables:
 
 | Capability | What It Means for You |
 |-----------|----------------------|
@@ -87,6 +87,14 @@ Replace `YOUR_USERNAME` with your GitHub username.
 ## Step 2: Start Claude Code and Paste This Prompt {#sec-first-session}
 
 Open your terminal in the project directory, run `claude`, and paste the following. Fill in the **bolded placeholders** with your project details:
+
+::: {.callout-note collapse="true"}
+## Using VS Code or Claude Desktop instead of the terminal?
+
+Everything in this guide works the same in any Claude Code interface. In **VS Code**, open the Claude Code panel (click the Claude icon in the sidebar or press Cmd+Shift+P → "Claude Code: Open"). In **Claude Desktop**, open your project folder and start a local session. Then paste the starter prompt below.
+
+The guide shows terminal commands because they are the most universal way to explain things, but every skill, agent, hook, and rule works identically regardless of which interface you use.
+:::
 
 ::: {.callout-tip appearance="simple"}
 ## Starter Prompt
@@ -515,7 +523,7 @@ If you configure model-per-agent, a typical Beamer-to-Quarto translation runs th
       {
         "hooks": [{
           "type": "command",
-          "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/log-reminder.py\"",
+          "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-reminder.py",
           "timeout": 10
         }]
       }
@@ -562,7 +570,7 @@ See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
 Git commits record what changed, but not *why*. Session logs fill this gap. Claude writes to `quality_reports/session_logs/` at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning *as it happens*, before auto-compression can discard it.
 
-Because relying on instructions alone is fragile (Claude forgets during long sessions), a **Stop hook** (`scripts/log-reminder.py`) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.
+Because relying on instructions alone is fragile (Claude forgets during long sessions), a **Stop hook** (`.claude/hooks/log-reminder.py`) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.
 
 New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in [Workflow Patterns](#sec-patterns) for the full protocol.
 
@@ -1148,7 +1156,7 @@ Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
 
 | Hook | Type | Configuration |
 |------|------|--------------|
-| Session log reminder | Stop (command) | `scripts/log-reminder.py` |
+| Session log reminder | Stop (command) | `.claude/hooks/log-reminder.py` |
 | Desktop notification | Notification (command) | `.claude/hooks/notify.sh` |
 | File protection | PreToolUse (command) | `.claude/hooks/protect-files.sh` |
 | Context snapshot | PreCompact (command) | `.claude/hooks/pre-compact.sh` |

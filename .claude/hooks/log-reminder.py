@@ -9,7 +9,7 @@ and reminds it to update the session log.
 Adapted from: https://gist.github.com/michaelewens/9a1bc5a97f3f9bbb79453e5b682df462
 
 Usage (in .claude/settings.json):
-    "Stop": [{ "hooks": [{ "type": "command", "command": "python3 scripts/log-reminder.py" }] }]
+    "Stop": [{ "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-reminder.py" }] }]
 """
 
 import json

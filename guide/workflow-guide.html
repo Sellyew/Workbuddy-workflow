@@ -2508,7 +2508,7 @@ window.Quarto = {
 </section>
 <section id="what-makes-claude-code-different" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="what-makes-claude-code-different"><span class="header-section-number">1.2</span> What Makes Claude Code Different</h2>
-<p>Claude Code is a <strong>CLI tool</strong> that runs on your computer with full access to your file system, terminal, and git. Here is what that enables:</p>
+<p>Claude Code runs on your computer with full access to your file system, terminal, and git. It works as a <strong>CLI tool</strong>, a <strong>VS Code extension</strong>, or through the <strong>Claude Desktop app</strong> — same capabilities, same configuration, different interface. Here is what that enables:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -2593,6 +2593,23 @@ window.Quarto = {
 <section id="sec-first-session" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-first-session"><span class="header-section-number">2.2</span> Step 2: Start Claude Code and Paste This Prompt</h2>
 <p>Open your terminal in the project directory, run <code>claude</code>, and paste the following. Fill in the <strong>bolded placeholders</strong> with your project details:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Using VS Code or Claude Desktop instead of the terminal?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Everything in this guide works the same in any Claude Code interface. In <strong>VS Code</strong>, open the Claude Code panel (click the Claude icon in the sidebar or press Cmd+Shift+P → “Claude Code: Open”). In <strong>Claude Desktop</strong>, open your project folder and start a local session. Then paste the starter prompt below.</p>
+<p>The guide shows terminal commands because they are the most universal way to explain things, but every skill, agent, hook, and rule works identically regardless of which interface you use.</p>
+</div>
+</div>
+</div>
 <div class="callout callout-style-simple callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2616,7 +2633,7 @@ window.Quarto = {
 <h2 data-number="2.3" class="anchored" data-anchor-id="optional-manual-setup"><span class="header-section-number">2.3</span> Optional: Manual Setup</h2>
 <p>If you prefer to configure things yourself instead of letting Claude handle it:</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2625,7 +2642,7 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Customize CLAUDE.md</strong> — Open <code>CLAUDE.md</code> and replace all <code>[BRACKETED PLACEHOLDERS]</code>:</p>
 <ol type="1">
@@ -3236,7 +3253,7 @@ APPROVED   NEEDS WORK
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR/scripts/log-reminder.py</span><span class="ch">\&quot;</span><span class="st">&quot;</span><span class="fu">,</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\&quot;</span><span class="st">/.claude/hooks/log-reminder.py&quot;</span><span class="fu">,</span></span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">10</span></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">]</span></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
@@ -3272,7 +3289,7 @@ APPROVED   NEEDS WORK
 <section id="session-logs-why-not-just-what-history-with-automated-reminders" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="session-logs-why-not-just-what-history-with-automated-reminders"><span class="header-section-number">4.6.2</span> Session Logs — Why-Not-Just-What History (with Automated Reminders)</h3>
 <p>Git commits record what changed, but not <em>why</em>. Session logs fill this gap. Claude writes to <code>quality_reports/session_logs/</code> at three points: right after plan approval, incrementally during implementation (as decisions happen), and at session end. This means the log captures reasoning <em>as it happens</em>, before auto-compression can discard it.</p>
-<p>Because relying on instructions alone is fragile (Claude forgets during long sessions), a <strong>Stop hook</strong> (<code>scripts/log-reminder.py</code>) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.</p>
+<p>Because relying on instructions alone is fragile (Claude forgets during long sessions), a <strong>Stop hook</strong> (<code>.claude/hooks/log-reminder.py</code>) fires after every response. It tracks how many responses have passed since the session log was last updated. After a threshold, it blocks Claude from stopping until the log is current. This turns a best practice into an enforced behavior.</p>
 <p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 </section>
 <section id="how-it-all-fits-together" class="level3" data-number="4.6.3">
@@ -4310,7 +4327,7 @@ Decision point (1-2 hours):
 <tr class="odd">
 <td>Session log reminder</td>
 <td>Stop (command)</td>
-<td><code>scripts/log-reminder.py</code></td>
+<td><code>.claude/hooks/log-reminder.py</code></td>
 </tr>
 <tr class="even">
 <td>Desktop notification</td>
