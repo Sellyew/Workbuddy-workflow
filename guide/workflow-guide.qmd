@@ -1144,15 +1144,129 @@ The template includes an example Quarto theme SCSS file. To customize:
 2. Update CSS class names if needed
 3. Modify the beamer-translator environment mapping to match your classes
 
-## Step 4: Add Project-Specific Skills
+## Step 4: Creating Custom Skills {#sec-create-skills}
 
-If you have recurring workflows, create new skills:
+The guide includes 19 skills for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.
 
-```bash
-mkdir -p .claude/skills/my-new-skill
+### When to Create a Skill
+
+Create a skill when:
+- You repeatedly explain the same 3+ step workflow to Claude
+- You need domain-specific quality checks (citation style, notation consistency, lab protocols)
+- You enforce field-specific output formats (thesis structure, journal templates)
+- You coordinate multi-tool workflows (data → analysis → manuscript)
+
+**Don't create a skill for:**
+- One-time tasks
+- Workflows that change frequently
+- Simple 1-2 step operations
+
+### Skill Structure
+
+Each skill is a directory in `.claude/skills/` with a `SKILL.md` file:
+
+```markdown
+---
+name: your-skill-name
+description: [What it does] + [When to use] + [Key capabilities]
+argument-hint: "[brief hint for user]"
+allowed-tools: ["Read", "Write", "Edit", "Bash", "Task"]
+---
+
+# Your Skill Name
+
+## Instructions
+Step 1: [First action with details]
+Step 2: [Second action]
+...
+
+## Examples
+Example 1: [Common scenario]
+...
+
+## Troubleshooting
+Error: [Common error]
+Solution: [How to fix]
 ```
 
-Then create `SKILL.md` with YAML frontmatter + step-by-step instructions.
+### Writing Effective Trigger Descriptions
+
+The `description` field determines when Claude loads your skill. Use specific trigger phrases users would actually say:
+
+**Good (Citation Style Enforcement):**
+```yaml
+description: Enforces APA 7th edition citation format. Use when user asks to "check citations", "fix references", "apply APA style", or when reviewing .tex/.qmd files with bibliographies.
+```
+
+**Good (Lab Notebook Entry):**
+```yaml
+description: Generates structured lab notebook entries from experimental notes. Use when user provides "experiment notes", "protocol results", or asks to "format lab entry".
+```
+
+**Bad (Too Vague):**
+```yaml
+description: Helps with citations
+```
+
+### Domain-Specific Examples
+
+::: {.panel-tabset}
+
+#### Econometrics
+
+**Regression Output Formatter**
+
+Converts R regression outputs to publication-ready LaTeX tables with proper formatting (standard errors in parentheses, significance stars, fixed effects rows).
+
+**Trigger:** User runs regressions and says "make a table", "format results", "export to LaTeX"
+
+**Tools:** `Read`, `Write`, `Bash` (to run R scripts)
+
+#### Experimental Sciences
+
+**Protocol Validator**
+
+Validates lab protocols against safety and reproducibility standards. Checks for: required sections (materials, procedure, safety), quantitative specifications, controls, and replication details.
+
+**Trigger:** User provides protocol documents, asks "check protocol", "validate procedure"
+
+**Tools:** `Read`, `Write`
+
+#### Literature Review
+
+**Citation Cross-Reference Checker**
+
+Cross-references in-text citations against bibliography entries. Identifies missing entries, unused references, and formatting inconsistencies.
+
+**Trigger:** User asks "check citations", "validate references", when working on manuscripts
+
+**Tools:** `Read`, `Grep`, `Glob`, `Write`
+
+:::
+
+### Quick Start
+
+1. **Copy the template:**
+   ```bash
+   cp templates/skill-template.md .claude/skills/your-skill-name/SKILL.md
+   ```
+
+2. **Customize for your domain:**
+   - Replace trigger phrases with your field's terminology
+   - Add domain-specific file types and tools
+   - Include field conventions and common errors
+
+3. **Test the skill:**
+   - Restart Claude Code or type `/reload`
+   - Use one of your trigger phrases
+   - Verify the skill loads and produces correct output
+
+4. **Iterate:**
+   - If skill doesn't trigger: Revise description with more specific phrases
+   - If instructions unclear: Add more examples
+   - If output wrong: Add validation steps
+
+**Full template:** See `templates/skill-template.md` for comprehensive examples from biology, economics, and physics.
 
 ## Tips from 6+ Sessions of Iteration
 

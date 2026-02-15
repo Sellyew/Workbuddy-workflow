@@ -193,6 +193,7 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `archive-readme.md` | Archive documentation template |
 | `requirements-spec.md` | MUST/SHOULD/MAY requirements framework with clarity status |
 | `constitutional-governance.md` | Template for defining non-negotiable principles vs. preferences |
+| `skill-template.md` | Academic skill creation template with domain-specific examples |
 
 </details>
 
