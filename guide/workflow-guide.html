@@ -2449,7 +2449,14 @@ window.Quarto = {
   </ul></li>
   <li><a href="#step-2-create-your-domain-reviewer" id="toc-step-2-create-your-domain-reviewer" class="nav-link" data-scroll-target="#step-2-create-your-domain-reviewer"><span class="header-section-number">6.2</span> Step 2: Create Your Domain Reviewer</a></li>
   <li><a href="#step-3-adapt-your-theme" id="toc-step-3-adapt-your-theme" class="nav-link" data-scroll-target="#step-3-adapt-your-theme"><span class="header-section-number">6.3</span> Step 3: Adapt Your Theme</a></li>
-  <li><a href="#step-4-add-project-specific-skills" id="toc-step-4-add-project-specific-skills" class="nav-link" data-scroll-target="#step-4-add-project-specific-skills"><span class="header-section-number">6.4</span> Step 4: Add Project-Specific Skills</a></li>
+  <li><a href="#sec-create-skills" id="toc-sec-create-skills" class="nav-link" data-scroll-target="#sec-create-skills"><span class="header-section-number">6.4</span> Step 4: Creating Custom Skills</a>
+  <ul class="collapse">
+  <li><a href="#when-to-create-a-skill" id="toc-when-to-create-a-skill" class="nav-link" data-scroll-target="#when-to-create-a-skill"><span class="header-section-number">6.4.1</span> When to Create a Skill</a></li>
+  <li><a href="#skill-structure" id="toc-skill-structure" class="nav-link" data-scroll-target="#skill-structure"><span class="header-section-number">6.4.2</span> Skill Structure</a></li>
+  <li><a href="#writing-effective-trigger-descriptions" id="toc-writing-effective-trigger-descriptions" class="nav-link" data-scroll-target="#writing-effective-trigger-descriptions"><span class="header-section-number">6.4.3</span> Writing Effective Trigger Descriptions</a></li>
+  <li><a href="#domain-specific-examples" id="toc-domain-specific-examples" class="nav-link" data-scroll-target="#domain-specific-examples"><span class="header-section-number">6.4.4</span> Domain-Specific Examples</a></li>
+  <li><a href="#quick-start" id="toc-quick-start" class="nav-link" data-scroll-target="#quick-start"><span class="header-section-number">6.4.5</span> Quick Start</a></li>
+  </ul></li>
   <li><a href="#tips-from-6-sessions-of-iteration" id="toc-tips-from-6-sessions-of-iteration" class="nav-link" data-scroll-target="#tips-from-6-sessions-of-iteration"><span class="header-section-number">6.5</span> Tips from 6+ Sessions of Iteration</a></li>
   </ul></li>
   <li><a href="#sec-appendix" id="toc-sec-appendix" class="nav-link" data-scroll-target="#sec-appendix"><span class="header-section-number">7</span> Appendix: File Reference</a>
@@ -4069,11 +4076,101 @@ Decision point (1-2 hours):
 <li>Modify the beamer-translator environment mapping to match your classes</li>
 </ol>
 </section>
-<section id="step-4-add-project-specific-skills" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="step-4-add-project-specific-skills"><span class="header-section-number">6.4</span> Step 4: Add Project-Specific Skills</h2>
-<p>If you have recurring workflows, create new skills:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/my-new-skill</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Then create <code>SKILL.md</code> with YAML frontmatter + step-by-step instructions.</p>
+<section id="sec-create-skills" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-create-skills"><span class="header-section-number">6.4</span> Step 4: Creating Custom Skills</h2>
+<p>The guide includes 19 skills for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.</p>
+<section id="when-to-create-a-skill" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="when-to-create-a-skill"><span class="header-section-number">6.4.1</span> When to Create a Skill</h3>
+<p>Create a skill when: - You repeatedly explain the same 3+ step workflow to Claude - You need domain-specific quality checks (citation style, notation consistency, lab protocols) - You enforce field-specific output formats (thesis structure, journal templates) - You coordinate multi-tool workflows (data → analysis → manuscript)</p>
+<p><strong>Don’t create a skill for:</strong> - One-time tasks - Workflows that change frequently - Simple 1-2 step operations</p>
+</section>
+<section id="skill-structure" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="skill-structure"><span class="header-section-number">6.4.2</span> Skill Structure</h3>
+<p>Each skill is a directory in <code>.claude/skills/</code> with a <code>SKILL.md</code> file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> your-skill-name</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> [What it does] + [When to use] + [Key capabilities]</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="an">argument-hint:</span><span class="co"> &quot;[brief hint for user]&quot;</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="an">allowed-tools:</span><span class="co"> [&quot;Read&quot;, &quot;Write&quot;, &quot;Edit&quot;, &quot;Bash&quot;, &quot;Task&quot;]</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># Your Skill Name</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Instructions</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>Step 1: <span class="co">[</span><span class="ot">First action with details</span><span class="co">]</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>Step 2: <span class="co">[</span><span class="ot">Second action</span><span class="co">]</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>Example 1: <span class="co">[</span><span class="ot">Common scenario</span><span class="co">]</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>Error: <span class="co">[</span><span class="ot">Common error</span><span class="co">]</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>Solution: <span class="co">[</span><span class="ot">How to fix</span><span class="co">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="writing-effective-trigger-descriptions" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="writing-effective-trigger-descriptions"><span class="header-section-number">6.4.3</span> Writing Effective Trigger Descriptions</h3>
+<p>The <code>description</code> field determines when Claude loads your skill. Use specific trigger phrases users would actually say:</p>
+<p><strong>Good (Citation Style Enforcement):</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Enforces APA 7th edition citation format. Use when user asks to &quot;check citations&quot;, &quot;fix references&quot;, &quot;apply APA style&quot;, or when reviewing .tex/.qmd files with bibliographies.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Good (Lab Notebook Entry):</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Generates structured lab notebook entries from experimental notes. Use when user provides &quot;experiment notes&quot;, &quot;protocol results&quot;, or asks to &quot;format lab entry&quot;.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Bad (Too Vague):</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Helps with citations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="domain-specific-examples" class="level3" data-number="6.4.4">
+<h3 data-number="6.4.4" class="anchored" data-anchor-id="domain-specific-examples"><span class="header-section-number">6.4.4</span> Domain-Specific Examples</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href>Econometrics</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href>Experimental Sciences</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href>Literature Review</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p><strong>Regression Output Formatter</strong></p>
+<p>Converts R regression outputs to publication-ready LaTeX tables with proper formatting (standard errors in parentheses, significance stars, fixed effects rows).</p>
+<p><strong>Trigger:</strong> User runs regressions and says “make a table”, “format results”, “export to LaTeX”</p>
+<p><strong>Tools:</strong> <code>Read</code>, <code>Write</code>, <code>Bash</code> (to run R scripts)</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p><strong>Protocol Validator</strong></p>
+<p>Validates lab protocols against safety and reproducibility standards. Checks for: required sections (materials, procedure, safety), quantitative specifications, controls, and replication details.</p>
+<p><strong>Trigger:</strong> User provides protocol documents, asks “check protocol”, “validate procedure”</p>
+<p><strong>Tools:</strong> <code>Read</code>, <code>Write</code></p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p><strong>Citation Cross-Reference Checker</strong></p>
+<p>Cross-references in-text citations against bibliography entries. Identifies missing entries, unused references, and formatting inconsistencies.</p>
+<p><strong>Trigger:</strong> User asks “check citations”, “validate references”, when working on manuscripts</p>
+<p><strong>Tools:</strong> <code>Read</code>, <code>Grep</code>, <code>Glob</code>, <code>Write</code></p>
+</div>
+</div>
+</div>
+</section>
+<section id="quick-start" class="level3" data-number="6.4.5">
+<h3 data-number="6.4.5" class="anchored" data-anchor-id="quick-start"><span class="header-section-number">6.4.5</span> Quick Start</h3>
+<ol type="1">
+<li><p><strong>Copy the template:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> templates/skill-template.md .claude/skills/your-skill-name/SKILL.md</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Customize for your domain:</strong></p>
+<ul>
+<li>Replace trigger phrases with your field’s terminology</li>
+<li>Add domain-specific file types and tools</li>
+<li>Include field conventions and common errors</li>
+</ul></li>
+<li><p><strong>Test the skill:</strong></p>
+<ul>
+<li>Restart Claude Code or type <code>/reload</code></li>
+<li>Use one of your trigger phrases</li>
+<li>Verify the skill loads and produces correct output</li>
+</ul></li>
+<li><p><strong>Iterate:</strong></p>
+<ul>
+<li>If skill doesn’t trigger: Revise description with more specific phrases</li>
+<li>If instructions unclear: Add more examples</li>
+<li>If output wrong: Add validation steps</li>
+</ul></li>
+</ol>
+<p><strong>Full template:</strong> See <code>templates/skill-template.md</code> for comprehensive examples from biology, economics, and physics.</p>
+</section>
 </section>
 <section id="tips-from-6-sessions-of-iteration" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="tips-from-6-sessions-of-iteration"><span class="header-section-number">6.5</span> Tips from 6+ Sessions of Iteration</h2>
