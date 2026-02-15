@@ -2,7 +2,7 @@
 title: "My Claude Code Setup"
 subtitle: "A Comprehensive Guide to Multi-Agent Slide Development, Code Review, and Research Automation"
 author: "Pedro H. C. Sant'Anna"
-date: "2026-02-06"
+date: "2026-02-15"
 format:
   html:
     toc: true
@@ -150,6 +150,62 @@ python scripts/quality_score.py Slides/MyFirstLecture.tex
 
 You don't need to fill everything in upfront. Start with 5--10 notation entries and add more as you develop lectures. The starter prompt will set up the essentials --- you can always refine later.
 :::
+
+## Requirements Specification (For Complex Tasks) {#sec-spec-then-plan}
+
+For complex or ambiguous tasks, Claude may ask 3-5 clarifying questions to create a requirements specification before planning. This catches ambiguity early and reduces rework.
+
+::: {.panel-tabset}
+
+### Slide Creation
+```
+You: "Improve my lecture on hypothesis testing"
+
+Claude: "Let me clarify:
+1. What needs improvement (clarity, examples, pacing)?
+2. Any student feedback to address?
+3. Constraints (time, notation changes)?
+4. Update which outputs (slides, web version, both)?"
+
+[Creates spec with MUST/SHOULD/MAY priorities]
+[You approve]
+[Then enters plan mode]
+```
+
+### Data Analysis
+```
+You: "Analyze the survey data"
+
+Claude: "Let me clarify:
+1. What's the research question?
+2. Expected output format (tables, plots, report)?
+3. Any replication targets or baselines?
+4. Computational constraints (runtime, memory)?"
+```
+
+### Code Refactoring
+```
+You: "Clean up my analysis scripts"
+
+Claude: "Let me clarify:
+1. What's the pain point (speed, readability, bugs)?
+2. Breaking changes okay or preserve compatibility?
+3. Testing infrastructure available?
+4. Refactor scope (one file, whole project)?"
+```
+
+:::
+
+After 3-5 questions, Claude creates a specification document in `quality_reports/specs/` with:
+
+- **MUST** have (non-negotiable requirements)
+- **SHOULD** have (preferred features)
+- **MAY** have (optional enhancements)
+- **Clarity status** (CLEAR/ASSUMED/BLOCKED for each aspect)
+
+You approve the spec, then Claude plans implementation. This reduces mid-plan pivots by 30-50%.
+
+**Template:** `templates/requirements-spec.md`
 
 ---
 
@@ -387,6 +443,35 @@ primary_gold  <- "#f2a900"
 ```
 
 The `paths:` block means this rule only loads when Claude reads or edits an `.R` file. When Claude works on a `.tex` file, this rule doesn't consume any of the instruction budget.
+
+## Constitutional Governance (Optional)
+
+As your project grows, some decisions become non-negotiable (to maintain quality, reproducibility, or collaboration standards). Others remain flexible.
+
+The `templates/constitutional-governance.md` template helps you distinguish between:
+
+- **Immutable principles** (Articles I-V): Non-negotiable rules that ensure consistency
+- **User preferences**: Flexible patterns that can vary by context
+
+### Example Articles You Might Define
+
+- **Article I: Primary Artifact** — Which file is authoritative (e.g., `.tex` vs `.qmd`, `.Rmd` vs `.html`, notebook vs script)
+- **Article II: Plan-First Threshold** — When to enter plan mode (e.g., >3 files, >30 min, multi-step workflows)
+- **Article III: Quality Gate** — Minimum score to commit (e.g., 80/100, all tests passing)
+- **Article IV: Verification Standard** — What must pass before commit (e.g., compile, tests, render)
+- **Article V: File Organization** — Where different file types live (prevents scattering)
+
+The template includes examples for LaTeX, R, Python, Jupyter, and multi-language workflows.
+
+::: {.callout-note}
+## When to Use Constitutional Governance
+
+Use it **after** you've established 3-7 recurring patterns that you want to enforce consistently. Don't create it on day one — let patterns emerge first, then codify them.
+
+**When to skip:** Solo projects with evolving standards, or when you prefer case-by-case decisions.
+:::
+
+**Template:** `templates/constitutional-governance.md`
 
 ## Skills --- Reusable Slash Commands
 

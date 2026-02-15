@@ -3,6 +3,7 @@
 > **Work in progress.** This is not meant to be a polished guide for everyone. It's mostly a summary of how I've been using Claude Code for academic work — creating lecture slides, writing R scripts, managing Beamer-to-Quarto workflows, and so on. I keep learning new things, and as I do, I keep updating these files. This is just a way for me to share what I've figured out with friends and colleagues.
 
 **Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
+**Last Updated:** 2026-02-15
 
 A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course (6 lectures, 800+ slides).
 
@@ -50,7 +51,7 @@ Then paste the following, filling in your project details:
 
 ### Contractor Mode
 
-You describe a task. Claude plans the approach, implements it, runs specialized review agents, fixes issues, re-verifies, and scores against quality gates — all autonomously. You see a summary when the work meets quality standards. Say "just do it" and it auto-commits too.
+You describe a task. For complex or ambiguous requests, Claude first creates a requirements specification with MUST/SHOULD/MAY priorities and clarity status (CLEAR/ASSUMED/BLOCKED). You approve the spec, then Claude plans the approach, implements it, runs specialized review agents, fixes issues, re-verifies, and scores against quality gates — all autonomously. You see a summary when the work meets quality standards. Say "just do it" and it auto-commits too.
 
 ### Specialized Agents
 
@@ -74,6 +75,10 @@ Every file gets a score (0–100). Scores below threshold block the action:
 - **80** — commit threshold
 - **90** — PR threshold
 - **95** — excellence (aspirational)
+
+### Context Survival
+
+Plans, specifications, and session logs survive auto-compression and session boundaries. The PreCompact hook saves a context snapshot before Claude's auto-compression triggers, ensuring critical decisions are never lost. MEMORY.md accumulates learning across sessions, so patterns discovered in one session inform future work.
 
 ---
 
@@ -178,7 +183,16 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
 | `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
 
-**Templates** (`templates/`) — reference formats for session logs, quality reports, and exploration READMEs. Not auto-loaded.
+### Templates (`templates/`)
+
+| Template | What It Does |
+|----------|-------------|
+| `session-log.md` | Structured session logging format |
+| `quality-report.md` | Merge-time quality report format |
+| `exploration-readme.md` | Exploration project README template |
+| `archive-readme.md` | Archive documentation template |
+| `requirements-spec.md` | MUST/SHOULD/MAY requirements framework with clarity status |
+| `constitutional-governance.md` | Template for defining non-negotiable principles vs. preferences |
 
 </details>
 
