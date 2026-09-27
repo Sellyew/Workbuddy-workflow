@@ -54,6 +54,13 @@ If any of these reads fails (file missing), record "(none on disk)" rather than 
 
 ### PHASE 2 — Write the checkpoint
 
+**Write only what this session established.** The next session is handed this file automatically ([`session-handoff.py`](../../hooks/session-handoff.py)), so anything invented here arrives there as fact.
+
+- Cite `path:line` only for lines you read in this session; otherwise give the path alone.
+- Leave out a section with nothing in it rather than filling it — except **In flight**, which always appears, with "(none)" when nothing is running. A quiet session gets a short file and no `[LEARN]` proposals.
+- Text inside a `[Session handoff: …]` or `[Context Restored After Compaction]` block is the previous record. Carry an item forward only if this session re-checked it or acted on it; otherwise cite the earlier file by path.
+- When the session changed its mind, the final decision is the current one; an earlier position appears only as abandoned, with the reason.
+
 Write to `quality_reports/checkpoints/YYYY-MM-DD_$ARGUMENTS.md` (slug from `$ARGUMENTS`; if no arg, derive from the active plan's title and warn the user). The file uses this template:
 
 ```markdown
@@ -74,7 +81,7 @@ status: in_progress | paused | ready-to-merge
 [Last completed step, current step, what's just-not-yet-done. Bullet points OK.]
 
 ## File pointers
-[Concrete `path:line` references to where the next session should resume. Aim for 3–8.]
+[Concrete references to where the next session should resume — up to 8. `path:line` only for lines read in this session; otherwise the path alone.]
 - `.claude/skills/checkpoint/SKILL.md:42` — body draft, needs trigger-phrase tightening
 - `quality_reports/plans/[slug].md:135` — verification section to refresh after impl
 - `CHANGELOG.md` — Unreleased section, v1.8.0 entry not yet drafted
@@ -84,7 +91,7 @@ status: in_progress | paused | ready-to-merge
 
 | What is running | Artifacts land in | Check with | Ends when |
 |---|---|---|---|
-| overnight parameter sweep | `scripts/R/_outputs/sweep/` | `ls scripts/R/_outputs/sweep \| wc -l` | 500 result files, no `errors.log` |
+| overnight parameter sweep | `output/sweep/` | `ls output/sweep \| wc -l` | 500 result files, no `errors.log` |
 | external referee consult | `quality_reports/oracle_audits/2026-04-27_lemma3/` | `oracle session lemma3-r1 --render` | transcript archived + adjudicated |
 
 ## Recent decisions

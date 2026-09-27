@@ -86,7 +86,7 @@ branch: [current branch]
 [Everything handed to a co-author, an RA, or an agent, dispositioned individually. No roll-ups.]
 | Item | Owner | State | Evidence / blocker |
 |---|---|---|---|
-| Re-run Table 3 with the new sample filter | [name] | done | measured: output diff vs `_outputs/tab3_prev.csv`, 2 cells moved |
+| Re-run Table 3 with the new sample filter | [name] | done | measured: output diff vs `output/tab3_prev.csv`, 2 cells moved |
 | Appendix B proof of Lemma 2 | [name] | blocked | waiting on the boundedness condition in Q1 below |
 
 ## Open questions / decisions needed
@@ -125,7 +125,7 @@ A single Markdown handoff doc at `quality_reports/handoffs/YYYY-MM-DD_coauthor-b
 
 ## Flags
 
-- `--since` `<tag|date|Ndays>` — Baseline to diff against — a git tag, an ISO date, or `Ndays` (e.g. `14days`). Default: the previous brief in `quality_reports/handoffs/`, else the last tag.
+- `--since` `<tag|date|Ndays>` — Baseline to diff against — a git tag, an ISO date, or `Ndays` (e.g. `14days`). Default: the previous brief in `quality_reports/handoffs/`, else 14 days (Phase 0).
 - `--for` `<name>` — Tailor the brief to a specific collaborator (e.g. surface the restricted-data access steps they still need).
 
 ## Cross-references

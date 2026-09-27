@@ -29,17 +29,17 @@ The rule says generic patterns should sync via git; personal patterns stay local
 - **Monthly memory maintenance.** Personal-memory accumulates faster than MEMORY.md; the council periodically harvests the genuinely generic learnings.
 - **Before sharing a fork.** Someone is about to clone your template — what should they inherit?
 - **After a large project ships.** Lessons from a paper or a course cycle deserve curation before the next project starts adding noise.
-- **As a `/loop` task.** Wire `/loop monthly /promote-memory all` if you want automated proposal cadence (still requires user approval for each promotion).
+- **Not on a schedule.** This skill is user-invoked (`disable-model-invocation`), so a scheduled task cannot fire it, and its candidates live in machine-local auto memory that a cloud routine cannot see. Set yourself a monthly reminder and run it in a local session; every promotion waits for your approval anyway.
 
 ## When NOT to use
 
 - **For a single fresh `[LEARN]` after a single correction.** Just let auto memory record it; let it sit until the next council runs.
-- **For deleting stale entries.** Use `/learn --revoke` or manual edit. `/promote-memory` only promotes; it doesn't demote.
+- **For deleting stale entries.** Edit MEMORY.md by hand, per `meta-governance.md` (dated addendum, or a merge to hold the cap). `/promote-memory` never deletes — though near the cap it *proposes* a demotion (Step 4).
 - **For project-specific context.** That belongs in CLAUDE.md or session logs, not in either memory tier.
 
 ## The five critics
 
-Each critic runs in a forked context (`Agent` with `context=fork`) — they don't see each other's verdicts or the user's draft. Each casts one **YES/NO** vote per candidate entry with a one-sentence rationale.
+Each critic runs in an isolated, fresh context (its own `Agent` call — never a conversation fork) — they don't see each other's verdicts or the user's draft. Each casts one **YES/NO** vote per candidate entry with a one-sentence rationale.
 
 ### 1. Generality critic
 
@@ -59,7 +59,7 @@ Each critic runs in a forked context (`Agent` with `context=fork`) — they don'
 
 ### 5. Format critic
 
-> "Does the entry follow the schema in [`.claude/rules/meta-governance.md`](../../rules/meta-governance.md): `[LEARN:category] wrong → right` for corrections, structured `**Why:**` + `**How to apply:**` for feedback/project entries? If it's just a free-form note, vote NO — fix the format first, then re-submit."
+> "Does the entry fit the format of the tier it lands in? MEMORY.md entries are `[LEARN:category] wrong → right` (see [`MEMORY.md`](../../../MEMORY.md) itself); a feedback/project candidate coming from native auto memory should carry the `**Why:**` + `**How to apply:**` lines auto memory writes, so the reason survives the move. If it's just a free-form note, vote NO — fix the format first, then re-submit."
 
 ### Council verdict
 
@@ -78,7 +78,7 @@ If `$ARGUMENTS` is `all`, read every `[LEARN:*]` entry in `~/.claude/projects/<p
 
 ### Step 2: Spawn the council
 
-Five `Task` invocations in parallel, one per critic, each with `context: fork`:
+Five `Agent` invocations in parallel, one per critic, each in a fresh context:
 
 - **Generality critic** — context: the candidate entry + a one-paragraph description of who the template's audience is (academic researchers across disciplines).
 - **Staleness critic** — context: the candidate entry + the ability to `Read` / `Grep` the codebase. Should explicitly check any file paths / function names / settings the entry references.
@@ -116,6 +116,8 @@ For each entry:
 [LEARN:foo] <full proposed text>
 ```
 ```
+
+**Near the cap, adding means removing.** MEMORY.md is capped at 200 lines **and** 25KB, and the byte cap usually binds first. When the file plus the proposed additions would pass ~190 lines or ~24KB (`wc -c MEMORY.md`), the report also names the **weakest current entry** as a demotion candidate — stale (a named file, flag, or model that no longer exists), contradicted by a newer rule, or local rather than generic — with the evidence, and asks the user whether to move it to auto memory or delete it. The test for keeping an entry: *would removing it cause a mistake on many tasks?*
 
 ### Step 5: User approves the promotions
 

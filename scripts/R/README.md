@@ -7,8 +7,8 @@ This directory ships a numbered-script template for **reproducible** data analys
 - **Run everything from `00_run_all.R`** — never source mid-pipeline scripts individually unless you're debugging.
 - **Paths via [`here::here()`](https://here.r-lib.org/)** — never `setwd()`. The project root is the git repo root.
 - **Fixed seed** set once in `00_run_all.R`: `set.seed(20260413)`. Stochastic scripts (`01_load.R`, `05_figures.R`) also re-seed locally from `PROJECT_SEED` so running them directly for debugging still produces deterministic outputs. Change only with a recorded reason in the session log.
-- **`sessionInfo()` written to `scripts/R/_outputs/sessionInfo.txt`** at the end of `00_run_all.R` so reviewers can verify the environment.
-- **Outputs to `scripts/R/_outputs/`** — tables (`*.tex`), figures (`*.pdf`, `*.svg`), and RDS snapshots (`*.rds`). Directory is `.gitignore`d in most setups; decide per-project.
+- **`sessionInfo()` written to `output/sessionInfo.txt`** at the end of `00_run_all.R` so reviewers can verify the environment.
+- **Outputs to the top-level `output/`**, never inside `scripts/` (the AEA Data Editor's advice: do not commingle code with its results) — tables (`*.tex`), figures (`*.pdf`, `*.svg`), and RDS snapshots (`*.rds`). Tables, figures and `sessionInfo.txt` are committed so co-authors can diff them (after disclosure clearance when the data are restricted); `.rds` and other regenerable intermediates are gitignored.
 - **No hardcoded absolute paths anywhere.** `/review-r` enforces this.
 - **Log package versions** either via `renv` (recommended) or a `DESCRIPTION` file at repo root.
 
@@ -47,7 +47,7 @@ Then run:
 source("scripts/R/00_run_all.R")
 ```
 
-Expected outputs in `scripts/R/_outputs/`:
+Expected outputs in `output/`:
 
 | File | Condition |
 | --- | --- |
@@ -60,7 +60,7 @@ Expected outputs in `scripts/R/_outputs/`:
 Verify:
 
 ```r
-list.files("scripts/R/_outputs/")
+list.files("output/")
 ```
 
 ## Reviewing

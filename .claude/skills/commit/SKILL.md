@@ -26,14 +26,14 @@ Spawn the **verifier** agent (via the `Agent` tool with `subagent_type=verifier`
 
 ### Step 0b: Consistency Gate (Pre-Commit)
 
-**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 60 skills, 37 rules, 8 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
+**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 60 skills, 37 rules, 9 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
 
 ```bash
 ./scripts/backtest.sh
 ```
 
 - **Exit 0:** all gates green — continue.
-- **Nonzero:** at least one gate is red — print its output and halt. Fix, then re-run. Do NOT proceed past this gate on a red result, even with "commit anyway" — count drift alone produced PRs #70, #76, and #78.
+- **Nonzero:** at least one gate is red — print its output and halt. Fix, then re-run. Do not proceed past this gate on a red result, even with "commit anyway": a red gate is drift that the next reader inherits, and small count drift has repeatedly cost follow-up PRs.
 
 ### Step 0c: Passport Check (Pre-Commit)
 
@@ -83,6 +83,9 @@ git push -u origin <branch-name>
 gh pr create --title "<short title>" --body "$(cat <<'EOF'
 ## Summary
 <1-3 bullet points>
+
+## Changed defaults
+<"None", or each default a forker will notice changing: a setting, a threshold, a hook that now fires, a path that moved>
 
 ## Test plan
 <checklist>

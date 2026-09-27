@@ -12,7 +12,7 @@ drafts. **Read-only inputs, not working files.**
 ## What does NOT belong here
 
 - Anything you are actively editing — that lives in `Slides/`, `Quarto/`, or `scripts/`.
-- Generated output — that lives in `scripts/*/_outputs/` or `docs/`.
+- Generated output — that lives in `output/` or `docs/`.
 - Scratch or experimental work — that lives in `explorations/`, or outside the repo entirely.
 
 ## Rules

@@ -79,12 +79,21 @@ quality_reports/diagnoses/*
 !quality_reports/audits/.gitkeep
 !quality_reports/diagnoses/.gitkeep
 
-# R analysis outputs (generated artifacts; keep scripts, ignore outputs)
-scripts/R/_outputs/
-
-# Output artifacts — uncomment lines below based on your preference
-# *.rds
-# output/**/*.rds
+# Generated results live in output/ (AEA layout: code in scripts/, results
+# apart from it). Final tables, figures and logs ARE committed, so co-authors
+# can diff them; on restricted data, only after disclosure clearance
+# (.claude/rules/confidential-data.md). Regenerable intermediates are not.
+output/**/*.rds
+output/**/*.RData
+output/**/*.rda
+output/**/*.qs
+output/**/*.parquet
+output/**/*.feather
+output/**/*.dta
+output/**/*.pkl
+output/**/*.pickle
+# pre-v2.6 location (outputs used to live beside the code)
+scripts/*/_outputs/
 
 # Quarto render artifacts beside their .qmd sources (regenerable; quality_score
 # renders them during gating). Published HTML lives in docs/, never here.

@@ -49,7 +49,7 @@ This is the most common way a qualification run produces a false alarm about its
 
 Run the check or agent against each variant **in a fresh context**, one variant per run. It
 must not know which variant it has, how many defects exist, or that a qualification is
-underway. For an AI reviewer, spawn via the `Agent` tool with `context: fork`.
+underway. For an AI reviewer, spawn a fresh-context `Agent` call (not a conversation fork, which would carry the seeded answer key).
 
 ### 4. Score
 

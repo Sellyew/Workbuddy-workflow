@@ -7,7 +7,7 @@ translation phases, review passes — each counted from its own source of truth.
 
 Exit: 0 all claims match, 1 mismatch, 2 internal error.
 """
-import glob, re, os, sys
+import glob, re, os, subprocess, sys
 from collections import namedtuple
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -205,6 +205,28 @@ _NUM = "(" + "|".join([r"\d+"] + sorted(
     list(_ONES) + list(_TENS) + [f"{t}-{o}" for t in _TENS for o in _ONES if 0 < _ONES[o] < 10],
     key=len, reverse=True)) + ")"
 
+def rubric_parity():
+    """quality-gates.md must embed quality_score.py's --print-rubric output verbatim.
+
+    Until 2026-09-26 the rule's tables and the script's dicts were kept by hand and
+    had drifted both ways: each carried rows the other lacked. The script is now the
+    single source, the rule embeds its generated tables between markers, and any
+    difference fails. Returns (ok, message).
+    """
+    rule = read(".claude/rules/quality-gates.md")
+    m = re.search(r'<!-- BEGIN rubric[^\n]*-->\n(.*?)<!-- END rubric -->', rule, re.S)
+    if not m:
+        return False, ".claude/rules/quality-gates.md: rubric markers missing — the tables are no longer gated"
+    try:
+        gen = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "quality_score.py"), "--print-rubric"],
+                             capture_output=True, text=True, check=True, timeout=60).stdout
+    except Exception as e:
+        return False, f"quality_score.py --print-rubric failed: {e}"
+    if m.group(1) != gen:
+        return False, (".claude/rules/quality-gates.md: rubric tables differ from quality_score.py — "
+                       "regenerate them with `python3 scripts/quality_score.py --print-rubric`")
+    return True, "quality-gates.md rubric == quality_score.py --print-rubric"
+
 def n_seven_pass():
     t = read(".claude/skills/seven-pass-review/SKILL.md")
     return len(set(re.findall(r'^\| (\d) \|', t, re.M)))
@@ -366,7 +388,7 @@ CHECKS = [
     # deliberately not a surface (see
     # changelog_current_release() for why history is never dragged to today).
     ("verification rungs",    r'(?i)\bthe ' + _NUM + r' rungs\b', ["CLAUDE.md", "guide/workflow-guide.qmd", "docs/workflow-guide.html"], n_rungs()),
-    ("seven-pass lenses",     r'(\d+) forked subagents',         [".claude/skills/seven-pass-review/SKILL.md"], n_seven_pass()),
+    ("seven-pass lenses",     r'(\d+) (?:forked|fresh-context) subagents',         [".claude/skills/seven-pass-review/SKILL.md"], n_seven_pass()),
     # The hook-battery case count drifted twice (12→16→…) because prose was
     # edited in parallel with case additions. Anchored on the vignette's own
     # ", about a second" tail so it matches ONLY the battery claim (not generic
@@ -387,7 +409,13 @@ CHECKS = [
 # is the closed alternation (digits, or the spelled numbers 0-99) the gate rows
 # above already use, so a real claim still matches and an unparseable one now
 # fails the REQUIRED-surface count instead of passing.
-    ("hook battery cases",    _NUM + r' cases, (?:about a second|seconds to run|and it finishes in seconds)', ["CHANGELOG.md", "guide/workflow-guide.qmd"], n_hook_battery_cases()),
+    # 2026-09-26: the CHANGELOG surface is the CURRENT release section, not the
+    # file. The only matching site had been the v2.5.1 entry's "(234 cases,
+    # seconds to run)"; once v2.5.1 shipped that line was history, and adding one
+    # battery case made the gate demand an edit to a published release — the
+    # exact drag changelog_current_release() exists to prevent. Each release now
+    # states its own battery size, and only the open one is compared to disk.
+    ("hook battery cases",    _NUM + r' cases, (?:about a second|seconds to run|and it finishes in seconds)', [SEC("CHANGELOG.md (current release)", _CL_CURRENT), "guide/workflow-guide.qmd"], n_hook_battery_cases()),
     # The QUALIFICATION LEDGER states the same number in its own phrasing —
     # "(46 cases, exit 0)" in the Reproduction paragraph and "(46/46 cases, exit
     # 0)" in the grading-the-grader row — and until 2026-08-23 NEITHER was a
@@ -514,6 +542,10 @@ def main():
         print(f"  workflow patterns      NOT SEQUENTIAL: {ids}")
     else:
         print(f"  workflow patterns      sequential 1..{len(ids)}  ok")
+    ok, msg = rubric_parity()
+    print(f"  quality rubric         {msg}  {'ok' if ok else 'MISMATCH'}")
+    if not ok:
+        bad.append(msg)
     if bad:
         print(f"\n{len(bad)} MISMATCH(ES):")
         for b in bad: print(f"  {b}")

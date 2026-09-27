@@ -103,7 +103,7 @@ Delegate to the r-package-reviewer agent:
 "Review the package source at [pkg]"
 ```
 
-Address Critical (CRAN-policy violations) and High (check WARNINGs) findings.
+The agent is read-only and returns its report; save it to `quality_reports/[pkg]_package_review.md`. Address Critical (CRAN-policy violations) and High (check WARNINGs) findings.
 
 ### Phase 6: Release Gate + Report
 

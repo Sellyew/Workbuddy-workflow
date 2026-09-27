@@ -102,4 +102,4 @@ Do NOT add other commentary. Do NOT comment on the other four dimensions. Do NOT
 
 ## Why critics are isolated
 
-Each critic runs in a forked context so they cannot see (a) each other's votes, (b) the user's intended verdict, or (c) the meta-skill's reasoning. The isolation prevents groupthink and ensures the dimensional review is genuinely independent. The user receives five honest one-dimension verdicts and decides — instead of a single composite verdict that conflates dimensions.
+Each critic runs in its own fresh context so they cannot see (a) each other's votes, (b) the user's intended verdict, or (c) the meta-skill's reasoning. The isolation prevents groupthink and ensures the dimensional review is genuinely independent. The user receives five honest one-dimension verdicts and decides — instead of a single composite verdict that conflates dimensions.

@@ -1,7 +1,7 @@
 # =============================================================================
 # 03_analyze.R — Regressions, tests, model fits. Save everything to RDS.
 #
-# Persist fitted objects to `_outputs/*.rds` so 04_tables.R and 05_figures.R
+# Persist fitted objects to `output/*.rds` so 04_tables.R and 05_figures.R
 # don't have to refit. Keeps the downstream steps fast and deterministic.
 # =============================================================================
 

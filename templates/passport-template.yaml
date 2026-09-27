@@ -43,7 +43,7 @@ claims:
                                    # compared at 2 decimals, not 3
     source_file: scripts/R/03_analyze.R
     source_line: 147
-    output_file: scripts/R/_outputs/main_did.rds
+    output_file: output/main_did.rds
     output_field: att_overall
     tolerance:                      # typed: pass if |x-y| <= atol + rtol*|reported|
       point_estimate: 0.01         # absolute tolerance for the headline value
@@ -76,7 +76,7 @@ claims:
         display_precision: 0       # shown as "73%"
     source_file: scripts/R/04_robustness.R
     source_line: 89
-    output_file: scripts/R/_outputs/loo_robustness.rds
+    output_file: output/loo_robustness.rds
     output_field: avg_retention_pct
     tolerance:
       point_estimate: 0.1          # 0.1 percentage points for percentages
@@ -106,7 +106,7 @@ claims:
                                    # compared at 2 decimals, not 3
     source_file: scripts/R/03_analyze.R
     source_line: 62
-    output_file: scripts/R/_outputs/main_model.rds
+    output_file: output/main_model.rds
     output_field: coef_treated
     tolerance:
       point_estimate: 0.001

@@ -20,12 +20,12 @@ Run the comprehensive R code review protocol.
 2. **For each script, launch the `r-reviewer` agent** with instructions to:
    - Follow the full protocol in the agent instructions
    - Read `.claude/rules/r-code-conventions.md` for current standards
-   - Save report to `quality_reports/[script_name]_r_review.md`
+   - Return its report as its final response (ending with the findings `json` block); this skill saves it to `quality_reports/[script_name]_r_review.md` — the agent is read-only
 
 3. **After all reviews complete**, present a summary:
    - Total issues found per script
    - Breakdown by severity (Critical / High / Medium / Low)
    - Top 3 most critical issues
 
-4. **IMPORTANT: Do NOT edit any R source files.**
+4. **Leave the R source files unchanged** — the report goes to the user, who decides what to fix.
    Only produce reports. Fixes are applied after user review.

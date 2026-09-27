@@ -1,6 +1,6 @@
 ---
 name: stata-replication
-description: End-to-end Stata replication pipeline — scaffolds numbered `.do` files in `scripts/stata/`, executes them via the `stata-mcp` MCP server, captures logs and outputs to `scripts/stata/_outputs/`, and produces publication-ready tables (esttab) and figures (graph export). Mirrors `/data-analysis` for R-first projects. Use when user says "stata replication", "set up Stata pipeline", "scaffold the .do files", "run Stata analysis", "AEA replication package in Stata", or when a project's analysis language is Stata not R.
+description: End-to-end Stata replication pipeline — scaffolds numbered `.do` files in `scripts/stata/`, executes them via the `stata-mcp` MCP server, captures logs and outputs to `output/`, and produces publication-ready tables (esttab) and figures (graph export). Mirrors `/data-analysis` for R-first projects. Use when user says "stata replication", "set up Stata pipeline", "scaffold the .do files", "run Stata analysis", "AEA replication package in Stata", or when a project's analysis language is Stata not R.
 argument-hint: "[paper-or-data-pointer] [--from-r] [--no-execute]"
 disable-model-invocation: true
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "Agent", "Task"]
@@ -11,7 +11,7 @@ metadata:
 
 # `/stata-replication` — Stata pipeline scaffold + execution
 
-Build a complete Stata replication pipeline in `scripts/stata/`: numbered `.do` files following [`.claude/rules/stata-code-conventions.md`](../../rules/stata-code-conventions.md), executed via the [`stata-mcp`](https://github.com/SepineTam/stata-mcp) MCP server, with outputs landing in `scripts/stata/_outputs/`.
+Build a complete Stata replication pipeline in `scripts/stata/`: numbered `.do` files following [`.claude/rules/stata-code-conventions.md`](../../rules/stata-code-conventions.md), executed via the [`stata-mcp`](https://github.com/SepineTam/stata-mcp) MCP server, with outputs landing in `output/`.
 
 ## When to use
 
@@ -34,7 +34,7 @@ This skill requires the `stata-mcp` MCP server. Install once per user:
 claude mcp add stata-mcp --scope user -- uvx stata-mcp
 ```
 
-The MCP server provides command-guarded Stata execution (refuses destructive operations like `!/shell/erase`), RAM monitoring, and Stata Language Server pairing. Maintained by SepineTam, 171 stars on GitHub as of 2026-05.
+The MCP server provides command-guarded Stata execution (refuses destructive operations like `!/shell/erase`), RAM monitoring, and Stata Language Server pairing. Maintained by SepineTam.
 
 If `stata-mcp` is not installed, the skill halts at Phase 0 with installation instructions.
 
@@ -70,16 +70,17 @@ If the paper or data source suggests specific specs (e.g., DiD with `reghdfe`, I
 For each script in numbered order:
 
 1. Dispatch to `stata-mcp` to execute the `.do` file.
-2. Capture the log (Stata writes to `scripts/stata/_outputs/NN_log.smcl` per the header convention) and the resulting `.dta` / `.tex` / `.pdf` outputs.
-3. If a script fails, halt — do NOT auto-fix unless the failure is trivial (typo flagged by Stata at parse time). For substantive failures (insufficient observations, singular matrices, missing covariates), surface to the user.
+2. Capture the log (Stata writes to `output/NN_log.smcl` per the header convention) and the resulting `.dta` / `.tex` / `.pdf` outputs.
+3. If a script fails, first append its specification to the ledger (step 4) with Status `failed` and the error in Why, then halt — do NOT auto-fix unless the failure is trivial (typo flagged by Stata at parse time). For substantive failures (insufficient observations, singular matrices, missing covariates), surface to the user.
+4. Append every specification each estimation `.do` file ran — kept, dropped, or failed — to `quality_reports/spec-ledger.md`, with the same columns, commit stamp and append-only block as [`/data-analysis`](../data-analysis/SKILL.md) Phase 3 ("Specification ledger"). A failed run is a row too, with Status `failed` and the error in Why.
 
 For long-running scripts (> 2 minutes), use the **Monitor tool** to stream stdout — same pattern documented in `/data-analysis` and `/audit-reproducibility`.
 
 ### Phase 3: Verify
 
-1. Confirm every expected output exists in `scripts/stata/_outputs/`.
-2. Check `sessionInfo.txt` was captured (package versions).
-3. Run `/audit-reproducibility` if a manuscript exists — it now handles Stata `.dta` outputs via `haven`/`pyreadstat` (Pass 4.3).
+1. Confirm every expected output exists in `output/`.
+2. Check `output/sessionInfo_stata.txt` was captured (package versions).
+3. Run `/audit-reproducibility` if a manuscript exists — it reads Stata `.dta` outputs via `haven`/`pyreadstat`.
 4. Report scripts run, outputs produced, any warnings from Stata.
 
 ### Phase 4 (optional): R cross-check
@@ -95,7 +96,7 @@ Discrepancies are surfaced for the user to investigate — typical culprits: clu
 ## Companion skills
 
 - [`/data-analysis`](../data-analysis/SKILL.md) — R analogue. Same pipeline shape, different language.
-- [`/audit-reproducibility`](../audit-reproducibility/SKILL.md) — reads both `.rds` and `.dta` outputs. Cross-checks manuscript claims against the produced values. Updated in v1.9.0 to handle Stata outputs.
+- [`/audit-reproducibility`](../audit-reproducibility/SKILL.md) — reads both `.rds` and `.dta` outputs. Cross-checks manuscript claims against the produced values.
 - [`/review-paper`](../review-paper/SKILL.md) — if the paper exists and cites tables/figures produced by this pipeline, `/review-paper` auto-invokes `/audit-reproducibility` (per `cross-artifact-review.md`).
 
 ## Anti-patterns

@@ -44,7 +44,7 @@ that halfway through is how a session gets reset.
 ### 2. One subagent per document — never load the corpus into one context
 
 Per [`pdf-processing.md`](../../rules/pdf-processing.md): spawn **one subagent per document**
-with `context: fork`. Each reads **only its own file**, writes a ~300-word note to
+in a fresh context. Each reads **only its own file**, writes a ~300-word note to
 `notes/voice/<name>.md` against the fixed schema below, and **returns only the filename**.
 
 The main session then reads only the notes. Loading a whole corpus at once has repeatedly

@@ -68,7 +68,7 @@ List candidate causes *before* testing any — a written list beats poking becau
 - **Sample** — a filter that runs before vs. after a transform; an outlier rule applied inconsistently.
 - **Environment** — a package/Stata version bump that changed a default; a seed that moved; locale/encoding.
 
-For a genuinely ambiguous bug, fan out the top competing hypotheses to parallel `Agent` subagents (one per hypothesis, `context: fork`), each instructed to *try to confirm its own cause on the MWE* and report back — the loop-first analogue of asking three colleagues at once (see [`orchestrator-protocol.md`](../../rules/orchestrator-protocol.md)).
+For a genuinely ambiguous bug, fan out the top competing hypotheses to parallel `Agent` subagents (one per hypothesis, each in a fresh context), each instructed to *try to confirm its own cause on the MWE* and report back — the loop-first analogue of asking three colleagues at once (see [`orchestrator-protocol.md`](../../rules/orchestrator-protocol.md)).
 
 ### Phase 3b — Reduce the hypotheses (so you don't launder a guess)
 

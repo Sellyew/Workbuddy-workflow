@@ -3,7 +3,6 @@ name: teach-from-paper
 description: Turn a research paper into teaching materials — a lecture outline, the 3-5 results worth presenting (with intuition), a slide skeleton ready for `/create-lecture`, discussion questions, and a problem-set brief. Reads the paper end-to-end and pitches to a stated audience level. Use when user says "turn this paper into a lecture", "teach from this paper", "build slides from this PDF", "make teaching materials from X", "I'm presenting this paper to my class".
 argument-hint: "[paper-path] [--level undergrad|phd|seminar] [--minutes N] [--no-exercises]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash"]
-effort: high
 ---
 
 # Teach From Paper
@@ -106,7 +105,7 @@ Motivation → Setup → Key Result → Method → Takeaways  (one line each)
 - `/create-lecture` — consumes the Phase 2 slide skeleton to draft the actual Beamer deck. See [`.claude/skills/create-lecture/SKILL.md`](../create-lecture/SKILL.md).
 - `/review-paper` — referee the paper's correctness *before* teaching it if you're unsure the result holds. See [`.claude/skills/review-paper/SKILL.md`](../review-paper/SKILL.md).
 - `/lit-review` — for situating the paper among many, rather than teaching one deeply. See [`.claude/skills/lit-review/SKILL.md`](../lit-review/SKILL.md).
-- The Phase 5 exercise brief is the input contract for `/scaffold-exercises` (a downstream skill that fleshes out problem sets); this skill stops at the brief.
+- The exercise brief (written in Phase 3; section 5 of the output) is the input contract for `/scaffold-exercises`, which fleshes out problem sets; this skill stops at the brief.
 
 ## What this skill does NOT do
 

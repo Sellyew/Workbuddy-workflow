@@ -426,6 +426,13 @@ RULE_KEYWORDS: dict[str, list[str]] = {
     # 59 of 60 skills for obeying the rule. Enforced instead by
     # check-model-versions.sh (the tier NAMES stay current) and by review.
     "model-routing.md": [],
+    # empty = explicitly skipped. orchestrator-protocol is path-scoped to skill
+    # and agent files so its runtime contract loads while those are being
+    # written, not in every research session. It governs HOW a fan-out skill
+    # composes the primitives; most skills fan out to nothing, so there is no
+    # keyword every SKILL.md must carry. The fan-out skills link the rule
+    # directly, and the reviewer contract is enforced by validate-findings.py.
+    "orchestrator-protocol.md": [],
     # Add more as new rules ship that include `.claude/skills/*/SKILL.md`
     # in their paths: or globs: frontmatter — check 5 below FAILS if you
     # forget, so this registry can no longer go green by omission.

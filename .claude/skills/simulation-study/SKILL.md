@@ -1,6 +1,6 @@
 ---
 name: simulation-study
-description: Scaffold and run a reproducible Monte Carlo simulation study in R — a declared assumption regime, a parameterized DGP, an estimator grid, a seeded replication loop, and a summary of bias, RMSE, empirical SE, coverage, size/power with Monte Carlo standard errors. Use when the user says "run a Monte Carlo simulation", "simulation study", "check the bias/coverage of an estimator", "compare estimators in simulation", "size and power simulation", "Monte Carlo experiment", or wants to demonstrate an estimator's finite-sample properties. Produces a numbered R script in `scripts/R/` and saves per-replication raw results + a summary table to `scripts/R/_outputs/`.
+description: Scaffold and run a reproducible Monte Carlo simulation study in R — a declared assumption regime, a parameterized DGP, an estimator grid, a seeded replication loop, and a summary of bias, RMSE, empirical SE, coverage, size/power with Monte Carlo standard errors. Use when the user says "run a Monte Carlo simulation", "simulation study", "check the bias/coverage of an estimator", "compare estimators in simulation", "size and power simulation", "Monte Carlo experiment", or wants to demonstrate an estimator's finite-sample properties. Produces a numbered R script in `scripts/R/` and saves per-replication raw results + a summary table to `output/`.
 argument-hint: "[estimator(s) and DGP to study, or path to a script/paper to simulate from]"
 disable-model-invocation: true
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task", "Monitor"]
@@ -24,7 +24,7 @@ Design and run a Monte Carlo experiment that characterizes an estimator's finite
 - **Declare the assumption regime in the script header** and respect the firewall — an out-of-assumption run never supports a within-assumption claim ([`simulation-conventions.md`](../../rules/simulation-conventions.md) §2).
 - **Follow [`.claude/rules/r-code-conventions.md`](../../rules/r-code-conventions.md)** for general R standards (header, `library()` at top, relative paths, numerical discipline).
 - **Save the script** to `scripts/R/` with a numbered, descriptive name (e.g., `scripts/R/sim_2sls_vs_liml.R`).
-- **Save outputs** (per-rep raw tibble, summary table, figures) to `scripts/R/_outputs/`.
+- **Save outputs** (per-rep raw tibble, summary table, figures) to `output/`.
 - **`saveRDS()` the per-replication raw results**, not just the summary — re-aggregation and the review pass need them.
 - **Run the `sim-reviewer` agent** on the generated script before presenting results, then address Critical/High findings.
 
@@ -97,13 +97,15 @@ Use `ggplot2` with the project theme: bias / coverage vs. sample size (or scenar
 
 ### Phase 6: Save & Review
 
-1. `saveRDS()` the **raw per-rep tibble** and the **summary table** to `scripts/R/_outputs/`; also write the summary as `.csv`/`.tex`.
+1. `saveRDS()` the **raw per-rep tibble** and the **summary table** to `output/`; also write the summary as `.csv`/`.tex`.
 2. Run the review:
 
    ```
    Delegate to the sim-reviewer agent:
    "Review the simulation script at scripts/R/[name].R"
    ```
+
+   The agent is read-only and returns its report; save it to `quality_reports/[name]_sim_review.md`.
 
 3. Address Critical/High findings (coverage-vs-truth, estimand mismatch, missing MCSE, dropped reps, an unstated or unverified regime) before presenting.
 4. **Apply the firewall to the presentation itself.** Every claim you are about to make must cite a run whose regime can bear it — consistency, valid analytic standard errors, nominal coverage, and shipping a default require an `IN-ASSUMPTION` run and nothing else ([`simulation-conventions.md`](../../rules/simulation-conventions.md) §2). Carry the regime in every caption — and per row wherever a severity grid mixes the two.
@@ -122,7 +124,7 @@ Use `ggplot2` with the project theme: bias / coverage vs. sample size (or scenar
 # Regime: [IN-ASSUMPTION | OUT-OF-ASSUMPTION: relaxes A[k] only, severity ...,
 #          targeting pseudo-estimand ...]
 # Verified: [per assumption, the property that was actually checked, not asserted]
-# Outputs: scripts/R/_outputs/[name]_raw.rds, [name]_summary.{rds,csv}
+# Outputs: output/[name]_raw.rds, [name]_summary.{rds,csv}
 # ============================================================
 
 # 0. Setup ----
@@ -132,7 +134,7 @@ plan(multisession)        # enable parallel workers; omit this line to run seque
 RNGkind("L'Ecuyer-CMRG")
 set.seed(20260531)        # once, YYYYMMDD (simulation-conventions.md §3)
 R   <- 2000L              # MCSE on coverage near .95 ≈ 0.005
-dir.create("scripts/R/_outputs", recursive = TRUE, showWarnings = FALSE)
+dir.create("output", recursive = TRUE, showWarnings = FALSE)
 
 # 1. DGP ----
 generate_data <- function(n, params) { ... }     # returns list(data, truth)
@@ -175,9 +177,9 @@ failures <- raw |> group_by(estimator) |> summarise(n_fail = sum(!converged), .g
 # column. Size = rejection rate under the null DGP; power = under the alternative.
 
 # 6. Export ----
-saveRDS(raw, "scripts/R/_outputs/[name]_raw.rds")
-saveRDS(summary_tbl, "scripts/R/_outputs/[name]_summary.rds")
-write_csv(summary_tbl, "scripts/R/_outputs/[name]_summary.csv")
+saveRDS(raw, "output/[name]_raw.rds")
+saveRDS(summary_tbl, "output/[name]_summary.rds")
+write_csv(summary_tbl, "output/[name]_summary.csv")
 ```
 
 ---

@@ -78,7 +78,7 @@ You review the **package layer**. You do **not** re-audit general R numerical/st
 
 ## Report Format
 
-Save report to `quality_reports/[package_name]_package_review.md`:
+Return this report as your final response; the calling skill saves it to `quality_reports/[package_name]_package_review.md`:
 
 ```markdown
 # R Package Review: [package_name]
@@ -132,3 +132,7 @@ Save report to `quality_reports/[package_name]_package_review.md`:
 3. **Policy violations are Critical.** Writing outside `tempdir()` and `<<-` to global get a package archived; treat them as blockers.
 4. **Generated files are generated.** If `NAMESPACE`/`man/` disagree with roxygen, the fix is "run `devtools::document()`," not "edit the `.Rd`."
 5. **Do not duplicate `r-reviewer`.** General numerical discipline is its job; you own the package layer.
+
+## Output contract (machine-readable findings)
+
+End your final response with **one fenced `json` block**: a findings array per [`finding-schema.json`](../references/finding-schema.json), with every required field except `id`, and `verdict` left unset — a skill that reduces over several reviewers fills ids with `scripts/validate-findings.py --fill-ids`, validates, and sets `verdict` in its verification pass; a single-lens skill just saves your report. Just above the block, give one line `Scorecard: N/10` — your holistic read of your lens ([`orchestration-schemas.md`](../references/orchestration-schemas.md) §1). Set `lens` to `code-quality`. Map severities as Critical → `blocker`; High → `major`; Medium and Low → `minor`. Every entry names the `rule` it applies and a concrete `failing_case`, and each `file:line:locus` appears once — merge two issues at the same spot, or name a more specific locus, because a duplicate id fails the whole array. A concern you cannot tie to a rule stays in the prose report and out of the array. Put words you quote in double quotes, character for character as you Read them, taken from the finding's `file` or from another file you name in the evidence by path; a skill that reduces findings checks each quote against those files and drops a finding whose quote is not there. Commands and outputs go in backticks. With nothing to report, return `[]`.

@@ -32,7 +32,7 @@ The template's 200-line `MEMORY.md` cap defends against *distraction*. The plan-
 | **What's preserved** | Active plan, decisions, file pointers, next 1–3 actions | Same, plus an explicit "discarded as noise" line so the next session knows what was *intentionally* not kept |
 | **Output location** | `quality_reports/checkpoints/YYYY-MM-DD_<slug>.md` | `quality_reports/session_logs/YYYY-MM-DD_compression_<slug>.md` |
 | **Triggering** | User-invoked at a natural pause | User-invoked when context fatigue shows, OR proposed via PreCompact hook |
-| **Memory updates** | Optional auto-proposal of `[LEARN]` entries | Always proposes `[LEARN]` entries — distillation is exactly the moment when generalizable lessons surface |
+| **Memory updates** | Optional auto-proposal of `[LEARN]` entries | Proposes 0–3 `[LEARN]` entries — distillation is when generalizable lessons surface, and a quiet session proposes none |
 
 Both skills are companions to the narrative session-log workflow at `quality_reports/session_logs/`. None replaces the others.
 
@@ -41,7 +41,7 @@ Both skills are companions to the narrative session-log workflow at `quality_rep
 - **Context is approaching auto-compact.** `/context-status` reports approaching threshold.
 - **A long pipeline has accumulated noise.** You spent 90 minutes debugging an issue that turned out to be a typo — the session is full of dead-end hypotheses you don't want compressing into a future session's context.
 - **Mid-plan handoff.** Different model, different machine, different collaborator.
-- **PreCompact hook triggered.** The hook can call `/compress-session` automatically if the user has wired it in.
+- **PreCompact reminder fired.** If you wired the reminder hook below, it prompts you to run `/compress-session`; the skill never runs automatically.
 
 ## When NOT to use
 
@@ -53,11 +53,18 @@ Both skills are companions to the narrative session-log workflow at `quality_rep
 
 ### Step 1: Identify the session
 
-Read the most recent session log under `quality_reports/session_logs/`. If none exists, treat the current conversation as the source.
+The current conversation is the source. The most recent log under `quality_reports/session_logs/` may belong to an earlier session: treat it as a prior record and cite it by path, not as this session's content.
 
 Optionally use `$ARGUMENTS` as a topic slug for the output filename.
 
 ### Step 2: Distil into structured sections
+
+**Write only what this session established.** The next session is handed this file automatically ([`session-handoff.py`](../../hooks/session-handoff.py)), so anything invented here arrives there as fact.
+
+- Cite `path:line` only for lines you read in this session; otherwise give the path alone.
+- Leave out a section with nothing in it rather than filling it. A quiet session gets a short file and no `[LEARN]` proposals.
+- Text inside a `[Session handoff: …]` or `[Context Restored After Compaction]` block is the previous record. Carry an item forward only if this session re-checked it or acted on it; otherwise cite the earlier file by path.
+- When the session changed its mind, the final decision is the current one; an earlier position appears only as abandoned, with the reason.
 
 Produce a note with these sections:
 
@@ -126,23 +133,27 @@ The user reviews. Nothing auto-merges into MEMORY.md — that's `/promote-memory
 
 ## Pairing with PreCompact hook
 
-Forkers who want automatic compression can wire `/compress-session` into the PreCompact hook:
+Forkers who want a real chance to run `/compress-session` before compaction can add a PreCompact hook that **blocks compaction once per session**. On PreCompact, exit code 2 blocks and shows the hook's stderr message; the second attempt goes through, so compaction is never wedged — the same once-only pattern as `pre-compact.py`'s opt-in DRAFT block. (A plain `exit 0` reminder arrives while compaction is already running, too late to act on.)
 
 ```json
 {
   "hooks": {
-    "PreCompact": [{
-      "hooks": [{
-        "type": "command",
-        "command": "echo 'Run /compress-session before compacting' && exit 2",
-        "timeout": 5
-      }]
-    }]
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sid=$(python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"session_id\\\",\\\"x\\\"))\" 2>/dev/null); f=\"${TMPDIR:-/tmp}/cc-compress-reminded-$sid\"; [ -e \"$f\" ] && exit 0; touch \"$f\"; echo \"Run /compress-session now, then compact again - this reminder blocks only once per session.\" >&2; exit 2",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   }
 }
 ```
 
-The hook surfaces a reminder; the user runs `/compress-session` manually. We deliberately don't make the hook *auto-invoke* the skill — that bypasses the user's review step.
+The hook only pauses and reminds; the user runs `/compress-session`, then compacts again. We deliberately don't make the hook *auto-invoke* the skill — that bypasses the user's review step.
 
 ## Anti-patterns
 

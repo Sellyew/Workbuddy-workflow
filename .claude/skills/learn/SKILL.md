@@ -66,9 +66,10 @@ Create the skill file at `.claude/skills/[skill-name]/SKILL.md`:
 ---
 name: descriptive-kebab-case-name
 description: |
-  [CRITICAL: Include specific triggers in the description]
+  [What the skill does, then the situations it applies to — the key use first.
+   Include an exact error string only when that string is the trigger.]
   - What the skill does
-  - Specific trigger conditions (exact error messages, symptoms)
+  - Trigger conditions (symptoms; an exact error message when that is the trigger)
   - When to use it (contexts, scenarios)
 metadata:
   author: [you]

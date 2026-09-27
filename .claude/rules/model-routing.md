@@ -29,26 +29,34 @@ Set per-skill via the same field in `SKILL.md` frontmatter. Inheritance is fine 
 
 ## The effort axis (the first cost lever)
 
-Model tier is the second cost lever; **effort is the first.** Every model runs at an effort level (`low / medium / high / xhigh / max`), and lowering effort is cheaper than dropping a tier — reach for it first.
+Model tier is the second cost lever; **effort is the first.** Every model that supports effort runs at a level (`low / medium / high / xhigh / max`) — the current Haiku takes no effort setting — and lowering effort is cheaper than dropping a tier: reach for it first.
 
-- **Opus 4.8 defaults to `high`**, and its `high` does roughly what Opus 4.7's `xhigh` did, for fewer tokens. Do **not** reflexively set `xhigh`.
-- **Mechanical work** (Haiku tier) → `low` / `medium`.
-- **Review and judgment** (Sonnet / Opus) → `high` (the default).
-- **The hardest runs** (deep refactors, the toughest `/review-paper --peer`) → `xhigh`; `ultracode` (xhigh + dynamic workflows) for repo-scale autonomous tasks.
-- Reserve `max` for the rare case where you've verified `xhigh` was insufficient.
+Default effort differs by tier — the current defaults live in [`model-versions.md`](../references/model-versions.md) (at its 2026-09-26 verification: Opus tier **`medium`**, Sonnet and Fable tiers `high`). Two facts about the current Opus shape every pin, and both belong to that verification — re-read them when the SSoT changes:
 
-Set per skill/agent with the `effort:` frontmatter field. Several skills ship at `effort: high` for genuinely hard gates (e.g. `/seven-pass-review`, `/simulation-study`, `/r-package-check`). Match effort to the cognitive demand the same way you match model tier — and tune effort before you swap models.
+- **Its `medium` matches or beats the prior Opus generation at `high`** on coding and knowledge work (Anthropic's own evaluations), and **at a given level it thinks more per turn** than that generation did. So pin above the default only where the extra thinking is the point.
+- **Thinking is always on**; effort is the only depth control. To get less thinking, lower effort — do not add "think less" prose. To get more, raise effort — do not add "think harder" prose.
 
-## Where Fable 5 fits — and where it does not
+How the template pins effort:
 
-**Fable 5** (GA 2026-06-09) is the most capable model in Claude Code — and this rule deliberately does **not** route any of the template's fleet to it. Two verified reasons:
+- **Mechanical work** → the Haiku tier (no effort setting on the current Haiku), or `low` / `medium` on a tier that takes one.
+- **Review and judgment on the Sonnet tier** → `high` (its default).
+- **Opus-tier gates where a false PASS is expensive** — `editor`, `domain-referee`, `methods-referee`, `claim-verifier` → `high`, deliberately one level above the default. These are the do-not-demote agents below; the extra thinking is what you are paying for.
+- **Other Opus-tier agents** (`verifier`, `quarto-critic`, `tikz-reviewer`, `sim-reviewer`, `domain-reviewer`) → `medium`. Raise one only after `medium` measurably missed issues on your material.
+- **Skills** pin `high` only for verification gates and correctness-critical computation (`/audit-reproducibility`, `/disclosure-check`, `/replication-package`, `/seven-pass-review`, `/r-package-check`, `/simulation-study`, `/diagnose`, `/power-analysis`). Writing and synthesis skills carry no pin and inherit the session. A handful of lightweight skills pin `medium` as a cost cap (`/syllabus`, `/scaffold-exercises`, `/coauthor-brief`, `/submission-disclosures`, `/data-management-plan`, `/triage-inbox`, `/capture-environment`, `/new-skill`). A skill's `effort:` *overrides* the session, so those `medium` pins also lower effort on tiers that default to `high` — intended for a cost cap, worth knowing if you run them on Sonnet or Fable.
+- **The hardest runs** (deep refactors, the toughest `/review-paper --peer`) → `xhigh`; `ultracode` (xhigh + dynamic workflows) for repo-scale autonomous tasks. Reserve `max` for the rare case where you've verified `xhigh` was insufficient. `maxEffortLevel` in settings caps every surface — a useful ceiling on a fixed grant budget.
 
-1. **Cost discipline.** Fable 5 is priced above the Opus tier <!-- model-allow --> — a premium on exactly the judgment tier the 70/20/10 split exists to guard. The referee/editor/verifier agents are bounded, single-sitting tasks; Fable's premium is priced for *long-horizon, larger-than-one-sitting* autonomous work, which the fleet is not.
-2. **Protocol maturity — STALE, needs re-measurement (flagged 2026-08-21).** In one *launch-week (2026-06)* fan-out, Fable 5 subagents failed the forced structured-output tool protocol 28/28 times vs 0 on the then-current Opus <!-- model-allow -->. That observation is ~10 weeks old and predates Opus 5; **treat this justification as unverified until re-measured.** It was a single-session signal, not a benchmark, but exactly the failure mode that matters here: in a fan-out fleet, a silent tool-protocol failure means a review lens returns *nothing*. (Same logic as the "don't push Opus down a tier" anti-pattern: a too-immature judge is as bad as a too-cheap one.)
+Set per skill/agent with the `effort:` frontmatter field. Match effort to the cognitive demand the same way you match model tier — and tune effort before you swap models.
 
-**Where Fable 5 *is* the right call:** your own interactive sessions on the hardest long-horizon work — a multi-day refactor, a deep research synthesis you'll steer by hand — where you are in the loop to catch a protocol hiccup and the task actually exploits the model's horizon. Select it per-session (`/model fable`); leave the fleet's `model:` pins alone. Re-evaluate at Fable point releases (the protocol gap is the kind of thing that gets fixed); when it does, the high-judgment tier is the natural first candidate.
+## Where the Fable tier fits — and where it does not
 
-**Cost reality check (grad-student budgets):** a full `/review-paper --peer` runs a meaningful fraction of a dollar-denominated token budget at Opus prices; doubling the judgment tier doubles that line item with no quality evidence yet. When cost-constrained, drop *effort* first (the first lever, above), then tier — never the reverse.
+The Fable tier is the most capable model in Claude Code, and this rule deliberately does **not** route any of the template's fleet to it. The reason is cost, and Anthropic's own routing advice agrees:
+
+- **Cost discipline.** The Fable tier costs a multiple of the Opus per-token price (current figures in [`model-versions.md`](../references/model-versions.md)) on exactly the judgment tier the 70/20/10 split exists to guard. The referee/editor/verifier agents are bounded, single-sitting reviews; Fable is priced for *long-horizon, larger-than-one-sitting* autonomous work, which the fleet is not.
+- **Anthropic's guidance** is to start with the current Opus for most workloads and move to Fable when evals at a higher Opus effort still fall short. For a fleet lens, raise that agent's effort first; move it to Fable only with a measured gap.
+
+**Where the Fable tier *is* the right call:** your own interactive sessions on the hardest long-horizon work — a multi-day refactor, a deep research synthesis you'll steer by hand, a proof you are auditing line by line — where the task actually exploits the model's horizon. Select it per-session (`/model fable`); leave the fleet's `model:` pins alone.
+
+**Cost reality check (grad-student budgets):** a full `/review-paper --peer` runs a meaningful fraction of a dollar-denominated token budget at Opus prices; moving the judgment tier to Fable multiplies that line item with no quality evidence yet. When cost-constrained, drop *effort* first (the first lever, above), then tier — never the reverse.
 
 ## Why this matters
 
@@ -56,11 +64,11 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 
 ## Routing recipe per task type
 
-### Mechanical (Haiku 4.5)
+### Mechanical (Haiku tier)
 
 - **TikZ → SVG extraction** (`extract-tikz`'s execution agent).
 - **Bib formatting / citation rewrites** (`validate-bib`'s mechanical fix path).
-- **Quarto fixer applying critic's diff** (`quarto-fixer` — separate from `quarto-critic`).
+- **Memory-promotion voting** (`promote-memory-council`).
 - **Proofread fix application** (when the fix is "replace X with Y" mechanically).
 - **File rename / search-and-replace operations.**
 
@@ -91,7 +99,7 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 
 ## Anti-pattern: pushing Opus down a tier
 
-Do **not** demote `claim-verifier`, `methods-referee`, or `editor` to Sonnet to save cost. These are the agents that protect the paper from hallucinated citations / weak identification / desk-reject mistakes. The cost of one false-positive PASS from a too-cheap verifier is materially higher than the cost of running Opus on every paper.
+Do **not** demote `claim-verifier`, `methods-referee`, `domain-referee`, or `editor` to Sonnet to save cost. These are the agents that protect the paper from hallucinated citations / weak identification / desk-reject mistakes. The cost of one false-positive PASS from a too-cheap verifier is materially higher than the cost of running Opus on every paper.
 
 ## Anti-pattern: self-as-architect-and-editor pairing
 
@@ -103,12 +111,12 @@ If a future contributor ever adds an explicit *challenger → auditor* step (e.g
 
 ## How `/commit` uses this rule
 
-`/commit`'s pre-commit verifier currently runs at the orchestrator's tier. When this rule's pattern matures (the Sonnet tier reliably catches most issues), the verifier can be routed to Sonnet by default with Opus reserved for `--strict` mode. Pending evaluation.
+`/commit` spawns the `verifier` agent, pinned to the Opus tier at `medium` effort: its checks are exit codes, counts, and file existence, which `medium` handles. Routing it to the Sonnet tier (Opus reserved for a `--strict` mode) is a reasonable next step once measured on your commits.
 
 ## Cross-references
 
 - [`.claude/rules/cross-artifact-review.md`](cross-artifact-review.md) — paper ↔ code dependency graph (orthogonal to routing but invoked at similar moments).
-- [`.claude/rules/post-flight-verification.md`](post-flight-verification.md) — CoVe / forked verifier (claim-verifier should stay on Opus per "anti-pattern: pushing Opus down" above).
+- [`.claude/rules/post-flight-verification.md`](post-flight-verification.md) — CoVe / fresh-context verifier (claim-verifier should stay on Opus per "anti-pattern: pushing Opus down" above).
 - Guide section "Cost-Conscious Composition" — user-facing cost guidance that points at this rule.
 
 > **Tiers, not point versions.** This rule names tiers (`Haiku` / `Sonnet` / `Opus` / `Fable`) on purpose. Current point versions and provider-dependent alias resolution live in the single source of truth: [`model-versions.md`](../references/model-versions.md). Do not hard-code a point version here.

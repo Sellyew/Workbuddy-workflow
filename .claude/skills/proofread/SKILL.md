@@ -8,7 +8,7 @@ disallowed-tools: ["Edit", "MultiEdit"]
 
 # Proofread Lecture Files
 
-Run the mandatory proofreading protocol on lecture files. This produces a report of all issues found WITHOUT editing any source files.
+Run the proofreading protocol on lecture files. This produces a report of all issues found WITHOUT editing any source files.
 
 ## Steps
 
@@ -34,7 +34,7 @@ Run the mandatory proofreading protocol on lecture files. This produces a report
    - For `.tex` files: `quality_reports/FILENAME_report.md`
    - For `.qmd` files: `quality_reports/FILENAME_qmd_report.md`
 
-5. **IMPORTANT: Do NOT edit any source files.**
+5. **Leave source files unchanged** — fixes are applied after the user reviews the report.
    Only produce the report. Fixes are applied separately after user review.
 
 6. **Present summary** to the user:

@@ -21,8 +21,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the append-only check compares against the branch this merges into
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Run gate suite
+        env:
+          # A replication-log or spec-ledger entry committed on the base branch must still
+          # be here, unedited — this catches a rewrite committed without the local hook.
+          APPEND_ONLY_BASE: ${{ github.base_ref && format('origin/{0}', github.base_ref) || 'origin/main' }}
         run: ./scripts/backtest.sh

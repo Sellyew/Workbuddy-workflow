@@ -1,7 +1,7 @@
 ---
 name: replication-package
 description: Assemble a submission-ready replication package to the AEA Data and Code Availability Standard (DCAS) / openICPSR / Social Science Reproduction Platform expectations — standard replication README, dataset manifest, computational-requirements capture, a Table/Figure → script:line map, and a confidential-data deposit plan. Use when user says "build the replication package", "prepare the openICPSR deposit", "make the AEA data and code package", "DCAS compliance", "assemble the deposit for the journal", or after a paper is accepted and the journal's data editor needs the package. NOT a numeric verifier — it calls /audit-reproducibility to confirm claims reproduce before packaging.
-argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to scripts/R/_outputs/)"
+argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to output/)"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task"]
 effort: high
 ---
@@ -22,7 +22,7 @@ Produce the deposit an economist hands a journal at acceptance: a directory tree
 ## Inputs
 
 - `$0` — path to the manuscript (`.tex`, `.qmd`, `.md`, `.pdf`). Required (the source of the Table/Figure inventory).
-- `$1` — outputs directory. Defaults to `scripts/R/_outputs/`. Recognised alternatives: `scripts/stata/_outputs/`, `scripts/python/_outputs/`, `_targets/objects/`.
+- `$1` — outputs directory. Defaults to `output/`, where every language's pipeline writes. Recognised alternative: `_targets/objects/`. If `output/` does not exist but a pre-v2.6 `scripts/<lang>/_outputs/` does, use that and say so.
 
 ## Workflow
 

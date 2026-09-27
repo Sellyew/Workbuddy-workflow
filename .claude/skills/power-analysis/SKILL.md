@@ -19,7 +19,7 @@ Compute the three interlocking quantities of an ex-ante design calculation — *
 ## When to use
 
 - **Before launching an RCT / field / survey experiment** — to choose N (or clusters) for a target MDE at 80–90% power.
-- **Invoked by [`/preregister`](../preregister/SKILL.md) for RCTs** — the AEA RCT Registry and most IRBs require a power/MDE justification; `/preregister`'s `aea-rct` style calls this skill to fill that section.
+- **Invoked by [`/preregister`](../preregister/SKILL.md) for RCTs** — the AEA RCT Registry and most IRBs require a power/MDE justification; `/preregister`'s `aea-rct` style follows this skill's phases to fill that section (this skill is user-invoked only, so it is read and followed, not called).
 - **During R&R** — when a referee asks "was this study adequately powered to detect the effect you claim?"
 - **Designing a Monte Carlo** — to set `R` and sample sizes before handing off to `/simulation-study`.
 
@@ -64,7 +64,7 @@ When the design is **not** a clean two-arm comparison — DiD / staggered event-
 1. **Seeded, parameterized DGP** that embeds the hypothesized effect (and the null DGP for size). `set.seed(YYYYMMDD)` once; L'Ecuyer streams if parallel.
 2. **Estimator** = the one you will actually use on the real data (e.g. `fixest::feols` two-way FE, `did::att_gt`, `AER::ivreg`), returning `est, se, ci, p, reject`.
 3. **Power = share of reps rejecting H0** at `alpha`; **size = rejection rate under the null DGP** (verify it is near nominal before trusting power). Report each with its **Monte Carlo SE** = `sqrt(p(1−p)/R)`.
-4. Sweep N (or #clusters / #periods) to trace the power curve; save the raw per-rep tibble via `saveRDS()` to `scripts/R/_outputs/`.
+4. Sweep N (or #clusters / #periods) to trace the power curve; save the raw per-rep tibble via `saveRDS()` to `output/`.
 
 A simulated power number without an MCSE, or without a verified size check, is not yet an answer.
 
@@ -116,7 +116,7 @@ If invoked by `/preregister`, return the methods paragraph + MDE row for the pre
 
 ## Cross-references
 
-- [`.claude/skills/preregister/SKILL.md`](../preregister/SKILL.md) — invokes this skill to fill the power/MDE section of an `aea-rct` (and OSF) preregistration; this skill returns the methods paragraph.
+- [`.claude/skills/preregister/SKILL.md`](../preregister/SKILL.md) — follows this skill to fill the power/MDE section of an `aea-rct` (and OSF) preregistration; this skill returns the methods paragraph.
 - [`.claude/skills/simulation-study/SKILL.md`](../simulation-study/SKILL.md) — the Monte Carlo harness Phase 2 reuses (seeded DGP, estimator grid, % rejecting H0).
 - [`.claude/rules/simulation-conventions.md`](../../rules/simulation-conventions.md) — the simulation contract (truth from DGP, MCSE, size-under-the-null) that Phase 2 must honor.
 - [`.claude/skills/data-analysis/SKILL.md`](../data-analysis/SKILL.md) · [`.claude/skills/stata-replication/SKILL.md`](../stata-replication/SKILL.md) — where the realised analysis (and its actual estimator/SE) lives; the power calc should use the same estimator.

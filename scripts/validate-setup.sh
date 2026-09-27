@@ -60,6 +60,15 @@ echo ""
 echo -e "${BOLD}Recommended tools:${RESET}"
 check_optional "R"            "R"        "https://www.r-project.org/"
 check_optional "GitHub CLI"   "gh"       "https://cli.github.com/"
+# Browser slide QA (scripts/slide-qa.py) runs under SLIDE_QA_PYTHON, usually a venv.
+sqa_py="${SLIDE_QA_PYTHON:-python3}"
+if "$sqa_py" -c "import playwright" >/dev/null 2>&1; then
+    echo -e "  ${GREEN}✓${RESET} Playwright (browser slide QA) found via $sqa_py"
+    pass=$((pass + 1))
+else
+    echo -e "  ${YELLOW}⚠${RESET} Playwright not found (optional; browser slide QA) — python3 -m venv ~/.venvs/slide-qa && ~/.venvs/slide-qa/bin/pip install playwright, then export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python"
+    warn=$((warn + 1))
+fi
 echo ""
 
 echo -e "${BOLD}Git configuration:${RESET}"

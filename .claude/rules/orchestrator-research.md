@@ -12,7 +12,7 @@ paths:
 ## The Simple Loop
 
 ```
-Plan approved → orchestrator activates
+R / analysis task (user-requested)
   │
   Step 1: IMPLEMENT — Execute plan steps
   │
@@ -29,7 +29,7 @@ Plan approved → orchestrator activates
         NO  → Fix blocking issues, re-verify, re-score
 ```
 
-**No 5-round loops. No multi-agent reviews. Just: write, test, done.**
+**One agent, no review fan-out:** write, run, verify, score. Reach for the fan-out runtime in `orchestrator-protocol.md` only through a skill that invokes it (e.g. `/review-r`, `/simulation-study`).
 
 ## Verification Checklist
 
