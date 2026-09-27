@@ -16,7 +16,7 @@ Turn a noisy academic inbox into a short, decision-ready digest. Fetch recent ma
 ## When to use
 
 - **Weekly / daily sweep** — "what landed that needs a decision?" without reading every thread yourself.
-- **As a scheduled routine** — wired to `/schedule` to run each morning and leave a digest waiting. Because this skill is user-invoked, write the routine prompt as "Read `.claude/skills/triage-inbox/SKILL.md` and follow it" — a scheduled task cannot fire `/triage-inbox` by name.
+- **As a scheduled task** — run each morning as a Desktop scheduled task (local), so the digest and the referee tracker stay on your machine; they are gitignored, so a cloud routine's fresh clone would neither see the tracker nor keep the digest. Because this skill is user-invoked, write the routine prompt as "Read `.claude/skills/triage-inbox/SKILL.md` and follow it" — a scheduled task cannot fire `/triage-inbox` by name.
 - **Referee-load management** — keep an honest count of outstanding reviews against a standing cap before you say yes to one more.
 - **R&R / editor deadline capture** — turn "minor revision due in 6 weeks" buried in an email into a calendar hold proposal.
 
@@ -59,7 +59,7 @@ For each non-noise thread, propose exactly one of:
 
 - **Draft reply** — write a courteous draft *for review*. Do not send. If the Gmail MCP exposes a create-draft tool, you MAY stage a Gmail draft (which still requires the user to hit send) — otherwise inline the text in the digest.
 - **Calendar hold** — for an R&R / grant / talk deadline, propose a hold (title, date, lead-time reminder). Surface conflicts against existing events. **Propose only** — booking is the user's click.
-- **Scaffold a referee project** — for an *accepted* (or leaning-yes) referee request under the cap, offer to scaffold a referee project (dated folder + manuscript + notes template). Over the cap → recommend a polite decline draft instead, and say why ("4 reviews already open vs. cap of 3").
+- **Scaffold a referee project** — for an *accepted* (or leaning-yes) referee request under the cap, offer to scaffold a referee project: a dated notes folder and notes template, outside the repository or under the gitignored `quality_reports/inbox/`. The manuscript itself is not copied in, and before it enters any Claude session the user checks the journal's or funder's reviewer rules — NIH forbids it outright ([`master_supporting_docs/README.md`](../../../master_supporting_docs/README.md) rule 5). Over the cap → recommend a polite decline draft instead, and say why ("4 reviews already open vs. cap of 3").
 - **Summarize + offer a brief** — for a co-author thread, distill the asks and offer to generate a [`/coauthor-brief`](../coauthor-brief/SKILL.md).
 - **Snooze** — defer with a re-surface date; nothing else happens.
 
@@ -108,14 +108,14 @@ Plus the one-line chat summary: digest path, counts per bucket, open-reviews-vs-
 
 - [`.claude/skills/coauthor-brief/SKILL.md`](../coauthor-brief/SKILL.md) — the handoff brief offered for co-author threads.
 - [`.claude/skills/respond-to-referees/SKILL.md`](../respond-to-referees/SKILL.md) — drafts the R&R response document once a revision deadline surfaces here.
-- `/schedule` — wire this skill into a cron routine; the human-gated design is what makes unattended runs safe.
+- Desktop scheduled tasks — run this skill each morning on your machine (a cloud `/schedule` routine would lose the gitignored digest and tracker); the human-gated design is what makes unattended runs safe.
 - [`.claude/rules/orchestrator-protocol.md`](../../rules/orchestrator-protocol.md) — the "no daemon, user/skill-initiated, human-in-the-loop" contract this skill honors for outbound actions.
-- [`.claude/rules/confidential-data.md`](../../rules/confidential-data.md) — never copy attachment contents, restricted data, or credentials into a digest that may be committed.
+- [`.claude/rules/confidential-data.md`](../../rules/confidential-data.md) — never copy attachment contents, restricted data, or credentials into a digest (gitignored, but still on disk).
 
 ## What this skill does NOT do
 
 - **Send, reply, accept, decline, or book.** It drafts and proposes; you execute. No exceptions, including in scheduled runs.
-- **Auto-scaffold a referee project.** It *offers* the scaffold; creating it waits for your yes and respects the cap.
+- **Auto-scaffold a referee project.** It *offers* the scaffold; creating it waits for your yes, respects the cap, and never copies the manuscript in.
 - **Run unattended with side effects.** Outbound actions are always human-gated — the only thing a cron run writes is the digest and the tracker.
 - **Read or store message bodies wholesale.** It extracts gists, deadlines, and senders; it does not archive email contents or attachment data into the repo.
 - **Reach mail/calendar without MCP.** No direct IMAP/API credentials — everything goes through the session's MCP servers, and their absence degrades gracefully.

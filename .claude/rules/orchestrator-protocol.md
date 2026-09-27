@@ -85,6 +85,7 @@ A synthesizer/editor may freely *downgrade* or *de-duplicate* lens findings, but
 Replace bespoke "max 5 rounds" stopping logic with **convergence**: stop after **2 consecutive dry rounds** (a round that adds 0 new CRITICAL/MAJOR findings). **Dedup is exact, not fuzzy (v2.5):** every finding carries `id = sha1("<file>:<line>:<locus>")`, so within a round the same defect gets the same id **even when a different lens rediscovers it**. Across rounds, a fixer's edits shift line numbers, so newness is judged on `file` + `locus` ([`orchestration-schemas.md`](../references/orchestration-schemas.md) §3). A round is dry when it produces no finding with a new `file` + `locus`. Guards:
 
 - **Fallback cap** — `RUN_CONFIG.max_rounds` (default 5) bounds a non-converging loop.
+- **A missing lens is not a dry round** — a round in which any lens has not reviewed (no valid findings array after one re-dispatch) is not dry and does not count toward the two; a lens that never returns runs the loop to its fallback cap, and the report names it.
 - **Two-strikes** — the *same* finding (same `file` + `locus` — mechanically checkable rather than eyeballed) surviving rounds N and N+2 is escalated to the user, not patched a third time ([`summary-parity.md`](summary-parity.md)).
 - **Spend cap** — `RUN_CONFIG.spend_cap_tokens` (default ~500k) warns-and-asks; it is a spend ceiling, not a context limit (each re-audit is fresh).
 - **Runaway backstop** — never exceed the harness's hard subagent cap; cost-pilot any ≥7× fan-out on one section before a full sweep.

@@ -33,6 +33,11 @@ Conduct a structured literature search and synthesis on the given topic.
    - What questions remain unanswered?
    - What data or methods could address them?
    - Where do findings conflict?
+   - **How independent is the support?** For any finding you call consistent or replicated, give
+     the apparent count and the independent count — studies that share an experiment, dataset,
+     sample or research team count once.
+   - **What went the other way?** For each headline finding, search for null results and failed
+     replications and report them, or say none were found and give the search terms used.
 
 5. **Extract citations** in BibTeX format for all papers discussed.
 

@@ -26,7 +26,7 @@ Not for: literature surveys across many papers (use `/lit-review`); refereeing t
 | `.tex`, `.qmd`, `.md`, `.txt` | Read directly with the `Read` tool. |
 | `.pdf` | `TMP=$(mktemp -t paper).txt && pdftotext "$0" "$TMP"` (poppler-utils), then Read/Grep `"$TMP"`. |
 
-If extraction fails or the tool is missing, ask the user for a plain-text version and stop. The full paper goes in the context window (1M) — read it end-to-end before extracting; do not skim the abstract and guess.
+If extraction fails or the tool is missing, ask the user for a plain-text version and stop. A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "$0" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read. The full paper goes in the context window (1M) — read it end-to-end before extracting; do not skim the abstract and guess.
 
 ## Phases
 

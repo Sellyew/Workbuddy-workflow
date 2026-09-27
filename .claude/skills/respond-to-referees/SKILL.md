@@ -23,7 +23,7 @@ Supported formats and how to read them. In the commands below, `FILE` stands for
 | `.docx` | `TMP=$(mktemp --suffix=.txt) && pandoc "FILE" -t plain -o "$TMP"` (or `docx2txt "FILE" "$TMP"`). Grep `"$TMP"`. |
 | `.html` | `TMP=$(mktemp --suffix=.txt) && pandoc "FILE" -t plain -o "$TMP"`. Grep `"$TMP"`. |
 
-If a required tool is missing or extraction fails, ask the user to provide a plain-text version (`.txt` or `.md`) and stop.
+If a required tool is missing or extraction fails, ask the user to provide a plain-text version (`.txt` or `.md`) and stop. A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "FILE" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read.
 
 ## Workflow
 

@@ -11,7 +11,7 @@ The loop-first half of the workflow: recurring scholarly chores that should run 
 | **Reproducibility drift** | nightly | Re-run `/audit-reproducibility` against the passport; diff stale claims | any FAIL (not EXPLAINED) |
 | **Literature delta** | weekly | `/lit-review` sweep on your saved topics; diff against last week | new directly-relevant work |
 | **Memory promotion** | monthly — **a reminder, not a routine** | run `/promote-memory` yourself in a local session: it is user-invoked, and its candidates live in machine-local auto memory a cloud routine cannot see | items graduate to MEMORY.md |
-| **Inbox triage** | daily / weekdays | `/triage-inbox` — referee requests, R&R deadlines, co-author asks | action proposed (always human-gated) |
+| **Inbox triage** | daily / weekdays — **a Desktop scheduled task (local), not a cloud routine** | `/triage-inbox` — referee requests, R&R deadlines, co-author asks. Its digest and referee tracker are gitignored and machine-local, so a cloud routine's fresh clone would start with no tracker and discard the digest | action proposed (always human-gated) |
 
 **A routine cannot fire a user-invoked skill.** Skills marked `disable-model-invocation: true` (e.g. `/triage-inbox`, `/promote-memory`) do not run when a scheduled task names them as its prompt. For such a skill, write the routine prompt as "Read `.claude/skills/<name>/SKILL.md` and follow it" — the routine's fresh clone has the file — or run it yourself.
 

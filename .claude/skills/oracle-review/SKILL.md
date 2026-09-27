@@ -39,8 +39,11 @@ reaches 100% instead of drifting toward whatever is easiest to read.
 **Nothing restricted leaves the machine.** A consult uploads every attached file to another
 vendor. Before launch, check the file list against
 [`confidential-data.md`](../../rules/confidential-data.md): no restricted microdata, no
-cell-level outputs that have not cleared `/disclosure-check`, no credentials. Manuscripts,
-proofs, and code are what a consult is for — send them. When a file mixes the paper with
+cell-level outputs that have not cleared `/disclosure-check`, no credentials. Your own manuscripts,
+proofs, and code are what a consult is for — send them. A manuscript or proposal you are *reviewing* is
+not yours to send: it is held in confidence. Many journals tell reviewers not to put a submission
+into AI tools, and NIH forbids its peer reviewers from uploading any part of an application,
+proposal or critique to one (NOT-OD-23-149). When a file mixes the paper with
 restricted material, send the paper without the restricted part.
 
 Mechanics, flags, and gotchas: the reference, §2–§3. Pick the target from the reference's

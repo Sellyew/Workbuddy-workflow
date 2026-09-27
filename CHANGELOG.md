@@ -148,6 +148,25 @@ absent; the debt was drift between files.
   `/data-analysis` doing steps they do not do (#162).
 - **Fixed:** `/deep-audit` lost `disable-model-invocation: true` when the v2.5 verification skills
   were merged, so a vague "audit this" could start its repo-wide fix loop; the flag is restored.
+- **Fixed:** the guide no longer has agents argue for one estimator each. Pattern 9's "Agent Debates"
+  told users to debate DiD vs synthetic control vs RDD, which the owner's methods ruling forbids;
+  it is now "Independent Advocates", with a method-neutral example (competing framings), each
+  advocate in its own context and the researcher deciding (#165).
+- **Fixed:** refereed manuscripts stay out. `master_supporting_docs/` no longer invites papers you
+  are refereeing into a committed folder; `/oracle-review`, `confidential-data.md` and
+  `/triage-inbox`'s referee scaffold no longer send or copy in a manuscript or proposal you are
+  reviewing; the guide says which terms (consumer or commercial) cover each kind of account (#166).
+- **Fixed:** `/triage-inbox` digests are gitignored — they hold email subjects, senders and referee
+  manuscript IDs — so inbox triage now runs as a local scheduled task, where the digest and the
+  referee tracker persist, not as a cloud routine (#167).
+- **Fixed:** session advice agrees with itself and with the handoff hook. Within a task, let compaction
+  carry you; between unrelated tasks, `/clear`; to stop or hand off, `/checkpoint`, quit, and
+  start a fresh `claude` — the hook hands the newest checkpoint, once, to the next fresh session
+  (`--continue` and `--resume` do not get it) (#168).
+- **Fixed:** TROUBLESHOOTING said deny rules do not cover shell commands; it now says Claude Code applies
+  them to `cat`, `head`, `tail`, `sed`, `tee` and redirect targets (not to scripts, nor to a command
+  that reads files without naming them, such as `grep -r pattern .`), and how to reach data kept
+  outside the checkout (#169).
 - **Fixed:** `/preregister` looked for a `paper_type:` field that `/interview-me` never writes (it
   writes a `**Paper type:**` line), so the paper type never reached the style choice.
 - **Fixed:** `check-derived-counts.py` counted `/translate-to-quarto`'s Phase 6.5 as a second
@@ -240,8 +259,26 @@ absent; the debt was drift between files.
 - README and guide: the mid-2026 Claude Code features worth knowing; TROUBLESHOOTING:
   deadline-safe updates and the headless credit pool.
 
+- **Small edits borrowed from claudeblattman** (after reading it for ideas; it also turned up the
+  defects above, #165–#169; each was filed as an issue before it was fixed):
+  - **A missing lens is not a dry round** in the review loop (`orchestrator-protocol.md`).
+  - **Restricted data:** deny patterns for data outside the checkout (`//` and `~/` anchors), and
+    Claude Code's own transcripts and file history named as copies a data agreement covers.
+  - **`/lit-review`** reports independent vs apparent study counts and searches for null results.
+  - **`/new-skill`** asks which steps send or cannot be undone, and whether self-critique needs a
+    fresh context.
+  - **`/grant-proposal --call <file>`** reads the program's actual call — its sections, limits and
+    review criteria override the generic funder profile.
+  - **Scanned PDFs:** `/teach-from-paper`, `/respond-to-referees`, `/respond-to-eval` and
+    `/seven-pass-review` compare `pdfinfo`'s page count with the pages that returned text.
+  - **Guide:** an optional fresh-context read of a plan before approval; read any skill, hook or
+    plugin before installing it.
+
 ### Considered, not adopted
 
+- **claudeblattman** (MIT) — beyond the small edits above: assistant and meeting skills, a persona
+  council, completeness and skeptic agents, a causal-language audit (its design ranking is method
+  content), and prompt skills either duplicate what the template has or do not fit it.
 - **ai-memory** — two ideas adapted (labelled restore context; demote near the cap); the tool
   itself captures prompts and shell output in every repository by default, which conflicts
   with `confidential-data.md`.

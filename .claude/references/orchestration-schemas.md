@@ -102,7 +102,7 @@ The synthesizer's verdict is a **deterministic function of the typed findings**,
 | **PASS / APPROVED** | `sum(CRITICAL) == 0` across all lenses (and, for gate skills, every hard gate true) |
 | **REVISE** | `sum(CRITICAL) == 0` and `sum(MAJOR) > 0` |
 | **BLOCK / FAIL** | `sum(CRITICAL) > 0` |
-| **converged (loop-until-dry)** | **2 consecutive** rounds each produce **0 new** blocker/major findings (deduped by the deterministic `id`) |
+| **converged (loop-until-dry)** | **2 consecutive** rounds each produce **0 new** blocker/major findings (deduped by the deterministic `id`), **and** every lens returned a valid findings array in both; a round with a missing lens (no valid array after one re-dispatch) is not dry and does not count ([`orchestrator-protocol.md`](../rules/orchestrator-protocol.md) §4) |
 
 "New" is measured against the running set of already-seen findings: within a round by **`id`** (`sha1(file:line:locus)` — exact, lens-independent), and **across rounds by `file` + `locus`**, because a fixer's edit shifts line numbers and so gives an unfixed defect below it a fresh `id`. A finding whose `file` + `locus` was already seen is not new — so a critic re-flagging an unfixed issue does not count as progress, and a fixer silently re-introducing one does not hide.
 
@@ -194,7 +194,7 @@ The same defect gets the same id from every lens and in every session **while th
 unchanged** — so dedup across lenses in one round is exact. Between rounds a fixer edits files,
 which shifts line numbers and therefore ids; match across rounds on `file` + `locus` (the named
 thing — a theorem label, slide title, function) instead (§3). That keeps `loop-until-dry` honest
-(a round is dry when it produces no finding whose `file` + `locus` is new) and the two-strikes
+(a round is dry when every lens reviewed and it produces no finding whose `file` + `locus` is new) and the two-strikes
 rule checkable — the same `file` + `locus` surviving rounds N and N+2 escalates to the human
 rather than being patched a third time. The validator recomputes every id and rejects any that
 does not match its own coordinates, so ids cannot be invented.

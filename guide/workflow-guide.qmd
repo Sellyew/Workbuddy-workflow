@@ -2,7 +2,7 @@
 title: "My Claude Code Setup"
 subtitle: "A Comprehensive Guide to AI-Assisted Academic Workflows: Slides, Papers, Analysis, and Beyond"
 author: "Pedro H. C. Sant'Anna"
-date: "2026-09-26"
+date: "2026-09-27"
 version: "2.6.0"
 date-modified: last-modified
 format:
@@ -209,7 +209,9 @@ You need four things: install Claude Code, fork the repo, run `./scripts/install
 
 **API access** (pay per token): For heavy users or CI/CD. Use [effort levels](#sec-effort) and the [multi-model strategy](#multi-model-strategy-cost-vs-quality) to control costs.
 
-Claude Code itself is free to install (the source is public on GitHub, but under Anthropic's commercial terms — not an open-source license). You pay only for the Claude model usage.
+Claude Code itself is free to install (the source is public on GitHub, but it is not open source; which Anthropic terms govern your use depends on your account — see below). You pay only for the Claude model usage.
+
+**Which terms apply to your work.** A personal Free, Pro or Max account runs under Anthropic's consumer terms, Claude Code included, and whether your conversations may be used for model training is a setting you choose there --- check it. Team, Enterprise and Education plans, and the API, run under commercial terms. Read the current terms at [anthropic.com/legal](https://www.anthropic.com/legal) rather than relying on this guide, and check your institution's and your data agreements' rules before restricted or confidential material enters a session.
 :::
 
 ::: {.callout-tip}
@@ -1269,7 +1271,7 @@ A handful of commands cut friction in the actual editing loop. Worth knowing bef
 **Three patterns that compose well:**
 
 - **Side question without polluting context:** `` /btw why does Quarto need ::: for callouts? `` --- get the answer, dismiss, keep working.
-- **Long session, want to switch tasks:** `/checkpoint current-work` then `/clear` then start the new task. Resume the first with `claude --resume`.
+- **Stopping, or switching to unrelated work:** `/checkpoint current-work`, then `/clear` for the new task. To come back to the first, start a fresh `claude`: the handoff hook gives the newest checkpoint (or `/compress-session` note, within 7 days) to the next fresh session, once. If a fresh session has opened since, or a newer checkpoint was written, tell Claude to read `quality_reports/checkpoints/<file>` instead. Or `claude --resume` reopens the old conversation with its full context (the hook does not deliver the checkpoint there).
 - **Plan mid-edit:** During plan mode, `Ctrl+G` to edit the plan file directly --- faster than dictating revisions back to Claude.
 
 ::: {.callout-warning}
@@ -1643,9 +1645,11 @@ Non-trivial task arrives
   +-- Step 8: Update session log + plan status to COMPLETED
 ```
 
+**An optional second read.** For a plan that changes a deliverable's substance, hand the saved plan file to a fresh agent before you approve it. Ask it for irreversible steps, steps that depend on data or approvals nobody has confirmed, what not to do, and whether the objective itself is wrong. Stop after two rounds. Its findings are concerns for you to rank; a clean read is not evidence that the plan is sound.
+
 ### Context Preservation
 
-Plans are saved to disk specifically so they survive context compression. The rule: **avoid `/clear`** --- prefer auto-compression. Use `/clear` only when context is genuinely polluted.
+Plans are saved to disk specifically so they survive context compression. The rule: **within a task, let compaction carry you** (steer it with `/compact <what to keep>`); **between unrelated tasks, `/clear`**. Either way the plan is still on disk.
 
 For details on how the system automatically preserves and restores context during compaction, see [Context Survival System](#context-survival-system-advanced) in the Building Blocks section.
 
@@ -2077,7 +2081,7 @@ Claude Code can spawn **multiple agents simultaneously** using the `Agent` tool.
 | Analyzing 3 papers for a new lecture | Read paper 1, then 2, then 3 | Spawn 3 agents, each reading one paper |
 | Generating figures | Create plot 1, then plot 2, then plot 3 | Spawn agents for independent plots |
 | Comparing estimators | Run simulation 1, then 2, then 3 | Spawn agents for each simulation |
-| Debating research design | Consider DiD, then SC, then RDD | 3 agents, each advocating one approach |
+| Weighing competing framings | Draft framing 1, then 2, then 3 | 3 agents, each making the strongest case for one framing |
 
 #### How It Works
 
@@ -2097,9 +2101,9 @@ For genuinely long jobs --- a 30-minute R fit, a `/audit-reproducibility` batch 
 
 When several review agents run in parallel (the two `/review-paper --peer` referees, or `/slide-excellence`'s visual + pedagogy + proofread fan-out), use **`claude agents`** (Week 20, v2.1.139) to watch them on a single screen. Replaces the old workflow of opening one terminal per agent. See the Anthropic Utilities section below for the full description.
 
-#### Agent Debates
+#### Independent Advocates
 
-A powerful variant: give each parallel agent a **distinct methodological perspective** and have them argue. Instead of asking "which estimator should I use?", spawn 3 agents --- one advocates for DiD, one for synthetic control, one for RDD --- each arguing why their approach fits your research question best and critiquing the others. Synthesize the debate into a decision matrix. This produces genuinely diverse perspectives that a single conversation cannot, because each agent commits fully to its position.
+A useful variant when a decision has several defensible answers: give each agent **one position** and ask for the strongest case for it --- three framings of a paper's contribution, say, or three ways to order a lecture sequence. Each advocate works in its own fresh context and never sees the others; agents that read each other's arguments tend to converge by imitation rather than by being right. A separate pass then reads their outputs as data and sets out where they disagree and what each one assumes. **You decide**; the comparison is a starting point for your own reading, not a verdict. (Whether an identification strategy is sound is a question for `/review-paper`, not for a debate.)
 
 #### What a delegated agent needs before it starts
 
@@ -2832,6 +2836,8 @@ This repository provides the foundation --- the infrastructure patterns (plan-fi
 ## Which Ecosystem Project Should I Start With?
 
 If you write **papers**: start with clo-author (adversarial review pairs) or ClaudeCodeTools (seven-audit protocol, see [Pattern 15](#pattern-15-sequential-audits)). If you give **presentations**: MixtapeTools. If you run **computational experiments**: autoresearch. If you're a **non-technical academic**: claudeblattman. All of them build on the same foundation patterns from this template — the [orchestrator](#sec-system), [quality gates](#sec-quality), and [adversarial review](#the-adversarial-pattern-critic-fixer).
+
+Whatever you take from these projects, read it before you copy it in --- see [Extending with Plugins](#extending-with-plugins).
 :::
 
 Here is what each project does and when you should use it.
@@ -2881,7 +2887,7 @@ claudeblattman is a comprehensive guide for academics who do not write code, bui
 - **Executive assistant workflows** --- morning briefings (weather, calendar, inbox, VIP tracking), smart email triage with 14 phases, daily check-in ritual, schedule queries, todo management
 - **Proposal writing** --- donor profiles, voice packs (maintain consistent writing style across documents), template gates, resubmission handling with reviewer comment categorization
 - **Fresh-context critique** --- the intellectual centerpiece: spin up a fresh-context agent to review your work without self-bias (see Pattern 8)
-- **Agent debates** --- multiple agents with distinct identities argue about research design, producing genuinely novel perspectives (see Pattern 9)
+- **Parallel critics with a separate synthesis** --- agents with distinct perspectives each work alone, and a separate pass compares what they found (see Pattern 9)
 - **Tips pipeline** --- self-improving system: capture tips by emailing yourself, `/tips-curate` quality-filters them, `/tips-integrate` converts them into concrete configuration changes
 - **Depth calibration** --- Light/Standard/Deep thoroughness levels that prevent over-engineering simple requests
 - **Graceful degradation** --- every skill works with partial infrastructure. Missing MCP integrations produce explanations, not errors
@@ -3321,7 +3327,7 @@ For capabilities beyond file editing and shell commands --- web search during li
 
 ## Extending with Plugins
 
-Claude Code supports **plugins** --- bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use `/plugin` to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins.
+Claude Code supports **plugins** --- bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use `/plugin` to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. **Read before you install:** a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template's broad allow rules (`Bash(*)`, `WebFetch(*)`) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project.
 :::
 
 ---
