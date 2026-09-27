@@ -3,7 +3,7 @@
 Numeric-Claim Reconciliation Hook (PostToolUse)
 
 Event-driven half of the cross-artifact dependency graph: the moment an
-analysis script or an `_outputs/` artifact changes, the manuscript's
+analysis script or an `output/` artifact changes, the manuscript's
 numeric claims that depend on it may be STALE. Instead of waiting for the
 nightly reproducibility Routine, this hook surfaces the staleness
 immediately so the author re-runs /audit-reproducibility before relying
@@ -11,7 +11,8 @@ on the affected tables.
 
 Fires on Write/Edit to:
   - scripts/**/*.{R,do,py,jl}        (analysis code)      — vertical link
-  - scripts/**/_outputs/**           (regenerated outputs) — vertical link
+  - output/**                        (regenerated outputs) — vertical link
+    (and the pre-v2.6 scripts/**/_outputs/**, kept so older forks still fire)
   - *.{tex,qmd,md,Rmd,typ,ipynb}     (display artifacts)   — horizontal link
 when a passport (quality_reports/passports/*.yaml) exists. It counts the
 passport claims whose `source_file`/`output_file` mentions the changed
@@ -44,7 +45,7 @@ import time
 import hashlib
 from pathlib import Path
 
-WATCH = re.compile(r"(^|/)scripts/.*\.(R|r|do|py|jl)$|(^|/)scripts/.*/_outputs/")
+WATCH = re.compile(r"(^|/)scripts/.*\.(R|r|do|py|jl)$|(^|/)output/|(^|/)scripts/.*/_outputs/")
 DISPLAY = re.compile(r"\.(tex|qmd|md|rmd|typ|ipynb)$", re.IGNORECASE)
 THROTTLE_S = 300
 

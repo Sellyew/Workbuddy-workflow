@@ -4,13 +4,9 @@ paths:
   - "Quarto/**/*.qmd"
 ---
 
-# Beamer → Quarto Auto-Sync Rule (MANDATORY)
+# Beamer → Quarto Auto-Sync Rule
 
-**Every edit to a Beamer `.tex` file MUST be immediately synced to the corresponding Quarto `.qmd` file — automatically, without the user asking.** This is non-negotiable.
-
-## The Rule
-
-When you modify a Beamer `.tex` file, you MUST also apply the equivalent change to the Quarto `.qmd` (if it exists) **in the same task**, before reporting completion. Do NOT wait to be asked. Do NOT just "flag the drift." Just do it.
+**When you change a Beamer `.tex` file that has a Quarto mirror, apply the equivalent change to the `.qmd` in the same task, and build both before reporting done.** The user relies on the pair staying in step and should not have to ask; flagging the drift instead of fixing it leaves the mirror stale. For the Quarto-only decorations the mirror may legitimately carry, see Precedence below.
 
 ## Lecture Mapping
 
@@ -56,13 +52,6 @@ This rule (auto-sync) and [`single-source-of-truth.md`](single-source-of-truth.m
 2. **Presentation-only divergence is allowed.** HTML-specific callouts (e.g., `.smaller`, `{.scrollable}`, plotly embeds) can live only in Quarto. Auto-sync should not delete them when propagating Beamer edits — diff before overwriting.
 3. **On ambiguity, regenerate the Quarto file from Beamer** (e.g. `/translate-to-quarto [file]` into a scratch path, then diff against the existing Quarto) so you can compare structurally. Merge manually, keeping HTML-only decorations.
 4. **If the two files have drifted structurally** (slide count mismatch, reordered sections), treat as a bug and fix Beamer first, then regenerate Quarto from scratch via `/translate-to-quarto`.
-
-## Enforcement
-
-Before marking any Beamer editing task as complete, check:
-> "Did I also update the Quarto file?"
-
-If the answer is no and a Quarto file exists, **you are NOT done.**
 
 ## When to Update This Table
 

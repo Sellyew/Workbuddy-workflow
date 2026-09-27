@@ -192,7 +192,7 @@
 
 ## 16. Dead config-map entries that mislead maintainers
 
-**Example:** PR #93 (Copilot). `check-skill-integrity.py` had `RULE_KEYWORDS` entries for `cross-artifact-review.md` and `content-invariants.md`, but neither rule's scope frontmatter (one uses `globs:`, both target `.tex`/`.qmd` files not `.claude/skills/*`) actually fires the check. The entries were no-ops. A future maintainer reading the code would reasonably assume the check was exercising those rules.
+**Example:** PR #93 (Copilot). `check-skill-integrity.py` had `RULE_KEYWORDS` entries for `cross-artifact-review.md` and `content-invariants.md`, but neither rule's scope frontmatter (one then used a Cursor-style `globs:` key, both target `.tex`/`.qmd` files not `.claude/skills/*`) actually fires the check. The entries were no-ops. A future maintainer reading the code would reasonably assume the check was exercising those rules.
 
 **How to catch.** When adding an entry to a config map, keyword dict, or registry, verify at least one execution path actually reaches the entry. Dead entries rot in place — they're worse than omitting them because they imply coverage that doesn't exist.
 

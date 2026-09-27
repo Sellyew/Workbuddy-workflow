@@ -58,7 +58,7 @@ For any task spanning **more than two or three documents** — style profiling a
 triaging reviewer findings across a bundle, a literature sweep — use the **one-subagent-per-
 document** pattern:
 
-1. Spawn **one subagent per document**, each with `context: fork`.
+1. Spawn **one subagent per document**, each in a fresh context.
 2. Each agent reads **only its own file** and writes a short structured note to disk
    (`notes/<name>.md`) — 300 words, a fixed schema.
 3. Each returns **only the filename**, not the content.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 Silent-Shell-Write Tripwire for the gate-defining files (PreToolUse, Bash only)
 
 NAMING, STATED UP FRONT. The file is called `root-of-trust-guard.py` and the
@@ -36,9 +36,10 @@ none of them trips this hook:
 So read every sentence below as "raises the cost of one silent path", never as
 "cannot be disabled".
 
-The template ships `permissions.defaultMode: "bypassPermissions"` with an
-empty `deny` list, so the hook layer is the only thing watching the files that
-decide whether any other gate runs at all:
+The template ships broad `allow` rules with an empty `deny` list, and many
+users run bypass from their user settings (a project-level bypass default is
+ignored by current Claude Code), so the hook layer is the only thing watching
+the files that decide whether any other gate runs at all:
 
     .claude/settings.json        — which hooks fire, and on what
     .claude/settings.local.json  — the same, per machine
@@ -1944,8 +1945,8 @@ def main() -> int:
         f"Blocked by root-of-trust-guard: shell write to '{path}' via {how}. "
         f"{scope}"
         f"define every gate (.claude/settings.json, .claude/settings.local.json, "
-        f".claude/hooks/, .githooks/). Permissions run in bypass mode here, so a "
-        f"shell one-liner can disable the whole gate suite without leaving anything "
+        f".claude/hooks/, .githooks/). Sessions here often run in bypass or auto "
+        f"mode, so a shell one-liner could disable the whole gate suite without leaving anything "
         f"a reviewer would see. Reads are untouched; edit the file with the "
         f"Edit/Write tool instead, which lands as a reviewable diff. "
         f"(Override: start the session with ALLOW_ROOT_OF_TRUST_WRITE=1 in its "

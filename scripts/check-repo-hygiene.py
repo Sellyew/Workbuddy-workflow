@@ -23,11 +23,21 @@ ROOT_ALLOW = {
     # Written by /voice-profile at the root (the skill documents this location);
     # an author's voice profile is a legitimate committed artifact.
     "voice-profile.md",
+    # R package and environment files that /r-package-check and /capture-environment
+    # work with at the root (DESCRIPTION, renv.lock, requirements.txt, a Dockerfile, ...).
+    "DESCRIPTION", "NAMESPACE", ".Rbuildignore", "renv.lock", ".Rprofile",
+    "requirements.txt", "environment.yml", "uv.lock", "pyproject.toml", "Dockerfile",
 }
 ROOT_ALLOW_DIRS = {
     ".claude", ".git", ".github", ".githooks", ".vscode", "Figures", "Preambles",
     "Quarto", "Slides", "docs", "explorations", "guide", "master_supporting_docs",
     "quality_reports", "scripts", "templates",
+    # The project layout in .claude/rules/repo-hygiene.md ("Where each kind of file
+    # goes"): generated results in output/, raw inputs in data/raw/, package-style
+    # functions and tests in R/ and tests/. A fork that follows it must not fail here.
+    "output", "data", "R", "tests",
+    # ...and the rest of an R package (r-package-conventions.md) and a renv library.
+    "man", "vignettes", "inst", "renv",
 }
 
 # Names that mean "I was experimenting". These must not live in tracked source.
@@ -45,6 +55,67 @@ DRAFT_PATTERNS = [
 
 # Directories that hold superseded work must explain themselves.
 ARCHIVE_DIRS = ["explorations", "master_supporting_docs"]
+
+# Append-only records: an entry, once committed, is never edited or removed — a
+# correction is a new entry. Every committed line must still be present, in order, in
+# the staged and the working-tree text; new lines may be added anywhere (a merge can
+# interleave two co-authors' entries). Line endings are compared as LF, so a CRLF
+# checkout does not read as an edit. ALLOW_LOG_REWRITE=1 downgrades a rewrite to a
+# warning, for the one case that needs it: a disclosure redaction, explained in the
+# commit. Locally the reference is HEAD, which the pre-commit hook checks before each
+# commit; CI sets APPEND_ONLY_BASE to the branch the work merges into, so a rewrite
+# committed without the hook is caught there.
+APPEND_ONLY = ["quality_reports/replication-log.md", "quality_reports/spec-ledger.md"]
+
+def git_blob(spec):
+    """Bytes of `git show <spec>` (e.g. HEAD:path, :path), or None if there is none."""
+    r = subprocess.run(["git", "-C", ROOT, "show", spec], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+def _lines(b):
+    return b.replace(b"\r\n", b"\n").decode("utf-8", "replace").split("\n")
+
+def _kept(old, new):
+    """(True, None) if every line of `old` appears in `new` in order; else (False, first lost line no.)."""
+    it = iter(enumerate(new))
+    for n, line in enumerate(old, 1):
+        for _, cand in it:
+            if cand == line:
+                break
+        else:
+            return False, n
+    return True, None
+
+def append_only_violations():
+    """One message per append-only record whose committed lines were edited or removed."""
+    out, base = [], os.environ.get("APPEND_ONLY_BASE", "").strip()
+    for rel in APPEND_ONLY:
+        refs = [("HEAD", git_blob(f"HEAD:{rel}"))]
+        if base:
+            refs.append((base, git_blob(f"{base}:{rel}")))
+        refs = [(name, blob) for name, blob in refs if blob is not None]
+        if not refs:                           # never committed: nothing to protect yet
+            continue
+        versions = []
+        stages = subprocess.run(["git", "-C", ROOT, "ls-files", "-s", "--", rel],
+                                capture_output=True, text=True).stdout.split("\n")
+        stages = [ln.split()[2] for ln in stages if ln.strip()]
+        if not stages:
+            versions.append(("staged (removed from the index)", b""))
+        elif stages == ["0"]:                  # a conflicted merge has stages 1-3: nothing staged yet
+            versions.append(("staged", git_blob(f":{rel}") or b""))
+        wt_path = os.path.join(ROOT, rel)
+        versions.append(("working tree", open(wt_path, "rb").read() if os.path.isfile(wt_path) else b""))
+        for ref, old in refs:
+            hit = next(((where, n) for where, text in versions
+                        for ok, n in [_kept(_lines(old), _lines(text))] if not ok), None)
+            if hit:
+                where, n = hit
+                out.append(f"{rel}: committed line {n} (as of {ref}) was edited or removed in the {where} "
+                           f"— this record is append-only, so add a new entry instead. For a disclosure "
+                           f"redaction, commit with ALLOW_LOG_REWRITE=1 and give the reason in the commit message.")
+                break
+    return out
 
 def tracked():
     r = subprocess.run(["git", "-C", ROOT, "ls-files"], capture_output=True, text=True)
@@ -108,7 +179,12 @@ def main():
         if ART.search(f) and not f.startswith("master_supporting_docs/"):
             errs.append(f"{f}: build artifact is tracked — add it to .gitignore")
 
-    # 5. advisory: very large tracked files
+    # 5. append-only records keep every committed entry
+    rewrite_ok = os.environ.get("ALLOW_LOG_REWRITE") == "1"
+    for msg in append_only_violations():
+        (warns if rewrite_ok else errs).append(msg + (" [ALLOW_LOG_REWRITE=1: allowed]" if rewrite_ok else ""))
+
+    # 6. advisory: very large tracked files
     for f in files:
         p = os.path.join(ROOT, f)
         try: sz = os.path.getsize(p)

@@ -51,7 +51,21 @@ fi
 
 FAIL=0
 
-echo "── pre-commit: backtest (full gate suite — see scripts/backtest.sh) ──"
+# The hook battery re-fires every guard hook and is most of the suite's run time.
+# Its result can only change when a hook, the settings that wire them, this git
+# hook or the battery itself changes — so skip it here when none of those is
+# staged. CI runs the full suite on every push; nothing merges unbatteried.
+# (A here-string, not `printf | grep -q`: under pipefail, grep -q exiting early
+# makes printf die of SIGPIPE on a long staged list, and the test would misfire.)
+if grep -E '^(\.claude/hooks/|\.claude/settings[^/]*\.json$|\.githooks/|scripts/hook-battery\.sh$)' \
+        >/dev/null <<< "$_staged"; then
+    unset BACKTEST_SKIP_HOOK_BATTERY      # a hook is staged: run it, whatever the shell inherited
+else
+    export BACKTEST_SKIP_HOOK_BATTERY=1
+    echo "ℹ pre-commit: no hook, hook-settings or battery change staged — the hook battery is skipped here (CI runs it)."
+fi
+
+echo "── pre-commit: backtest (gate suite — see scripts/backtest.sh) ──"
 ./scripts/backtest.sh
 [ $? -ne 0 ] && FAIL=1
 

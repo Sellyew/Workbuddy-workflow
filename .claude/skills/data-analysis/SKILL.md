@@ -1,6 +1,6 @@
 ---
 name: data-analysis
-description: End-to-end R data analysis pipeline — exploration → cleaning → regression → publication-ready tables and figures. Use when user says "analyze this dataset", "run a regression on X", "explore this CSV", "full analysis workflow", "get me summary stats and a regression", or points at a `.csv`/`.rds`/`.dta` and asks for empirical results. Produces numbered R scripts in `scripts/R/` and outputs to `scripts/R/_outputs/`.
+description: End-to-end R data analysis pipeline — exploration → cleaning → regression → publication-ready tables and figures. Use when user says "analyze this dataset", "run a regression on X", "explore this CSV", "full analysis workflow", "get me summary stats and a regression", or points at a `.csv`/`.rds`/`.dta` and asks for empirical results. Produces numbered R scripts in `scripts/R/` and outputs to `output/`.
 argument-hint: "[dataset path or description of analysis goal]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task", "Monitor"]
 ---
@@ -17,7 +17,7 @@ Run an end-to-end data analysis in R: load, explore, analyze, and produce public
 
 - **Follow R code conventions** in `.claude/rules/r-code-conventions.md`
 - **Save all scripts** to `scripts/R/` with descriptive names
-- **Save all outputs** (figures, tables, RDS) to `scripts/R/_outputs/`
+- **Save all outputs** (figures, tables, RDS) to `output/`
 - **Use `saveRDS()`** for every computed object — Quarto slides may need them
 - **Use project theme** for all figures (check for custom theme in `.claude/rules/`)
 - **Run r-reviewer** on the generated script before presenting results
@@ -68,7 +68,7 @@ Generate diagnostic outputs:
 - **Time patterns:** If panel data, plot trends over time
 - **Group comparisons:** If treatment/control, compare pre-treatment means
 
-Save all diagnostic figures to `scripts/R/_outputs/diagnostics/`.
+Save all diagnostic figures to `output/diagnostics/`.
 
 ### Phase 3: Main Analysis
 
@@ -77,6 +77,32 @@ Based on the research question:
 - **Standard errors:** Cluster at the appropriate level (document why)
 - **Multiple specifications:** Start simple, progressively add controls
 - **Effect sizes:** Report standardized effects alongside raw coefficients
+
+#### Specification ledger — every run, kept or not
+
+Every specification estimated in this phase, including the ones dropped and the ones that failed, gets one row appended to `quality_reports/spec-ledger.md` as it is run. It is the record a referee's "what else did you try?" deserves: it keeps the search visible rather than preventing it, and it records specifications without advising which to run.
+
+- **Append only.** Never edit or delete a row; a correction is a new row. A commit that changes a committed row fails the repo-hygiene gate.
+- **Status** is `kept`, `dropped` or `failed`; **Why** says why for anything not kept.
+- **Estimate** is optional. On restricted data, leave it empty until the number has cleared disclosure review ([`confidential-data.md`](../../rules/confidential-data.md)).
+- Escape a `|` inside a formula as `\|`, or the table breaks. A specification containing a backtick (a Stata local macro such as `` `x' ``) goes in a double-backtick span: ``` `` reg y `controls' `` ```.
+
+```bash
+LEDGER=quality_reports/spec-ledger.md
+[ -f "$LEDGER" ] || printf '%s\n' "# Specification ledger" "" \
+  "Every specification estimated, kept or not, one row each, appended as it is run. Never edit a past row; a correction is a new row." "" \
+  "| Date | Commit | Script:line | Outcome | Specification | Sample | Status | Why | Estimate |" \
+  "|---|---|---|---|---|---|---|---|---|" > "$LEDGER"
+if REV=$(git rev-parse --short HEAD 2>/dev/null); then       # -dirty = anything uncommitted outside quality_reports/, untracked files included
+  [ -n "$(git status --porcelain -- . ':(exclude)quality_reports' 2>/dev/null)" ] && REV="$REV-dirty"
+else
+  REV="no-commit"
+fi
+printf '| %s | %s ' "$(date +%F)" "$REV" >> "$LEDGER"          # one printf + one heredoc per specification
+cat >> "$LEDGER" <<'EOF'
+| scripts/R/03_analyze.R:42 | log_wage | `feols(log_wage ~ treat + age \| id + year, cluster = ~id)` | panel 2010-2019 | kept | main specification | 0.082 (0.021) |
+EOF
+```
 
 ### Phase 4: Publication-Ready Output
 
@@ -95,7 +121,7 @@ Based on the research question:
 ### Phase 5: Save and Review
 
 1. `saveRDS()` for all key objects (regression results, summary tables, processed data)
-2. Create `scripts/R/_outputs/` subdirectories as needed with `dir.create(..., recursive = TRUE)`
+2. Create `output/` subdirectories as needed with `dir.create(..., recursive = TRUE)`
 3. Run the r-reviewer agent on the generated script:
 
 ```
@@ -127,7 +153,7 @@ library(modelsummary)
 
 set.seed(20260415)  # YYYYMMDD per r-code-conventions.md (INV-9)
 
-dir.create("scripts/R/_outputs/analysis", recursive = TRUE, showWarnings = FALSE)
+dir.create("output/analysis", recursive = TRUE, showWarnings = FALSE)
 
 # 1. Data Loading ----
 # [Load and clean data]

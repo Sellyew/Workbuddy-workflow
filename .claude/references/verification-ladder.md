@@ -264,11 +264,12 @@ source. Verdicts: **CONFIRMED / REFUTED / DOWNGRADED**. Check the proposed *fix*
 reviewer can be right that something reads badly and wrong about why, and its patch can
 introduce a real defect.
 
-**Batch, do not drip.** Apply all confirmed fixes in one pass, re-verify, then run **at most
-one** confirmation round. One-finding-per-round converges linearly and burns rounds.
+**Batch, do not drip.** Apply all confirmed fixes in one pass, then re-verify. One-finding-per-round
+converges linearly and burns rounds. (An expensive external consult — `/oracle-review` — runs **at
+most one** confirmation round; in-house loops use the stopping rule below.)
 
-**Stopping rule.** Stop when a round adds **no new CONFIRMED** defect — only held items and
-exposition taste. Guards: a fallback round cap; a *two-strikes* rule (the same finding
+**Stopping rule.** Stop after **two consecutive** rounds add **no new CONFIRMED** defect — only held
+items and exposition taste ([`orchestrator-protocol.md`](../rules/orchestrator-protocol.md)). Guards: a fallback round cap; a *two-strikes* rule (the same finding
 surviving two rounds escalates to the human rather than being patched a third time); and a
 spend ceiling.
 

@@ -2,6 +2,11 @@
 
 <!-- 1-3 bullet points describing what changed and why. -->
 
+## Changed defaults
+
+<!-- Required. "None", or each default someone who forked the template will notice changing:
+     a setting, a threshold, a hook that now fires, a file or folder that moved. -->
+
 ## Type
 
 - [ ] Bug fix (`fix/...`)

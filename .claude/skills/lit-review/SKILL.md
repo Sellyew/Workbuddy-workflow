@@ -100,7 +100,7 @@ Before returning the draft literature review to the user, run the Post-Flight Ve
 
 1. **Extract claims** from the draft. Each cited paper, each paraphrased finding ("Smith 2019 shows X"), each negative-literature assertion ("no prior work studies Y") is a claim.
 2. **Generate verification questions** per claim. Specific ones: "Does Smith (2019, *JEL*) Section 3 actually report the finding that X implies Y? Is the venue correct?"
-3. **Spawn `claim-verifier`** via the `Agent` tool with `subagent_type=claim-verifier` and `context=fork`. Pass: the claims table, the verification questions, the source-material pointers (paper URLs, DOIs, `master_supporting_docs/` paths). **Do NOT pass the draft text itself** — the fresh-context independence is what makes CoVe work.
+3. **Spawn `claim-verifier`** via the `Agent` tool with `subagent_type=claim-verifier`, in a fresh context — a named `Agent` call, not a conversation fork, which would inherit the draft. Pass: the claims table, the verification questions, the source-material pointers (paper URLs, DOIs, `master_supporting_docs/` paths). **Do NOT pass the draft text itself** — the fresh-context independence is what makes CoVe work.
 4. **Reconcile:** if the verifier reports PASS, attach a green Post-Flight block to the output. If PARTIAL, mark the unverifiable claims with uncertainty flags in the BibTeX block. If FAIL, **remove or rewrite the contradicted citations** using the verifier's evidence before returning.
 
 ### Skip conditions

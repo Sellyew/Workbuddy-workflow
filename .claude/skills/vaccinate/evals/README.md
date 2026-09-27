@@ -57,7 +57,7 @@ the hit rate, and proposing description edits when the skill fires on the wrong 
 Rank by *cost of being wrong*, not by how often they run:
 
 1. **`/review-paper --peer`** — informs submission decisions.
-2. **`claim-verifier`** — HIGH-WARN gate-refuses `/commit`.
+2. **`claim-verifier`** — HIGH-WARN fails the verification closed.
 3. **`/audit-reproducibility`** — gates the replication package.
 4. **`/challenge`** — its output becomes a robustness claim in a paper.
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Pedro H. C. Sant’Anna">
-<meta name="dcterms.date" content="2026-08-24">
+<meta name="dcterms.date" content="2026-09-26">
 
 <title>My Claude Code Setup</title>
 <style>
@@ -2374,8 +2374,9 @@ window.Quarto = {
   <li><a href="#step-1-fork-clone" id="toc-step-1-fork-clone" class="nav-link" data-scroll-target="#step-1-fork-clone"><span class="header-section-number">2.2</span> Step 1: Fork &amp; Clone</a></li>
   <li><a href="#sec-first-session" id="toc-sec-first-session" class="nav-link" data-scroll-target="#sec-first-session"><span class="header-section-number">2.3</span> Step 2: Start Claude Code and Paste This Prompt</a></li>
   <li><a href="#optional-manual-setup" id="toc-optional-manual-setup" class="nav-link" data-scroll-target="#optional-manual-setup"><span class="header-section-number">2.4</span> Optional: Manual Setup</a></li>
-  <li><a href="#sec-spec-then-plan" id="toc-sec-spec-then-plan" class="nav-link" data-scroll-target="#sec-spec-then-plan"><span class="header-section-number">2.5</span> Requirements Specification (For Complex Tasks)</a></li>
-  <li><a href="#the-adoption-ladder" id="toc-the-adoption-ladder" class="nav-link" data-scroll-target="#the-adoption-ladder"><span class="header-section-number">2.6</span> The Adoption Ladder</a></li>
+  <li><a href="#sec-adopt-existing" id="toc-sec-adopt-existing" class="nav-link" data-scroll-target="#sec-adopt-existing"><span class="header-section-number">2.5</span> Adopting the template in an existing project</a></li>
+  <li><a href="#sec-spec-then-plan" id="toc-sec-spec-then-plan" class="nav-link" data-scroll-target="#sec-spec-then-plan"><span class="header-section-number">2.6</span> Requirements Specification (For Complex Tasks)</a></li>
+  <li><a href="#the-adoption-ladder" id="toc-the-adoption-ladder" class="nav-link" data-scroll-target="#the-adoption-ladder"><span class="header-section-number">2.7</span> The Adoption Ladder</a></li>
   </ul></li>
   <li><a href="#sec-system" id="toc-sec-system" class="nav-link" data-scroll-target="#sec-system"><span class="header-section-number">3</span> The System in Action</a>
   <ul class="collapse">
@@ -2424,7 +2425,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#the-six-layer-permission-stack" id="toc-the-six-layer-permission-stack" class="nav-link" data-scroll-target="#the-six-layer-permission-stack"><span class="header-section-number">4.6.1</span> The Six-Layer Permission Stack</a></li>
   <li><a href="#troubleshooting-prompts-fire-despite-bypasspermissions" id="toc-troubleshooting-prompts-fire-despite-bypasspermissions" class="nav-link" data-scroll-target="#troubleshooting-prompts-fire-despite-bypasspermissions"><span class="header-section-number">4.6.2</span> Troubleshooting: Prompts Fire Despite <code>bypassPermissions</code></a></li>
-  <li><a href="#the-plan-bypass-handoff-recommended-daily-driver" id="toc-the-plan-bypass-handoff-recommended-daily-driver" class="nav-link" data-scroll-target="#the-plan-bypass-handoff-recommended-daily-driver"><span class="header-section-number">4.6.3</span> The Plan → Bypass Handoff (Recommended Daily Driver)</a></li>
+  <li><a href="#the-plan-execute-handoff-recommended-daily-driver" id="toc-the-plan-execute-handoff-recommended-daily-driver" class="nav-link" data-scroll-target="#the-plan-execute-handoff-recommended-daily-driver"><span class="header-section-number">4.6.3</span> The Plan → Execute Handoff (Recommended Daily Driver)</a></li>
   <li><a href="#sec-session-management" id="toc-sec-session-management" class="nav-link" data-scroll-target="#sec-session-management"><span class="header-section-number">4.6.4</span> Session Management</a></li>
   </ul></li>
   <li><a href="#sec-effort" id="toc-sec-effort" class="nav-link" data-scroll-target="#sec-effort"><span class="header-section-number">4.7</span> Effort Levels — Cost vs. Thoroughness</a></li>
@@ -2563,14 +2564,14 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 24, 2026</p>
+      <p class="date">September 26, 2026</p>
     </div>
   </div>
   
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">August 24, 2026</p>
+      <p class="date-modified">September 26, 2026</p>
     </div>
   </div>
     
@@ -2876,6 +2877,11 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 <td>PR workflow</td>
 <td><code>brew install gh</code> (macOS)</td>
 </tr>
+<tr class="odd">
+<td>Playwright for Python</td>
+<td>Slide overflow measured in a real browser (<code>scripts/slide-qa.py</code>)</td>
+<td><code>python3 -m venv ~/.venvs/slide-qa &amp;&amp; ~/.venvs/slide-qa/bin/pip install playwright</code>, then <code>export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python</code> (uses your installed Chrome)</td>
+</tr>
 </tbody>
 </table>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -3046,8 +3052,21 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 </div>
 <p>You don’t need to fill everything in upfront. Start with 5–10 notation entries and add more as you develop lectures. The starter prompt will set up the essentials — you can always refine later.</p>
 </section>
-<section id="sec-spec-then-plan" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="sec-spec-then-plan"><span class="header-section-number">2.5</span> Requirements Specification (For Complex Tasks)</h2>
+<section id="sec-adopt-existing" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="sec-adopt-existing"><span class="header-section-number">2.5</span> Adopting the template in an existing project</h2>
+<p>You don’t have to start from a fork. To bring the workflow into a repository you already have:</p>
+<ol type="1">
+<li><strong>Copy in</strong> <code>.claude/</code>, <code>scripts/</code>, <code>templates/</code>, <code>.githooks/</code>, <code>Preambles/</code>, <code>CLAUDE.md</code>, <code>MEMORY.md</code>, <code>TROUBLESHOOTING.md</code> and <code>CHANGELOG.md</code> (the template’s files link to the last two), plus <code>quality_reports/</code> — its folder skeleton and <code>qualification/LEDGER.md</code>, not the template’s own plans or logs. Merge the template’s <code>.gitignore</code> into yours.</li>
+<li><strong>Rewrite <code>CLAUDE.md</code> for your project</strong> — name, folder tree, current state. It is the first file Claude reads. Its link to the template README’s skills table (<code>README.md#skills-claudeskills</code>) will not resolve in your repo; point it at your own index or drop it.</li>
+<li><strong>Tell the hygiene gate about your folders and root files.</strong> Add each top-level folder of yours (<code>paper/</code>, <code>code/</code>, …) to <code>ROOT_ALLOW_DIRS</code> in <code>scripts/check-repo-hygiene.py</code>, and each file at the root that is not already allowed (a <code>Makefile</code>, an <code>.Rproj</code>, …) to <code>ROOT_ALLOW</code>, each with a one-line reason. The layout folders (<code>output/</code>, <code>data/</code>, <code>R/</code>, <code>tests/</code>) and the common R and Python environment files (<code>DESCRIPTION</code>, <code>renv.lock</code>, <code>requirements.txt</code>, …) are allowed already.</li>
+<li><strong>Remove the two checks that read the template’s own documentation.</strong> Delete the <code>run &quot;surface-sync&quot;</code> and <code>run &quot;derived-counts&quot;</code> lines from <code>scripts/backtest.sh</code>: they count skills, gates and battery cases in the template’s README, guide and changelog, which your project does not have. Every other check applies to your work as-is.</li>
+<li><strong>Stage the copied files by name</strong> — <code>git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>. The ledger check needs the hook files tracked, and the template’s own guard refuses a blanket <code>git add -A</code>.</li>
+<li><strong>Run</strong> <code>./scripts/validate-setup.sh</code>, then <code>./scripts/install-hooks.sh</code>, then <code>./scripts/backtest.sh</code>.</li>
+</ol>
+<p>We tested these steps on a project with its own README, <code>paper/</code> and <code>code/</code> folders and a root <code>Makefile</code>. As copied, five of the suite’s checks failed. After steps 1–5, the full suite passed, the hook battery included.</p>
+</section>
+<section id="sec-spec-then-plan" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="sec-spec-then-plan"><span class="header-section-number">2.6</span> Requirements Specification (For Complex Tasks)</h2>
 <p>For complex or ambiguous tasks, Claude may ask 3-5 clarifying questions to create a requirements specification before planning. This catches ambiguity early and reduces rework.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href>Slide Creation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href>Data Analysis</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href>Code Refactoring</a></li></ul>
@@ -3096,8 +3115,8 @@ Claude: &quot;Let me clarify:
 <p><strong>Template:</strong> <code>templates/requirements-spec.md</code></p>
 <hr>
 </section>
-<section id="the-adoption-ladder" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="the-adoption-ladder"><span class="header-section-number">2.6</span> The Adoption Ladder</h2>
+<section id="the-adoption-ladder" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="the-adoption-ladder"><span class="header-section-number">2.7</span> The Adoption Ladder</h2>
 <p>You do not need all of this on day one — and adopting it all at once is the classic way to bounce off. Each level below is a stable place to live; <strong>“you may stop here” is written into every rung deliberately</strong>.</p>
 <table class="caption-top table">
 <colgroup>
@@ -3254,12 +3273,12 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Closing the visual loop with Computer Use (research preview, Apr 2026)
+<span class="screen-reader-only">Note</span>Closing the visual loop: a measured render, then Computer Use
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The critic-fixer loop above is text-only — it compares LaTeX source to Quarto source. It can’t see the <em>rendered</em> slides. Anthropic’s <strong>Computer Use</strong> (research preview, Mar/Apr 2026 Week 14) lets Claude open a PDF/HTML in a real viewer, click through, and verify visually. If you want closed-loop visual QA — “does the rendered slide actually look right?” — Computer Use closes the gap.</p>
-<p>Optional, not required: <code>/qa-quarto</code> and <code>/visual-audit</code> already catch most issues without it. Treat Computer Use as an extra rung when text-level audits aren’t enough (e.g., suspecting a TikZ render glitch that the source code looks fine for).</p>
+<p>The critic-fixer loop above compares LaTeX source to Quarto source, and since v2.6 it also measures the <em>rendered</em> deck: <code>scripts/slide-qa.py</code> loads the HTML in headless Chrome, measures overflow on every slide (every fragment state, every tab) and saves one screenshot per slide, which the critic reads. That needs Playwright (see Prerequisites); without it the loop falls back to the source. For anything a measurement cannot judge — a TikZ render glitch, whether a figure is legible — Anthropic’s <strong>Computer Use</strong> (research preview) lets Claude open the PDF or HTML in a real viewer and look.</p>
+<p>Optional, not required: Computer Use is an extra rung when the measured audit and the screenshots are not enough.</p>
 </div>
 </div>
 </section>
@@ -3271,7 +3290,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="sec-quality" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-quality"><span class="header-section-number">3.4</span> Quality Review: The 80/90/95 System</h2>
-<p>The <a href="#sec-blocks">quality-gates rule</a> (<code>quality-gates.md</code>) defines scoring thresholds that <code>/commit</code> and review skills apply. Thresholds are <strong>advisory</strong> — enforced inside specific skills <strong>and</strong>, once you run <code>./scripts/install-hooks.sh</code>, by a real git pre-commit hook (<code>.githooks/pre-commit</code>) that runs the full backtest gate suite plus the quality (≥80) gate on every commit. Bypass it sparingly with <code>SKIP_QUALITY_GATE=1</code> or <code>--no-verify</code>. Every substantive artifact (<code>.tex</code>, <code>.qmd</code>, <code>.R</code>) gets a quality score from 0 to 100:</p>
+<p>The <a href="#sec-blocks">quality-gates rule</a> (<code>quality-gates.md</code>) defines scoring thresholds that <code>/commit</code> and review skills apply. Thresholds are <strong>advisory</strong> — enforced inside specific skills <strong>and</strong>, once you run <code>./scripts/install-hooks.sh</code>, by a real git pre-commit hook (<code>.githooks/pre-commit</code>) that runs the backtest gate suite (the hook battery only when a hook, its settings or the battery itself is staged; CI always runs everything) plus the quality (≥80) gate on every commit. Bypass it sparingly with <code>SKIP_QUALITY_GATE=1</code> or <code>--no-verify</code>. Every substantive artifact (<code>.tex</code>, <code>.qmd</code>, <code>.R</code>) gets a quality score from 0 to 100:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -3427,7 +3446,7 @@ APPROVED   NEEDS WORK
 </tr>
 <tr class="odd">
 <td><code>/verify-claims</code></td>
-<td>forked verifier agent</td>
+<td>fresh-context verifier agent</td>
 <td>citations, numbers in a draft</td>
 <td>HIGH-WARN = must-fix</td>
 <td>explicit <code>--no-fail-closed</code></td>
@@ -3474,7 +3493,7 @@ APPROVED   NEEDS WORK
 <li><strong><code>/verify-claims</code></strong> with the Chain-of-Verification forked-verifier (the verifier cannot self-confirm even if the orchestrator’s checkpoint regressed).</li>
 <li><strong><code>/audit-reproducibility</code></strong> with <code>passport.yaml</code> (numeric claims are anchored to specific script output values, not to the model’s recall of the values).</li>
 <li><strong>The cross-artifact review rule</strong> (a paper’s claims are checked against the code that produced them, not against the model’s intuition about whether they’re “plausible”).</li>
-<li><strong>HIGH-WARN gate-refuse on <code>/commit</code></strong> (Pass 3A I) — a fabricated citation or numerical contradiction blocks the commit even if the model “feels confident.”</li>
+<li><strong>HIGH-WARN fails closed in the report</strong> — a fabricated citation or numerical contradiction is surfaced first and the draft is never presented as verified, even if the model “feels confident.” (This is a reporting rule: <code>/commit</code> and the pre-commit hook do not read <code>/verify-claims</code> verdicts, so resolving a HIGH-WARN before committing is the author’s call.)</li>
 </ul>
 <p>Anthropic’s post is also a useful reminder that running <code>/review-paper --variance N</code> (Pass 2C E) is the empirical answer to “should I trust this output?” — a single point estimate of model quality on a single task hides variance that the template’s adversarial-review patterns surface.</p>
 </div>
@@ -3669,7 +3688,7 @@ APPROVED   NEEDS WORK
 <td><strong>Factual claims</strong></td>
 <td><a href="#all-skills"><code>/verify-claims</code></a></td>
 <td>fabricated citations, numerical contradictions, directional contradictions</td>
-<td><strong>Must-fix — resolve HIGH-WARN before committing</strong> (v1.9.0)</td>
+<td><strong>Reported, not blocked</strong> — HIGH-WARN fails the verification closed (the draft is never reported as verified); <code>/commit</code> does not read it, so resolving it before committing is on you</td>
 </tr>
 <tr class="even">
 <td><strong>Numeric provenance</strong></td>
@@ -3811,12 +3830,10 @@ APPROVED   NEEDS WORK
 <p><strong>Always-on rules</strong> (no <code>paths:</code> frontmatter) load every session. Keep these few and focused:</p>
 <pre><code>.claude/rules/
 ├── plan-first-workflow.md       # ~83 lines — plan before you build
-├── orchestrator-protocol.md     # ~119 lines — review-fix runtime (fan-out → reduce → judge → loop-until-dry)
 ├── session-logging.md           # ~23 lines — three logging triggers
-├── prompt-shaping.md            # ~32 lines — shape informal asks (ambient; replaces /prompt)
+├── prompt-shaping.md            # ~7 lines — shape informal asks before acting
 ├── progress-reports.md          # ~92 lines — GitHub as memory: issues, reports, MEMORY.md
-├── repo-hygiene.md              # ~74 lines — scratch must not become main
-└── meta-governance.md           # ~277 lines — template vs working project</code></pre>
+└── repo-hygiene.md              # ~74 lines — scratch must not become main</code></pre>
 <p><strong>Path-scoped rules</strong> load only when relevant:</p>
 <pre><code>.claude/rules/
 ├── r-code-conventions.md        # paths: [&quot;**/*.R&quot;] — R standards
@@ -3825,8 +3842,10 @@ APPROVED   NEEDS WORK
 ├── replication-protocol.md      # paths: [&quot;scripts/**/*.R&quot;] — replicate first
 ├── exploration-folder-protocol.md  # paths: [&quot;explorations/**&quot;] — sandbox rules
 ├── orchestrator-research.md     # paths: [&quot;scripts/**/*.R&quot;, &quot;explorations/**&quot;] — simple loop
-└── ...29 path-scoped rules total</code></pre>
-<p>The always-on rules are deliberately compact — together they fit well within the budget Claude reads reliably each session. <code>meta-governance</code> is a reference document for the template’s dual nature (working project vs. public template) and loads passively. Path-scoped rules add rich, domain-specific guidance exactly when Claude needs it.</p>
+├── orchestrator-protocol.md     # paths: [&quot;.claude/skills/**&quot;, &quot;.claude/agents/**&quot;, ...] — review runtime
+├── meta-governance.md           # paths: [top-level docs, &quot;guide/**&quot;, &quot;.claude/**&quot;, ...] — template vs working project
+└── ...32 path-scoped rules total</code></pre>
+<p>The always-on rules are deliberately compact — together they fit well within the budget Claude reads reliably each session. Two of the largest rules are path-scoped on purpose: <code>orchestrator-protocol</code> (the review runtime) loads while skills and reviewer agents are being written — the fan-out skills link it directly — and <code>meta-governance</code> (the template’s dual nature) loads only for maintainer work on docs, <code>.claude/</code>, and gate scripts, so a research or teaching session does not pay for either. Path-scoped rules add rich, domain-specific guidance exactly when Claude needs it.</p>
 <p><strong>Sync vs. translate:</strong> The <code>beamer-quarto-sync</code> rule handles incremental edits — fix a typo in Beamer, same fix goes to Quarto. The <code>/translate-to-quarto</code> skill is for full initial translation of a new lecture. Translate once, sync thereafter.</p>
 <p><strong>Why rules matter:</strong> Without them, Claude will use generic defaults. With them, Claude follows <em>your</em> standards consistently across sessions.</p>
 <section id="example-path-scoped-r-code-conventions-rule" class="level3" data-number="4.2.1">
@@ -4018,13 +4037,33 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Current Anthropic lineup (re-verified 2026-08-21; expiry-gated via the model SSoT)
+<span class="screen-reader-only">Note</span>Current Anthropic lineup (re-verified 2026-09-26; expiry-gated via the model SSoT)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Fable 5</strong> (<code>claude-fable-5</code>, alias <code>fable</code>) is the most capable Claude Code model — opt-in via <code>/model fable</code> or the <code>best</code> alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is <strong>not</strong> the default on any account type and may bill to usage credits. <strong>Opus</strong> is the high-judgment tier and what this template routes referees, editors, and verifiers to. <strong>Sonnet</strong> is the workhorse mid-tier; <strong>Haiku</strong> is the fast/mechanical tier.</p>
+<p>The <strong>Fable tier</strong> (alias <code>fable</code>) is the top Claude Code tier — opt-in via <code>/model fable</code> or the <code>best</code> alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is <strong>not</strong> the default on any account type and costs a multiple of the Opus price. The <strong>Opus tier</strong> is the Claude Code default and what this template routes referees, editors, and verifiers to; its adaptive thinking is always on and it defaults to <code>medium</code> effort. <strong>Sonnet</strong> is the workhorse mid-tier; <strong>Haiku</strong> is the fast/mechanical tier. Anthropic’s own routing advice: start with the current Opus, and move to Fable when evals at a higher Opus effort still fall short.</p>
 <p>Alias resolution is <strong>provider-dependent</strong>, and point versions move faster than any guide can. The single source of truth is <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/references/model-versions.md"><code>model-versions.md</code></a>, which carries the current versions, the per-provider alias table, and a <code>verified_on</code> date with an expiry — <code>scripts/check-staleness.py</code> fails the build when that expiry passes, and <code>scripts/check-model-versions.sh</code> catches any superseded version presented as current. <strong>Do not hard-code a point version here.</strong></p>
-<p><strong>Retired (2026-06-15):</strong> Sonnet 4 and the original Opus 4 are gone. If your environment still pins one (<code>ANTHROPIC_MODEL</code> env, hard-coded model strings), requests fail — migrate to the current tiers in the SSoT.</p>
+<p><strong>Retirement watch:</strong> Sonnet 4 and the original Opus 4 retired on 2026-06-15; the current Haiku model’s retirement floor is 2026-10-15 (see the SSoT). If your environment pins a model string (<code>ANTHROPIC_MODEL</code>, <code>ANTHROPIC_DEFAULT_*_MODEL</code>, hard-coded IDs in CI), re-check it against the SSoT. The current Opus needs Claude Code ≥ 2.1.280 — run <code>claude update</code> (or <code>claude --version</code>) if <code>/model</code> does not offer it.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Prompting the current Opus (from Anthropic’s Opus 5.5 prompting guide)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Effort is the dial, not prose.</strong> Thinking is always on. To get shorter, faster answers, lower <code>/effort</code>; for harder problems, raise it. “Think harder” or “don’t overthink” lines are weaker than the setting and can backfire.</li>
+<li><strong>Say it once, plainly, with the reason.</strong> The model follows instructions closely and literally: state the goal, the constraints and why they hold, and how you will check the result. <code>MUST</code>/<code>CRITICAL</code> shouting and long step-by-step scripts written for older models now cause over-triggering and rigid work.</li>
+<li><strong>Don’t ask it to write out its reasoning in the answer.</strong> A request to reproduce its internal reasoning can be declined; ask for the argument, the evidence, or a short rationale instead.</li>
+<li><strong>Pasted text is data.</strong> When you paste a referee report, an email, or a web page, say so; instructions inside pasted text should be treated as content to handle, not directions to follow.</li>
+<li><strong>Unattended runs need a finish line.</strong> For <code>/schedule</code> routines and long background runs, state what “done” means and which early stops you accept (only when blocked); keep human gates for anything irreversible.</li>
+<li><strong>It reads visuals well.</strong> Charts, rendered slides, and screenshots are read accurately without crop-and-zoom scaffolding — re-test old visual workarounds before keeping them.</li>
+</ul>
 </div>
 </div>
 <p>Not all agents need the same model. Each agent file has a <code>model:</code> field in its YAML frontmatter. In v2.0 all 18 agents are <strong>pinned</strong> to an explicit model + effort tier (no longer <code>inherit</code>), following the 70/20/10 routing pattern below. You can re-tune any agent to optimize cost:</p>
@@ -4194,7 +4233,7 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>Set per-agent via <code>model:</code> in <code>.claude/agents/&lt;name&gt;.md</code> frontmatter. Typical savings vs. all-Opus in our use: <strong>50–80% on routed skills</strong>, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in <a href="https://augmentcode.com">Augment Code’s routing data</a> and aligns with Aider’s architect/editor split; we cite Anthropic’s <a href="https://www.anthropic.com/engineering">Apr 8 2026 “Decoupling brain from hands”</a> as the primary-source endorsement of the pattern.</p>
-<p><strong>3. Effort budgeting.</strong> The Effort Levels section earlier covered the <code>low | medium | high | xhigh | max</code> ladder. <strong>the current Opus tier defaults to <code>high</code></strong> — and its <code>high</code> does roughly what 4.7’s <code>xhigh</code> did, for fewer tokens. So: let <code>high</code> be the default; drop to <code>medium</code>/<code>low</code> to save cost on mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); <code>ultracode</code> (xhigh + dynamic workflows) for repo-scale autonomous tasks.</p>
+<p><strong>3. Effort budgeting.</strong> The Effort Levels section earlier covered the <code>low | medium | high | xhigh | max</code> ladder. <strong>The current Opus tier defaults to <code>medium</code></strong> — and its <code>medium</code> matches or beats the prior Opus generation at <code>high</code> (Anthropic’s evaluations), while at any given level it thinks more per turn. So: let <code>medium</code> be the default; pin <code>high</code> only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as <code>/audit-reproducibility</code>, <code>/seven-pass-review</code>, and <code>/simulation-study</code> — the full list is in <code>model-routing.md</code>); drop to <code>low</code> for mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); <code>ultracode</code> (xhigh + dynamic workflows) for repo-scale autonomous tasks. On a fixed grant budget, <code>maxEffortLevel</code> in settings caps effort everywhere.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4222,7 +4261,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Starting 2026-06-15, <code>claude -p</code> headless subprocess calls (used by <code>/coarse-review</code> and any script that calls Claude Code in <code>-p</code> mode) draw from a <strong>separate monthly Agent SDK credit pool</strong>, decoupled from interactive credits. If <code>/coarse-review</code> starts failing after the cutover with credit-exhaustion errors even though your interactive session works, the Agent SDK pool is what’s empty. See <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md">TROUBLESHOOTING.md</a> for the migration details.</p>
+<p>Since 2026-06-15, <code>claude -p</code> headless subprocess calls (used by <code>scripts/run-skill-eval.sh</code> and any script or routine that calls Claude Code in <code>-p</code> mode) draw from a <strong>separate monthly Agent SDK credit pool</strong>, decoupled from interactive credits. If a headless run fails with credit-exhaustion errors even though your interactive session works, the Agent SDK pool is what’s empty. See <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md">TROUBLESHOOTING.md</a> for the migration details.</p>
 </div>
 </div>
 </section>
@@ -4252,7 +4291,7 @@ APPROVED   NEEDS WORK
 <span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Permission modes.</strong> Claude Code has five permission modes that control how much autonomy Claude gets:</p>
+<p><strong>Permission modes.</strong> Claude Code has six permission modes that control how much autonomy Claude gets:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4290,19 +4329,19 @@ APPROVED   NEEDS WORK
 <tr class="even">
 <td><strong>Plan</strong></td>
 <td><code>plan</code></td>
-<td>Read-only — no edits allowed</td>
+<td>Read-only — edits blocked until you approve the plan (except in interactive terminal sessions where bypass is available: there the block is not enforced)</td>
 <td>Exploring code, reviewing before acting</td>
 </tr>
 <tr class="odd">
 <td><strong>Auto</strong></td>
 <td><code>auto</code></td>
-<td>Classifier-gated; everything runs unless flagged risky. <strong>Since 2026-08-14 this is the default starting mode</strong> for new interactive terminal and VS Code sessions on Pro, Max, and Team, and it needs no opt-in flag on Bedrock, Google Cloud’s Agent Platform, or Microsoft Foundry</td>
+<td>Classifier-gated; everything runs unless flagged risky. <strong>The built-in starting mode on Claude Code ≥ 2.1.283</strong> for interactive terminal and VS Code sessions (on earlier versions, Pro/Max/Team since 2026-08-14), and it needs no opt-in flag on Bedrock, Google Cloud’s Agent Platform, or Microsoft Foundry</td>
 <td>Long autonomous tasks with safety net — the recommended mode for trusted repos when bypass is too permissive</td>
 </tr>
 <tr class="even">
 <td><strong>Bypass</strong></td>
 <td><code>bypassPermissions</code></td>
-<td>Skips <strong>all</strong> permission prompts and safety checks — including writes to protected paths (<code>.git</code>, <code>.vscode</code>, <code>.idea</code>, <code>.husky</code>, <code>.claude</code>). Anthropic’s docs advise reserving it for isolated environments</td>
+<td>Skips <strong>all</strong> permission prompts and safety checks (deny rules still apply) — including writes to protected paths (<code>.git</code>, <code>.vscode</code>, <code>.idea</code>, <code>.husky</code>, <code>.claude</code>). Anthropic’s docs advise reserving it for isolated environments</td>
 <td>CI/CD, headless scripts, and — eyes open — trusted-repo daily driving: nothing prompts, so pair it with plan-first and the shipped <code>git-guardrails</code> hook — which narrows the common accidents rather than replacing the prompt you turned off</td>
 </tr>
 </tbody>
@@ -4361,26 +4400,27 @@ APPROVED   NEEDS WORK
 <td>6</td>
 <td><strong>In-session runtime</strong></td>
 <td>(ephemeral)</td>
-<td>toggled via <code>Shift+Tab</code> / <code>/permission-mode</code></td>
+<td>toggled via <code>Shift+Tab</code> (CLI) or the mode indicator (VS Code)</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Layer 6 is authoritative</strong> and catches most users off-guard. <code>initialPermissionMode</code> only fires at <strong>session start</strong> — if you (or <code>Shift+Tab</code>) change modes mid-session, every file-level layer is ignored until the session ends.</p>
+<p><strong>Two exceptions that surprise people</strong> (re-verified 2026-09-26 against Anthropic’s permission-modes docs): layers 4 and 5 — the project’s <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code> — do <strong>not</strong> honor <code>auto</code> or <code>bypassPermissions</code> as a starting mode (a project bypass is ignored and the session starts in Manual), and the VS Code extension does not read project settings for its starting mode at all. Set bypass in layer 3 or with <code>--permission-mode bypassPermissions</code>; in VS Code, set <code>claudeCode.initialPermissionMode</code> and turn on the extension’s <em>Allow dangerously skip permissions</em> toggle. With no override, Claude Code ≥ 2.1.283 starts in auto mode.</p>
 </section>
 <section id="troubleshooting-prompts-fire-despite-bypasspermissions" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="troubleshooting-prompts-fire-despite-bypasspermissions"><span class="header-section-number">4.6.2</span> Troubleshooting: Prompts Fire Despite <code>bypassPermissions</code></h3>
 <p>This is the single most common source of confusion. Work through the checklist in order:</p>
 <ol type="1">
-<li><strong>Look at the status line</strong> at the top of the Claude Code panel. With this repo’s <code>statusLine</code> configured, it prints <code>[BYPASS]</code>, <code>[PLAN]</code>, <code>[AUTO-EDIT]</code>, or <code>[PROMPT]</code> for the four standard modes. Any other mode Claude Code reports (e.g., <code>dontAsk</code>) is shown as a bracketed raw name like <code>[dontAsk]</code>. If it doesn’t say <code>[BYPASS]</code>, you have an in-session override — press <code>Shift+Tab</code> to cycle modes until you land on bypass.</li>
-<li><strong>Run <code>/permission-check</code></strong> to see every layer’s value, the resolved merged state, and any drift (e.g., project says bypass but project-local says default).</li>
+<li><strong>Look at the status line.</strong> With this repo’s <code>statusLine</code> configured, it prints <code>[AUTO]</code>, <code>[BYPASS]</code>, <code>[PLAN]</code>, <code>[AUTO-EDIT]</code>, or <code>[PROMPT]</code> when Claude Code reports the mode; any other mode (e.g. <code>dontAsk</code>) shows as its raw name like <code>[dontAsk]</code>. If it doesn’t say <code>[BYPASS]</code>, either bypass was set somewhere Claude Code ignores (the project settings — see above) or you have an in-session override; <code>Shift+Tab</code> cycles modes.</li>
+<li><strong>Run <code>/permission-check</code></strong> to see every layer’s value, the resolved merged state, and any drift (e.g. a bypass set only in project settings, which Claude Code ignores).</li>
 <li><strong>Check for stale sessions.</strong> If settings changed recently but the session predates the change, it still runs under the old mode. Reload the window (<code>Cmd+Shift+P</code> → “Developer: Reload Window”) and start a new session.</li>
 <li><strong>Check <code>deny</code> lists.</strong> A match in any layer’s <code>deny</code> blocks the tool regardless of <code>allow</code> entries elsewhere.</li>
 <li><strong>VSCode vs CLI split.</strong> If the VSCode layers say bypass but no CLI layer does, a terminal-launched Claude Code will still prompt. Align them.</li>
 </ol>
 </section>
-<section id="the-plan-bypass-handoff-recommended-daily-driver" class="level3" data-number="4.6.3">
-<h3 data-number="4.6.3" class="anchored" data-anchor-id="the-plan-bypass-handoff-recommended-daily-driver"><span class="header-section-number">4.6.3</span> The Plan → Bypass Handoff (Recommended Daily Driver)</h3>
-<p>Plan mode and bypass permissions sound like opposites, but they chain into a single workflow that gives you a <strong>review-before-execute convenience</strong>: you see the approach before any edits happen, then execution runs without per-tool prompts.</p>
+<section id="the-plan-execute-handoff-recommended-daily-driver" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="the-plan-execute-handoff-recommended-daily-driver"><span class="header-section-number">4.6.3</span> The Plan → Execute Handoff (Recommended Daily Driver)</h3>
+<p>Plan mode and a low-prompt execution mode — <strong>auto mode</strong>, or bypass if you run it — chain into a single workflow that gives you a <strong>review-before-execute convenience</strong>: you see the approach before any edits happen, then execution runs without per-tool prompts.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4391,7 +4431,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Approving a plan via <code>ExitPlanMode</code> hands the session to the mode set at the approval prompt — current Claude Code versions present explicit choices there (approve into auto mode, approve with manual edit review, keep planning); on this template’s bypass-default setup the approved plan proceeds without per-tool prompts. Once there, any subsequent tool call (Edit, Write, Bash) executes under the full allowlist in your <code>settings.json</code>, not a scope derived from the plan. A mistaken implementation can still edit unrelated files or run destructive shell commands with no second checkpoint.</p>
+<p>Approving a plan via <code>ExitPlanMode</code> hands the session to the mode set at the approval prompt — current Claude Code versions present explicit choices there (approve into auto mode, approve with manual edit review, keep planning); on a bypass setup the approved plan proceeds without per-tool prompts. Once there, any subsequent tool call (Edit, Write, Bash) executes under the full allowlist in your <code>settings.json</code>, not a scope derived from the plan. A mistaken implementation can still edit unrelated files or run destructive shell commands with no second checkpoint.</p>
 <p>Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, keep <code>defaultMode: &quot;default&quot;</code> and approve each high-risk tool individually, or run the whole session in <code>plan</code> mode and copy actions out manually.</p>
 </div>
 </div>
@@ -4415,12 +4455,12 @@ User approves via ExitPlanMode UI
 Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p><strong>Why this is the recommended daily flow:</strong></p>
 <ul>
-<li>You always see the approach before any edits happen (plan mode is read-only).</li>
+<li>You see the approach before any edits happen (plan mode blocks edits — except in terminal sessions where bypass is available, where that discipline is yours to keep).</li>
 <li>Once you approve, every downstream action — edits, bash, multi-file refactors — runs without interruption.</li>
 <li>No mid-session toggling — the approval prompt is the single handoff point (read its options once; they set the post-plan mode).</li>
 <li>Fits cleanly with the plan-first rule enforced by this repo.</li>
 </ul>
-<p><strong>Prerequisite:</strong> your <code>defaultMode</code> must be <code>bypassPermissions</code> in at least one CLI layer (typically the project or project-local layer). Without that, exiting plan mode returns you to <code>default</code> and you’re back to per-tool prompts.</p>
+<p><strong>Prerequisite:</strong> for the no-prompt version, bypass must be available — set in your user settings (<code>~/.claude/settings.json</code>) or with <code>--permission-mode bypassPermissions</code>, since project settings don’t honor it. The safer daily driver on Claude Code ≥ 2.1.283 is to approve the plan into <strong>auto mode</strong>: execution still runs without per-tool prompts for routine actions, and a classifier stays between you and the risky ones.</p>
 </section>
 <section id="sec-session-management" class="level3" data-number="4.6.4">
 <h3 data-number="4.6.4" class="anchored" data-anchor-id="sec-session-management"><span class="header-section-number">4.6.4</span> Session Management</h3>
@@ -4479,8 +4519,30 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <td>Sets an end-state condition; Claude keeps working across turns until a fast model confirms it holds (May 2026 Week 20, v2.1.139)</td>
 <td>“All R scripts pass without errors”, “Figure 3 renders to PDF without overflow” — pair with <code>/commit</code> quality gates for verified-end-state runs</td>
 </tr>
+<tr class="odd">
+<td><code>/fork</code></td>
+<td>Copies the conversation into a new background session while you keep working (Jul 2026)</td>
+<td>Try a risky variant of an analysis without losing the main thread</td>
+</tr>
+<tr class="even">
+<td><code>/doctor</code> (alias <code>/checkup</code>)</td>
+<td>Full setup checkup that diagnoses — and can fix — configuration problems (Jul 2026)</td>
+<td>Something that used to work stopped working after an update</td>
+</tr>
+<tr class="odd">
+<td><code>/skill-doctor</code></td>
+<td>Shows what each skill costs in context and how often it is used (Sep 2026)</td>
+<td>Pruning skills you never use; checking a new skill’s context cost</td>
+</tr>
 </tbody>
 </table>
+<p><strong>Also new since mid-2026</strong> (Claude Code release notes, Jun–Sep 2026):</p>
+<ul>
+<li><strong>Subagents run in the background, and fork mode is on by default</strong> in interactive sessions — Claude keeps working while subagents run, and <code>/fork</code> copies the conversation into a background session. A fork <em>inherits the conversation</em>, so reviews that must be independent (claim verification, referees) use fresh-context subagents, never a fork.</li>
+<li><strong>Output styles:</strong> <code>/output-style</code> switches how Claude writes. <strong>Concise</strong> leads with the result and skips preamble; <strong>Learning</strong> leaves parts for you to write — a good fit next to <code>/scaffold-exercises</code> for teaching.</li>
+<li><strong><code>/skill-doctor</code></strong> shows each skill’s context cost and usage; <strong><code>claude plugin eval</code></strong> scores a plugin against test cases versus a no-plugin baseline.</li>
+<li><strong>Deadline-safe updates:</strong> <code>&quot;autoUpdatesChannel&quot;: &quot;stable&quot;</code> (and <code>minimumVersion</code>) in <code>~/.claude/settings.json</code> — see TROUBLESHOOTING; <code>maxEffortLevel</code> caps effort for a fixed budget.</li>
+</ul>
 <p><strong>Three patterns that compose well:</strong></p>
 <ul>
 <li><strong>Side question without polluting context:</strong> <code>/btw why does Quarto need ::: for callouts?</code> — get the answer, dismiss, keep working.</li>
@@ -4497,7 +4559,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By default, Claude saves plans to a global directory (<code>~/.claude/plans/</code>), not your project. To keep plans with your project (and in git), add this to <code>.claude/settings.json</code>:</p>
+<p>By default, Claude saves plans to a global directory (<code>~/.claude/plans/</code>), not your project. To keep plans with your project, add this to <code>.claude/settings.json</code> (this template gitignores <code>quality_reports/plans/</code> — plans are local working records):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;plansDirectory&quot;</span><span class="fu">:</span> <span class="st">&quot;quality_reports/plans&quot;</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -4508,18 +4570,18 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </section>
 <section id="sec-effort" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="sec-effort"><span class="header-section-number">4.7</span> Effort Levels — Cost vs. Thoroughness</h2>
-<p>Claude Code lets you control how deeply it reasons about each task. Higher effort means more “thinking tokens” and better results — but higher cost. On <strong>the current Opus tier the default is <code>high</code></strong> — its <code>high</code> reasoning now delivers what 4.7’s <code>xhigh</code> did, so you rarely need to bump up (see <a href="#sec-cost">Cost-Conscious Composition</a>).</p>
+<p>Claude Code lets you control how deeply it reasons about each task. Higher effort means more thinking and better results on hard problems — but higher cost and latency. On <strong>the current Opus tier the default is <code>medium</code></strong>, and thinking is always on, so effort is the <em>only</em> depth control: lower it rather than asking for brevity, raise it rather than writing “think harder” (see <a href="#sec-cost">Cost-Conscious Composition</a>). The Fable and Sonnet tiers default to <code>high</code>.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 12%">
-<col style="width: 28%">
-<col style="width: 33%">
-<col style="width: 26%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 37%">
+<col style="width: 29%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Level</th>
-<th>Thinking Budget</th>
+<th>Thinking</th>
 <th>Academic Use Case</th>
 <th>Relative Cost</th>
 </tr>
@@ -4527,32 +4589,32 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <tbody>
 <tr class="odd">
 <td><code>low</code></td>
-<td>Minimal</td>
+<td>Short; may skip thinking on easy steps</td>
 <td>Quick formatting, grep, file renames</td>
 <td>$</td>
 </tr>
 <tr class="even">
 <td><code>medium</code></td>
-<td>Standard</td>
-<td>Mechanical work; drop here from <code>high</code> to save cost</td>
+<td>Standard (<strong>Opus-tier default</strong>)</td>
+<td>Most drafting, analysis, and review</td>
 <td><span class="math display">\[ |
-| `high` | ~10k tokens | Complex derivations, paper reviews (**Opus-tier default**) | \]</span>$</td>
+| `high` | Deeper (Fable/Sonnet default) | Gates where a false PASS is expensive: referee reports, claim verification, replication audits | \]</span>$</td>
 </tr>
 <tr class="odd">
 <td><code>xhigh</code></td>
-<td>~20k tokens</td>
-<td>Extended exploration / hardest runs; <strong>the current Opus tier defaults to <code>high</code></strong>, so reserve <code>xhigh</code> for genuinely hard work (introduced Apr 2026 Week 16)</td>
+<td>Extended</td>
+<td>Extended exploration / hardest runs — reserve for genuinely hard work</td>
 <td>$<span class="math display">\[$ |
-| `max` / ultrathink | ~32k tokens | Deep proofs, multi-step analysis | \]</span>$$$</td>
+| `max` | Uncapped | Deep proofs, multi-step analysis where you measured `xhigh` falling short | \]</span>$$$</td>
 </tr>
 </tbody>
 </table>
 <p><strong>How to set effort:</strong></p>
 <ul>
-<li><strong>Per-session:</strong> Type <code>/effort high</code> (the current Opus default) or <code>/effort xhigh</code> for the hardest runs. Typing <code>/effort</code> on its own opens an <strong>interactive slider</strong> (Apr 2026 Week 16).</li>
+<li><strong>Per-session:</strong> Type <code>/effort high</code> for a demanding session (the current Opus default is <code>medium</code>) or <code>/effort xhigh</code> for the hardest runs. Typing <code>/effort</code> on its own opens an <strong>interactive slider</strong> (Apr 2026 Week 16).</li>
 <li><strong>Per-skill:</strong> Add <code>effort: high</code> to skill frontmatter (see <a href="#skill-frontmatter">Skill Frontmatter Reference</a>)</li>
-<li><strong>Keyboard toggle:</strong> <code>Option+T</code> (Mac) / <code>Alt+T</code> (Windows/Linux) toggles extended thinking</li>
-<li><strong>In prompts:</strong> Include “ultrathink” in your prompt to enable extended thinking for that turn. Note: phrases like “think hard” are treated as regular instructions and do <em>not</em> allocate extra thinking tokens</li>
+<li><strong>Keyboard toggle:</strong> <code>Option+T</code> (Mac) / <code>Alt+T</code> (Windows/Linux) toggles thinking on models where it can be switched off; on the current Opus and Fable tiers thinking is always on, so <code>/effort</code> is the control</li>
+<li><strong>In prompts:</strong> on always-thinking tiers, raise <code>/effort</code> for a hard turn rather than relying on a keyword such as <code>ultrathink</code>; phrases like “think hard” are treated as regular instructions and do <em>not</em> allocate extra thinking</li>
 <li><strong>Environment variable:</strong> <code>CLAUDE_CODE_EFFORT_LEVEL=high</code> for all sessions</li>
 <li><strong>Hooks can read it:</strong> As of Apr 2026 Week 19, hook input includes <code>effort.level</code> and <code>$CLAUDE_EFFORT</code> is set in Bash subprocess env — useful for skipping expensive verification on low-effort runs</li>
 </ul>
@@ -4566,7 +4628,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Effort levels compose with model selection for fine-grained cost control. For example, <code>Haiku + high effort</code> costs less than <code>Opus + low effort</code> but may produce comparable results for bounded tasks like formatting. Use <code>Opus + max</code> only for tasks that genuinely require deep multi-step reasoning — complex proofs, intricate data pipeline debugging, or comprehensive paper critique.</p>
+<p>Effort levels compose with model selection for fine-grained cost control. For example, <code>Sonnet + high effort</code> costs less than <code>Opus + high effort</code> and may produce comparable results for bounded tasks like formatting, and the Haiku tier (which takes no effort setting) is cheaper still. Use <code>Opus + max</code> only for tasks that genuinely require deep multi-step reasoning — complex proofs, intricate data pipeline debugging, or comprehensive paper critique.</p>
 </div>
 </div>
 </section>
@@ -4604,8 +4666,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <li><strong>Evidence</strong> — does it cite the originating incident / file / why?</li>
 <li><strong>Format</strong> — does it follow <code>[LEARN:category] wrong → right</code>?</li>
 </ol>
-<p>Majority (3+ of 5 YES) recommends promotion; the user approves the final move. Critics run in <em>isolated forked contexts</em> — they cannot see each other’s votes — so dimensions are reviewed independently, no groupthink. Critics use Haiku (per <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/model-routing.md">model-routing.md</a>) since the review is mechanical-ish.</p>
-<p>When to run: monthly as memory-maintenance, before sharing a fork, after a paper or course cycle ships, or wired as a <code>/loop</code> task.</p>
+<p>Majority (3+ of 5 YES) recommends promotion; the user approves the final move. Critics run in <em>isolated fresh contexts</em> — they cannot see each other’s votes — so dimensions are reviewed independently, no groupthink. Critics use Haiku (per <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/model-routing.md">model-routing.md</a>) since the review is mechanical-ish.</p>
+<p>When to run: monthly as memory-maintenance (set a reminder and run it in a local session — it is user-invoked and reads machine-local auto memory, so a scheduled routine cannot run it), before sharing a fork, or after a paper or course cycle ships.</p>
 </section>
 <section id="plans-compression-resistant-task-memory" class="level3" data-number="4.8.1">
 <h3 data-number="4.8.1" class="anchored" data-anchor-id="plans-compression-resistant-task-memory"><span class="header-section-number">4.8.1</span> Plans — Compression-Resistant Task Memory</h3>
@@ -4686,7 +4748,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <section id="hooks---automated-enforcement" class="level3" data-number="4.8.4">
 <h3 data-number="4.8.4" class="anchored" data-anchor-id="hooks---automated-enforcement"><span class="header-section-number">4.8.4</span> Hooks — Automated Enforcement</h3>
 <p>The session log reminder above is one example of a broader pattern: using <strong>hooks</strong> to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in <code>.claude/settings.json</code> and fire every time, regardless of context state.</p>
-<p>The template includes 8 hooks for logging, notifications, context survival, git safety, and protection of the configuration that defines the gates (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>):</p>
+<p>The template includes 9 hooks for logging, notifications, context survival, git safety, and protection of the configuration that defines the gates (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 23%">
@@ -4722,21 +4784,26 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <td>Restores context after compaction or resume</td>
 </tr>
 <tr class="odd">
+<td>Session handoff</td>
+<td><code>SessionStart[startup]</code> + <code>UserPromptSubmit</code></td>
+<td>Hands a fresh session the newest checkpoint written in the last 7 days; used up only once you type a prompt (<code>CLAUDE_HANDOFF=off</code> to skip)</td>
+</tr>
+<tr class="even">
 <td>Context monitor</td>
 <td><code>PostToolUse[Bash|Agent|Task]</code></td>
 <td>Progressive warnings at 40%/55%/65%/80%/90% context</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Git guardrails</td>
 <td><code>PreToolUse[Bash]</code></td>
 <td>Blocks destructive git (<code>reset --hard</code>, <code>clean -f</code>, <code>push --force</code>, <code>add -A</code>), and refuses a merge, rebase, or pull while the tree is dirty — including chains that would clean it first</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Claim reconcile</td>
 <td><code>PostToolUse[Write|Edit|MultiEdit]</code></td>
 <td>Flags stale numeric claims when analysis scripts change</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Root-of-trust guard</td>
 <td><code>PreToolUse[Bash]</code></td>
 <td>A tripwire, not a lock: denies <em>silent shell</em> writes into <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, and <code>.githooks/</code> — the files that define every other gate — and applies the destructive-git deny list to <code>bash -c</code> / <code>env -S</code> payloads. <code>Edit</code>/<code>Write</code>, a branch switch, or a bug in the hook can still replace them</td>
@@ -4755,7 +4822,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>One distinction inside that is worth keeping, because it changes what a fix can even do. Most of those forms are just <strong>text</strong> — the information is in the command line, so a scanner can be taught to read it, and another round of parsing is a reasonable answer. A symbolic link is not: it is a fact about the filesystem, and reading the command line cannot recover it. A link named anything at all, pointing at the directory you protect, is invisible to a text scan while the shell writes straight through it. That one is written down as out of reach rather than chased — and when you build your own guard, the same question tells you which gaps are worth more parsing and which mean the mechanism is the wrong shape for the guarantee you wanted.</p>
 <p>Verification and Beamer-Quarto sync are enforced via auto-loaded rules, which are the right tool for nuanced judgment. Hooks are reserved for enforcement that <em>must</em> survive context compression.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -4764,13 +4831,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-29" class="callout-29-contents callout-collapse collapse">
+<div id="callout-30" class="callout-30-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p>Picture a lab’s shared template that registers a guard hook to refuse writes to its instrument-calibration files. Someone reorganises the hooks directory and updates <code>settings.json</code> to match, but types <code>.claude/hooks/calibration_guard.py</code> where the file on disk is <code>calibration-guard.py</code>.</p>
 <p>What is lost is the <em>guarding</em>, and the symptom that replaces it is never legible as <em>a hook is misconfigured</em>. Which symptom you get depends on how the hook was registered, and both are bad in their own way. This template registers all but one of its hooks as <code>python3 &lt;path&gt;</code>; a path Python cannot open exits <strong>2</strong>, and exit 2 from a <code>PreToolUse</code> hook means BLOCK (the handler table below states that contract). So a typo on one of the guards would deny <em>every</em> matching call, and the reason handed back is an interpreter error about a missing file — the loudest possible failure, and still not one a reader parses as a settings typo. Registered as a bare path instead, the missing file exits 127 (126 if it exists but is not executable): a non-blocking error that scrolls past while the session continues, tools are allowed, and the only thing that changed is the one thing nobody was watching. That is the lab’s case. The guard is in the settings file, in the README, and in the onboarding doc. It is not in the process. Weeks later a calibration file is overwritten by an agent that the hook had been written to stop.</p>
 <p>Gate 9, ledger coverage, is the check that would have caught it: it opens every hook registered in <code>.claude/settings.json</code> and requires the file to exist, be invocable, and be tracked in git. Nothing else in the repo reads the settings file against the disk, so <strong>a hook can be wired to nothing while every gate in the suite stays green</strong> — the failure has no detector of its own. That is what Gate 9 is worth: a mistyped path fails the build the moment it is committed, instead of waiting for the day the guard was supposed to fire.</p>
-<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 234 cases, and it finishes in seconds.</p>
+<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 253 cases, and it finishes in seconds.</p>
 </div>
 </div>
 </div>
@@ -4927,7 +4994,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </tbody>
 </table>
 <p>Use <code>/context-status</code> to check current session health at any time.</p>
-<p>Note: the monitor uses tool call count as a proxy for context usage, so warnings may appear earlier or later than actual compaction.</p>
+<p>Note: the monitor estimates context from transcript size (falling back to a tool-call count), so warnings may appear earlier or later than actual compaction; the status line prefers Claude Code’s own <code>context_window.used_percentage</code> where available.</p>
 </section>
 <section id="recovery-after-compaction" class="level4" data-number="4.8.5.4">
 <h4 data-number="4.8.5.4" class="anchored" data-anchor-id="recovery-after-compaction"><span class="header-section-number">4.8.5.4</span> Recovery After Compaction</h4>
@@ -5079,7 +5146,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p><strong>During implementation</strong> — append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.</p>
 <p><strong>At session end</strong> — add a final section with what was accomplished, open questions, and unresolved issues.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5088,7 +5155,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-32" class="callout-32-contents callout-collapse collapse">
+<div id="callout-33" class="callout-33-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Git records what; session logs record why.</strong> A commit message says “Update Lecture 5 TikZ diagrams.” A session log says “Redesigned the TWFE decomposition diagram because the DA challenge revealed students couldn’t trace the path from weights to bias. Considered a table format but chose a flow diagram because it shows directionality.”</p>
 <p><strong>Incremental logging is the key.</strong> A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they are already on disk.</p>
@@ -5097,7 +5164,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <p>Claude writes all three log entries automatically — no need to ask.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5106,7 +5173,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-33" class="callout-33-contents callout-collapse collapse">
+<div id="callout-34" class="callout-34-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For multi-project academics, start each week by asking Claude to read all session logs from the past week and synthesize a status report with priorities and open questions. The session log infrastructure already captures what you need — the weekly review is just a synthesis prompt: <em>“Read all session logs from this week. Summarize: what was accomplished, what’s blocked, what should I prioritize next?”</em></p>
 </div>
@@ -5154,7 +5221,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
         Step 6: SCORE
         |  Apply quality-gates rubric
         |
-        +-- Converged? (a round adds 0 new Critical/Major)
+        +-- Converged? (2 consecutive rounds add 0 new Critical/Major)
               YES -&gt; Present summary to user
               NO  -&gt; Loop to Step 3 in fresh context
                      (loop-until-dry; 5-round cap is a fallback only)</code></pre>
@@ -5220,7 +5287,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </ul>
 <p>The difference: when you invoke a skill directly, it runs its specific workflow. The orchestrator runtime lives <em>inside</em> each skill — there is no repo-wide orchestrator that activates on its own or chains skills together. A skill is always user- or skill-initiated; nothing fires the runtime unattended.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5229,7 +5296,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-34" class="callout-34-contents callout-collapse collapse">
+<div id="callout-35" class="callout-35-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Natural-language task</strong> → Claude picks a skill: “Translate Lecture 5 to Quarto” → Claude invokes <code>/translate-to-quarto</code>, and that skill runs the orchestrator pattern (translate → verify → review → fix → score) internally.</p>
 <p><strong>Explicit skill call:</strong> <code>/qa-quarto Lecture5</code> — you specifically want the adversarial critic-fixer loop, nothing else.</p>
@@ -5321,7 +5388,7 @@ Phase 4: Only then extend
 <p>In one course, we discovered that a widely-used R package silently produced <strong>incorrect estimates</strong> due to a subtle specification issue. This bug was caught 3 times in different scripts. Without the replication-first protocol, these wrong numbers would have been taught to PhD students.</p>
 </div>
 </div>
-<p><strong>Source-language coverage:</strong> The pattern is language-agnostic. The template ships <a href="#all-skills"><code>/data-analysis</code></a> for R-first projects and <a href="#all-skills"><code>/stata-replication</code></a> (v1.9.0) for Stata-first projects (mirrors <code>/data-analysis</code> exactly; same numbered-pipeline shape, different language; executes via the <code>stata-mcp</code> MCP server). Python-first projects follow the same convention with the path <code>scripts/python/_outputs/</code>. For Stata users, <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/stata-code-conventions.md"><code>stata-code-conventions.md</code></a> (v1.9.0) codifies the header (<code>version 18</code>, <code>clear all</code>, <code>set seed</code>/<code>set sortseed</code>), numbered pipeline (00–99), <code>esttab</code> for <code>\input{}</code> tables, clustering discipline (<code>reghdfe</code>), balance via <code>iebaltab</code>, and AEA Data Editor compliance.</p>
+<p><strong>Source-language coverage:</strong> The pattern is language-agnostic. The template ships <a href="#all-skills"><code>/data-analysis</code></a> for R-first projects and <a href="#all-skills"><code>/stata-replication</code></a> (v1.9.0) for Stata-first projects (mirrors <code>/data-analysis</code> exactly; same numbered-pipeline shape, different language; executes via the <code>stata-mcp</code> MCP server). Python-first projects follow the same convention: numbered scripts in <code>scripts/python/</code>, results in the shared top-level <code>output/</code>, which every language writes to. For Stata users, <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/stata-code-conventions.md"><code>stata-code-conventions.md</code></a> (v1.9.0) codifies the header (<code>version 18</code>, <code>clear all</code>, <code>set seed</code>/<code>set sortseed</code>), numbered pipeline (00–99), <code>esttab</code> for <code>\input{}</code> tables, clustering discipline (<code>reghdfe</code>), balance via <code>iebaltab</code>, and AEA Data Editor compliance.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5343,7 +5410,7 @@ Phase 4: Only then extend
 </ol>
 <p><code>STALE</code> widened to match: a claim goes stale when the source script, the output file, <strong>or any declared <code>appears_in</code> path</strong> is modified after <code>last_verified_on</code>. A touched display is as much a reason to re-check as a touched script — it is the edit that puts two artifacts out of step. Three surfaces act on this: the claim-reconcile hook nudges when a display is edited, <code>nightly-repro-check</code> marks display-touches STALE, and <code>/commit</code> triggers the passport check on display diffs rather than only on script diffs.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5352,7 +5419,7 @@ Phase 4: Only then extend
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-37" class="callout-37-contents callout-collapse collapse">
+<div id="callout-38" class="callout-38-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the mechanism is real, the scenario is invented to make it concrete.</em></p>
 <p>A structural-biology group revises a methods paper. A reviewer asks for a different background correction; the pipeline is rerun, and the reported binding-affinity shift moves from 0.42 to 0.38 log units. The manuscript and the supplement are both generated from the output files, so both update on the next build. The vertical audit is entirely green: every number in the paper traces to the script and line that produced it, within tolerance.</p>
@@ -5507,7 +5574,7 @@ Phase 4: QUALITY GATE
 <li>Cognitive load issues</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-39-contents" aria-controls="callout-39" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5516,7 +5583,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-39" class="callout-39-contents callout-collapse collapse">
+<div id="callout-40" class="callout-40-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A stronger variant: when Claude reviews its own work in the same conversation, it suffers <strong>confirmation bias</strong> — it has internalized its own reasoning and will systematically find the work acceptable. The fix: spawn a new agent via the Task tool with NO access to the original conversation. Give it only the artifact and a critique prompt. The fresh agent has no sunk cost in the work and will be ruthless.</p>
 <blockquote class="blockquote">
@@ -5531,7 +5598,7 @@ Phase 4: QUALITY GATE
 <p>A forked reviewer is independent in <em>context</em>. It is not independent in <em>filesystem</em>. It still holds the repository checkout, and that checkout contains the previous round’s review reports, the judge’s verdict, the passport recording every number the paper claims, the ledger of what each checker has been shown to detect, and the render stamp saying what the current build came from. Telling an agent to “review this independently” while it can <code>grep</code> for the answer is an honour system with a search tool attached.</p>
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/review-fencing.md"><code>review-fencing.md</code></a> (v2.5.1, path-scoped to agent and skill definitions) states the rule as a question to ask before dispatch: what would this reviewer’s <em>environment</em> reveal if it looked — and then remove that, rather than instructing it not to look. In practice that means a copy of the artifact placed outside the checkout under a neutral filename (<code>artifact-a.tex</code>, not <code>paper_round3_after_referee_fixes.tex</code> — a filename announcing the round has already reported what was found last time), prior verdicts withheld, and the reviewer’s own reading recorded before it is shown anyone else’s findings. Fencing is for reviews whose output is about to be <strong>compared</strong> against something; an in-repo review is right when the repository context is the point, as in cross-artifact traversal from paper to table to output to script.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5540,7 +5607,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-40" class="callout-40-contents callout-collapse collapse">
+<div id="callout-41" class="callout-41-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p><code>-0.07314</code>, in nine seconds. Correct to the last printed digit. That is what a team qualifying its reproduction agent got back from a positive control — reproduce a pinned coefficient from a published analysis and report it.</p>
@@ -5629,7 +5696,7 @@ Phase 4: QUALITY GATE
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/executor-contract.md"><code>templates/executor-contract.md</code></a> is the shape of a dispatchable task: the <strong>goal</strong>, the <strong>acceptance bar</strong> that decides done, the exact <strong>paths</strong> to touch, the <strong>gates</strong> the work must pass, the <strong>output contract</strong> it must return, and the mechanisms it is allowed to <strong>refuse</strong>. An agent that does not know the bar will report success, because from inside the task there is nothing else to report.</p>
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/screening-rubric.md"><code>templates/screening-rubric.md</code></a> covers the other case — deciding which candidates survive, whether they are papers, datasets, specifications, or findings. It makes the <strong>default verdict a declared decision rather than a constant</strong>: a precision-first shortlist defaults to EXCLUDE, so a candidate is out unless a written criterion admits it, while a recall-first sweep must not, because a wrong exclusion leaves no trace for anything downstream to catch. Either way the evidence is recorded per candidate. It ends in an adjudication table and a dispatcher spot-check of a few decisions, because the person who wrote the rubric is the only one who can tell whether it was applied or merely cited. And a fan-out is adjudicated as a whole wave — bank every return, reconcile them together, then decide — rather than acting on whichever agent finished first.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5638,7 +5705,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-41" class="callout-41-contents callout-collapse collapse">
+<div id="callout-42" class="callout-42-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p>A doctoral student delegates a first-pass screen of twenty candidate papers for a methods review: <em>“read each one and tell me which are relevant to measurement error in self-reported exposure.”</em> The agents come back fast and agreeable. Nineteen are marked relevant. The summaries are fluent, each one names a plausible connection, and the shortlist is useless — it is the original list with one paper missing.</p>
@@ -5864,7 +5931,7 @@ Decision point (1-2 hours):
                            work backwards)</code></pre>
 <p><strong>Enter mid-pipeline.</strong> You do not have to start from ideation. If you already have data, start with <code>/data-analysis</code> and work backwards to the research question. If you already have a draft, start with <code>/review-paper</code>. The skills are modular — use what you need, skip what you don’t.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-45-contents" aria-controls="callout-45" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5873,7 +5940,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-44" class="callout-44-contents callout-collapse collapse">
+<div id="callout-45" class="callout-45-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For a production-grade paper pipeline, a dedicated fork takes these same skills and wraps them in full research infrastructure: 6 worker-critic agent pairs plus specialized agents (data-engineer, referees, verifier), simulated blind peer review, weighted aggregate scoring, journal targeting, and R&amp;R response routing. If your primary output is research papers, see <a href="#sec-ecosystem">The Ecosystem</a> for details.</p>
 </div>
@@ -5897,7 +5964,7 @@ Decision point (1-2 hours):
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-46-contents" aria-controls="callout-46" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-47-contents" aria-controls="callout-47" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5906,7 +5973,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-46" class="callout-46-contents callout-collapse collapse">
+<div id="callout-47" class="callout-47-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Strong statisticians hit these six walls more than any others; each has a one-line diagnosis:</p>
 <ol type="1">
@@ -6155,7 +6222,7 @@ Decision point (1-2 hours):
 <section id="pre-submission-checklist" class="level4" data-number="5.10.1.3">
 <h4 data-number="5.10.1.3" class="anchored" data-anchor-id="pre-submission-checklist"><span class="header-section-number">5.10.1.3</span> Pre-Submission Checklist</h4>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-48-contents" aria-controls="callout-48" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6164,7 +6231,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-48" class="callout-48-contents callout-collapse collapse">
+<div id="callout-49" class="callout-49-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Documentation:</strong></p>
 <ul class="task-list">
@@ -6213,7 +6280,7 @@ Decision point (1-2 hours):
 └── results/                # Output tables, figures</code></pre>
 <p>These standards load automatically via the path-scoped rule mechanism: when Claude edits files matching <code>replication-protocol.md</code>’s path globs, the rule is injected into context without any manual invocation. Ask Claude to <em>“prepare a replication package”</em> and the rule’s directory structure and checklist above guide the work from the first file touched.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6222,7 +6289,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-49" class="callout-49-contents callout-collapse collapse">
+<div id="callout-50" class="callout-50-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A key principle that maps directly to this workflow: <strong>separate scientific reasoning from computational execution.</strong> Humans design diagnostic templates (what to measure); AI handles execution (how to run it).</p>
 <p>This is the template-executor architecture — and you are already using it:</p>
@@ -6318,7 +6385,7 @@ Decision point (1-2 hours):
 <h4 data-number="5.10.2.4" class="anchored" data-anchor-id="how-existing-agents-support-this"><span class="header-section-number">5.10.2.4</span> How Existing Agents Support This</h4>
 <p>The <code>/slide-excellence</code> skill already invokes the pedagogy-reviewer and slide-auditor, which enforce many of these principles automatically. To enforce <em>all</em> of them — including title-as-assertion and MB/MC smoothness — customize the <strong>domain-reviewer</strong> agent (<code>.claude/agents/domain-reviewer.md</code>) with rhetoric-of-decks lenses. The orchestrator will then apply them during every review cycle without manual invocation.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-51-contents" aria-controls="callout-51" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6327,7 +6394,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-50" class="callout-50-contents callout-collapse collapse">
+<div id="callout-51" class="callout-51-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the complete philosophical treatment — from Aristotle’s three modes of persuasion through neuroaesthetics and the Netflix analogy — see <a href="https://github.com/scunning1975/MixtapeTools/tree/main/presentations">The Rhetoric of Decks</a>. The repository includes a full essay, example Beamer decks with professional color palettes, a <code>theme_rhetoric()</code> ggplot2 theme, and a tested deck generation prompt for Claude Code.</p>
 </div>
@@ -7090,7 +7157,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <p><strong>The gold-standard pattern has three parts:</strong></p>
 <ol type="1">
 <li><strong>Verb + object</strong> — what the skill <em>does</em>, in one clause. Start with an action verb (Compile, Review, Generate, Translate).</li>
-<li><strong>“Use when:” trigger phrases</strong> — 3–5 phrases the user might <em>actually</em> say. Include verbatim quotes (<code>&quot;proofread&quot;</code>, <code>&quot;check the layout&quot;</code>) and semantic paraphrases (<code>&quot;does this overflow?&quot;</code>). Cover both explicit commands and natural-language requests.</li>
+<li><strong>“Use when:” situations</strong> — the 2–4 situations a user is in when they need the skill, each with a phrasing they might <em>actually</em> say (<code>&quot;proofread&quot;</code>, <code>&quot;does this overflow?&quot;</code>). Name the situation rather than stacking near-synonyms: every model-invocable description is loaded every session, and the listing is truncated (see <code>/new-skill</code>).</li>
 <li><strong>Disambiguation from sibling skills</strong> — if your skill lives near others in the same domain (e.g., <code>proofread</code>, <code>visual-audit</code>, and <code>pedagogy-review</code> all operate on slides), explicitly say what it is <em>not</em> for, or point at the alternative. This prevents mis-routing.</li>
 </ol>
 <p><strong>Example: refactoring a weak description into an A-grade one.</strong></p>
@@ -7115,8 +7182,8 @@ research-spec.md  ─────────────→  preregistration-dr
 <p><strong>Checklist before shipping a new skill:</strong></p>
 <ul class="task-list">
 <li><label><input type="checkbox">Starts with a verb + object.</label></li>
-<li><label><input type="checkbox">Has a “Use when:” clause with at least 3 trigger phrases.</label></li>
-<li><label><input type="checkbox">Includes at least one verbatim quote a user might literally type.</label></li>
+<li><label><input type="checkbox">Has a “Use when:” clause naming 2–4 situations.</label></li>
+<li><label><input type="checkbox">Includes at least one verbatim phrasing a user might literally type.</label></li>
 <li><label><input type="checkbox">Disambiguates from any sibling skills in the same domain.</label></li>
 <li><label><input type="checkbox">Fits in roughly 2–4 lines (longer descriptions get truncated in Claude’s skill index).</label></li>
 </ul>
@@ -7203,7 +7270,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <li><strong>Use <code>CLAUDE.local.md</code> for personal overrides.</strong> This file is automatically gitignored and loaded alongside <code>CLAUDE.md</code>. Put machine-specific paths, personal preferences, and local tool versions here — they won’t pollute the shared repo.</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-57-contents" aria-controls="callout-57" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-58-contents" aria-controls="callout-58" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -7212,7 +7279,7 @@ research-spec.md  ─────────────→  preregistration-dr
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-57" class="callout-57-contents callout-collapse collapse">
+<div id="callout-58" class="callout-58-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For capabilities beyond file editing and shell commands — web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Configure them in <code>.claude/settings.json</code> under <code>&quot;mcpServers&quot;</code>. Start with skills and agents first; add MCP when you need external integrations.</p>
 <section id="extending-with-plugins" class="level2" data-number="7.6">
@@ -7380,7 +7447,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="even">
 <td><code>/visual-audit</code></td>
 <td><code>.claude/skills/visual-audit/</code></td>
-<td>Run layout audit agent</td>
+<td>Visual layout audit, run inline (the <code>slide-auditor</code> checks)</td>
 </tr>
 <tr class="odd">
 <td><code>/pedagogy-review</code></td>
@@ -7435,7 +7502,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="odd">
 <td><code>/oracle-review</code></td>
 <td><code>.claude/skills/oracle-review/</code></td>
-<td>Run an external frontier-model referee (Claude Code → GPT-5.6 Sol Pro) and adjudicate what comes back</td>
+<td>Run an external frontier-model referee (Claude Code → another vendor’s frontier model via the Oracle CLI) and adjudicate what comes back</td>
 </tr>
 <tr class="even">
 <td><code>/verify-artifact</code></td>
@@ -7678,19 +7745,9 @@ research-spec.md  ─────────────→  preregistration-dr
 <td>Plan mode + context preservation</td>
 </tr>
 <tr class="even">
-<td>Orchestrator Protocol</td>
-<td><code>orchestrator-protocol.md</code></td>
-<td>Review runtime: fan-out → reduce → judge (+ hallucination gate) → loop-until-dry (goal-first / gate-enforced; augments contractor mode)</td>
-</tr>
-<tr class="odd">
 <td>Session Logging</td>
 <td><code>session-logging.md</code></td>
 <td>Three logging triggers</td>
-</tr>
-<tr class="even">
-<td>Meta-Governance</td>
-<td><code>meta-governance.md</code></td>
-<td>Template vs working project distinctions</td>
 </tr>
 <tr class="odd">
 <td>Prompt Shaping</td>
@@ -7724,6 +7781,16 @@ research-spec.md  ─────────────→  preregistration-dr
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td>Orchestrator Protocol</td>
+<td><code>orchestrator-protocol.md</code></td>
+<td><code>.claude/skills/</code>, <code>.claude/agents/</code>, orchestration refs</td>
+</tr>
+<tr class="even">
+<td>Meta-Governance</td>
+<td><code>meta-governance.md</code></td>
+<td>top-level docs, <code>guide/</code>, <code>docs/</code>, <code>templates/</code>, <code>.claude/</code>, gate scripts</td>
+</tr>
 <tr class="odd">
 <td>Verification Protocol</td>
 <td><code>verification-protocol.md</code></td>
@@ -7852,7 +7919,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="even">
 <td>Review Fencing</td>
 <td><code>review-fencing.md</code></td>
-<td><code>.claude/agents/**/*.md</code>, <code>.claude/skills/**/SKILL.md</code> — reviewer independence as a property of the <em>environment</em>: neutral copy outside the checkout, prior verdicts withheld, own reading before prior findings, positive controls fenced from committed answer keys (v2.5.1)</td>
+<td><code>*.tex</code>, <code>*.qmd</code>, <code>master_supporting_docs/**</code>, <code>quality_reports/</code> audit dirs, <code>claim-verifier.md</code> — reviewer independence as a property of the <em>environment</em>: neutral copy outside the checkout, prior verdicts withheld, own reading before prior findings, positive controls fenced from committed answer keys (v2.5.1)</td>
 </tr>
 <tr class="odd">
 <td>Stata Code Conventions</td>
@@ -7906,7 +7973,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="odd">
 <td>Context state capture</td>
 <td>PreCompact (command)</td>
-<td><code>.claude/hooks/pre-compact.py</code> — DRAFT-block default is ON</td>
+<td><code>.claude/hooks/pre-compact.py</code> — saves plan/task/decisions; the DRAFT-block is opt-in (<code>CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1</code>)</td>
 </tr>
 <tr class="even">
 <td>Context restoration</td>
@@ -7914,21 +7981,26 @@ research-spec.md  ─────────────→  preregistration-dr
 <td><code>.claude/hooks/post-compact-restore.py</code></td>
 </tr>
 <tr class="odd">
+<td>Session handoff</td>
+<td>SessionStart[startup] + UserPromptSubmit (command)</td>
+<td><code>.claude/hooks/session-handoff.py</code> — hands a fresh session the newest <code>/checkpoint</code> or <code>/compress-session</code> file written in the last 7 days; it counts as delivered at the session’s first prompt, never in headless runs; <code>CLAUDE_HANDOFF=off</code> opts out</td>
+</tr>
+<tr class="even">
 <td>Context monitor</td>
 <td>PostToolUse[Bash|Agent|Task] (command)</td>
 <td><code>.claude/hooks/context-monitor.py</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Git guardrails</td>
 <td>PreToolUse (command)</td>
 <td><code>.claude/hooks/git-guardrails.py</code> — blocks <code>reset --hard</code> / <code>clean -f</code> / <code>push --force</code> / <code>add -A</code>; refuses merge / rebase / pull on a dirty tree, including chains that would clean it first (<code>ALLOW_DIRTY_MERGE=1</code>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Claim reconcile</td>
 <td>PostToolUse (command)</td>
 <td><code>.claude/hooks/claim-reconcile.py</code> — flags stale numeric claims when scripts change, including edits to a declared <code>appears_in</code> display</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Root-of-trust guard</td>
 <td>PreToolUse (command)</td>
 <td><code>.claude/hooks/root-of-trust-guard.py</code> — best-effort tripwire against <em>silent</em> shell writes to <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, <code>.githooks/</code>, plus the destructive-git deny list applied to <code>bash -c</code> / <code>env -S</code> payloads; reads and <code>Edit</code>/<code>Write</code> still pass, so it changes the channel rather than locking the files (<code>ALLOW_ROOT_OF_TRUST_WRITE=1</code>)</td>

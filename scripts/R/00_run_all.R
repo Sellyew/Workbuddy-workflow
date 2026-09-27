@@ -5,7 +5,7 @@
 #   - Fixed seed set below.
 #   - Project root resolved via here::here() — no setwd().
 #   - Every package loaded under a renv (or DESCRIPTION) lockfile.
-#   - Outputs written to scripts/R/_outputs/ and listed at the end.
+#   - Outputs written to output/ and listed at the end.
 #   - sessionInfo() captured so reviewers can verify the environment.
 # =============================================================================
 
@@ -23,7 +23,7 @@ PROJECT_SEED <- 20260413L
 set.seed(PROJECT_SEED)
 
 # Output directory (create if missing; treat as ephemeral).
-OUT_DIR <- here("scripts", "R", "_outputs")
+OUT_DIR <- here("output")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ---- Pipeline --------------------------------------------------------------

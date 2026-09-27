@@ -7,11 +7,11 @@ paths:
 
 # Task Completion Verification Protocol
 
-**At the end of EVERY task, Claude MUST verify the output works correctly.** This is non-negotiable.
+**Before reporting a slide or deck task done, confirm the output builds and renders** — a deck that compiles with a missing figure or an overflowing slide is not done, and the user usually discovers it in front of a class.
 
 ## For Quarto/HTML Slides:
 1. Run `./scripts/sync_to_docs.sh` (or `./scripts/sync_to_docs.sh LectureN`) to render and deploy
-2. Open the HTML in browser: `open docs/slides/LectureX.html` (macOS) or `xdg-open` (Linux)
+2. Inspect the rendered output yourself: read the rendered HTML of the dense slides, and Read any screenshot or PDF export the user supplies. If neither is available, name the slides the user should eyeball — `open` launches a window only the user can see
 3. Verify images display by reading 2-3 image files to confirm valid content
 4. Check HTML source for correct image paths
 5. Check for overflow by scanning dense slides
@@ -20,7 +20,7 @@ paths:
 
 ## For LaTeX/Beamer Slides:
 1. Compile with xelatex and check for errors
-2. Open the PDF to verify figures render (`open` on macOS, `xdg-open` on Linux)
+2. Read the compiled PDF pages that carry figures to confirm they render
 3. Check for overfull hbox warnings
 
 ## For TikZ Diagrams in HTML/Quarto:
@@ -52,7 +52,7 @@ Any statement about what the code currently does carries the revision it was rea
 [ ] No compilation/render errors
 [ ] Images/figures display correctly
 [ ] Paths resolve in deployment location (docs/)
-[ ] Opened in browser/viewer to confirm visual appearance
+[ ] Rendered output inspected, or the slides to eyeball named for the user
 [ ] Any claim about code state carries the revision it was read at
 [ ] Reported results to user
 ```

@@ -1,6 +1,6 @@
-# The External Oracle Process — Claude Code → GPT-5.6 Sol Pro
+# The External Oracle Process — Claude Code → an external frontier-model referee
 
-**Verified 2026-08-21.** How to get an independent frontier-model referee on a paper, proof,
+**Verified 2026-09-26 against Oracle CLI 0.21.3.** How to get an independent frontier-model referee on a paper, proof,
 or estimator implementation, and — more importantly — how to *adjudicate* what it returns.
 
 > **Two different things are called "oracle".** Keep them apart.
@@ -38,8 +38,13 @@ The [Oracle CLI](https://github.com/steipete/oracle) (`@steipete/oracle`, MIT) b
 prompt plus files and drives a **dedicated browser profile** against ChatGPT — no API key.
 
 ```bash
-brew install steipete/tap/oracle        # or: npm install -g @steipete/oracle
+brew install steipete/tap/oracle        # or: npm install -g @steipete/oracle@latest
 ```
+
+Requires Oracle ≥ 0.21 and Node ≥ 24; `oracle --version` to check. Use one install method, not
+both. Oracle ≥ 0.18 no longer copies your everyday Chrome cookies — the dedicated
+`--browser-manual-login` profile below is the supported path, and it survives ChatGPT's token
+rotation without logging you out of your normal browser.
 
 First run creates the automation profile and waits for you to log in:
 
@@ -52,7 +57,7 @@ Then set defaults once in `~/.oracle/config.json`:
 
 ```json
 { "engine": "browser",
-  "model": "gpt-5.6-sol",
+  "model": "gpt-6-pro",
   "browser": {
     "manualLogin": true,
     "manualLoginProfileDir": "~/.oracle/browser-profile",
@@ -66,12 +71,30 @@ Then set defaults once in `~/.oracle/config.json`:
   } }
 ```
 
-`thinkingTime: "pro"` is the **GPT-5.6 Sol max effort tier** (the CLI's own valid levels are
-`light | standard | extended | heavy | pro`). `archiveConversations: "never"` keeps threads
-alive for follow-ups.
+`thinkingTime: "pro"` selects ChatGPT's **Pro effort tier** and **fails closed** — if Pro cannot
+be confirmed in the picker, the run aborts instead of silently submitting at a cheaper tier.
+Other accepted levels: ChatGPT's current labels `instant | medium | high | extra-high`, and the
+older names `light | standard | extended | heavy`. `archiveConversations: "never"` keeps
+threads alive for follow-ups.
+
+### Targets (verified 2026-09-26 — re-check when ChatGPT's picker changes)
+
+The referee model is **account-dependent**; name it per consult and record what actually ran.
+
+| Order | Target | Flags | Use when |
+|---|---|---|---|
+| 1 | **GPT-6 Pro** | `--model gpt-6-pro` (ChatGPT's "Latest" entry at Pro effort) | your ChatGPT account shows **Latest** in the model picker — the config above |
+| 2 | **GPT-5.6 Sol Pro** | `--model gpt-5.6-sol --browser-thinking-time pro` | Latest is unavailable; this is the target the template's own 2026-08-23 guard-design consult ran on |
+| 3 | **API** | `--engine api --model gpt-6-astra --reasoning-mode pro` | no ChatGPT subscription. **Billed per token — needs the user's explicit consent**; run `oracle doctor --providers` first |
+| 4 | **Manual** | `--copy-markdown --render` | browser automation unavailable (see §3) |
+
+Do not rely on legacy aliases: since 0.18, `gpt-5.4-pro` and similar old Pro names silently
+re-route to GPT-5.6 Sol Pro. A `--dry-run summary` prints the resolved `target=` before you
+spend a 30-minute consult on the wrong model.
 
 **Smoke-check before relying on it:** `oracle -s smoke-check-now -p "Reply with OK."` — a run
-that produces no conversation URL never happened.
+that produces no conversation URL never happened. For API runs, `oracle doctor --providers`
+reports key and route readiness without printing secrets.
 
 ---
 
@@ -88,9 +111,12 @@ oracle -s did-proof-audit-r1 -p "$(cat prompt.md)" -f main.tex supplement.tex --
 | `--files-report` | token cost per attached file — **always use it**; the browser composer has a payload cliff (~35k tokens) above which nothing happens |
 | `--followup <slug>` | reopen the exact saved conversation; inherits profile, model, and verifies prior turns |
 | `--browser-follow-up "..."` | multi-turn in one run: answer → *"challenge your recommendation"* → *"final decision, smallest safe next step"* |
-| `--models "gpt-5.6-sol,gemini-3.1-pro"` | query several vendors in parallel (API engine) |
+| `--models "gpt-6-astra,gemini-3.1-pro"` | query several vendors in parallel (API engine; billed); add `--allow-partial` so one failed model does not sink the run |
 | `--copy-markdown --render` | assemble the bundle and paste it into ChatGPT by hand — the degradation path when **browser automation is unavailable** (no automation profile, expired login, broken capture). With no CLI at all, the fallback is the *contract*, not the tool: build the prompt per §4 and paste manually |
 | `oracle session <slug> --render` | reattach and recover a finished answer |
+| `oracle session <slug> --harvest` | re-read the bound ChatGPT tab and save the latest answer when capture failed or Chrome was closed (`--live` tails a run still generating) |
+| `oracle status --hours 72` | list recent sessions and their state before deciding anything is lost |
+| `--browser-capture-provider-native` | also save ChatGPT's verbatim conversation record — evidence that the captured answer is the answer ChatGPT gave |
 
 ### Artifacts — where the evidence lives
 
@@ -103,6 +129,12 @@ oracle -s did-proof-audit-r1 -p "$(cat prompt.md)" -f main.tex supplement.tex --
 ```
 
 `browser.runtime.tabUrl` is the **send-committed signal**. No URL → the run never happened.
+
+> **Record which model actually answered.** The picker is account-dependent and changes under
+> you; the requested alias is not evidence. Copy the resolved model and effort from the run
+> (the `--dry-run` `target=` line, the session's `meta.json`, or the conversation header) into
+> the archived `meta.json` as `oracle.model`, `oracle.effort`, `oracle.transport`, and
+> `oracle.cli` — the fields the 2026-08-23 consult already records.
 
 > **Archive the transcript into the repo — the session directory is not the record.**
 > `~/.oracle/sessions/` is machine-local, unversioned, and one `--force` respawn away from

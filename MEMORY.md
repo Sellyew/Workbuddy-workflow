@@ -7,53 +7,33 @@ When a mistake is corrected, append a `[LEARN:category]` entry below; most recen
 
 ## Workflow Patterns
 
-[LEARN:workflow] Requirements specification phase catches ambiguity before planning → reduces rework 30-50%. Use spec-then-plan for complex/ambiguous tasks (>1 hour or >3 files).
+[LEARN:workflow] Requirements specification catches ambiguity before planning → reduces rework 30-50%. Spec-then-plan for complex/ambiguous tasks (>1 hour or >3 files): AskUserQuestion (3-5 questions) → `quality_reports/specs/YYYY-MM-DD_description.md` (not scattered in root — keeps structure) with MUST/SHOULD/MAY requirements → clarity status (CLEAR/ASSUMED/BLOCKED) → approval → then draft plan.
 
-[LEARN:workflow] Spec-then-plan protocol: AskUserQuestion (3-5 questions) → create `quality_reports/specs/YYYY-MM-DD_description.md` with MUST/SHOULD/MAY requirements → declare clarity status (CLEAR/ASSUMED/BLOCKED) → get approval → then draft plan.
-
-[LEARN:workflow] Context survival before compression: (1) Update MEMORY.md with [LEARN] entries, (2) Ensure session log current (last 10 min), (3) Active plan saved to disk, (4) Open questions documented. The pre-compact hook displays checklist.
-
-[LEARN:workflow] Plans, specs, and session logs must live on disk (not just in conversation) to survive compression and session boundaries. Quality reports only at merge time.
+[LEARN:workflow] Plans, specs, and session logs must live on disk (not just in conversation) to survive compression and session boundaries; quality reports only at merge time. Context survival before compression: (1) Update MEMORY.md with [LEARN] entries, (2) Ensure session log current (last 10 min), (3) Active plan saved to disk, (4) Open questions documented. The pre-compact hook displays checklist. *[2026-09-26: now silent; restores only what's on disk.]*
 
 ## Documentation Standards
 
-[LEARN:documentation] When adding new features, update BOTH README and guide immediately to prevent documentation drift. Stale docs break user trust.
-
-[LEARN:documentation] Always document new templates in README's "What's Included" section with purpose description. Template inventory must be complete and accurate.
-
-[LEARN:documentation] Guide must be generic (framework-oriented) not prescriptive. Provide templates with examples for multiple workflows (LaTeX, R, Python, Jupyter), let users customize. No "thou shalt" rules.
+[LEARN:documentation] When adding new features, update BOTH README and guide immediately to prevent documentation drift — stale docs break user trust. Document new templates in README's "What's Included" with their purpose; the inventory must be complete and accurate.
 
 [LEARN:documentation] Date fields in frontmatter and README must reflect latest significant changes. Users check dates to assess currency.
 
 ## Design Philosophy
 
-[LEARN:design] Framework-oriented > Prescriptive rules. Constitutional governance works as a TEMPLATE with examples users customize to their domain. Same for requirements specs.
+[LEARN:design] Framework-oriented > Prescriptive rules: constitutional governance and requirements specs work as TEMPLATES with examples users customize to their domain. Quality standard for guide additions: useful + pedagogically strong + drives usage + leaves great impression + improves upon starting fresh + no redundancy + not slow — all 7 must hold.
 
-[LEARN:design] Quality standard for guide additions: useful + pedagogically strong + drives usage + leaves great impression + improves upon starting fresh + no redundancy + not slow. All 7 criteria must hold.
-
-[LEARN:design] Generic means working for any academic workflow: pure LaTeX (no Quarto), pure R (no LaTeX), Python/Jupyter, any domain (not just econometrics). Test recommendations across use cases.
+[LEARN:design] Generic means working for any academic workflow: pure LaTeX (no Quarto), pure R (no LaTeX), Python/Jupyter, any domain (not just econometrics) — guide stays framework-oriented: templates users customize, no "thou shalt" rules. Test recommendations across use cases.
 
 ## File Organization
-
-[LEARN:files] Specifications go in `quality_reports/specs/YYYY-MM-DD_description.md`, not scattered in root or other directories. Maintains structure.
 
 [LEARN:files] Templates belong in `templates/` with descriptive names. Don't enumerate the inventory here — a hand-kept list goes stale (this entry's own list was missing three files when audited); `ls templates/` is the inventory.
 
 ## Constitutional Governance
 
-[LEARN:governance] Constitutional articles distinguish immutable principles (non-negotiable for quality/reproducibility) from flexible user preferences. Keep to 3-7 articles max.
-
-[LEARN:governance] Example articles: Primary Artifact (which file is authoritative), Plan-First Threshold (when to plan), Quality Gate (minimum score), Verification Standard (what must pass), File Organization (where files live).
-
-[LEARN:governance] Amendment process: Ask user if deviating from article is "amending Article X (permanent)" or "overriding for this task (one-time exception)". Preserves institutional memory.
+[LEARN:governance] Constitutional articles distinguish immutable principles (non-negotiable for quality/reproducibility) from flexible user preferences; keep to 3-7 articles. Examples: Primary Artifact (which file is authoritative), Plan-First Threshold (when to plan), Quality Gate (minimum score), Verification Standard (what must pass), File Organization (where files live). Amendments: ask the user whether deviating from article is "amending Article X (permanent)" or "overriding for this task (one-time exception)". Preserves institutional memory.
 
 ## Skill Creation
 
-[LEARN:skills] Effective skill descriptions use trigger phrases users actually say: "check citations", "format results", "validate protocol" → Claude knows when to load skill.
-
-[LEARN:skills] Skills need 3 sections minimum: Instructions (step-by-step), Examples (concrete scenarios), Troubleshooting (common errors) → users can debug independently.
-
-[LEARN:skills] Domain-specific examples beat generic ones: citation checker (psychology), protocol validator (biology), regression formatter (economics) → shows adaptability.
+[LEARN:skills] Effective skill descriptions use trigger phrases users actually say ("check citations", "format results", "validate protocol") → Claude knows when to load skill. Skills need 3 sections minimum: Instructions (step-by-step), Examples (concrete scenarios), Troubleshooting (common errors) → users can debug independently. Domain-specific examples beat generic ones (citation checker — psychology; protocol validator — biology; regression formatter — economics) — they show adaptability. *[2026-09-26: name situations, not synonyms; state outcome, constraints, checks.]*
 
 ## Memory System
 
@@ -63,27 +43,21 @@ When a mistake is corrected, append a `[LEARN:category]` entry below; most recen
 
 ## Meta-Governance
 
-[LEARN:meta] Repository dual nature requires explicit governance: what's generic (commit) vs specific (gitignore) → prevents template pollution.
-
-[LEARN:meta] Dogfooding principles must be enforced: plan-first, spec-then-plan, quality gates, session logs → we follow our own guide.
-
-[LEARN:meta] Template development work (building infrastructure, docs) doesn't create session logs in quality_reports/ → those are for user work (slides, analysis), not meta-work. Keeps template clean for users who fork.
+[LEARN:meta] Repository dual nature requires explicit governance: what's generic (commit) vs specific (gitignore) → prevents template pollution. Dogfooding principles must be enforced: plan-first, spec-then-plan, quality gates, session logs → we follow our own guide. Template work (infrastructure, docs) skipped session logs — those were for user work (slides, analysis), keeping forks clean. *[Superseded 2026-09-26: logs are gitignored; a Stop hook writes them.]*
 
 ## Drift Prevention
 
-[LEARN:drift] `replace_all` on one phrasing (e.g., `"26 skills"`) misses sibling phrasings — `"26 skills, and 21 rules"` (extra "and"), `"26 slash commands"`, `"template's 26"`, `"N skills on day one"` (prose). Count drift hit us 3 times in v1.5.x (PRs #70, #76, #78). Solution: `scripts/check-surface-sync.py` with compound regex patterns as a pre-commit gate. Adding a new phrasing to documentation requires adding a matching regex to the script, otherwise it won't be caught.
-
-[LEARN:drift] Guard against false positives when scanning for template counts: `"3 parallel agents"`, `"17 specialized agents"` (clo-author attribution), `"start with 2-3 skills"` are all legitimate non-template uses of `N + category` phrases. Use compound patterns requiring multiple template-specific tokens on the same line.
+[LEARN:drift] `replace_all` on one phrasing (e.g., `"26 skills"`) misses sibling phrasings — `"26 skills, and 21 rules"` (extra "and"), `"26 slash commands"`, `"template's 26"`, `"N skills on day one"` (prose). Count drift hit us 3 times in v1.5.x (PRs #70, #76, #78). Solution: `scripts/check-surface-sync.py` with compound regex patterns as a pre-commit gate. Adding a new phrasing to documentation requires adding a matching regex to the script, otherwise it won't be caught. Conversely, guard against false positives when scanning for template counts: `"3 parallel agents"`, `"17 specialized agents"` (clo-author attribution), `"start with 2-3 skills"` are all legitimate non-template uses of `N + category` phrases. Use compound patterns requiring multiple template-specific tokens on the same line.
 
 ## Claude Code Hooks
 
 [LEARN:hooks] Stop-hook block protocol has TWO valid forms: (a) legacy — `exit 2` + reason on stderr; (b) modern — `exit 0` + JSON `{"decision":"block","reason":"..."}` on stdout. `log-reminder.py` uses the modern form. Audit agents unfamiliar with the modern protocol will flag this as "should exit 2" — false alarm. Documented in `/deep-audit` skill's false-alarm list.
 
-[LEARN:hooks] `initialPermissionMode` in VSCode settings only fires at **session start**. Mid-session mode toggles (via `Shift+Tab` or `/permission-mode`) override the file settings until session end. The 6-tier permission stack: VSCode user / workspace / CLI user / project / project-local / in-session runtime — the last is authoritative. "Prompts fire despite bypass config" is almost always a stale session, not a settings bug.
+[LEARN:hooks] `initialPermissionMode` in VSCode settings only fires at **session start**. Mid-session mode toggles (via `Shift+Tab` or `/permission-mode`) override the file settings until session end. The 6-tier permission stack: VSCode user / workspace / CLI user / project / project-local / in-session runtime — the last is authoritative. "Prompts fire despite bypass config" is almost always a stale session, not a settings bug. *[2026-09-26: no `/permission-mode` command; a project-settings bypass (not honoured) is as common a cause.]*
 
 ## Plan→Bypass Framing
 
-[LEARN:safety] Do NOT frame Plan→Bypass as a "safety boundary" or "safety guarantee." Plan approval gives you a chance to review the APPROACH before execution, but exiting plan mode returns the session to `defaultMode` (bypassPermissions), at which point any tool call runs under the full allowlist. Frame as "review-before-execute convenience." If a user needs a real enforcement boundary, they should keep `defaultMode: "default"` and approve each high-risk tool individually.
+[LEARN:safety] Do NOT frame Plan→Bypass as a "safety boundary" or "safety guarantee." Plan approval gives you a chance to review the APPROACH before execution, but exiting plan mode returns the session to `defaultMode` (bypassPermissions *[2026-09-26: the mode the approval prompt picks; no bypass default]*), at which point any tool call runs under the full allowlist. Frame as "review-before-execute convenience." If a user needs a real enforcement boundary, they should keep `defaultMode: "default"` and approve each high-risk tool individually.
 
 ## Privacy in Diagnostic Skills
 
@@ -113,7 +87,7 @@ When a mistake is corrected, append a `[LEARN:category]` entry below; most recen
 
 2. **Cross-artifact review** (`/review-paper` + `/review-r` + `/audit-reproducibility`) — **horizontal dependency traversal** — a manuscript's claims depend on scripts' outputs, so the paper reviewer spawns script reviewers and reproducibility checkers alongside it. Best for **paper ↔ code consistency** (ATTs, coefficients, N match the outputs that produced them).
 
-3. **Post-Flight Verification / CoVe** (`/verify-claims` + `claim-verifier` agent, v1.7.0) — **single agent, fresh-context fork** — the verifier has never seen the draft; it answers verification questions from the source material alone, using `context: fork` to architecturally enforce independence. Best for **factual hallucination** (fabricated citations, wrong dataset fields, misattributed findings). Adapted from Dhuliawala et al. 2023 ([arXiv:2309.11495](https://arxiv.org/abs/2309.11495)).
+3. **Post-Flight Verification / CoVe** (`/verify-claims` + `claim-verifier` agent, v1.7.0) — **single agent, fresh-context fork** — the verifier has never seen the draft; it answers verification questions from the source material alone, using `context: fork` to architecturally enforce independence. Best for **factual hallucination** (fabricated citations, wrong dataset fields, misattributed findings). Adapted from Dhuliawala et al. 2023 ([arXiv:2309.11495](https://arxiv.org/abs/2309.11495)). *[2026-09-26: use a fresh Agent call; a fork inherits the draft.]*
 
 The key insight: each enforces independence differently — role tension, dependency-graph traversal, context isolation. A skill needing all three (e.g. `/review-paper --peer`) invokes them at different phases.
 
@@ -135,11 +109,9 @@ The key insight: each enforces independence differently — role tension, depend
 
 ## v1.8.0 Cycle Lessons (2026-04-27)
 
-[LEARN:permissions] **Protected-path behavior is mode-dependent — re-verify, never assume** (re-verified 2026-08-22 vs the permission-modes doc: `bypassPermissions` disables prompts and safety checks INCLUDING protected paths — the earlier "`.claude/` always prompts" version of this entry was stale). Auto mode classifier-gates risky actions and since 2026-08-14 is the built-in starting mode on Pro/Max/Team. Forkers in default mode still see prompts on `.claude/` edits.
+[LEARN:permissions] **Protected-path behavior is mode-dependent — re-verify, never assume** (re-verified 2026-08-22 vs the permission-modes doc: `bypassPermissions` disables prompts and safety checks INCLUDING protected paths — the earlier "`.claude/` always prompts" version of this entry was stale). Auto mode classifier-gates risky actions and since 2026-08-14 is the built-in starting mode on Pro/Max/Team. Forkers in default mode still see prompts on `.claude/` edits. Batch 5+ edits to protected `.claude/` paths with one Bash `python3` heredoc (Edit fires the protected-paths gate; Bash does not). *[2026-09-26: not for settings/hooks — `root-of-trust-guard` blocks it.]*
 
 [LEARN:vscode] **`claudeCode.allowDangerouslySkipPermissions` is a typo trap** — the canonical key has NO `claudeCode.` prefix (unlike `claudeCode.initialPermissionMode`). The wrong key is silently ignored. Documented in `TROUBLESHOOTING.md`.
-
-[LEARN:edits] **Batch edits to protected `.claude/` paths: use Bash + `python3` heredoc.** Edit fires the protected-paths gate; Bash does not. For 5+ edits, one read→modify→write script via Bash avoids the prompt storm.
 
 [LEARN:audit] **Surface-sync checks counts and MARKED tables** (`<!-- surface-sync-table: ... -->`, since v2.0) — tables without the marker are invisible to it (the guide appendix shipped 58 of 60 rows in v2.5 until a semantic sweep caught it). New skill/agent: add the row AND confirm the table is marker-covered or hand-checked.
 
@@ -157,9 +129,9 @@ The key insight: each enforces independence differently — role tension, depend
 
 [LEARN:pattern] **Provenance as a YAML artifact, not a folder.** `templates/passport-template.yaml`: per-paper numeric claims with source line, output field, tolerance, status; `/audit-reproducibility` rewrites it in place. Queryable beats folder reports. (Scope-reduced from Imbad0202/ARS "Material Passport" to numeric claims only.)
 
-[LEARN:pattern] **Variance reporting > point estimate for peer review.** ~37% of verdicts vary purely from referee-disposition sampling (AgentReview, arXiv:2406.12708), so `--variance N` returns a verdict distribution + K-of-N concern table instead of one verdict. Bimodal spreads and tight majorities are both information. Referees route to Sonnet; hard cap N=5.
+[LEARN:pattern] **Variance reporting > point estimate for peer review.** ~37% of verdicts vary purely from referee-disposition sampling (AgentReview, arXiv:2406.12708), so `--variance N` returns a verdict distribution + K-of-N concern table instead of one verdict. Bimodal spreads and tight majorities are both information. Referees route to Sonnet; hard cap N=5. *[Fixed 2026-09-26: referees stay on Opus (do-not-demote).]*
 
-[LEARN:pattern] **HIGH-WARN must-fix for fabricated citations.** `/verify-claims` tiers: HIGH-WARN (fabricated reference / numerical or directional contradiction) is must-fix before commit; MED-WARN transient; LOW-WARN inaccessible source. Be conservative assigning HIGH-WARN — false positives erode the gate. The CoVe forked verifier (never sees the draft) is the architecture; the must-fix policy makes it consequential.
+[LEARN:pattern] **HIGH-WARN must-fix for fabricated citations.** `/verify-claims` tiers: HIGH-WARN (fabricated reference / numerical or directional contradiction) is must-fix before commit; MED-WARN transient; LOW-WARN inaccessible source. Be conservative assigning HIGH-WARN — false positives erode the gate. The CoVe forked verifier (never sees the draft) is the architecture; the must-fix policy makes it consequential. *[2026-09-26: no /commit gate reads it; verifier = fresh Agent call, not a fork.]*
 
 [LEARN:pattern] **70/20/10 model routing for cost discipline** (`model-routing.md`): Haiku tier mechanical, Sonnet tier review/critique, Opus tier high-judgment. 50–80% savings with no quality loss on the mechanical tier. Anti-pattern: down-tiering claim-verifier / methods-referee / editor — one false-positive PASS costs more than the routing saves. (Primary source: Anthropic "Decoupling brain from hands", Apr 2026.)
 

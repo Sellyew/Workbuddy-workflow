@@ -1,3 +1,20 @@
+---
+paths:
+  - "CLAUDE.md"
+  - "MEMORY.md"
+  - "README.md"
+  - "CHANGELOG.md"
+  - "TROUBLESHOOTING.md"
+  - "CITATION.cff"
+  - "guide/**"
+  - "docs/**"
+  - "templates/**"
+  - ".claude/**"
+  - ".github/**"
+  - "scripts/*.sh"
+  - "scripts/*.py"
+---
+
 # Meta-Governance: This Repository's Dual Nature
 
 **This repository is BOTH a working project AND a template for others.**

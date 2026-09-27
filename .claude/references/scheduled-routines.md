@@ -10,14 +10,16 @@ The loop-first half of the workflow: recurring scholarly chores that should run 
 |---|---|---|---|
 | **Reproducibility drift** | nightly | Re-run `/audit-reproducibility` against the passport; diff stale claims | any FAIL (not EXPLAINED) |
 | **Literature delta** | weekly | `/lit-review` sweep on your saved topics; diff against last week | new directly-relevant work |
-| **Memory promotion** | monthly | `/promote-memory` — the five-critic council reviews `[LEARN]` candidates | items graduate to MEMORY.md |
+| **Memory promotion** | monthly — **a reminder, not a routine** | run `/promote-memory` yourself in a local session: it is user-invoked, and its candidates live in machine-local auto memory a cloud routine cannot see | items graduate to MEMORY.md |
 | **Inbox triage** | daily / weekdays | `/triage-inbox` — referee requests, R&R deadlines, co-author asks | action proposed (always human-gated) |
+
+**A routine cannot fire a user-invoked skill.** Skills marked `disable-model-invocation: true` (e.g. `/triage-inbox`, `/promote-memory`) do not run when a scheduled task names them as its prompt. For such a skill, write the routine prompt as "Read `.claude/skills/<name>/SKILL.md` and follow it" — the routine's fresh clone has the file — or run it yourself.
 
 **Push-on-failure, silence-on-success.** A nightly job that emails "all good" every day trains you to ignore it. These notify only on a real finding; a quiet run leaves no trace but a log line.
 
 ## Event-driven, not just scheduled
 
-The nightly reproducibility job is the *backstop*. The *immediate* signal is the [`claim-reconcile`](../hooks/claim-reconcile.py) PostToolUse hook: the moment an analysis script or `_outputs/` artifact changes, it flags the manuscript claims that depend on it as potentially stale and points you at `/audit-reproducibility` — so you catch drift during analysis, not the next morning. For *external* regenerations (you ran `Rscript` outside Claude), the harness `FileChanged` hook event can drive the same check; wire it in `.claude/settings.json` if your workflow regenerates outputs outside the tool layer.
+The nightly reproducibility job is the *backstop*. The *immediate* signal is the [`claim-reconcile`](../hooks/claim-reconcile.py) PostToolUse hook: the moment an analysis script or `output/` artifact changes, it flags the manuscript claims that depend on it as potentially stale and points you at `/audit-reproducibility` — so you catch drift during analysis, not the next morning. For *external* regenerations (you ran `Rscript` outside Claude), the harness `FileChanged` hook event can drive the same check; wire it in `.claude/settings.json` if your workflow regenerates outputs outside the tool layer.
 
 ## Setting one up
 
@@ -36,6 +38,7 @@ A precise cron expression (e.g. `0 6 * * *`) is applied via `/schedule update` *
 ## Guardrails for unattended runs
 
 - **Never point an unattended loop at a submission portal, shared/restricted data, or a co-author's inbox without a human gate.** Routines *propose*; a human *sends*. (`/triage-inbox` never auto-sends; the [`git-guardrails`](../hooks/git-guardrails.py) hook still blocks destructive git even in a routine.)
+- **Say what "done" means, and which stops you want.** In an unattended run the current Opus sometimes ends a turn with a progress report instead of the next step (Anthropic's Opus 5.5 prompting guide, "Unattended agentic runs"). Put the completion condition in the routine prompt and name the only acceptable stops — e.g. "continue until every claim is re-checked; stop early only if a step is blocked, and say what blocks it" — while keeping human gates for anything risky or irreversible.
 - **Bound the cost.** A nightly full-manuscript re-audit is fine; a nightly 7× `/seven-pass-review` is not — cost-pilot first.
 - **Connectors are INCLUDED by default — least-privilege them.** Cloud Routines run with **all of your claude.ai connectors attached, write access included, and no approval prompts**. An unattended routine that only needs to read your repo should have Gmail/Calendar/Slack *removed from that routine's connector list* before it ever fires — the risk is not a missing connector but a fully-armed one acting without you. (Locally-authenticated MCP servers in your *terminal* sessions are a separate thing and may still be absent in other headless contexts — degrade gracefully either way.)
 

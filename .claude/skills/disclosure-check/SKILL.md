@@ -1,7 +1,7 @@
 ---
 name: disclosure-check
 description: Pre-screen analysis outputs (tables, figures, logs) built on restricted or confidential data for statistical-disclosure-limitation problems before any release. Scans for small cell counts, complementary-suppression gaps, dominance (p-percent / (n,k)), re-identifiable exact counts, PII leakage, and unrounded sensitive statistics; classifies each finding CRITICAL / WARNING / OK and gates on any CRITICAL. Use before depositing or sharing restricted-data results, or when the user says "disclosure check", "SDL scan", "is this output safe to release", "check for small cells", "disclosure avoidance", "pre-screen for the RDC", or "can I export this from the enclave".
-argument-hint: "[outputs-dir] [--provider census|irs|irb|generic] [--threshold N] (outputs-dir defaults to scripts/R/_outputs/)"
+argument-hint: "[outputs-dir] [--provider census|irs|irb|generic] [--threshold N] (outputs-dir defaults to output/)"
 disable-model-invocation: true
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash"]
 effort: high
@@ -22,7 +22,7 @@ Scan analysis outputs built on **restricted or confidential data** (Census FSRDC
 
 ## Inputs
 
-- `$0` — outputs directory to scan. Defaults to `scripts/R/_outputs/`. Recognised siblings: `scripts/stata/_outputs/`, `scripts/python/_outputs/`, or any export-staging directory (e.g., a `to_review/` folder the analyst stages for the RDC).
+- `$0` — outputs directory to scan. Defaults to `output/`, where every language's pipeline writes; if it does not exist but a pre-v2.6 `scripts/<lang>/_outputs/` does, scan that and say so. Also accepts any export-staging directory (e.g., a `to_review/` folder the analyst stages for the RDC).
 - `--provider` — selects which disclosure-rule profile to load (Phase 0). One of `census` / `irs` / `irb` / `generic`. **Providers differ** — thresholds and rules are not interchangeable; default `generic` is deliberately conservative.
 - `--threshold N` — override the minimum cell count (default `n<10`). Census FSRDC commonly uses 10 for establishments; IRS and many IRBs differ. Always reconcile with your provider's *written* rules.
 
@@ -121,7 +121,7 @@ Write `quality_reports/disclosure_check_[outputs-dir-slug].md`:
 
 ## Flags
 
-- `--provider` `<name>` — Load that data provider's disclosure rules (e.g. `census-fsrdc`, `irs`, `irb`). Default: the generic small-cell ruleset.
+- `--provider` `<name>` — Load that data provider's disclosure rules (e.g. `census`, `irs`, `irb`). Default: the generic small-cell ruleset.
 - `--threshold` `<n>` — Override the minimum cell-count threshold (default `n<10`); match your data-use agreement's actual rule.
 
 ## Cross-references

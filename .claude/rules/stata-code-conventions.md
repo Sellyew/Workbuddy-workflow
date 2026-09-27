@@ -30,7 +30,7 @@ set seed 12345                    // pin RNG seed for any random ops
 set sortseed 12345                // pin sort stability across versions
 cap log close
 cap log close _all                // belt-and-suspenders
-log using "scripts/stata/_outputs/NN_log.smcl", replace
+log using "output/NN_log.smcl", replace
 ```
 
 Why each line:
@@ -68,24 +68,24 @@ The 99-script is the **one-command reproduction**: `do scripts/stata/99_run_all.
 
 ## 3. Outputs convention
 
-All outputs land in `scripts/stata/_outputs/`:
+All outputs land in the top-level `output/` directory — never inside `scripts/`, and shared with any R or Python stages of the same project (the AEA Data Editor's advice: do not commingle code with its results):
 
 ```
-scripts/stata/_outputs/
+output/
 ├── 01_log.smcl                 # captured stdout per script
-├── clean_panel.dta             # cleaned data
+├── clean_panel.dta             # cleaned data (regenerable intermediate; gitignored)
 ├── descriptives.csv            # summary stats
 ├── main_results.tex            # esttab → .tex for direct \input{} in paper
 ├── balance_table.tex
 ├── fig_eventstudy.pdf          # graph export, vector
-└── sessionInfo.txt             # capture stata version + installed pkg versions
+└── sessionInfo_stata.txt       # capture stata version + installed pkg versions
 ```
 
-`sessionInfo.txt` is mandatory. Generate via:
+`sessionInfo_stata.txt` is mandatory (named so it does not overwrite R's `sessionInfo.txt` in a mixed project). Generate via:
 
 ```stata
 * At end of 00_install.do (or via a dedicated sessioninfo subroutine):
-log using "scripts/stata/_outputs/sessionInfo.txt", text replace
+log using "output/sessionInfo_stata.txt", text replace
 which estout
 which reghdfe
 which ivreg2
@@ -105,7 +105,7 @@ eststo m1
 quietly: reghdfe y x1 x2 controls, absorb(unit time) cluster(unit)
 eststo m2
 
-esttab m1 m2 using "scripts/stata/_outputs/tab_main.tex", replace ///
+esttab m1 m2 using "output/tab_main.tex", replace ///
     booktabs label                              /// use the variable labels you set
     se(2) b(3)                                  /// SE in parens, 3-decimal coeffs
     star(* 0.10 ** 0.05 *** 0.01)              /// significance convention
@@ -113,7 +113,7 @@ esttab m1 m2 using "scripts/stata/_outputs/tab_main.tex", replace ///
     nonotes addnote("Robust SEs clustered at unit level.")
 ```
 
-Then in the manuscript: `\input{scripts/stata/_outputs/tab_main.tex}` — table values update mechanically every time the .do file runs.
+Then in the manuscript: `\input{output/tab_main.tex}` — table values update mechanically every time the .do file runs.
 
 ## 5. Significance-stars convention
 
@@ -138,8 +138,8 @@ For every RCT or quasi-experimental design:
 ## 8. Figures (graph export)
 
 ```stata
-graph export "scripts/stata/_outputs/fig_eventstudy.pdf", replace as(pdf)
-graph export "scripts/stata/_outputs/fig_eventstudy.png", replace as(png) width(2000)
+graph export "output/fig_eventstudy.pdf", replace as(pdf)
+graph export "output/fig_eventstudy.png", replace as(png) width(2000)
 ```
 
 Both vector (PDF for the paper) and raster (PNG for slides). Don't rely on the auto-generated `.gph` — it's not portable across Stata versions.
@@ -162,7 +162,7 @@ The [AEA Data Editor checklist](https://aeadataeditor.github.io/) requires:
 - `README.md` at repo root describing data source, computational requirements, run instructions.
 - A single command that reproduces all results (`do scripts/stata/99_run_all.do`).
 - All scripts numbered and ordered.
-- A separate `requirements.txt`-equivalent — for Stata, that's the `sessionInfo.txt` from §3 plus a list of `ssc install` commands in `00_install.do`.
+- A separate `requirements.txt`-equivalent — for Stata, that's the `sessionInfo_stata.txt` from §3 plus a list of `ssc install` commands in `00_install.do`.
 - License (MIT / GPL / similar).
 - No hard-coded paths — use globals or relative paths from repo root.
 
@@ -170,7 +170,7 @@ The [AEA Data Editor checklist](https://aeadataeditor.github.io/) requires:
 
 - [`/stata-replication`](../skills/stata-replication/SKILL.md) is the analogue of `/data-analysis` for Stata. It emits .do files conforming to this convention.
 - [`/audit-reproducibility`](../skills/audit-reproducibility/SKILL.md) handles Stata `.dta` outputs alongside R `.rds` (via `haven` or `pyreadstat`).
-- [`/review-r`](../skills/review-r/SKILL.md) is R-specific; a Stata-equivalent is on the v2.0-backlog.
+- [`/review-r`](../skills/review-r/SKILL.md) is R-specific; no Stata code-review skill ships yet.
 
 ## Cross-references
 

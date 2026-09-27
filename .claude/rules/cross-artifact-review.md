@@ -11,9 +11,9 @@ A paper is not an island. Its claims depend on the code that produced them. Revi
 
 ```
 manuscript.tex ──cites──> Table 2
-Table 2        ──from──> scripts/R/_outputs/results.rds
+Table 2        ──from──> output/results.rds
 results.rds    ──by──> scripts/R/03_analyze.R
-03_analyze.R   ──uses──> scripts/R/_outputs/clean.rds
+03_analyze.R   ──uses──> output/clean.rds
 clean.rds      ──by──> scripts/R/02_clean.R
 02_clean.R     ──reads──> data/raw.csv
 ```
@@ -26,10 +26,10 @@ Applies when `/review-paper` runs on a manuscript that references analysis scrip
 
 Detection signals:
 
-- `\input{scripts/R/...}` or `\input{tables/...}`
+- `\input{output/...}`, `\input{tables/...}`, or (pre-v2.6 layout) `\input{scripts/R/...}`
 - `%% source: scripts/R/03_analyze.R` comments
 - Numeric claims in text (ATT, coefficients, N, p-values) **combined with** a sibling `scripts/R/` / `scripts/stata/` / `scripts/python/` directory
-- Table labels in the paper that match filenames under `scripts/*/\_outputs/`
+- Table labels in the paper that match filenames under `output/`
 
 Detection is intentionally conservative — a theory paper with no code should not trigger the protocol, even if it lives in a repo that has scripts for other work.
 
@@ -43,17 +43,17 @@ Scan the manuscript for:
 
 - `\input{path}` commands (tables, figures pulled from files)
 - Line comments `%% from: scripts/...`
-- Table labels that match filenames in `scripts/R/_outputs/` (e.g., `Table:main_ATT` ↔ `results_main.rds`)
+- Table labels that match filenames in `output/` (e.g., `Table:main_ATT` ↔ `results_main.rds`)
 
 Build a list of scripts that produced content in this paper.
 
 ### 2. Auto-invoke `/review-r`
 
-For each identified R script, launch `/review-r` in a forked subagent (`context: fork`). Save reports to `quality_reports/cross_artifact_[paper]/review_r_[script].md`.
+For each identified R script, launch `/review-r` in its own fresh-context subagent. Save reports to `quality_reports/cross_artifact_[paper]/review_r_[script].md`.
 
 ### 3. Auto-invoke `/audit-reproducibility`
 
-Run `/audit-reproducibility $manuscript scripts/R/_outputs/` once. Save to `quality_reports/cross_artifact_[paper]/reproducibility.md`.
+Run `/audit-reproducibility $manuscript output/` once. Save to `quality_reports/cross_artifact_[paper]/reproducibility.md`.
 
 ### 4. Surface cross-artifact findings
 

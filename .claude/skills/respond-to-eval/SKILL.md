@@ -3,7 +3,6 @@ name: respond-to-eval
 description: Turn student course evaluations (free-text + numeric) into an actionable teaching-improvement plan — the teaching analogue of /respond-to-referees. Clusters comments into themes, separates signal from noise, classifies each theme Keep / Change / Investigate / Out-of-scope, and drafts concrete changes mapped to the syllabus and slide decks. Use when user says "respond to my evals", "what do these course evaluations tell me", "turn my teaching feedback into a plan", or after a semester's evals arrive.
 argument-hint: "[eval-file(s)] [prior-plan-path] [--min-mentions N] [--no-verify]"
 allowed-tools: ["Read", "Write", "Grep", "Glob", "Bash", "Agent", "Task"]
-effort: high
 ---
 
 # Respond to Evaluations
@@ -18,7 +17,7 @@ Convert a semester's course evaluations into a defensible teaching-improvement p
 - Assembling a teaching dossier / tenure file where you must *show* you acted on feedback.
 - Mid-stream (early-semester feedback) to course-correct before the term ends.
 
-Not for: writing the syllabus from scratch (compose with `/create-lecture` and a course outline), or reviewing one deck's pedagogy (use `/pedagogy-review`).
+Not for: writing the syllabus from scratch (use `/syllabus`), or reviewing one deck's pedagogy (use `/pedagogy-review`).
 
 ## Inputs
 
@@ -85,7 +84,7 @@ The plan is a deliverable, not a transient report, so it lives under `quality_re
 
 ### Phase 3.5: Post-Flight Verification (quotes + targets)
 
-The plan's hallucination-prone content is (a) verbatim quotes attributed to students and (b) "edit syllabus §X / LectureNN slide K" targets that must actually exist. Run the forked-verifier protocol in [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md): spawn `claim-verifier` (`context: fork`) with the quotes + the eval source and the edit-targets + the syllabus/deck paths. Reconcile — a quote that isn't in the source, or a "slide K" that doesn't exist, is corrected or dropped before the plan is final. Opt-out: `--no-verify` (not recommended).
+The plan's hallucination-prone content is (a) verbatim quotes attributed to students and (b) "edit syllabus §X / LectureNN slide K" targets that must actually exist. Run the fresh-context verifier protocol in [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md): spawn `claim-verifier` (fresh context, never a conversation fork) with the quotes + the eval source and the edit-targets + the syllabus/deck paths. Reconcile — a quote that isn't in the source, or a "slide K" that doesn't exist, is corrected or dropped before the plan is final. Opt-out: `--no-verify` (not recommended).
 
 ## Output / Report
 

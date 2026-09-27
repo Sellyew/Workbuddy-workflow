@@ -43,7 +43,7 @@ If no signal is found, report and stop — there is no environment to capture.
 
 **R** — emit two artifacts:
 - `renv.lock` via `renv::snapshot()` (run `renv::init(bare = TRUE)` first if the project isn't renv-managed; snapshot records every package + version + source/remote and the R version). Honors the seed conventions in [`r-code-conventions.md`](../../rules/r-code-conventions.md).
-- `sessionInfo.txt` via `Rscript -e "writeLines(capture.output(sessionInfo()), 'scripts/R/_outputs/sessionInfo.txt')"` — the human-readable companion `/audit-reproducibility` looks for.
+- `sessionInfo.txt` via `Rscript -e "writeLines(capture.output(sessionInfo()), 'output/sessionInfo.txt')"` — the human-readable companion `/audit-reproducibility` looks for.
 
 **Python** — emit whichever matches the project's existing tooling (do not invent a new one):
 - `uv.lock` (preferred when `pyproject.toml` + `uv` present — fully-resolved, hashed, cross-platform): `uv lock` / `uv export --format requirements-txt > requirements.txt`.
@@ -53,7 +53,7 @@ Always also record the interpreter version (`python --version`) in the report.
 
 **Stata** — Stata has no lockfile, so capture the closest equivalents (mirrors [`stata-code-conventions.md`](../../rules/stata-code-conventions.md) §3):
 - The pinned `version` line each `.do` file declares (e.g. `version 18`) — grep `scripts/stata/*.do` and report the version actually pinned.
-- An ado/plus package inventory: a small `.do` that runs `which` on the user-installed commands the pipeline uses (`reghdfe`, `ivreg2`, `estout`/`esttab`, `rdrobust`, `csdid`, …) plus `ado dir` and `about`, logged to `scripts/stata/_outputs/sessionInfo.txt`.
+- An ado/plus package inventory: a small `.do` that runs `which` on the user-installed commands the pipeline uses (`reghdfe`, `ivreg2`, `estout`/`esttab`, `rdrobust`, `csdid`, …) plus `ado dir` and `about`, logged to `output/sessionInfo_stata.txt`.
 - A note that Stata version pinning is *semantic* (`version 18` fixes command behavior), not a binary pin — the Dockerfile (Phase 2) cannot help here because Stata is licensed and not redistributable; record the exact Stata version + flavor (SE/MP/IC) + update level in the report so a replicator can match it.
 
 ### Phase 1b: Record seeds and RNG
@@ -85,7 +85,7 @@ A FAIL here means the lockfile references a package version that can't be resolv
 
 ### Phase 4: Report
 
-Print a paste-ready block and write it to `scripts/<lang>/_outputs/computational_requirements.md`:
+Print a paste-ready block and write it to `output/computational_requirements.md`:
 
 ```markdown
 ## Computational requirements
@@ -95,7 +95,7 @@ Print a paste-ready block and write it to `scripts/<lang>/_outputs/computational
 **Key packages:** fixest 0.12.1, did 2.1.2 (full list in renv.lock)
 **Random seeds:** set.seed(20260609); RNGkind("L'Ecuyer-CMRG") for the bootstrap
 **Approx. runtime:** [author confirms — e.g. ~12 min, 8 cores]
-**Lockfiles in package:** renv.lock, scripts/R/_outputs/sessionInfo.txt[, Dockerfile]
+**Lockfiles in package:** renv.lock, output/sessionInfo.txt[, Dockerfile]
 ```
 
 Pre-fill software/package/seed lines from the captured artifacts; leave runtime for the author to confirm.
@@ -104,11 +104,11 @@ Pre-fill software/package/seed lines from the captured artifacts; leave runtime 
 
 | Stack | Files written |
 |---|---|
-| R | `renv.lock`, `scripts/R/_outputs/sessionInfo.txt` |
+| R | `renv.lock`, `output/sessionInfo.txt` |
 | Python | `requirements.txt` *or* `environment.yml` *or* `uv.lock` (matching project tooling) |
-| Stata | `scripts/stata/_outputs/sessionInfo.txt` (version + ado list) |
+| Stata | `output/sessionInfo_stata.txt` (version + ado list; named so it does not overwrite R's in a mixed project) |
 | Any (`--docker`) | `Dockerfile` |
-| Always | `scripts/<lang>/_outputs/computational_requirements.md` (the paste-ready block) |
+| Always | `output/computational_requirements.md` (the paste-ready block) |
 
 ## Exit behavior
 
@@ -121,7 +121,7 @@ Pre-fill software/package/seed lines from the captured artifacts; leave runtime 
 
 - [`.claude/rules/replication-protocol.md`](../../rules/replication-protocol.md) — the tolerance contract a pinned environment is meant to reproduce.
 - [`.claude/rules/r-code-conventions.md`](../../rules/r-code-conventions.md) — R seeding + output-path conventions this skill reads.
-- [`.claude/rules/stata-code-conventions.md`](../../rules/stata-code-conventions.md) — §3 `sessionInfo.txt` + `version`-pinning the Stata path mirrors.
+- [`.claude/rules/stata-code-conventions.md`](../../rules/stata-code-conventions.md) — §3 `sessionInfo_stata.txt` + `version`-pinning the Stata path mirrors.
 - [`.claude/rules/simulation-conventions.md`](../../rules/simulation-conventions.md) — L'Ecuyer streams for reproducible parallel/MC work.
 - [`.claude/rules/confidential-data.md`](../../rules/confidential-data.md) — when raw data is restricted, the *environment* still ships even though the data does not; coordinate the README's "data availability" section with this block.
 - [`/audit-reproducibility`](../audit-reproducibility/SKILL.md) — consumes the `sessionInfo.txt` this skill produces; run it after.

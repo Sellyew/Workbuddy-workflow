@@ -115,7 +115,7 @@ After replication is verified (all targets PASS):
 
 ## Enforcement
 
-This rule is enforced by the [`/audit-reproducibility`](../skills/audit-reproducibility/SKILL.md) skill. It parses numeric claims from a manuscript, locates matching values in `scripts/R/_outputs/` (or the user-specified outputs directory), and compares against the tolerance thresholds above. Run it:
+This rule is enforced by the [`/audit-reproducibility`](../skills/audit-reproducibility/SKILL.md) skill. It parses numeric claims from a manuscript, locates matching values in `output/` (or the user-specified outputs directory), and compares against the tolerance thresholds above. Run it:
 
 - **Before submission** — `/audit-reproducibility path/to/manuscript.tex`
 - **Before releasing a replication package** — same invocation; aim for zero FAILs.
@@ -154,7 +154,7 @@ claims:
         display_precision: 2                      #   coarser → this pair compares at 2
     source_file: scripts/R/03_analyze.R           # script that produced the value
     source_line: 147                              # nearest line in the script
-    output_file: scripts/R/_outputs/main_model.rds # where the value lives on disk
+    output_file: output/main_model.rds # where the value lives on disk
     output_field: att_overall                      # field within the output (e.g., list element, column)
     tolerance:
       point_estimate: 0.01                         # absolute floor (atol); see typed rule below

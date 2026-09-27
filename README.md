@@ -39,7 +39,7 @@ claude
 
 **Using VS Code?** Open the Claude Code panel instead. Everything works the same — see the [full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-setup) for details.
 
-> **Avoid prompt fatigue.** New interactive sessions on Pro/Max/Team start in **auto mode** (classifier-gated — most actions run, risky ones prompt); on plans and providers without auto, Normal mode prompts per risky tool call. If you still see too many prompts, toggle **Auto-accept edits** mode (a keybinding; see the [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks) of the guide) or run `claude --permission-mode acceptEdits`. For fully-autonomous runs on a trusted repo, **Bypass** mode skips prompts entirely. The template's `.claude/settings.json` ships `defaultMode: bypassPermissions` with broad catch-all allows (`Bash(*)`, `Edit(**)`, `Write(**)` — 7 wildcard rules, not a curated list), so out of the box almost nothing prompts. That is a deliberate power-user default: to tighten it, set `defaultMode: "default"` in `.claude/settings.json` and approve tools as you go, or remove the override to fall back to the platform's auto mode.
+> **Avoid prompt fatigue.** On Claude Code ≥ 2.1.283, new interactive sessions start in **auto mode** by default (classifier-gated — most actions run, risky ones prompt; on earlier versions this applied to Pro/Max/Team); where auto is unavailable, Manual mode prompts per risky tool call. If you still see too many prompts, toggle **Auto-accept edits** mode (a keybinding; see the [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks) of the guide) or run `claude --permission-mode acceptEdits`. **Bypass** mode skips permission prompts and safety checks (deny rules still apply), and Anthropic scopes it to isolated containers and VMs; it takes effect from the CLI flag, `--settings`, or user/managed settings (`~/.claude/settings.json`) — a bypass default in a project's `.claude/settings.json` is not honoured (the session starts in Manual). The template's `.claude/settings.json` sets no default mode (terminal sessions get the platform's auto mode); its `.vscode/settings.json` does start VS Code sessions in bypass — delete its two permission keys if you want auto there too — and the `.claude/settings.json` ships broad catch-all allows (`Bash(*)`, `Edit(**)`, `Write(**)` — 7 wildcard rules, not a curated list), so in Manual mode almost nothing prompts; auto mode drops the blanket `Bash(*)` and routes shell commands through its classifier. Working with restricted data? Add deny rules — see [TROUBLESHOOTING](TROUBLESHOOTING.md#keep-restricted-data-off-the-model).
 
 Then paste the [starter prompt](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session) from the guide, filling in your project details:
 
@@ -85,7 +85,7 @@ This is **not** an autonomous daemon — the loop is always you- or skill-initia
 
 ### Contractor Mode
 
-You describe a task. For complex or ambiguous requests, Claude first creates a requirements specification with MUST/SHOULD/MAY priorities and clarity status (CLEAR/ASSUMED/BLOCKED). You approve the spec, then Claude plans the approach and invokes the right skill (e.g. `/create-lecture`, `/qa-quarto`, `/review-paper --adversarial`). That skill implements the orchestrator runtime internally — implement, verify, review, fix, re-verify, score — and returns a summary when the work meets quality standards. Say "just do it" and it runs the full loop; commits still require an explicit `/commit` (which the pre-commit hook then gates).
+You describe a task. For complex or ambiguous requests, Claude first creates a requirements specification with MUST/SHOULD/MAY priorities and clarity status (CLEAR/ASSUMED/BLOCKED). You approve the spec, then Claude plans the approach and runs the right skill — or, for user-invoked skills such as `/create-lecture`, tells you which one to run (e.g. `/create-lecture`, `/qa-quarto`, `/review-paper --adversarial`). That skill implements the orchestrator runtime internally — implement, verify, review, fix, re-verify, score — and returns a summary when the work meets quality standards. Say "just do it" and it runs the full loop; commits still require an explicit `/commit` (which the pre-commit hook then gates).
 
 ### Specialized Agents
 
@@ -102,7 +102,7 @@ Each is better at its narrow task than a generalist would be. The `/slide-excell
 
 ### Adversarial QA
 
-Two agents work in opposition: the **critic** reads both Beamer and Quarto and produces harsh findings. The **fixer** implements exactly what the critic found. They **loop until dry** — converging when a round surfaces no new issue (a 5-round cap is the fallback, not the primary stop). This catches errors that single-pass review misses.
+Two agents work in opposition: the **critic** reads both Beamer and Quarto and produces harsh findings. The **fixer** implements exactly what the critic found. They **loop until dry** — converging after two consecutive rounds surface no new issue (a 5-round cap is the fallback, not the primary stop). This catches errors that single-pass review misses.
 
 ### Quality Review
 
@@ -112,7 +112,7 @@ Every artifact gets a score (0–100). Scores below threshold halt the workflow 
 - **90** — PR threshold
 - **95** — excellence (aspirational)
 
-> **Framing honesty:** Thresholds are advisory at the harness level — the `/commit` skill runs quality checks and halts on failure. **And** as of v2.0, running `./scripts/install-hooks.sh` once installs a real pre-commit hook (`.githooks/pre-commit`) that runs the full backtest gate suite plus the quality (≥80) gate on *every* commit, so bypassing the skill no longer bypasses the review. Opt out per-commit with `SKIP_QUALITY_GATE=1` or `git commit --no-verify`.
+> **Framing honesty:** Thresholds are advisory at the harness level — the `/commit` skill runs quality checks and halts on failure. **And** as of v2.0, running `./scripts/install-hooks.sh` once installs a real pre-commit hook (`.githooks/pre-commit`) that runs the backtest gate suite (the hook battery only when a hook, its settings or the battery itself is staged; CI always runs everything) plus the quality (≥80) gate on *every* commit, so bypassing the skill no longer bypasses the review. Opt out per-commit with `SKIP_QUALITY_GATE=1` or `git commit --no-verify`.
 
 ### Context Survival
 
@@ -124,7 +124,7 @@ For *forced* compression (long pipelines, mid-plan handoffs), `/compress-session
 
 Multiple complementary verification layers run before submission:
 
-- **`/verify-claims`** (v1.7.0) — Chain-of-Verification with a forked verifier that cannot self-confirm because it has never seen the draft. v1.9.0 adds HIGH/MED/LOW-WARN severity tiers; HIGH-WARN findings (fabricated citation, numerical contradiction) are must-fix — resolve them before committing.
+- **`/verify-claims`** (v1.7.0) — Chain-of-Verification with a fresh-context verifier that cannot self-confirm because it has never seen the draft. v1.9.0 adds HIGH/MED/LOW-WARN severity tiers; HIGH-WARN findings (fabricated citation, numerical contradiction) fail the verification closed — the draft is never reported as verified; `/commit` does not read these verdicts, so resolving them before committing is on you.
 - **`/audit-reproducibility`** (v1.7.0; Stata coverage v1.9.0) — every numeric claim in the manuscript is cross-checked against the script output that produced it. v1.9.0 adds `passport.yaml` — a per-paper YAML state file with PASS/FAIL/STALE/UNVERIFIED status per claim.
 - **`/humanize`** (v1.9.0) — detect AI-voice tells (boilerplate transitions, hedging stacking, sycophancy) before submission. Read-only by design; auto-rewriting degrades quality.
 - **`/review-paper --variance N`** (v1.9.0) — runs N referees with sampled dispositions and reports a **decision distribution**, not a point estimate. Motivated by AgentReview (EMNLP 2024) finding 37% of decisions vary purely from disposition sampling.
@@ -148,8 +148,8 @@ It covers:
 
 The guide covers Claude Code's latest capabilities:
 
-- **Model lineup** — **Fable 5** (`claude-fable-5`, opt-in via `/model fable` or the `best` alias) is the top tier for long-horizon work. Current Opus/Sonnet point versions and the **provider-dependent alias table** live in the single source of truth, [`model-versions.md`](.claude/references/model-versions.md) — surfaces here stay tier-abstract so they cannot go stale, and the staleness gate fails the build when the SSoT's own expiry passes.
-- **Effort levels** — `/effort` sets cost vs. thoroughness (`low` / `medium` / `high` / `xhigh` / `max`). **Fable 5 defaults to `high`** (per the [model SSoT](.claude/references/model-versions.md)); set effort explicitly on other tiers — reserve `xhigh` for extended exploration and `ultracode` (xhigh + dynamic workflows) for the largest autonomous runs.
+- **Model lineup** — the **Fable tier** (opt-in via `/model fable` or the `best` alias) is the top tier for long-horizon work; the **Opus tier** is the Claude Code default and the template's high-judgment tier. Current point versions, prices, effort defaults, and the **provider-dependent alias table** live in the single source of truth, [`model-versions.md`](.claude/references/model-versions.md) — surfaces here stay tier-abstract so they cannot go stale, and the staleness gate fails the build when the SSoT's own expiry passes.
+- **Effort levels** — `/effort` sets cost vs. thoroughness (`low` / `medium` / `high` / `xhigh` / `max`). **Default effort differs by tier** (per the [model SSoT](.claude/references/model-versions.md)): the current Opus defaults to `medium` — and its `medium` matches the prior Opus generation's `high` — while the Fable and Sonnet tiers default to `high`. Set effort explicitly, lower it before prompting for brevity, reserve `xhigh` for extended exploration and `ultracode` (xhigh + dynamic workflows) for the largest autonomous runs; `maxEffortLevel` caps effort on every surface.
 - **`/goal <verifiable condition>`** (v1.9.0; Anthropic May 2026) — keep working across turns until a fast model confirms the condition holds. Pairs with `/commit` quality gates for verified-end-state runs.
 - **`claude agents` dashboard** (v1.9.0; Anthropic May 2026) — single screen for parallel review work (`/review-paper --peer`, `/slide-excellence`).
 - **Cost-Conscious Composition** — prompt-cache TTL (5-min default on API keys; **1-hour automatic on Claude subscriptions**), 70/20/10 model routing (Haiku/Sonnet/Opus), `/cost` + `/usage` monitoring, Agent SDK credit-pool split (2026-06-15).
@@ -160,6 +160,7 @@ The guide covers Claude Code's latest capabilities:
 - **Worktree base ref** (v1.9.0; Anthropic Apr 2026) — `worktree.baseRef` setting controls `fresh` (default; remote default-branch) vs `head` (local HEAD) for new worktrees
 - **Built-in skills** — `/fewer-permission-prompts`, `/team-onboarding`, `/autofix-pr`, `/powerup`, Ultraplan, `/loop` (self-pacing)
 - **Plugins** — `/discover-plugins` for third-party extensions
+- **Mid-2026 additions** (Jun–Sep 2026) — `/skill-doctor` (what each skill costs in context and how often it fires), `claude plugin eval` (score a plugin against test cases vs a no-plugin baseline), `maxEffortLevel` (cap effort on every surface — a hard ceiling for a fixed grant budget), built-in output styles (**Concise** for everyday work; **Learning**, which leaves parts for you to write — pairs with `/scaffold-exercises`), subagents running in the background and fork mode on by default, `/fork` (continue a copy of the conversation in a background session), `/doctor` (setup checkup), and `autoUpdatesChannel: "stable"` for deadline weeks
 
 ---
 
@@ -176,7 +177,7 @@ The guide covers Claude Code's latest capabilities:
 | Presentations | Rhetoric of decks principles, visual audit, cognitive load review |
 | Research proposals | Structured drafting with adversarial critique |
 | Preregistration | OSF / AsPredicted / AEA RCT Registry-ready document (`/preregister --style`) — full workflow in Pattern 16 |
-| Manuscript submission discipline | `/humanize` (detect AI voice), `/verify-claims` HIGH-WARN gate (block fabricated citations), reviewer-disposition variance |
+| Manuscript submission discipline | `/humanize` (detect AI voice), `/verify-claims` HIGH-WARN fail-closed reporting (a fabricated citation is never reported as verified), reviewer-disposition variance |
 
 **Disciplines preloaded:** Economics (top-5 journal profiles, R conventions) and Political Science (APSR / AJPS / JOP profiles, formal-theory + survey-experiment paper types, conjoint/`cjoint` conventions). Forkers extend for psych / sociology / public-health via journal profiles + paper types + discipline cards.
 
@@ -189,7 +190,7 @@ This workflow is designed as a **single hub for an entire research program** —
 ## What's Included
 
 <details>
-<summary><strong>18 agents, 60 skills, 37 rules, 8 hooks</strong> (click to expand)</summary>
+<summary><strong>18 agents, 60 skills, 37 rules, 9 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -206,7 +207,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `quarto-fixer` | Implements fixes from the critic agent |
 | `verifier` | End-to-end task completion verification |
 | `domain-reviewer` | **Template** for your field-specific substance reviewer |
-| `claim-verifier` (v1.7.0) | Chain-of-Verification fact-checker in a forked context |
+| `claim-verifier` (v1.7.0) | Chain-of-Verification fact-checker in a fresh context (never a conversation fork) |
 | `editor` (v1.5.0) | Journal editor for `/review-paper --peer` (desk review + referee selection + synthesis) |
 | `domain-referee` (v1.5.0) | Disposition-primed substance referee for `--peer` mode |
 | `methods-referee` (v1.5.0+) | Paper-type-aware methodology referee (6 paper types) |
@@ -224,7 +225,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/deploy` | Render Quarto + sync to GitHub Pages |
 | `/extract-tikz` | TikZ diagrams to PDF to SVG pipeline |
 | `/proofread` | Launch proofreader on a file |
-| `/visual-audit` | Launch slide-auditor on a file |
+| `/visual-audit` | Visual layout audit of a deck (the `slide-auditor` checks, run inline) |
 | `/pedagogy-review` | Launch pedagogy-reviewer on a file |
 | `/review-r` | Launch R code reviewer |
 | `/qa-quarto` | Adversarial critic-fixer loop (loops until dry; 5-round cap is a fallback) |
@@ -235,7 +236,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/blast-radius` | Before and after changing anything shared (return value, schema, default, units), enumerate every consumer and actually run them |
 | `/credible-claims` | Research brief before delegating, claim record after. Keeps faster execution from being mistaken for credible evidence |
 | `/differential-audit` | Compare two implementations — a port, a replication, a refactor, a version upgrade — so that agreement means something |
-| `/oracle-review` | Run an external frontier-model referee (Claude Code → GPT-5.6 Sol Pro) and adjudicate what comes back |
+| `/oracle-review` | Run an external frontier-model referee (Claude Code → another vendor's frontier model via the Oracle CLI) and adjudicate what comes back |
 | `/verify-artifact` | Prove the file you are about to send IS the thing you mean — rebuild, verify integrity, diff against source |
 | `/voice-profile` | Extract a written voice profile from your own prior papers, then audit drafts against it — the positive counterpart to `/humanize`, which only detects AI tells |
 | `/validate-bib` | Cross-reference citations against bibliography |
@@ -257,7 +258,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/seven-pass-review` | Seven-pass adversarial manuscript review (parallel forked subagents) |
 | `/checkpoint` | Structured session-handoff snapshot (state + plan pointers + next actions). Companion to narrative session logs. |
 | `/preregister` | Generate a preregistration document (OSF / AsPredicted / AEA RCT Registry style) from a research spec |
-| `/verify-claims` (v1.7.0) | Chain-of-Verification fact-check (forked verifier, fresh context). HIGH/MED/LOW-WARN severity tiers (v1.9.0); HIGH-WARN gate-refuses `/commit`. |
+| `/verify-claims` (v1.7.0) | Chain-of-Verification fact-check (fresh-context verifier). HIGH/MED/LOW-WARN severity tiers (v1.9.0); HIGH-WARN fails closed in the report (the draft is never presented as verified). |
 | `/humanize` (v1.9.0) | Detect AI-voice tells in academic prose (10 detection categories; read-only, no rewrite) |
 | `/compress-session` (v1.9.0) | Distil current session into structured notes (decisions, next actions, *discarded-as-noise*) before auto-compaction |
 | `/promote-memory` (v1.9.0) | Five-critic council that votes on which `[LEARN]` entries graduate from native auto memory to MEMORY.md |
@@ -302,9 +303,7 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | Rule | What It Enforces |
 |------|-----------------|
 | `plan-first-workflow` | Plan mode for non-trivial tasks + context preservation |
-| `orchestrator-protocol` | Goal-first review runtime: fan-out → reduce → judge (+ hallucination gate) → loop-until-dry (the contractor loop, now a real runtime) |
 | `session-logging` | Three logging triggers: post-plan, incremental, end-of-session |
-| `meta-governance` | Template vs. working project distinctions |
 | `progress-reports` | GitHub as memory — issues as defect memory, `quality_reports/` as work memory, `MEMORY.md` as lesson memory |
 | `repo-hygiene` | Scratch must not become main — enforced by `check-repo-hygiene.py` on every commit |
 | `prompt-shaping` (v2.0) | Ambient habit — shape informal/ambiguous requests before acting (replaces the retired `/prompt` + `/prompt-only` skills) |
@@ -313,6 +312,8 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 
 | Rule | Triggers On | What It Enforces |
 |------|------------|-----------------|
+| `orchestrator-protocol` | `.claude/skills/`, `.claude/agents/`, orchestration refs | Goal-first review runtime: fan-out → reduce → judge (+ hallucination gate) → loop-until-dry — loads while fan-out skills and reviewer agents are written; the skills link it directly |
+| `meta-governance` | top-level docs, `guide/`, `docs/`, `templates/`, `.claude/`, gate scripts | Template vs. working project distinctions — maintainer work only |
 | `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
 | `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
 | `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
@@ -334,10 +335,10 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `tikz-measurement` (v1.5.x) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
 | `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Pre-Flight Reports — proves inputs were read before work |
 | `cross-artifact-review` (v1.7.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
-| `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with forked verifier |
+| `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with a fresh-context verifier |
 | `summary-parity` (v1.8.x) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |
 | `model-routing` (v1.9.0) | `.claude/agents/**/*.md`, `.claude/skills/**/SKILL.md` | 70/20/10 architect/editor split (Haiku/Sonnet/Opus) |
-| `review-fencing` (v2.5.1) | `.claude/agents/**/*.md`, `.claude/skills/**/SKILL.md` | Reviewer independence is a property of the environment — neutral copy outside the checkout, prior verdicts excluded, own reading first, positive controls fenced from committed answer keys |
+| `review-fencing` (v2.5.1) | `.tex`/`.qmd`, `master_supporting_docs/`, `quality_reports/` audit dirs, `claim-verifier.md` | Reviewer independence is a property of the environment — neutral copy outside the checkout, prior verdicts excluded, own reading first, positive controls fenced from committed answer keys |
 | `stata-code-conventions` (v1.9.0) | `**/*.do`, `scripts/stata/**` | Stata header scaffold, numbered pipeline, esttab, clustering discipline, AEA compliance |
 | `simulation-conventions` (v1.10.0) | `**/*simulation*.R`, `**/*_sim.R`, `explorations/**` | Monte Carlo discipline: DGP/estimand, L'Ecuyer seeding, Monte Carlo SE, coverage-vs-truth, raw-result storage |
 | `r-package-conventions` (v1.10.0) | `R/**`, `tests/**`, `DESCRIPTION`, `NAMESPACE`, `man/**` | R package-source standards: no `library()` in `R/`, roxygen NAMESPACE, Imports/Suggests, testthat 3e, CRAN policy |
@@ -379,12 +380,13 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | R | Figures and analysis (`/data-analysis`, `scripts/R/` template) | [r-project.org](https://www.r-project.org/) |
 | pdf2svg | TikZ → SVG for Quarto (`/extract-tikz`) | `brew install pdf2svg` (macOS), `apt install pdf2svg` (Debian) |
 | [gh CLI](https://cli.github.com/) | PR / issue workflow | `brew install gh` (macOS), `apt install gh` (Debian) |
+| Playwright for Python (optional) | Browser-measured slide QA (`scripts/slide-qa.py`, run by `/visual-audit`, `/qa-quarto`, `/slide-excellence`); drives your installed Chrome | `python3 -m venv ~/.venvs/slide-qa && ~/.venvs/slide-qa/bin/pip install playwright`, then `export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python` |
 
 **Minimum to fork this template:** Claude Code + git + Python 3 (Python is already installed on macOS/Linux).
 
 **Minimum to run the included HelloWorld demos end-to-end:** add XeLaTeX (for `/compile-latex HelloWorld`) and Quarto (for `/deploy HelloWorld`).
 
-**Your real lectures may need more** — R for `scripts/R/` analyses, pdf2svg if you use TikZ extraction, gh CLI if you use the PR-based commit workflow. `./scripts/validate-setup.sh` reports which of these are installed and what each unlocks.
+**Your real lectures may need more** — R for `scripts/R/` analyses, pdf2svg if you use TikZ extraction, gh CLI if you use the PR-based commit workflow, Playwright if you want slide overflow measured in a browser. `./scripts/validate-setup.sh` reports which of these are installed and what each unlocks.
 
 ---
 
@@ -433,7 +435,7 @@ See the [guide's ecosystem section](https://psantanna.com/claude-code-my-workflo
 
 - **What's new:** see [CHANGELOG.md](CHANGELOG.md). We follow loose semver — breaking changes get major bumps so you can decide when to pull updates.
 - **How to contribute:** see [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md). PRs welcome for generalizable improvements; fork-specific work stays in your fork.
-- **Pin to a version:** `git checkout $(git describe --tags --abbrev=0)` pins the newest tag (v2.5.1 at this writing — see [CHANGELOG.md](CHANGELOG.md)).
+- **Pin to a version:** `git checkout $(git describe --tags --abbrev=0)` pins the newest tag (v2.6.0 once this release is tagged — see [CHANGELOG.md](CHANGELOG.md)).
 
 ---
 

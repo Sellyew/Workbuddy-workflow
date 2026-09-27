@@ -211,7 +211,7 @@ Define against **the truth**, never against another estimate:
 ## 6. Storage: save raw, not just summary
 
 - `saveRDS()` the **per-replication raw results** (a tibble: one row per rep × estimator, with `est`, `se`, `ci_lo`, `ci_hi`, `converged`), not only the aggregated table. Re-aggregation, new metrics, and `sim-reviewer` all need the raw object.
-- Save the summary table as `.rds` **and** a human-readable `.csv`/`.tex`. Outputs go to `scripts/R/_outputs/` (repo canonical path).
+- Save the summary table as `.rds` **and** a human-readable `.csv`/`.tex`. Outputs go to `output/` (repo canonical path).
 - Never let a headline number exist only in console output — it cannot be audited or re-rendered onto slides.
 
 ## 7. Performance & robustness
@@ -258,7 +258,7 @@ Define against **the truth**, never against another estimate:
 [ ] R chosen for adequate MCSE; MCSE reported on bias/coverage/power
 [ ] coverage = CI contains truth (not the estimate)
 [ ] failed/non-converged reps counted and reported
-[ ] per-rep raw results saved via saveRDS() to scripts/R/_outputs/
+[ ] per-rep raw results saved via saveRDS() to output/
 [ ] no per-replication console printing
 ```
 

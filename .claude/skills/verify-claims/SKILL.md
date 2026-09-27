@@ -1,6 +1,6 @@
 ---
 name: verify-claims
-description: Run Chain-of-Verification (CoVe) on a draft or a block of text with factual claims. Spawns the `claim-verifier` agent in a forked (fresh) context so it never sees the draft — then reports which claims are supported, contradicted, or unverifiable. Use when user says "verify these citations", "check the claims in X", "did I hallucinate anything", "fact-check this draft", "run CoVe on this", or after any text generation that asserts facts about papers, datasets, or numerical results. NOT for style/grammar review (use `/proofread`) or substance review (use `/review-paper`).
+description: Run Chain-of-Verification (CoVe) on a draft or a block of text with factual claims. Spawns the `claim-verifier` agent in a fresh context (never a conversation fork) so it never sees the draft — then reports which claims are supported, contradicted, or unverifiable. Use when user says "verify these citations", "check the claims in X", "did I hallucinate anything", "fact-check this draft", "run CoVe on this", or after any text generation that asserts facts about papers, datasets, or numerical results. NOT for style/grammar review (use `/proofread`) or substance review (use `/review-paper`).
 argument-hint: "[file-or-text-path] [--source <path-or-url>] [--no-fail-closed]"
 allowed-tools: ["Read", "Grep", "Glob", "Agent", "Task", "Write"]
 disallowed-tools: ["Edit", "MultiEdit"]
@@ -64,10 +64,10 @@ Output a claims table:
 
 One question per claim. Make it specific and answerable from the source alone.
 
-### Phase 3 — Spawn `claim-verifier` (forked, fresh context)
+### Phase 3 — Spawn `claim-verifier` (fresh context — never a conversation fork)
 
 ```
-Agent: subagent_type=claim-verifier, context=fork
+Agent: subagent_type=claim-verifier   # a named subagent starts fresh; a /fork copy would inherit the draft
 Prompt: hand over claims table + verification questions + source material pointers.
         Do NOT include the draft text.
 ```
@@ -78,20 +78,20 @@ The forked agent runs the CoVe independent-answer step. It has never seen the dr
 
 The verifier returns a per-claim verdict in one of these severity tiers:
 
-- **HIGH-WARN** — fabricated reference (the cited paper doesn't exist at the named venue/year), draft claim directly contradicted by the source, or `not_found` retrieval that the verifier interprets as a hallucinated citation. **Gate-refuse** — these block `/commit` for any file `/verify-claims` was just run against, unless the user explicitly overrides with `--no-fail-closed` or sets `verifyClaims.allowHighWarn: true` in `.claude/settings.json`.
+- **HIGH-WARN** — fabricated reference (the cited paper doesn't exist at the named venue/year), draft claim directly contradicted by the source, or `not_found` retrieval that the verifier interprets as a hallucinated citation. **Fail closed** — surface these first and never present the draft as verified while one stands. This is a reporting rule, not a mechanical gate: nothing in `/commit` or the pre-commit hook reads these verdicts, so the author decides, and a HIGH-WARN left in place is stated in the report the user sees.
 - **MED-WARN** — transient infrastructure / retrieval failure (paywall the verifier can normally bypass via cached metadata; DOI resolver timeout; partial PDF read). Surface for the author; do not gate-refuse.
 - **LOW-WARN** — source genuinely inaccessible (paywalled and not in cache; private dataset; pre-print server transient). Surface with `cannot-verify` flag; do not gate-refuse.
 - **EXPLAINED** (v2.0) — a numeric/directional contradiction the author has *pre-justified* with a concrete named alternative (different defensible edition, specification, sample, or rounding convention), passed to the verifier via the claim's `author_alternative` field. Surfaced with the evidence and the recorded reason; **non-gating**. The hard floor holds: a *fabricated* citation is never EXPLAINED, and a blank/vague alternative stays HIGH-WARN. This mirrors `audit-reproducibility`'s EXPLAINED disposition for numeric claims — a mismatch is not always a failure when a defensible alternative is named.
 
 Verdict aggregation by tier across all extracted claims (EXPLAINED counts as non-gating, like LOW):
 
-| Tier counts | Outcome | `/commit` behaviour |
+| Tier counts | Outcome | What the report says |
 |---|---|---|
-| 0 HIGH, 0 MED, ≥ 0 LOW/EXPLAINED | **PASS** (green block) | proceeds |
-| 0 HIGH, ≥ 1 MED, any LOW/EXPLAINED | **PARTIAL** (yellow block) | proceeds with warning |
-| ≥ 1 HIGH | **FAIL** (red block) | **halts** unless override |
+| 0 HIGH, 0 MED, ≥ 0 LOW/EXPLAINED | **PASS** (green block) | draft verified |
+| 0 HIGH, ≥ 1 MED, any LOW/EXPLAINED | **PARTIAL** (yellow block) | verified with warnings |
+| ≥ 1 HIGH | **FAIL** (red block) | **never reported as verified** while a HIGH-WARN stands (unless `--no-fail-closed`) |
 
-`--no-fail-closed` opts out of the gate-refuse behaviour on HIGH-WARN. Use sparingly — it's there for offline / hallucination-sensitive contexts where the user accepts the risk in writing.
+`--no-fail-closed` reports HIGH-WARN verdicts as ordinary warnings instead of failing closed. Use sparingly — it's there for offline / hallucination-sensitive contexts where the user accepts the risk in writing.
 
 If the draft is writeable and the user asked for auto-correction, regenerate the affected sections using the verifier's evidence. Otherwise return the report and let the user decide.
 
@@ -107,8 +107,8 @@ Expected output (abridged):
 ## Post-Flight Verification — lit-review_measurement-error.md
 
 **Claims extracted:** 14
-**Verified independently:** 14 (forked claim-verifier)
-**Outcome:** PARTIAL — 12 verified, 1 discrepancy, 1 unverifiable
+**Verified independently:** 14 (fresh-context claim-verifier)
+**Outcome:** FAIL — 12 verified, 1 contradicted by its source (HIGH-WARN), 1 unverifiable (LOW-WARN); the draft is not reported as verified until C7 is corrected
 
 ### Discrepancies
 
@@ -136,6 +136,6 @@ Expected output (abridged):
 
 ## Cross-references
 
-- [`.claude/agents/claim-verifier.md`](../../agents/claim-verifier.md) — the forked verifier.
+- [`.claude/agents/claim-verifier.md`](../../agents/claim-verifier.md) — the fresh-context verifier.
 - [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — the protocol.
 - MEMORY.md `[LEARN:pattern]` on Chain-of-Verification vs critic-fixer vs cross-artifact review.

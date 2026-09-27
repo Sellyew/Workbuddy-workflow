@@ -1,7 +1,7 @@
 ---
 name: audit-reproducibility
 description: Enforce the replication-protocol.md rule by cross-checking numeric claims in a manuscript against the actual R / Stata / Python outputs. Report PASS/FAIL per claim against tolerance thresholds. Use before submission and before releasing a replication package.
-argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to scripts/R/_outputs/)"
+argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to output/)"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task", "Monitor"]
 effort: high
 ---
@@ -25,7 +25,7 @@ Compare numeric claims in a manuscript (point estimates, standard errors, p-valu
 ## Inputs
 
 - `$0` — path to the manuscript (`.tex`, `.qmd`, `.md`, `.pdf`). Required.
-- `$1` — path to the outputs directory. Defaults to `scripts/R/_outputs/`. Recognised alternatives: `scripts/stata/_outputs/` (Stata pipelines built by [`/stata-replication`](../stata-replication/SKILL.md)), `_targets/objects/` (R `targets` workflows), any directory the user-specified outputs live in.
+- `$1` — path to the outputs directory. Defaults to `output/`, where every language's pipeline writes (R, Stata via [`/stata-replication`](../stata-replication/SKILL.md), Python). Recognised alternatives: `_targets/objects/` (R `targets` workflows), any directory the user-specified outputs live in. If `output/` does not exist but a pre-v2.6 `scripts/<lang>/_outputs/` does, use that and say so in the report.
 
 ## Workflow
 
@@ -75,7 +75,7 @@ Record each extracted result:
 
 ```
 {
-  source: "scripts/R/_outputs/results.rds",
+  source: "output/results.rds",
   lookup_key: "fit_main$coefficients['treated']",
   value: -1.628,
   uncertainty: 0.591,
@@ -234,6 +234,39 @@ Write `quality_reports/reproducibility_audit_[manuscript-name].md`:
 6. After zero FAILs and zero HORIZONTAL DRIFT (EXPLAINED rows allowed), the paper is replication-ready.
 ```
 
+### Phase 5b: Append to the replication log
+
+The report above and the passport are rewritten on every run, so neither keeps a history. The log does. After every run — default and passport mode alike — **append** one block to `quality_reports/replication-log.md`. It is committed, so a co-author or data editor can see what was checked, against which commit, and how each number was obtained, without reading the code.
+
+- **Append only.** Write with `>>`; never edit or reorder a past block. A correction is a new run, not an edit. The repo-hygiene gate fails a commit that edits or removes a committed line — at the pre-commit hook against the last commit, and in CI against the branch the work merges into. It proves no entry was edited, not that every run was logged. A disclosure redaction is the one exception: commit it with `ALLOW_LOG_REWRITE=1` and the reason in the commit message.
+- **Stamp the revision.** The short commit hash, plus `-dirty` when anything outside `quality_reports/` is uncommitted (untracked files included) — so a verdict on uncommitted code says so, and the audit's own report files do not trigger it. Outside git, or before the first commit, the stamp is `no-commit`.
+- **"How computed" is the exact accessor or command Phase 2 used** — enough for someone else to recompute that one number.
+- **Restricted data:** the log carries the same numbers as the report, so it is committed only after disclosure clearance, like any output ([`confidential-data.md`](../../rules/confidential-data.md)).
+
+```bash
+LOG=quality_reports/replication-log.md
+[ -f "$LOG" ] || printf '%s\n' "# Replication log" "" \
+  "Append-only record of /audit-reproducibility runs: what was checked, against which commit, and how each number was computed. Never edit a past entry; a correction is a new run." "" > "$LOG"
+# -dirty = anything uncommitted outside quality_reports/, untracked files included (the audit writes its own files in quality_reports/)
+if REV=$(git rev-parse --short HEAD 2>/dev/null); then
+  [ -n "$(git status --porcelain -- . ':(exclude)quality_reports' 2>/dev/null)" ] && REV="$REV-dirty"
+else
+  REV="no-commit"   # not a git repository, or nothing committed yet
+fi
+printf '## %s — %s @ %s\n\n' "$(date +%F)" "<manuscript path>" "$REV" >> "$LOG"
+# Quoted heredoc: nothing below is expanded, so an accessor's `$` or backtick is written as-is.
+cat >> "$LOG" <<'EOF'
+Outputs: `<outputs dir>` · Verdict: **<PASS|FAIL>** (<M> FAIL, <H> horizontal drift, <E> EXPLAINED, <K> unmatched)
+
+| Claim | Location | Reported | Computed | How computed | Tolerance | Verdict |
+|---|---|---|---|---|---|---|
+| Table2_col3_ATT | main.tex: Table 2, col 3 | -1.632 | -1.628 | `readRDS("output/results.rds")$coef[["treatment"]]` | 0.01 | PASS |
+
+EOF
+```
+
+One row per audited claim, in the order of the report.
+
 ## Exit behavior
 
 - **All PASS (or PASS + EXPLAINED):** exit 0, summary printed.
@@ -243,18 +276,18 @@ Write `quality_reports/reproducibility_audit_[manuscript-name].md`:
 
 ## Source-language coverage
 
-The skill compares manuscript claims against outputs in three source-language ecosystems:
+The skill compares manuscript claims against outputs in three source-language ecosystems. All three write to the same `output/` directory:
 
 | Source | Default outputs dir | Read-output via | Common claim sources |
 |---|---|---|---|
-| **R** (default) | `scripts/R/_outputs/` | `readRDS()`, `arrow::read_parquet()`, `vroom::vroom()` | `.rds` / `.parquet` / `.csv` / `tinytable` `.tex` |
-| **Stata** (v1.9.0) | `scripts/stata/_outputs/` | `haven::read_dta()` from R, or `pyreadstat.read_dta()` from Python | `.dta` / `esttab` `.tex` / `.smcl` log values |
-| **Python** | `scripts/python/_outputs/` (or `_targets/`) | `pandas.read_parquet`, `pickle.load` | `.parquet` / `.pickle` / `.csv` |
+| **R** (default) | `output/` | `readRDS()`, `arrow::read_parquet()`, `vroom::vroom()` | `.rds` / `.parquet` / `.csv` / `tinytable` `.tex` |
+| **Stata** (v1.9.0) | `output/` | `haven::read_dta()` from R, or `pyreadstat.read_dta()` from Python | `.dta` / `esttab` `.tex` / `.smcl` log values |
+| **Python** | `output/` (or `_targets/`) | `pandas.read_parquet`, `pickle.load` | `.parquet` / `.pickle` / `.csv` |
 
 **Stata-specific notes (v1.9.0):**
 
 - `.dta` outputs are read via `haven::read_dta()` (R), `pyreadstat.read_dta()` (Python), or by parsing the corresponding `esttab` `.tex` if the table-cell value is what the manuscript cites.
-- Manuscript cell `\input{scripts/stata/_outputs/tab_main.tex}` is the strongest provenance signal — the cell value comes mechanically from the .do file. Match the location in the `.tex` to the regression call in `03_analyze.do`.
+- Manuscript cell `\input{output/tab_main.tex}` is the strongest provenance signal — the cell value comes mechanically from the .do file. Match the location in the `.tex` to the regression call in `03_analyze.do`.
 - Clustering df adjustments can differ between `reghdfe` and base `reg, cluster()`. If a SE mismatches at the 2nd decimal, the tolerance in `replication-protocol.md` covers it; if it mismatches at the 1st decimal, investigate the df adjustment.
 
 ## Passport-mode (v1.9.0)

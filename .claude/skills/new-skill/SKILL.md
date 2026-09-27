@@ -2,7 +2,7 @@
 name: new-skill
 description: Scaffold a new skill that follows this repo's conventions — interviews for purpose, trigger phrases, and tool needs, then writes `.claude/skills/<name>/SKILL.md` from the skill template with frontmatter and body that pass the integrity gates on first try. Use when user says "write a skill", "scaffold a skill", "create a new skill", "I keep doing X, make it a skill", "new slash command", or "turn this workflow into a skill". NOT for capturing a one-off session discovery — that is `/learn`.
 argument-hint: "[skill-name (kebab-case)] [--from-learn] [--dry-run]"
-allowed-tools: ["Read", "Write", "Glob", "Grep", "Bash", "Agent"]
+allowed-tools: ["Read", "Write", "Glob", "Grep", "Bash"]
 disable-model-invocation: true
 effort: medium
 ---
@@ -34,9 +34,9 @@ Adapted from the *write-a-skill* pattern in [mattpocock/skills](https://github.c
 A skill cannot stop to ask mid-write, so gather all interactivity up front (the [orchestrator-protocol.md](../../rules/orchestrator-protocol.md) RUN_CONFIG discipline). Ask, in one batch:
 
 1. **Purpose** — one sentence: what does it accomplish and why does it exist?
-2. **Trigger phrases** — the 4-7 quoted phrases a user would actually say. These become the `description`'s "Use when…" clause and are what makes the skill auto-discoverable.
+2. **When it should fire** — the 2-4 *situations* a user is in when they need it (e.g. "preparing a submission", "a number changed between runs"), plus one or two example phrasings. These become the `description`'s "Use when…" clause. Name intent categories rather than enumerating near-synonyms: every model-invocable description is loaded into every session, and `description` + `when_to_use` are truncated in the skill listing (at 1,536 characters per the Claude Code skills docs, 2026-09) — put the key use first.
 3. **Inputs / arguments** — positional args and any **flags** (each must become a documented `--token`).
-4. **Tools** — does the body Read? Write? Grep/Glob? run `Bash`? fan out to a subagent (the `Agent` tool)? hit the web via `WebSearch`/`WebFetch`? Only declare what it actually uses.
+4. **Tools** — does the body Read? Write? Grep/Glob? run `Bash`? fan out to a subagent (Agent)? hit the web via `WebSearch`/`WebFetch`? Only declare what it actually uses.
 5. **Output** — a written file (where?), a chat report, or an in-place edit? Should it be read-only?
 6. **Scope boundary** — the one or two things it explicitly does NOT do (and which sibling owns those).
 
@@ -46,8 +46,9 @@ Echo a one-paragraph **design brief** back for confirmation before writing.
 
 Write `.claude/skills/<name>/SKILL.md` from the template, with these gold-standard sections:
 
-- Frontmatter: `name`, `description` (third person, with the quoted trigger phrases), `argument-hint`, `allowed-tools`, `effort`. Add `disable-model-invocation: true` if it writes a persistent, load-bearing file (template's "when to disable" rule).
-- Body sections: **When to use**, numbered **Phases** (or Steps), an **Output / report format**, **Exit behavior**, **Cross-references** (to real sibling files), **What this skill does NOT do**, and a **## Flags** section if any flags are advertised.
+- Frontmatter: `name`, `description` (third person — what it does, then when to use it by intent category), `argument-hint`, `allowed-tools`, and `effort` only if the skill genuinely needs a level other than the session's (see `model-routing.md` § effort — a skill pin *overrides* the session, downward as well as up). Add `disable-model-invocation: true` if it writes a persistent, load-bearing file (template's "when to disable" rule) — and note that other skills then cannot invoke it; they must Read its `SKILL.md` and follow it.
+- Body sections: **When to use**; the **goal and deliverable**; the **constraints, each with its reason**; **how to verify it is done**; an **Output / report format**; **Exit behavior**; **Cross-references** (to real sibling files); **What this skill does NOT do**; and a **## Flags** section if any flags are advertised. Number phases only where order genuinely matters (interview before writing, verify before reporting) — current models plan well, and a step-by-step script for a judgment task makes the output worse, not safer.
+- Keep `SKILL.md` readable in one sitting (well under ~500 lines). Move long rubrics, worked examples, and reference tables into files beside it (e.g. `references/`) and link them, so they load only when needed.
 - Keep the *interface* small (a few args) and the *implementation* deep (the phases carry the weight) — resist exposing a knob for every internal choice.
 
 ### Phase 3 — Enforce parity so the gates pass first try
@@ -55,7 +56,7 @@ Write `.claude/skills/<name>/SKILL.md` from the template, with these gold-standa
 `check-skill-integrity.py` enforces two parities this phase must satisfy (`.claude/scripts/` hosts the gate runners; `scripts/check-skill-integrity.py` is the checker):
 
 - **Flag parity (both directions).** Every flag in `argument-hint` MUST appear in the body as a bare-backticked token, and every flag documented in the body MUST appear in `argument-hint`. So `--from-learn` and `--dry-run` are listed in the hint *and* described under `## Flags`. A stale hint flag fails the gate as surely as a missing one.
-- **allowed-tools parity.** The body may only invoke tools listed in `allowed-tools`. If a phase fans out to a subagent (the `Agent` tool), that tool must be in the list; if it never does, do not list it. This skill lists exactly `Read, Write, Glob, Grep, Bash` — the tools its phases use, and no subagent fan-out.
+- **allowed-tools parity.** The body may only invoke tools listed in `allowed-tools`. If a phase fans out to a subagent, `Agent` must be in the list; if it never does, do not list it. This skill lists exactly `Read, Write, Glob, Grep, Bash` — the tools its phases use; it does no subagent fan-out.
 - **Anchor resolution.** Internal `[text](path#anchor)` links must resolve — only link to headings that exist.
 
 Run `python3 scripts/check-skill-integrity.py --verbose` and fix any P0/P1 before declaring done.
@@ -66,11 +67,12 @@ The skill is NOT discoverable to a reader until it is listed. `check-surface-syn
 
 REMIND the user to:
 
-1. Add a row to the **CLAUDE.md** "Skills Quick Reference" table: `` | `/<name> [args]` | <what it does> | ``.
-2. Add a row to the **README.md** skills table: `` | `/<name>` | <what it does> | ``.
+1. Add a row to the **README.md** skills table: `` | `/<name>` | <what it does> | `` (the gated table).
+2. Optionally add the skill to CLAUDE.md's "Skills Quick Reference" bullet list — only if it belongs among the most-used skills; no gate checks that list.
 3. Run `./scripts/check-surface-sync.sh` and `python3 scripts/check-skill-integrity.py` — both must exit 0.
+4. Check what the skill costs and whether it fires: `/skill-doctor` shows its context cost and usage; `./scripts/run-skill-eval.sh` runs its eval cases once they exist.
 
-Print the two ready-to-paste rows so the user can drop them in.
+Print the ready-to-paste README row so the user can drop it in.
 
 ## Output / report format
 
@@ -101,6 +103,6 @@ Print the two ready-to-paste rows so the user can drop them in.
 ## What this skill does NOT do
 
 - **Capture a session discovery** — that is [`/learn`](../learn/SKILL.md). This skill designs an interface; `/learn` records a finding.
-- **Edit the README / CLAUDE.md surface tables for you.** It *prints* the two rows and reminds you; registering them (and re-running `./scripts/check-surface-sync.sh`) is a deliberate human step so the surface gate is never silently satisfied.
+- **Edit the README / CLAUDE.md surface tables for you.** It *prints* the README row and reminds you; registering them (and re-running `./scripts/check-surface-sync.sh`) is a deliberate human step so the surface gate is never silently satisfied.
 - **Write agents, rules, or hooks.** It scaffolds a skill only; an agent goes in `.claude/agents/`, a rule in `.claude/rules/`.
 - **Commit anything.** Branch / PR / merge is [`/commit`](../commit/SKILL.md)'s job.

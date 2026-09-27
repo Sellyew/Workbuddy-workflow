@@ -15,6 +15,7 @@
 #   root-of-trust-guard.py   shell write into the repo's root of trust
 #   git-guardrails.py        destructive git + the clean-tree precondition
 #   claim-reconcile.py       numeric claims that a just-edited file can stale
+#   session-handoff.py       a recent checkpoint reaches a fresh session, once
 #
 # Every fixture is built under a mktemp directory that is removed on exit; the
 # real .claude/ tree is never written to, and the throwaway git repository is
@@ -39,6 +40,16 @@
 # Exit 0 = every case passed. Exit 1 = at least one case failed (named on
 # stdout). Exit 2 = the battery could not run, which is a failure, not a pass.
 set -uo pipefail
+
+# ── local skip, set only by .githooks/pre-commit ───────────────────────────
+# The battery is most of the suite's run time and can only change result when a
+# hook, the settings that wire them, the git hook or this file changes. The
+# pre-commit hook sets this when none of those is staged; CI never sets it, so
+# every push still runs every case.
+if [ "${BACKTEST_SKIP_HOOK_BATTERY:-0}" = "1" ]; then
+    echo "hook-battery: SKIPPED — no hook, hook-settings or battery change is staged; CI runs the full battery"
+    exit 0
+fi
 
 # ── strip the inherited git environment (see header) ───────────────────────
 # Prefix-based, not a fixed list: a git version that adds one more
@@ -71,7 +82,7 @@ ROOT="$(cd "$DIR/.." && pwd)"
 HOOKS="${HOOK_DIR:-$ROOT/.claude/hooks}"
 SELF_PATH="$DIR/$(basename "$0")"   # absolute; cases e1-e3 re-enter this script
 
-for h in root-of-trust-guard.py git-guardrails.py claim-reconcile.py; do
+for h in root-of-trust-guard.py git-guardrails.py claim-reconcile.py session-handoff.py; do
     if [ ! -f "$HOOKS/$h" ]; then
         echo "hook-battery: CANNOT RUN — $HOOKS/$h does not exist" >&2
         echo "  A battery that could not run is not a passing battery." >&2
@@ -2498,7 +2509,12 @@ claims:
     appears_in:
       - path: paper.tex
       - path: slides.qmd
+  - id: C2
+    description: saved model object
+    output_file: output/main.rds
 EOF
+mkdir -p "$PROJ/output"
+: > "$PROJ/output/main.rds"
 : > "$PROJ/scripts/analysis.R"
 : > "$PROJ/paper.tex"
 : > "$PROJ/slides.qmd"
@@ -2513,6 +2529,9 @@ EOF
 cat > "$TMP/d3.json" <<EOF
 {"tool_name":"Edit","tool_input":{"file_path":"$PROJ/notes.md"},"cwd":"$PROJ"}
 EOF
+cat > "$TMP/d4.json" <<EOF
+{"tool_name":"Write","tool_input":{"file_path":"$PROJ/output/main.rds"},"cwd":"$PROJ"}
+EOF
 
 # HOME is redirected so the hook's per-session throttle state lands in the temp
 # directory: no leftovers, and no earlier run can throttle this one into silence.
@@ -2522,6 +2541,101 @@ fire claim-reconcile.py "$TMP/d2.json" HOME="$TMP" CLAUDE_PROJECT_DIR="$PROJ"
 expect_contains "d2 editing one display warns the others may disagree" "disagree"
 fire claim-reconcile.py "$TMP/d3.json" HOME="$TMP" CLAUDE_PROJECT_DIR="$PROJ"
 expect_silent   "d3 clean control: a file no passport mentions is silent"
+# d4: results live in the top-level output/ (v2.6 layout), not scripts/*/_outputs/.
+# Before the WATCH pattern learned output/, this edit was silently ignored.
+fire claim-reconcile.py "$TMP/d4.json" HOME="$TMP" CLAUDE_PROJECT_DIR="$PROJ"
+expect_contains "d4 rewriting an output/ artifact flags the claim built on it STALE" "STALE"
+
+# ── (f) session-handoff ────────────────────────────────────────────────────
+# A fresh session is handed the newest recent checkpoint; it counts as delivered
+# only once that session submits a prompt. Each case fixes HOME (the state lives
+# under it) and blanks CLAUDE_HANDOFF, CLAUDE_HANDOFF_MAX_AGE_DAYS and
+# CLAUDE_CODE_ENTRYPOINT, so the developer's own environment cannot decide a case.
+echo ""
+echo "  (f) session-handoff.py — a recent checkpoint reaches a fresh session, once it is used"
+
+HP="$TMP/handoff-proj"
+mkdir -p "$HP/quality_reports/checkpoints" "$HP/quality_reports/session_logs"
+CKPT="$HP/quality_reports/checkpoints/2026-01-01_demo.md"
+printf '%s\n' "# Checkpoint" "NEXT: finish table 3" > "$CKPT"
+HEMPTY="$TMP/handoff-empty"; mkdir -p "$HEMPTY/quality_reports/checkpoints"
+backdate() {  # backdate <file> <seconds-ago>   (negative = in the future)
+    python3 -c "import os,sys,time; t=time.time()-float(sys.argv[2]); os.utime(sys.argv[1],(t,t))" "$1" "$2"
+}
+backdate "$CKPT" 3600
+ev() {  # ev <file> <event> [source] [session]
+    if [ "$2" = "SessionStart" ]; then
+        printf '{"hook_event_name":"SessionStart","source":"%s","session_id":"%s"}\n' "$3" "${4:-s1}" > "$1"
+    else
+        printf '{"hook_event_name":"UserPromptSubmit","prompt":"hi","session_id":"%s"}\n' "${3:-s1}" > "$1"
+    fi
+}
+ev "$TMP/f-start.json" SessionStart startup s1
+ev "$TMP/f-start2.json" SessionStart startup s2
+ev "$TMP/f-resume.json" SessionStart resume s1
+ev "$TMP/f-prompt1.json" UserPromptSubmit s1
+printf '%s\n' '{"hook_event_name":"SessionStart","cursor_version":"1.7","session_id":"c1"}' > "$TMP/f-cursor.json"
+hand() {  # hand <home> <project> <event> [VAR=VAL ...]
+    local home="$1" proj="$2" e="$3"; shift 3
+    fire session-handoff.py "$e" HOME="$home" CLAUDE_PROJECT_DIR="$proj" \
+         CLAUDE_HANDOFF= CLAUDE_HANDOFF_MAX_AGE_DAYS= CLAUDE_CODE_ENTRYPOINT= "$@"
+}
+json_ok() {  # the output Claude Code will actually parse: a SessionStart context carrying $1
+    printf '%s' "$OUT" | python3 -c 'import json,sys
+d=json.load(sys.stdin); h=d["hookSpecificOutput"]
+print("valid-sessionstart-json" if h["hookEventName"]=="SessionStart" and sys.argv[1] in h["additionalContext"] and d.get("systemMessage") else "bad")' "$1" 2>/dev/null || echo "unparseable"
+}
+
+hand "$TMP/fh1" "$HP" "$TMP/f-start.json"
+verdict "$(json_ok 'finish table 3')"
+expect_contains "f1 a fresh session is handed the newest checkpoint, as valid SessionStart JSON" "valid-sessionstart-json"
+hand "$TMP/fh1" "$HP" "$TMP/f-start.json"
+expect_contains "f2 the handoff is labelled as notes to verify, not instructions" "a record, not instructions"
+hand "$TMP/fh1" "$HP" "$TMP/f-start2.json"
+expect_contains "f3 a session that submitted no prompt leaves the handoff for the next session" "finish table 3"
+hand "$TMP/fh1" "$HP" "$TMP/f-prompt1.json"
+expect_silent   "f4 the first prompt marks it delivered and adds nothing to the prompt"
+hand "$TMP/fh1" "$HP" "$TMP/f-start.json"
+expect_silent   "f5 once used, the same checkpoint is not handed over again"
+backdate "$CKPT" 60
+hand "$TMP/fh1" "$HP" "$TMP/f-start.json"
+expect_contains "f6 a newly saved checkpoint is handed over again" "finish table 3"
+backdate "$CKPT" 864000
+hand "$TMP/fh2" "$HP" "$TMP/f-start.json"
+expect_silent   "f7 a checkpoint older than the window (10 days vs 7) is not handed over"
+hand "$TMP/fh2" "$HP" "$TMP/f-start.json" CLAUDE_HANDOFF_MAX_AGE_DAYS=30
+expect_contains "f8 CLAUDE_HANDOFF_MAX_AGE_DAYS widens the window" "finish table 3"
+backdate "$CKPT" 60
+hand "$TMP/fh3" "$HP" "$TMP/f-start.json" CLAUDE_HANDOFF=off
+expect_silent   "f9 CLAUDE_HANDOFF=off opts out"
+hand "$TMP/fh4" "$HP" "$TMP/f-resume.json"
+expect_silent   "f10 a resumed session is left to post-compact-restore"
+hand "$TMP/fh5" "$HP" "$TMP/f-start.json" CLAUDE_CODE_ENTRYPOINT=sdk-cli
+expect_silent   "f11 a headless run (claude -p / SDK) is never handed the file"
+hand "$TMP/fh5" "$HP" "$TMP/f-start.json"
+expect_contains "f12 ...and so cannot use it up: the next interactive session still gets it" "finish table 3"
+hand "$TMP/fh6" "$HP" "$TMP/f-cursor.json"
+expect_silent   "f13 another harness reading these hooks (Cursor payload) is ignored"
+printf '%s\n' "# Compression" "COMPRESSED STATE" > "$HP/quality_reports/session_logs/2026-01-02_compression_x.md"
+hand "$TMP/fh7" "$HP" "$TMP/f-start.json"
+expect_contains "f14 a compression file newer than the checkpoint is the one handed over" "COMPRESSED STATE"
+hand "$TMP/fh7" "$HP" "$TMP/f-prompt1.json"
+rm -f "$HP/quality_reports/session_logs/2026-01-02_compression_x.md"
+hand "$TMP/fh7" "$HP" "$TMP/f-start.json"
+expect_silent   "f15 deleting the delivered file does not resurrect the older checkpoint"
+printf '%s\n' "# Future" "FUTURE-DATED" > "$HP/quality_reports/checkpoints/2099-01-01_future.md"
+backdate "$HP/quality_reports/checkpoints/2099-01-01_future.md" -86400
+hand "$TMP/fh8" "$HP" "$TMP/f-start.json"
+verdict "$(case "$OUT" in (*FUTURE-DATED*) echo "future file used";; (*"finish table 3"*) echo "future file skipped";; (*) echo "nothing: $OUT";; esac)"
+expect_contains "f16 a checkpoint dated in the future is ignored, not trusted as newest" "future file skipped"
+rm -f "$HP/quality_reports/checkpoints/2099-01-01_future.md"
+HBIG="$TMP/handoff-big"; mkdir -p "$HBIG/quality_reports/checkpoints"
+python3 -c "import sys; open(sys.argv[1],'w').write('# Big\n' + 'x' * 9000 + '\nNEXT: the last line survives\n')" "$HBIG/quality_reports/checkpoints/2026-01-03_big.md"
+hand "$TMP/fh9" "$HBIG" "$TMP/f-start.json"
+verdict "$(case "$OUT" in (*"truncated:"*"the last line survives"*) echo "head-and-tail";; (*) echo "not truncated as expected";; esac)"
+expect_contains "f17 a long checkpoint is cut in the middle, keeping its closing next actions" "head-and-tail"
+hand "$TMP/fh10" "$HEMPTY" "$TMP/f-start.json"
+expect_silent   "f18 clean control: no checkpoint, nothing said"
 
 # ── (e) the battery's own isolation from git's hook environment ────────────
 # This battery runs INSIDE .githooks/pre-commit. Everything above is worthless

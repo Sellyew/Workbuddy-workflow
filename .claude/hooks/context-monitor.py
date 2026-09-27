@@ -194,7 +194,7 @@ def run_context_monitor() -> int:
         if percentage >= threshold and threshold not in shown["learn"]:
             emit(
                 f"💡 Context ~{percentage:.0f}% (approx) — if a reusable discovery emerged, consider /learn before auto-compaction.",
-                f"Context usage is approximately {percentage:.0f}% (coarse proxy). If a non-obvious discovery or reusable workflow emerged this session, consider running /learn to persist it as a skill before auto-compaction.",
+                f"Context usage is approximately {percentage:.0f}% (coarse proxy). If a non-obvious discovery or reusable workflow emerged this session, suggest that the user run /learn to persist it as a skill before auto-compaction (/learn is user-invoked; you cannot run it yourself).",
             )
             mark_threshold_shown("learn", threshold)
             return 0  # Only show one message at a time

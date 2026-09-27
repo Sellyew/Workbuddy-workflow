@@ -26,7 +26,7 @@ Referees and editors increasingly recognise AI-generated prose. The tells are no
 
 ## What this skill is NOT
 
-- **Not a rewriter.** No `--rewrite` mode. Auto-rewriting AI tells degrades prose quality (cross-vendor research finding); the author preserves voice by editing manually.
+- **Not a rewriter.** No `--rewrite` mode. An automatic rewriter introduces its own tells and cannot change what a neural detector sees (see `writing-with-ai.md`); the author preserves voice by editing manually.
 - **Not a substance reviewer.** Use `/review-paper` for argument structure, identification, citations.
 - **Not a grammar checker.** Use `/proofread` for grammar, typos, overflow, citation format.
 - **Not a fact-checker.** Use `/verify-claims` for Chain-of-Verification fact-checking of citations and numeric claims.
@@ -196,7 +196,7 @@ Long chains of compound modifiers as a paragraph signature:
 
 ## Anti-pattern: no `--rewrite` mode
 
-We deliberately do not ship `/humanize --rewrite`. Cross-vendor research (Cursor / Aider community findings; cited in the v1.9.0 plan) finds that auto-rewriting prose to strip AI tells degrades quality more often than it improves it — the rewriter introduces its *own* AI tells. The detect-and-flag pattern preserves authorial voice; the cost is your editing time, which is exactly the cost we want to pay.
+We deliberately do not ship `/humanize --rewrite`. Auto-rewriting prose to strip AI tells tends to degrade it — the rewriter introduces its *own* AI tells — and, as [`writing-with-ai.md`](../../rules/writing-with-ai.md) records, a model's rewrite of its own output still reads as model output to a detector. The detect-and-flag pattern preserves authorial voice; the cost is your editing time, which is exactly the cost we want to pay.
 
 If you find yourself reaching for an auto-rewriter, that's the signal to rewrite the paragraph from scratch — not to patch the tells one by one.
 

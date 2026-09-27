@@ -32,62 +32,106 @@ def _timeout(env_name: str, default: int) -> int:
         return default
 
 # ==============================================================================
-# SCORING RUBRIC (from .claude/rules/quality-gates.md)
+# SCORING RUBRIC — the single source. `.claude/rules/quality-gates.md` mirrors
+# these dicts (regenerate its tables with `--print-rubric`); every emitter below
+# reads its points from here, so a value changed here changes both the score and
+# the documented rubric. Types listed in AUTO_DETECTED have a detector in this
+# script; the rest are a reviewer checklist and are never deducted automatically.
 # ==============================================================================
 
 QUARTO_RUBRIC = {
     'critical': {
-        'compilation_failure': {'points': 100, 'auto_fail': True},
-        'equation_overflow': {'points': 20},
-        'broken_citation': {'points': 15},
-        'typo_in_equation': {'points': 10},
-        'missing_plotly_chart': {'points': 10},
+        'compilation_failure': {'points': 100, 'auto_fail': True, 'label': 'Compilation failure'},
+        'equation_overflow': {'points': 20, 'label': 'Equation overflow'},
+        'broken_citation': {'points': 15, 'label': 'Broken citation'},
+        'typo_in_equation': {'points': 10, 'label': 'Typo in equation'},
+        'missing_plotly_chart': {'points': 10, 'per': 'chart', 'label': 'Plotly chart failed to render'},
     },
     'major': {
-        'text_overflow': {'points': 5},
-        'tikz_label_overlap': {'points': 5},
-        'notation_inconsistency': {'points': 3},
-        'missing_box_separation': {'points': 2},
-        'color_contrast_low': {'points': 3},
+        'text_overflow': {'points': 5, 'label': 'Text overflow'},
+        'tikz_label_overlap': {'points': 5, 'label': 'TikZ label overlap'},
+        'notation_inconsistency': {'points': 3, 'label': 'Notation inconsistency'},
+        'missing_box_separation': {'points': 2, 'label': 'Missing separation between boxes'},
+        'color_contrast_low': {'points': 3, 'label': 'Low color contrast'},
     },
     'minor': {
-        'font_size_reduction': {'points': 1},
-        'missing_forward_ref': {'points': 1},
-        'missing_framing_sentence': {'points': 1},
+        'font_size_reduction': {'points': 1, 'per': 'slide', 'label': 'Font size reduction'},
+        'missing_forward_ref': {'points': 1, 'label': 'Missing forward reference'},
+        'missing_framing_sentence': {'points': 1, 'label': 'Missing framing sentence'},
+        'long_line': {'points': 1, 'label': 'Long line (>100 chars; documented math formulas exempt)'},
     }
 }
 
 R_SCRIPT_RUBRIC = {
     'critical': {
-        'syntax_error': {'points': 100, 'auto_fail': True},
-        'hardcoded_path': {'points': 20},
-        'missing_library': {'points': 10},
+        'syntax_error': {'points': 100, 'auto_fail': True, 'label': 'Syntax error'},
+        'domain_bug': {'points': 30, 'label': 'Domain-specific bug'},
+        'hardcoded_path': {'points': 20, 'label': 'Hardcoded absolute path'},
+        'missing_library': {'points': 10, 'label': 'Missing library() call'},
     },
     'major': {
-        'missing_set_seed': {'points': 10},
-        'missing_figure': {'points': 5},
-        'missing_rds': {'points': 5},
+        'missing_set_seed': {'points': 10, 'label': 'Missing set.seed() where randomness is used'},
+        'missing_figure': {'points': 5, 'label': 'Missing figure generation'},
+        'missing_rds': {'points': 5, 'label': 'Missing saved .rds of computed results'},
     },
     'minor': {
-        'style_violation': {'points': 1},
-        'missing_roxygen': {'points': 1},
+        'style_violation': {'points': 1, 'label': 'Style violation'},
+        'missing_roxygen': {'points': 1, 'label': 'Missing roxygen documentation'},
     }
 }
 
 BEAMER_RUBRIC = {
     'critical': {
-        'compilation_failure': {'points': 100, 'auto_fail': True},
-        'undefined_citation': {'points': 15},
-        'overfull_hbox': {'points': 10},
+        'compilation_failure': {'points': 100, 'auto_fail': True, 'label': 'Compilation failure (LaTeX syntax)'},
+        'undefined_citation': {'points': 15, 'label': 'Undefined citation'},
+        'overfull_hbox': {'points': 10, 'label': 'Overfull hbox (long line or equation in a frame)'},
     },
     'major': {
-        'text_overflow': {'points': 5},
-        'notation_inconsistency': {'points': 3},
+        'text_overflow': {'points': 5, 'label': 'Text overflow'},
+        'notation_inconsistency': {'points': 3, 'label': 'Notation inconsistency'},
     },
     'minor': {
-        'font_size_reduction': {'points': 1},
+        'font_size_reduction': {'points': 1, 'per': 'slide', 'label': 'Font size reduction'},
     }
 }
+
+# Rubric types that have a detector in this script (scored automatically).
+AUTO_DETECTED = {
+    'quarto': {'compilation_failure', 'equation_overflow', 'broken_citation', 'missing_plotly_chart'},
+    'r': {'syntax_error', 'hardcoded_path', 'missing_set_seed'},
+    'beamer': {'compilation_failure', 'undefined_citation', 'overfull_hbox'},
+}
+
+RUBRICS = [
+    ('quarto', 'Quarto Slides (.qmd)', QUARTO_RUBRIC),
+    ('r', 'R Scripts (.R)', R_SCRIPT_RUBRIC),
+    ('beamer', 'Beamer Slides (.tex)', BEAMER_RUBRIC),
+]
+
+
+def pts(rubric: Dict, severity: str, issue_type: str) -> int:
+    """Points for one rubric entry — the only place emitters get a deduction."""
+    return rubric[severity][issue_type]['points']
+
+
+def render_rubric() -> str:
+    """The markdown tables that quality-gates.md must reproduce verbatim."""
+    out = []
+    for key, heading, rubric in RUBRICS:
+        out.append(f"### {heading}\n")
+        out.append("| Severity | Issue | Deduction | Caught by |")
+        out.append("|----------|-------|-----------|-----------|")
+        for severity in ('critical', 'major', 'minor'):
+            for issue_type, spec in rubric[severity].items():
+                ded = f"-{spec['points']}"
+                if spec.get('per'):
+                    ded += f" per {spec['per']}"
+                if spec.get('auto_fail'):
+                    ded += " (auto-fail)"
+                by = 'script' if issue_type in AUTO_DETECTED[key] else 'reviewer'
+                out.append(f"| {severity.capitalize()} | {spec['label']} | {ded} | {by} |")
+        out.append("")
+    return "\n".join(out).rstrip("\n") + "\n"
 
 THRESHOLDS = {
     'commit': 80,
@@ -249,12 +293,19 @@ class IssueDetector:
 
     @staticmethod
     def check_hardcoded_paths(content: str) -> List[int]:
-        """Detect absolute paths in R scripts."""
+        """Detect absolute paths in R scripts.
+
+        Flags a string literal that opens with `/` (Unix root), a drive letter
+        (`"C:\\..."`), or a UNC prefix (`"\\\\\\\\server"` in R source). A literal
+        opening with a single escaped backslash is NOT a path: that is how R
+        writes LaTeX (`"\\\\begin{tabular}"`), and flagging it made the template's
+        own table script score 0.
+        """
         issues = []
         lines = content.split('\n')
 
         for i, line in enumerate(lines, 1):
-            if re.search(r'["\'][/\\]|["\'][A-Za-z]:[/\\]', line):
+            if re.search(r'["\'](?:/|\\\\\\\\)|["\'][A-Za-z]:[/\\]', line):
                 if not re.search(r'http:|https:|file://|/tmp/', line):
                     issues.append(i)
 
@@ -413,7 +464,7 @@ class QualityScorer:
                 'type': 'compilation_failure',
                 'description': 'Quarto compilation failed',
                 'details': error[:200],
-                'points': 100
+                'points': pts(QUARTO_RUBRIC, 'critical', 'compilation_failure')
             })
             self.score = 0
             return self._generate_report()
@@ -427,9 +478,9 @@ class QualityScorer:
                 'type': 'equation_overflow',
                 'description': f'Potential equation overflow at line {line}',
                 'details': 'Single equation line >120 chars may overflow slide',
-                'points': 20
+                'points': pts(QUARTO_RUBRIC, 'critical', 'equation_overflow')
             })
-            self.score -= 20
+            self.score -= pts(QUARTO_RUBRIC, 'critical', 'equation_overflow')
 
         # Check broken citations (LaTeX-style \cite patterns)
         bib_file = self.filepath.parent.parent / 'Bibliography_base.bib'
@@ -444,9 +495,9 @@ class QualityScorer:
                 'type': 'broken_citation',
                 'description': f'Citation key not in bibliography: {key}',
                 'details': 'Add to Bibliography_base.bib or fix key',
-                'points': 15
+                'points': pts(QUARTO_RUBRIC, 'critical', 'broken_citation')
             })
-            self.score -= 15
+            self.score -= pts(QUARTO_RUBRIC, 'critical', 'broken_citation')
 
         # Check plotly widgets (if HTML exists)
         html_file = self.filepath.parent.parent / 'docs' / 'slides' / self.filepath.with_suffix('.html').name
@@ -459,9 +510,9 @@ class QualityScorer:
                     'type': 'missing_plotly_chart',
                     'description': f'{missing} plotly chart(s) failed to render',
                     'details': f'Expected {expected_plotly}, found {widget_count}',
-                    'points': 10 * missing
+                    'points': pts(QUARTO_RUBRIC, 'critical', 'missing_plotly_chart') * missing
                 })
-                self.score -= 10 * missing
+                self.score -= pts(QUARTO_RUBRIC, 'critical', 'missing_plotly_chart') * missing
 
         self.score = max(0, self.score)
         return self._generate_report()
@@ -479,7 +530,7 @@ class QualityScorer:
                 'type': 'syntax_error',
                 'description': 'R syntax error',
                 'details': error[:200],
-                'points': 100
+                'points': pts(R_SCRIPT_RUBRIC, 'critical', 'syntax_error')
             })
             self.score = 0
             return self._generate_report()
@@ -493,9 +544,9 @@ class QualityScorer:
                 'type': 'hardcoded_path',
                 'description': f'Hardcoded absolute path at line {line}',
                 'details': 'Use relative paths or here::here()',
-                'points': 20
+                'points': pts(R_SCRIPT_RUBRIC, 'critical', 'hardcoded_path')
             })
-            self.score -= 20
+            self.score -= pts(R_SCRIPT_RUBRIC, 'critical', 'hardcoded_path')
 
         # Check for set.seed() if randomness detected
         has_random = any(fn in content for fn in ['rnorm', 'runif', 'sample', 'rbinom', 'rnbinom'])
@@ -505,9 +556,9 @@ class QualityScorer:
                 'type': 'missing_set_seed',
                 'description': 'Missing set.seed() for reproducibility',
                 'details': 'Add set.seed(YYYYMMDD) after library() calls',
-                'points': 10
+                'points': pts(R_SCRIPT_RUBRIC, 'major', 'missing_set_seed')
             })
-            self.score -= 10
+            self.score -= pts(R_SCRIPT_RUBRIC, 'major', 'missing_set_seed')
 
         self.score = max(0, self.score)
         return self._generate_report()
@@ -525,7 +576,7 @@ class QualityScorer:
                     'type': 'compilation_failure',
                     'description': f'LaTeX syntax issue at line {issue["line"]}',
                     'details': issue['description'],
-                    'points': 100
+                    'points': pts(BEAMER_RUBRIC, 'critical', 'compilation_failure')
                 })
             self.auto_fail = True
             self.score = 0
@@ -542,9 +593,9 @@ class QualityScorer:
                 'type': 'undefined_citation',
                 'description': f'Citation key not in bibliography: {key}',
                 'details': 'Add to Bibliography_base.bib or fix key',
-                'points': 15
+                'points': pts(BEAMER_RUBRIC, 'critical', 'undefined_citation')
             })
-            self.score -= 15
+            self.score -= pts(BEAMER_RUBRIC, 'critical', 'undefined_citation')
 
         # Check for lines likely to cause overfull hbox
         overfull_lines = IssueDetector.check_overfull_hbox_risk(content)
@@ -553,9 +604,9 @@ class QualityScorer:
                 'type': 'overfull_hbox',
                 'description': f'Potential overfull hbox at line {line}',
                 'details': 'Line >120 chars inside frame may overflow slide width',
-                'points': 10
+                'points': pts(BEAMER_RUBRIC, 'critical', 'overfull_hbox')
             })
-            self.score -= 10
+            self.score -= pts(BEAMER_RUBRIC, 'critical', 'overfull_hbox')
 
         # Check equation overflow (same heuristic as Quarto)
         equation_overflows = IssueDetector.check_equation_overflow(content)
@@ -564,9 +615,9 @@ class QualityScorer:
                 'type': 'overfull_hbox',
                 'description': f'Potential equation overflow at line {line_num}',
                 'details': 'Single equation line >120 chars likely to overflow',
-                'points': 10
+                'points': pts(BEAMER_RUBRIC, 'critical', 'overfull_hbox')
             })
-            self.score -= 10
+            self.score -= pts(BEAMER_RUBRIC, 'critical', 'overfull_hbox')
 
         self.score = max(0, self.score)
         return self._generate_report()
@@ -735,12 +786,20 @@ Exit Codes:
         """
     )
 
-    parser.add_argument('filepaths', type=Path, nargs='+', help='Path(s) to file(s) to score')
+    parser.add_argument('filepaths', type=Path, nargs='*', help='Path(s) to file(s) to score')
     parser.add_argument('--summary', action='store_true', help='Show summary only')
     parser.add_argument('--verbose', action='store_true', help='Show all issues including minor')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
+    parser.add_argument('--print-rubric', action='store_true',
+                        help='Print the rubric tables that .claude/rules/quality-gates.md mirrors, then exit')
 
     args = parser.parse_args()
+
+    if args.print_rubric:
+        print(render_rubric(), end='')
+        sys.exit(0)
+    if not args.filepaths:
+        parser.error('at least one file path is required (or use --print-rubric)')
 
     results = []
     exit_code = 0

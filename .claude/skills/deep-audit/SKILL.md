@@ -31,7 +31,7 @@ Requires the user to have opted into multi-agent orchestration (they asked for a
 
 **4. Synthesize.** Dedup by location, rank fatal > major > minor, and hand back one clean defect list. Nothing is accepted as an issue until it survives this.
 
-**5. Fix all confirmed, then re-verify.** Apply every confirmed fix (you, in the main loop — fixing needs care and judgment). Then re-audit the touched spots and check that no fix created a new defect. Repeat waves until an audit pass comes back empty. Don't stop after the first wave.
+**5. Fix all confirmed, then re-verify.** Apply every confirmed fix (you, in the main loop — fixing needs care and judgment). Then re-audit the touched spots and check that no fix created a new defect. Repeat waves until **two consecutive** audit passes come back empty (fallback cap: 5 waves; a finding that survives waves N and N+2 goes to the user rather than a third patch). Don't stop after the first wave.
 
 ## Failure-mode lenses (adapt to domain)
 Beyond per-component attacks, sweep these cross-cutting modes explicitly — they are where real defects hide:
