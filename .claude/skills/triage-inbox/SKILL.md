@@ -11,7 +11,7 @@ effort: medium
 
 Turn a noisy academic inbox into a short, decision-ready digest. Fetch recent mail and calendar context through the session's MCP servers (Gmail / Google Calendar), classify each thread into the categories an academic actually acts on, and propose **one** action per thread — always human-gated. The companion artifact is a running **referee-obligations tracker** so you never silently overcommit to reviews.
 
-**Core principle:** this skill *reads, classifies, and proposes*. It drafts; it never sends, accepts, declines, or books anything without you. That boundary is what makes it safe to run unattended as a [`/schedule`](#cross-references) routine.
+**Core principle:** this skill *reads, classifies, and proposes*. It drafts; it never sends, accepts, declines, or books anything without you. That boundary is what makes it safe to run unattended as a local Desktop scheduled task — not a cloud `/schedule` routine, whose fresh clone would lose the gitignored digest and tracker.
 
 ## When to use
 

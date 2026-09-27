@@ -2,7 +2,7 @@
 
 The loop-first half of the workflow: recurring scholarly chores that should run *on a schedule* and surface only when they find something — not when you remember to run them. These are **Routines** (cron-scheduled remote agents managed by `/schedule`), not committed cron files, so they survive a closed laptop and run on web infrastructure.
 
-> **Use Routines, not `CronCreate`,** for any away-from-keyboard work — Routines run on managed infra and persist; a local cron dies with the REPL. Each routine below is a *prompt + interval*; set them up once with `/schedule`.
+> **Use Routines, not `CronCreate`,** for any away-from-keyboard work — Routines run on managed infra and persist; a local cron dies with the REPL. Each routine below is a *prompt + interval*; set them up once with `/schedule`. **One exception:** inbox triage runs as a Desktop scheduled task on your machine, because its digest and referee tracker are gitignored and would not survive a routine's fresh clone.
 
 ## Standing routines (and one reminder)
 
@@ -13,7 +13,7 @@ The loop-first half of the workflow: recurring scholarly chores that should run 
 | **Memory promotion** | monthly — **a reminder, not a routine** | run `/promote-memory` yourself in a local session: it is user-invoked, and its candidates live in machine-local auto memory a cloud routine cannot see | items graduate to MEMORY.md |
 | **Inbox triage** | daily / weekdays — **a Desktop scheduled task (local), not a cloud routine** | `/triage-inbox` — referee requests, R&R deadlines, co-author asks. Its digest and referee tracker are gitignored and machine-local, so a cloud routine's fresh clone would start with no tracker and discard the digest | action proposed (always human-gated) |
 
-**A routine cannot fire a user-invoked skill.** Skills marked `disable-model-invocation: true` (e.g. `/triage-inbox`, `/promote-memory`) do not run when a scheduled task names them as its prompt. For such a skill, write the routine prompt as "Read `.claude/skills/<name>/SKILL.md` and follow it" — the routine's fresh clone has the file — or run it yourself.
+**A scheduled task cannot fire a user-invoked skill.** Skills marked `disable-model-invocation: true` (e.g. `/triage-inbox`, `/promote-memory`) do not run when a scheduled task — a cloud routine or a Desktop task — names them as its prompt. For such a skill, write the prompt as "Read `.claude/skills/<name>/SKILL.md` and follow it" — the task's checkout has the file — or run it yourself.
 
 **Push-on-failure, silence-on-success.** A nightly job that emails "all good" every day trains you to ignore it. These notify only on a real finding; a quiet run leaves no trace but a log line.
 

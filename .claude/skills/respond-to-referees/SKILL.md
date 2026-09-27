@@ -19,11 +19,11 @@ Supported formats and how to read them. In the commands below, `FILE` stands for
 | Format | How to extract text |
 | --- | --- |
 | `.tex`, `.qmd`, `.md`, `.txt` | Read directly with the `Read` tool. |
-| `.pdf` | `TMP=$(mktemp --suffix=.txt) && pdftotext "FILE" "$TMP"` (poppler-utils; use `mktemp -t ...` on macOS if `--suffix` is unsupported). Grep `"$TMP"`. |
-| `.docx` | `TMP=$(mktemp --suffix=.txt) && pandoc "FILE" -t plain -o "$TMP"` (or `docx2txt "FILE" "$TMP"`). Grep `"$TMP"`. |
-| `.html` | `TMP=$(mktemp --suffix=.txt) && pandoc "FILE" -t plain -o "$TMP"`. Grep `"$TMP"`. |
+| `.pdf` | `TMP=$(mktemp -d)/input.txt && pdftotext "FILE" "$TMP"` (poppler-utils). Grep `"$TMP"`. |
+| `.docx` | `TMP=$(mktemp -d)/input.txt && pandoc "FILE" -t plain -o "$TMP"` (or `docx2txt "FILE" "$TMP"`). Grep `"$TMP"`. |
+| `.html` | `TMP=$(mktemp -d)/input.txt && pandoc "FILE" -t plain -o "$TMP"`. Grep `"$TMP"`. |
 
-If a required tool is missing or extraction fails, ask the user to provide a plain-text version (`.txt` or `.md`) and stop. A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "FILE" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read.
+If a required tool is missing or extraction fails, ask the user to provide a plain-text version (`.txt` or `.md`) and stop. A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "FILE" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read. When you are done, delete the extracted copy (`rm -rf "$(dirname "$TMP")"`): it is a plaintext copy of the document.
 
 ## Workflow
 

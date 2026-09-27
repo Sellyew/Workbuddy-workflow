@@ -270,7 +270,8 @@ absent; the debt was drift between files.
   - **`/grant-proposal --call <file>`** reads the program's actual call — its sections, limits and
     review criteria override the generic funder profile.
   - **Scanned PDFs:** `/teach-from-paper`, `/respond-to-referees`, `/respond-to-eval` and
-    `/seven-pass-review` compare `pdfinfo`'s page count with the pages that returned text.
+    `/seven-pass-review` compare `pdfinfo`'s page count with the pages that returned text; the extracted text goes to a
+    private temp folder that is deleted when the skill is done (before, a plaintext copy was left behind).
   - **Guide:** an optional fresh-context read of a plan before approval; read any skill, hook or
     plugin before installing it.
 

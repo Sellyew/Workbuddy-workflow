@@ -43,8 +43,9 @@ cell-level outputs that have not cleared `/disclosure-check`, no credentials. Yo
 proofs, and code are what a consult is for — send them. A manuscript or proposal you are *reviewing* is
 not yours to send: it is held in confidence. Many journals tell reviewers not to put a submission
 into AI tools, and NIH forbids its peer reviewers from uploading any part of an application,
-proposal or critique to one (NOT-OD-23-149). When a file mixes the paper with
-restricted material, send the paper without the restricted part.
+proposal or critique to one (NOT-OD-23-149). When a file mixes your own paper
+with restricted material, send the paper without the restricted part; a submission you are
+reviewing stays unsendable even after redaction.
 
 Mechanics, flags, and gotchas: the reference, §2–§3. Pick the target from the reference's
 **targets table** (it is account-dependent — confirm the resolved `target=` with a

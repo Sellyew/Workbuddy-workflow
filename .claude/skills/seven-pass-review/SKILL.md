@@ -37,7 +37,7 @@ Each lens runs as its own subagent in a **fresh context** (never a conversation 
 ### Phase 0: Pre-flight
 
 1. Resolve manuscript path.
-2. Decide if `.pdf` → extract text first (`TMP=$(mktemp -t paper).txt && pdftotext -layout "$0" "$TMP"`). A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "$0" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read.
+2. Decide if `.pdf` → extract text first (`TMP=$(mktemp -d)/paper.txt && pdftotext -layout "$0" "$TMP"`). A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "$0" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read. When you are done, delete the extracted copy (`rm -rf "$(dirname "$TMP")"`): it is a plaintext copy of the manuscript.
 3. Create output dir: `quality_reports/seven_pass_[stem]/`.
 
 ### Phase 1: Spawn 7 reviewers in parallel
