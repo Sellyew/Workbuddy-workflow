@@ -49,7 +49,7 @@ Generate the dependency lockfile(s) and an environment snapshot for each detecte
 
 - **R** — `renv::snapshot()` → `renv.lock`; `sessionInfo()` → `output/sessionInfo.txt`.
 - **Python** — `pip freeze` → `requirements.txt` (or export the conda `environment.yml`); record `python --version`.
-- **Stata** — `creturn list` / `about` → `output/stata_version.txt`; confirm every `.do` pins `version NN` (per [`stata-code-conventions.md`](../../rules/stata-code-conventions.md)).
+- **Stata** — `creturn list` / `about` / the `which` list → `output/sessionInfo_stata.txt`, the environment record the Stata convention requires; confirm every `.do` pins `version NN` (per [`stata-code-conventions.md`](../../rules/stata-code-conventions.md)).
 - **Container (recommended by DCAS for non-trivial setups)** — scaffold a `Dockerfile` pinning the base image + language version.
 
 ### Phase 3: Confirm claims reproduce before packaging
@@ -71,7 +71,7 @@ replication_package/
 │   ├── raw/                 # as-obtained (or a pointer + DUA note if restricted)
 │   └── analysis/            # constructed analysis files
 ├── code/                    # numbered scripts + master script (00_run_all.* / 99_run_all.do)
-└── output/                  # tables/, figures/, logs/, sessionInfo.txt, renv.lock / requirements.txt
+└── output/                  # tables/, figures/, logs/, sessionInfo.txt (R) / sessionInfo_stata.txt (Stata), renv.lock / requirements.txt
 ```
 
 Then emit the **DCAS compliance checklist** (`replication_package/DCAS_checklist.md`): Data Availability Statement present · every dataset has source + access + license · master script present and one-command · computational requirements stated · every Table/Figure mapped to program:line · no absolute/machine-specific paths in code · seeds set for any stochastic step · license file (a code license such as BSD/MIT + a data-usage statement). Mark each PASS / FAIL / `[FILL]`.

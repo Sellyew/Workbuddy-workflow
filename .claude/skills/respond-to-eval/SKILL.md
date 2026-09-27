@@ -116,7 +116,7 @@ If all themes are classified and every Change names a target, say `All themes cl
 - [`.claude/skills/respond-to-referees/SKILL.md`](../respond-to-referees/SKILL.md) — the research analogue; this skill borrows its map-classify-respond shape and "signal to investigate, not auto-act" posture.
 - [`.claude/skills/pedagogy-review/SKILL.md`](../pedagogy-review/SKILL.md) — once a **Change** targets a specific deck, run pedagogy-review on it before re-teaching.
 - [`.claude/skills/create-lecture/SKILL.md`](../create-lecture/SKILL.md) — to execute deck-level changes the plan proposes.
-- [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — the forked-verifier protocol Phase 3.5 reuses.
+- [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — the fresh-context verifier protocol Phase 3.5 reuses.
 - [`templates/skill-template.md`](../../../templates/skill-template.md) — house style for skills.
 
 ## What this skill does NOT do

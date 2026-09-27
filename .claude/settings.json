@@ -33,6 +33,17 @@
             "timeout": 20
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(gh *)",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/issue-guard.py",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "Notification": [
@@ -74,6 +85,11 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-handoff.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/open-issues.py",
             "timeout": 5
           }
         ]

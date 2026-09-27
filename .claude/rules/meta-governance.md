@@ -145,7 +145,7 @@ correctness bug — see [`replication-protocol.md`](replication-protocol.md).
 
 **Review cadence:** As needed (no pressure to formalize)
 
-**Size limit:** None (doesn't load into context automatically)
+**Size limit:** Keep the auto-memory `MEMORY.md` index short. Claude Code loads it into every session automatically, and only the head of a long index is loaded. Every line costs context and can steer a session without showing up anywhere, so keep the detail in the topic files.
 
 ---
 

@@ -38,7 +38,7 @@ paths:
 ```r
 # --- Your institutional palette ---
 primary_blue  <- "#012169"
-primary_gold  <- "#f2a900"
+primary_gold  <- "#b9975b"
 accent_gray   <- "#525252"
 positive_green <- "#15803d"
 negative_red  <- "#b91c1c"
@@ -91,7 +91,7 @@ saveRDS(result, file.path(out_dir, "descriptive_name.rds"))
 3. The line is in a numerically intensive section (simulation loops, estimation routines, inference calculations)
 
 **Quality Gate Impact:**
-- Long lines in non-mathematical code: minor penalty (-1 to -2 per line)
+- Long lines in non-mathematical code: a reviewer-applied Style violation (-1; see the R Scripts table in [`quality-gates.md`](quality-gates.md), generated from `scripts/quality_score.py`, which does not measure line length itself)
 - Long lines in documented mathematical sections: no penalty
 
 ## 8. Numerical Discipline

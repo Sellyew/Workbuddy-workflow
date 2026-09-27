@@ -5,7 +5,8 @@ Git & Path Guardrails Hook (PreToolUse)
 Blocks the small set of operations that are destructive or that the
 template's own conventions forbid — before they run, not after. Adapted
 from the `git-guardrails` pattern in mattpocock/skills, scoped so the
-normal workflow (`/commit` pushes, stages specific files) still works.
+normal workflow (`/commit` stages specific files, and pushes only with
+`--pr`) still works.
 
 Two checks, by tool:
 

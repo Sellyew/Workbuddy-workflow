@@ -29,15 +29,41 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 
 # svglite is OPTIONAL but documented. If absent, fail LOUDLY (warning + explicit
 # note in the output list) rather than silently skipping a promised artifact.
-has_svg   <- requireNamespace("svglite", quietly = TRUE)
-has_cairo <- tryCatch(capabilities("cairo"), error = function(e) FALSE)
+has_svg <- requireNamespace("svglite", quietly = TRUE)
+
+# cairo_pdf gives nicer anti-aliasing and font embedding, but capabilities("cairo")
+# only says cairo was compiled in: on macOS without XQuartz it reports TRUE and the
+# library then fails to load, so the device never opens and ggsave silently draws
+# into Rplots.pdf instead (issue #156). Decide by actually opening the device.
+cairo_works <- function() {
+  if (!isTRUE(tryCatch(capabilities("cairo"), error = function(e) FALSE))) return(FALSE)
+  probe  <- tempfile(fileext = ".pdf")
+  before <- grDevices::dev.list()
+  ok <- tryCatch({
+    suppressWarnings(grDevices::cairo_pdf(probe))
+    opened <- setdiff(grDevices::dev.list(), before)
+    if (length(opened) > 0) grDevices::dev.off(opened[1])
+    length(opened) > 0 && file.exists(probe)
+  }, error = function(e) FALSE)
+  unlink(probe)
+  isTRUE(ok)
+}
+
+# A promised figure either exists and is non-empty, or the run stops naming it.
+save_checked <- function(path, plot, device) {
+  unlink(path)
+  ggsave(path, plot, width = 5, height = 3.5, device = device)
+  if (!file.exists(path) || file.size(path) == 0) {
+    stop("05_figures.R: ", path, " was not written (the graphics device failed). ",
+         "Nothing was silently skipped; fix the device and re-run 00_run_all.R.")
+  }
+  message("Wrote ", path)
+}
 
 fig_main_pdf <- file.path(OUT_DIR, "fig_main.pdf")
 fig_main_svg <- file.path(OUT_DIR, "fig_main.svg")
 
-# Choose the best available PDF device. cairo_pdf gives nicer anti-aliasing
-# and font embedding but isn't compiled into every R build.
-pdf_device <- if (has_cairo) grDevices::cairo_pdf else grDevices::pdf
+pdf_device <- if (cairo_works()) grDevices::cairo_pdf else grDevices::pdf
 
 library(ggplot2)
 
@@ -52,12 +78,10 @@ p <- ggplot(df, aes(x = factor(treated, labels = c("Control", "Treated")),
     axis.text = element_text(color = "#1A1A1A")
   )
 
-ggsave(fig_main_pdf, p, width = 5, height = 3.5, device = pdf_device)
-message("Wrote ", fig_main_pdf)
+save_checked(fig_main_pdf, p, pdf_device)
 
 if (has_svg) {
-  ggsave(fig_main_svg, p, width = 5, height = 3.5, device = svglite::svglite)
-  message("Wrote ", fig_main_svg)
+  save_checked(fig_main_svg, p, svglite::svglite)
 } else {
   # Loud skip — warning() not message() so it shows up in `summary(sessionInfo())`
   # and in any CI log that collects warnings.

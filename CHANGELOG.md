@@ -42,15 +42,25 @@ absent; the debt was drift between files.
   Code does not honour a bypass default in project settings — the terminal session starts in
   Manual mode — so the shipped default was dead configuration; with no override, Claude Code
   ≥ 2.1.283 starts in auto mode. This supersedes the v2.5.0 ruling that kept the bypass default,
-  whose premise no longer holds for project settings. The allow list is unchanged, and
-  `.vscode/settings.json` still starts VS Code sessions in bypass (that layer is honoured) —
-  the docs now say so and how to remove it.
+  whose premise no longer holds for project settings. The allow list is unchanged.
+  `.vscode/settings.json` still carries two bypass keys, but they do not set the VS Code starting
+  mode: the current extension reads `claudeCode.initialPermissionMode` and
+  `claudeCode.allowDangerouslySkipPermissions` from user settings only, and never reads the
+  unprefixed key, so VS Code bypass is configured in user settings.
 - TROUBLESHOOTING, the guide, and `/permission-check` now teach the two override rules (project
   settings cannot set bypass or auto; the VS Code extension ignores project settings for its
   starting mode), and the protected-path text matches the docs (Manual prompts, auto routes to
   the classifier, bypass allows).
 - **Restricted data stays off the model.** A paste-ready deny-rule block, and a new section in
   `confidential-data.md` covering deny rules, external capture tools, and external-model consults.
+
+### Changed — `/commit` stops at the commit (owner decision, 2026-09-26)
+
+- **`/commit` no longer pushes, opens a pull request, or merges by default.** It runs the gates and
+  commits (on a new branch when on `main`). `--pr`, or asking for a pull request, pushes and opens
+  one. **It never merges**: a merge happens only when you say to merge that pull request, after
+  its CI and reviews (human, Codex, Copilot) have been read. Before, the skill's last step merged
+  the pull request as soon as it was opened, before any reviewer had commented.
 
 ### Changed — the external referee
 
@@ -115,6 +125,31 @@ absent; the debt was drift between files.
   moved into the script, and every deduction now reads its weight from the rubric.
 - **Fixed:** the repo-hygiene gate rejected the top-level folders the new layout recommends
   (`output/`, `data/`, `R/`, `tests/`); they are now allowed.
+- **Fixed:** `scripts/R/05_figures.R` reported writing `fig_main.pdf` when the PDF device had
+  failed — cairo compiled in but not loadable, as on macOS without XQuartz — and left
+  `Rplots.pdf` in the working directory. It now chooses the device by opening it, and stops,
+  naming the file, if a promised figure was not written (#156).
+- **Fixed:** `/replication-package` wrote Stata's environment to `output/stata_version.txt`; the
+  Stata convention requires `output/sessionInfo_stata.txt`, and the skill now also checks that
+  every `.do` pins `version NN` (#157).
+- **Fixed:** `promote-memory-council`'s description said "forked context" while its body requires
+  a fresh one (#158); the same wording is corrected in seven other files, and the guide.
+- **Fixed:** `slide-qa.py` exited 0 on a deck whose math never typeset (no network, or MathJax
+  blocked); it now fails with exit 2 and says how to fix it (#159). A slide that both overflows and
+  hides clipped content now reports both, instead of only the first (#160).
+- **Fixed:** `quarto-critic` could return APPROVED with major issues open, so `/qa-quarto` never ran
+  its fixer on them; APPROVED now requires every hard gate to pass and no critical or major issue
+  (#161).
+- **Fixed:** 131 statements in the README, the guide, rules, skills and agents disagreed with the
+  repository after the release was assembled (counts, paths, flags, removed features); each was
+  confirmed against the tree and corrected. A second, independent pass over the README, the guide,
+  `CLAUDE.md` and the landing page checked 865 statements and confirmed 44 more, also corrected —
+  among them the guide's worked examples, which showed `/slide-excellence`, `/review-paper` and
+  `/data-analysis` doing steps they do not do (#162).
+- **Fixed:** `/preregister` looked for a `paper_type:` field that `/interview-me` never writes (it
+  writes a `**Paper type:**` line), so the paper type never reached the style choice.
+- **Fixed:** `check-derived-counts.py` counted `/translate-to-quarto`'s Phase 6.5 as a second
+  Phase 6, so the README's wrong "11 translation phases" passed; it now counts 12.
 - **Fixed:** the hardcoded-path check read R strings that open with an escaped backslash — how R
   writes LaTeX — as Windows paths, so the template's own `04_tables.R` scored 0.
 - **Fixed:** `check-derived-counts.py` compared the battery-size claim in *published* CHANGELOG
@@ -167,13 +202,32 @@ absent; the debt was drift between files.
   case (they break on Linux and GitHub Pages) — each pinned to the slide that uses it.
 - **`gate:off`** in the status line when the repo's pre-commit gate is not installed.
 - **Faster pre-commit.** The hook battery (most of the suite's run time) is skipped locally when no
-  hook, hook setting or battery file is staged; CI runs every gate on every push.
+  hook, hook setting or battery file is staged; CI runs every gate on every pull request and on
+  every push to a branch other than main.
 - **"Changed defaults"** is a required section of the PR template and of the PR body `/commit`
   writes.
 - **`/checkpoint` and `/compress-session` write only what the session established** — no
   `path:line` they did not read, no padded sections, earlier handoff text carried forward only if
   re-checked — because the handoff now hands their files to the next session automatically.
-- **Guide: adopting the template in an existing project** — five steps, tested end to end on a
+- **GitHub issues as the project's memory.** `CLAUDE.md` now states the practice, and
+  `issue-ledger.md` spells out what gets an issue: every shipped bug (opened before the fix),
+  every improvement deferred for later, every owner decision that blocks work, and one summary
+  issue per review round over an unmerged branch. Issues are closed by hand when the fix lands —
+  a short closing comment for a small fix, the full seven sections for anything that can move a
+  result — and never carry restricted data. A guide section explains the habit for papers.
+- **`/issues`** files findings as issues, lists what is open, and closes an issue with a comment on
+  what was tried and how it was fixed; it shows every draft and posts nothing without a yes, and
+  warns before posting to a public repository. `/review-paper`, `/seven-pass-review` and
+  `/adjudicate-review` offer it at the end.
+- **Duplicate check on every new issue.** `scripts/file-issue.py` searches open and closed issues
+  several ways and creates nothing until each candidate has been reviewed; the issue body records
+  the check. A new hook, `issue-guard.py`, denies a raw `gh issue create` (or a REST or GraphQL
+  create) and points to the script. It is spawned only for `gh` commands (`"if": "Bash(gh *)"`,
+  Claude Code 2.1.85 or later; older versions run it on every Bash call, still correctly).
+- **Open issues at startup (opt-in).** With `CLAUDE_ISSUES_AT_START=1`, the new `open-issues.py`
+  hook lists open issues' numbers and titles — by the owner and collaborators only — when a
+  session starts. Off by default: it calls GitHub on every startup.
+- **Guide: adopting the template in an existing project** — six steps, tested end to end on a
   project with its own README and folders.
 - `check-model-versions.sh` catches superseded **model IDs**, refuses to let a comparison excuse a
   line that asserts a **default**, and scans `agent-fleet.md` — qualified on seeded defects, with a
@@ -194,8 +248,8 @@ absent; the debt was drift between files.
 - **awesome-ai-agents** — no scholarly tools; its restricted-data concern is adopted above,
   browser-measured slide QA is adopted (see Added), and gate mutation testing goes to the backlog.
 
-**Inventory at release: 60 skills, 18 agents, 37 rules, 9 hooks, 10 gates**
-(v2.5.1: 8 hooks; the rest unchanged).
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 10 gates**
+(v2.5.1: 60 skills, 8 hooks; the rest unchanged).
 
 ### Verification of this release
 
@@ -211,7 +265,7 @@ absent; the debt was drift between files.
   across lenses); all confirmed findings are fixed. **The loop was stopped after round 2 by
   owner decision, so convergence (two consecutive rounds with nothing new) is not claimed.**
 - **Gates:** `./scripts/backtest.sh` passes all 10 gates, including the hook battery
-  (253 cases, seconds to run; the new case fails against the hook's old watch pattern).
+  (296 cases, seconds to run; the new case fails against the hook's old watch pattern).
   Every checker this release changed was re-qualified on seeded defects with clean controls
   (ledger rows): `check-model-versions.sh` 5/5 recall, 0/4 false positives;
   `validate-findings.py --fill-ids` 4/4; `check-derived-counts.py` seven-pass pattern 1/1,

@@ -44,7 +44,7 @@ Economics framing is the primary lens (DiD/event-study, IV, RCT, panel; AEA Data
 
 1. Resolve `--funder` (or infer from the request wording; default `nsf`). Echo the chosen profile back before drafting.
 2. Locate the research spec: `--input <path>`, else the most recent `quality_reports/specs/research_spec_*.md` from `/interview-me`. If none exists, **stop and recommend `/interview-me`** — do not invent the science.
-3. From the spec, extract: research question, hypotheses (directional), identification strategy (DiD / IV / RDD / RCT / structural), data sources, sample, expected results, contribution. Record any `paper_type:` field.
+3. From the spec, extract: research question, hypotheses (directional), identification strategy (DiD / IV / RDD / RCT / structural), data sources, sample, expected results, contribution. Record the spec's `**Paper type:**` value if present (the header line `/interview-me` writes; accept a `paper_type:` field in a hand-written spec too).
 4. Scan `quality_reports/` for adjacent artifacts to reuse: a `/lit-review` synthesis (prior work), a `/preregister` PAP (analysis plan), a `passport.yaml` or `/data-analysis` outputs (preliminary results).
 
 ### Phase 1 — Scaffold sections from templates + the spec

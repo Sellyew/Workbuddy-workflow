@@ -30,7 +30,7 @@ Each agent:
    - Current text
    - Proposed fix
    - Category (grammar / typo / overflow / consistency)
-3. Saves report to `quality_reports/` (e.g., `quality_reports/LectureN_Topic_report.md`)
+3. Returns the report as its final response; the `/proofread` skill saves it to `quality_reports/` (e.g., `quality_reports/LectureN_Topic_report.md`, or `quality_reports/LectureN_Topic_qmd_report.md` for a `.qmd` file)
 4. **Does NOT modify any source files**
 
 ### Phase 2: Review & Approve

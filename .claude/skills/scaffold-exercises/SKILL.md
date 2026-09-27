@@ -72,10 +72,10 @@ For every problem, write:
 
 ### Phase 3: Write student set + solution key
 
-Emit two files (paths configurable; default under the working directory):
+Emit two files (paths configurable; default under `quality_reports/teaching/`, beside `/respond-to-eval`'s teaching plans. A new top-level directory such as `exercises/` fails `scripts/check-repo-hygiene.py` once committed, unless it is added to that script's `ROOT_ALLOW_DIRS`):
 
-- `exercises/<topic-slug>_problems.md` — the **student set**: sections, problems, any data, NO answers.
-- `exercises/<topic-slug>_solutions.md` — the **solution key**: each problem restated, its worked solution, and its explainer.
+- `quality_reports/teaching/<topic-slug>_problems.md` — the **student set**: sections, problems, any data, NO answers.
+- `quality_reports/teaching/<topic-slug>_solutions.md` — the **solution key**: each problem restated, its worked solution, and its explainer.
 
 The split is load-bearing: never leak a solution into the student file. With `--no-solutions`, write only the student set and stop.
 

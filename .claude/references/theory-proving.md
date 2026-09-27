@@ -70,7 +70,7 @@ never the exploration history (it would inherit the same blind spots). The audit
 
 Loop: *attempt → failure → diagnosis → new route → draft → audit → repair* — under the
 standard convergence rules ([`verification-ladder.md`](verification-ladder.md): batch fixes,
-one confirmation round, two-strikes escalates to the human).
+stop after two consecutive rounds add no new CONFIRMED defect, two-strikes escalates to the human).
 
 ## 5. Verification and disclosure
 
@@ -91,7 +91,7 @@ one confirmation round, two-strikes escalates to the human).
 |---|---|
 | Proof contract | pre-committed interpretation ([`verification-ladder.md`](verification-ladder.md) rung 5) |
 | Route ledger | the specification-search ledger, applied to proof routes |
-| Isolated explorers | the independence rung — fresh-context forks |
+| Isolated explorers | the independence rung — fresh-context agents |
 | Adversarial audit | [`/deep-audit`](../skills/deep-audit/SKILL.md)'s refute-biased verifier + the FINDING contract |
 | "Computation is evidence" | the five credibility questions — evidence for one never clears another |
 | External referee at the end | [`/oracle-review`](../skills/oracle-review/SKILL.md) — confirmation, not discovery |

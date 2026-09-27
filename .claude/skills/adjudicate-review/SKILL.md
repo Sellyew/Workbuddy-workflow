@@ -66,6 +66,13 @@ Return: what was fixed (location + evidence), what was refuted and why (with the
 
 Stop when a confirmation pass returns no new confirmed defect — only held items and taste. Track the yield: when a round produces mostly refutations, artifacts, and exposition, further rounds cost more to adjudicate than they return. **The number of findings is not a measure of rigor.**
 
+## Tracking what the review found
+
+After the report, offer `/issues file <report>`: it turns the findings this pass confirmed that affect
+correctness or a stated requirement into GitHub issues, one per root cause, each checked against
+open and closed issues first. Nothing is filed without the user's yes; on a public repository it
+warns first, since unpublished weaknesses would be visible to anyone.
+
 ## Cross-references
 
 - [`external-oracle-process.md`](../../references/external-oracle-process.md) §5 — adjudicate, never ingest

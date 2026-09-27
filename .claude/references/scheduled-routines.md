@@ -4,7 +4,7 @@ The loop-first half of the workflow: recurring scholarly chores that should run 
 
 > **Use Routines, not `CronCreate`,** for any away-from-keyboard work — Routines run on managed infra and persist; a local cron dies with the REPL. Each routine below is a *prompt + interval*; set them up once with `/schedule`.
 
-## The four standing routines
+## Standing routines (and one reminder)
 
 | Routine | Interval | What it does | Push when |
 |---|---|---|---|

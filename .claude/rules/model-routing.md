@@ -66,8 +66,8 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 
 ### Mechanical (Haiku tier)
 
-- **TikZ → SVG extraction** (`extract-tikz`'s execution agent).
-- **Bib formatting / citation rewrites** (`validate-bib`'s mechanical fix path).
+- **TikZ → SVG extraction** — if you delegate `/extract-tikz`'s compile-and-convert steps to an agent (the skill runs them inline today; its only agent, `tikz-reviewer`, is Opus-tier).
+- **Bib formatting / citation rewrites** — if you add a fix path (`/validate-bib` is report-only and does not auto-fix).
 - **Memory-promotion voting** (`promote-memory-council`).
 - **Proofread fix application** (when the fix is "replace X with Y" mechanically).
 - **File rename / search-and-replace operations.**

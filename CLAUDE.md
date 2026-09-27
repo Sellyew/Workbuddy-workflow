@@ -2,7 +2,7 @@
 
 <!-- HOW TO USE: Replace [BRACKETED PLACEHOLDERS] with your project info.
      Customize Beamer environments and CSS classes for your theme.
-     Keep this file under ~150 lines — Claude loads it every session.
+     Keep this file under ~200 lines (official guidance) — Claude loads it every session.
      See the guide at docs/workflow-guide.html for full documentation. -->
 
 **Project:** [YOUR PROJECT NAME]
@@ -52,7 +52,7 @@ Cross-session context lives in [MEMORY.md](MEMORY.md); past plans, specs, and se
 **How we remember** — the record lives in the repo, not the transcript:
 
 - [`progress-reports.md`](.claude/rules/progress-reports.md) — GitHub issues as defect memory, `quality_reports/` as work memory, `MEMORY.md` as lesson memory.
-- [`issue-ledger.md`](.claude/rules/issue-ledger.md) — the evidence standard an issue must meet, and the seven-section closure comment.
+- [`issue-ledger.md`](.claude/rules/issue-ledger.md) — every shipped bug, deferred improvement and blocking owner decision gets a GitHub issue, closed by hand when the fix lands; the evidence standard and the closing comment.
 - [`repo-hygiene.md`](.claude/rules/repo-hygiene.md) — **scratch must not become main.** Enforced by `check-repo-hygiene.py` on every commit.
 
 Nothing clears work until it has a row in [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md) — run [`/vaccinate`](.claude/skills/vaccinate/SKILL.md) to put one there.
@@ -94,7 +94,7 @@ TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
 ./scripts/sync_to_docs.sh LectureN
 
 # Quality score
-python scripts/quality_score.py Quarto/file.qmd
+python3 scripts/quality_score.py Quarto/file.qmd
 
 # Palette sync (LaTeX ↔ SCSS)
 ./scripts/check-palette-sync.sh
@@ -130,7 +130,7 @@ The full table of all skills lives in [README.md](README.md#skills-claudeskills)
 - **Data / reproducibility:** `/data-analysis` `/simulation-study` `/audit-reproducibility` `/diagnose` `/replication-package` `/capture-environment` `/power-analysis` `/disclosure-check`
 - **Research / writing:** `/interview-me` `/lit-review` `/research-ideation` `/preregister` `/grant-proposal` `/data-management-plan`
 - **Verification / rigor:** `/vaccinate` `/challenge` `/oracle-review` `/adjudicate-review` `/differential-audit` `/blast-radius` `/verify-artifact` `/credible-claims` `/deep-audit`
-- **Meta / workflow:** `/commit` `/learn` `/new-skill` `/checkpoint` `/context-status` `/deep-audit` `/coauthor-brief` `/triage-inbox`
+- **Meta / workflow:** `/commit` `/learn` `/new-skill` `/checkpoint` `/context-status` `/deep-audit` `/coauthor-brief` `/triage-inbox` `/issues`
 
 Stata (`/stata-replication`), R packages (`/r-package-check`), TikZ (`/extract-tikz`, `/new-diagram`), and more — see the README for the complete index.
 

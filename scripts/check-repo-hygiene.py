@@ -38,6 +38,8 @@ ROOT_ALLOW_DIRS = {
     "output", "data", "R", "tests",
     # ...and the rest of an R package (r-package-conventions.md) and a renv library.
     "man", "vignettes", "inst", "renv",
+    # The deposit /replication-package assembles for a journal's data editor.
+    "replication_package",
 }
 
 # Names that mean "I was experimenting". These must not live in tracked source.

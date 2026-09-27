@@ -199,7 +199,7 @@ source-spec: <path>
 
 ## Data Sharing (SHOULD)
 - **Public data plan:** <yes / no / restricted>
-- **Replication code:** <will be deposited at JEL data archive — see AEA Data and Code Availability Policy>
+- **Replication code:** <will be deposited in the AEA Data and Code Repository (openICPSR) — see AEA Data and Code Availability Policy>
 
 ## Conflicts of Interest (MUST)
 <Disclosure>

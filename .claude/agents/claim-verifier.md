@@ -1,6 +1,6 @@
 ---
 name: claim-verifier
-description: Fresh-context verifier for factual claims made by other agents or skills. Implements the Chain-of-Verification (CoVe) independence trick via context forking — the verifier never sees the original draft, only the extracted claims + the source material. Use when a skill has produced a draft that contains citations, numerical facts, named entities, or literature references that need hallucination-checking before returning to the user.
+description: Fresh-context verifier for factual claims made by other agents or skills. Implements the Chain-of-Verification (CoVe) independence trick by running as its own Agent call in a fresh context (never a conversation fork) — the verifier never sees the original draft, only the extracted claims + the source material. Use when a skill has produced a draft that contains citations, numerical facts, named entities, or literature references that need hallucination-checking before returning to the user.
 tools: Read, Grep, Glob, WebFetch, WebSearch, Bash
 model: opus
 effort: high

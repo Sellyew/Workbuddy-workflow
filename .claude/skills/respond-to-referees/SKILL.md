@@ -81,7 +81,7 @@ Tone conventions: courteous but firm; never defensive; never quote the referee b
 
 ### Step 5: Produce the Response Document
 
-Write the output to `response-to-referees.md` (matching the template filename) or a path the user specifies. Use the structure in `templates/response-to-referees.md`:
+Write the output to `quality_reports/response-to-referees_<paper-slug>.md` or a path the user specifies (not the repo root: `scripts/check-repo-hygiene.py` rejects an unallowlisted root-level file once it is committed). Use the structure in `templates/response-to-referees.md`:
 
 1. **Header** — journal, manuscript ID, revision round, date.
 2. **Cover paragraph** — one paragraph thanking the editor and referees, summarizing the major changes at a high level.
@@ -122,8 +122,8 @@ If everything is covered, the final message should say `All concerns addressed o
 
 ## Output Files
 
-- `response-to-referees.md` — the deliverable (filename matches `templates/response-to-referees.md`)
-- (Optional) `response-to-referees-matrix.csv` — machine-readable concern-to-response mapping for tracking across revisions
+- `quality_reports/response-to-referees_<paper-slug>.md` — the deliverable (structure from `templates/response-to-referees.md`)
+- (Optional) `quality_reports/response-to-referees-matrix_<paper-slug>.csv` — machine-readable concern-to-response mapping for tracking across revisions
 
 ## Pre-submission rehearsal
 
@@ -133,7 +133,7 @@ If everything is covered, the final message should say `All concerns addressed o
 
 - For first-pass manuscript review **before** receiving referee comments, use `/review-paper`.
 - For substantive content audits during revision, use `/review-paper` (or `/seven-pass-review` for a submission-ready draft) — `/slide-excellence` reviews lecture decks, not manuscripts.
-- Save the response to `quality_reports/` if you want a permanent record alongside other quality reports.
+- The response lives in `quality_reports/` by default, alongside the other quality reports, as a permanent record.
 
 ## Verification
 

@@ -277,6 +277,6 @@ After **any** TikZ fix, re-audit **every** TikZ figure in the deck. The same err
 
 ## Integration with the workflow
 
-- **`/extract-tikz` and `/new-diagram`** — both run a Step 1 prevention pre-check against the rules in [`tikz-prevention.md`](tikz-prevention.md) (P3 bare `scale=`, P4 missing directional keyword) before compiling. Both skills use identical grep patterns so behavior doesn't drift.
+- **`/extract-tikz` and `/new-diagram`** — both run a prevention pre-check (`/extract-tikz` Step 1, `/new-diagram` Step 4) against the rules in [`tikz-prevention.md`](tikz-prevention.md) (P3 bare `scale=`, P4 missing directional keyword) before compiling. Both call the same script, `scripts/check-tikz-prevention.py`, so behavior cannot drift.
 - **`tikz-reviewer` agent** — runs the measurement passes here (Pass 1 Bézier, Pass 2 gaps, Pass 3 keywords, Pass 4 boundaries, Pass 4b arc3, Pass 4c text pairs, Pass 5 margins, Pass 5b plotted curves, Pass 6 visual). Must cite the specific pass and formula when reporting a collision.
 - **`quality_score.py`** — its rubric dicts are the scoring source; [`quality-gates.md`](quality-gates.md) mirrors them. The Quarto rubric defines a −5 `tikz_label_overlap` deduction (no automated detector emits it yet — the reviewer's finding is the enforcement); the Beamer rubric has no overlap deduction.

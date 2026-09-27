@@ -31,7 +31,7 @@ The template's 200-line `MEMORY.md` cap defends against *distraction*. The plan-
 | **When** | Explicit stop-point (end of working session, before model switch, before collaborator handoff) | Forced — context is about to auto-compact, or the conversation has accumulated enough noise that distillation pays for itself |
 | **What's preserved** | Active plan, decisions, file pointers, next 1–3 actions | Same, plus an explicit "discarded as noise" line so the next session knows what was *intentionally* not kept |
 | **Output location** | `quality_reports/checkpoints/YYYY-MM-DD_<slug>.md` | `quality_reports/session_logs/YYYY-MM-DD_compression_<slug>.md` |
-| **Triggering** | User-invoked at a natural pause | User-invoked when context fatigue shows, OR proposed via PreCompact hook |
+| **Triggering** | User-invoked at a natural pause | User-invoked when context fatigue shows, OR prompted by the optional PreCompact reminder hook below (not wired by default) |
 | **Memory updates** | Optional auto-proposal of `[LEARN]` entries | Proposes 0–3 `[LEARN]` entries — distillation is when generalizable lessons surface, and a quiet session proposes none |
 
 Both skills are companions to the narrative session-log workflow at `quality_reports/session_logs/`. None replaces the others.
@@ -129,7 +129,7 @@ Report to the user:
 - Counts (decisions made, files touched, open questions, next actions).
 - Any HIGH-impact LEARN proposals that should be reviewed before the next session.
 
-The user reviews. Nothing auto-merges into MEMORY.md — that's `/promote-memory`'s job.
+The user reviews. Nothing auto-merges into MEMORY.md: a proposal the user approves is appended to MEMORY.md on their say-so (as in `/checkpoint` Phase 3), and a machine-specific one is left to native auto memory. `/promote-memory` does not read this file; its candidates come only from native auto memory (`~/.claude/projects/<project>/memory/`).
 
 ## Pairing with PreCompact hook
 

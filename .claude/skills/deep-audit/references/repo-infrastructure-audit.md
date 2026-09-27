@@ -15,18 +15,20 @@ Run a comprehensive consistency audit across the entire repository, fix all issu
 
 ### PHASE 0: Mechanical checks (run FIRST, cheap, deterministic)
 
-Before spawning agents, run the mechanical parity checks:
+Before spawning agents, run the full mechanical battery, then the skill-integrity gate on its own for per-check detail:
 
 ```bash
-python3 scripts/check-skill-integrity.py --verbose
+./scripts/backtest.sh
+python3 scripts/check-skill-integrity.py --verbose   # backtest gate 2, verbose
 ```
 
-This catches four classes of bug that agent-based audits have historically missed:
+`check-skill-integrity.py` catches five classes of bug that agent-based audits have historically missed:
 
 1. Frontmatter `allowed-tools` ↔ body tool-invocation parity (e.g. body spawns `Task` but `Task` not in `allowed-tools` — the v1.7.0 PR #92 miss).
 2. `argument-hint` ↔ body flag parity (flags documented but not advertised, or vice versa).
 3. Internal markdown anchors resolve (no broken `[text](path#anchor)` links — the `#category-11-numerical-discipline` miss on PR #87).
 4. Rule `paths:` ↔ skill implementation parity (rule claims skill follows protocol but skill body has none of the protocol keywords — the `/interview-me` miss on PR #92).
+5. Rule-keyword registry completeness (check 4 only sees rules registered in `RULE_KEYWORDS`, so any rule scoping itself to `.claude/skills/` must be registered, with keywords or with an explicit `[]` and the reason it is not keyword-checkable).
 
 If Phase 0 reports P0 or P1 findings, fix them (or tune the regex if they are false positives) **before** launching the 4 agents. The mechanical layer is cheaper and more precise than agent prompts for these classes.
 
@@ -44,7 +46,7 @@ Focus: `guide/workflow-guide.qmd`
 - No stale counts from previous versions
 
 #### Agent 2: Executable Code Quality
-Focus: **all** executable code in the repo — `.claude/hooks/*.py`, `.claude/hooks/*.sh`, `scripts/*.py`, `scripts/*.sh`, `.claude/scripts/*.sh`. Not just `.claude/hooks/` — when PR #93 added new code under `scripts/`, the original narrow scope meant Copilot + Codex caught 5 bugs the audit missed.
+Focus: **all** executable code in the repo — `.claude/hooks/*.py`, `.claude/hooks/*.sh`, `scripts/*.py`, `scripts/*.sh`, `.claude/scripts/*.sh`, `.githooks/pre-commit`. Not just `.claude/hooks/` — when PR #93 added new code under `scripts/`, the original narrow scope meant Copilot + Codex caught 5 bugs the audit missed.
 
 Hook-specific checks (Stop/PreToolUse/SessionStart protocols, `CLAUDE_PROJECT_DIR` usage, hash-length consistency) apply only to `.claude/hooks/`. Everything below applies to ALL executable code:
 
@@ -54,10 +56,10 @@ Hook-specific checks (Stop/PreToolUse/SessionStart protocols, `CLAUDE_PROJECT_DI
 - **Docstring-claim ↔ implementation parity.** If a function's docstring describes "bidirectional parity" / "fail-open" / "exits 1 on X", the implementation must match. Common drift: one-directional implementation of a claimed-bidirectional contract; exit codes documented as one thing but returning another.
 - **Config-map entries point at live targets.** Keyword dicts, path maps, and rule registries should not contain dead entries (e.g. rule files that don't exist, fields the script doesn't actually read). Dead entries mislead maintainers.
 - JSON input/output correctness (stdin for input, stdout/stderr for output) [hooks only]
-- Exit code correctness. Two valid blocking protocols for Stop/PreToolUse hooks:
-  (a) **exit 2 + reason on stderr** — legacy, still supported
-  (b) **exit 0 + JSON `{"decision": "block", "reason": "..."}` on stdout** — modern; this is what `log-reminder.py` uses and it works correctly
-  Non-blocking hooks always exit 0. On PreCompact, exit 2 **blocks compaction** — use it only when blocking is the point; plain stdout goes to the debug log, so a user-visible note goes out as a JSON `systemMessage` and diagnostics go to stderr
+- Exit code correctness. Blocking protocols differ by hook event:
+  - **Stop:** (a) **exit 2 + reason on stderr** — legacy, still supported; (b) **exit 0 + JSON `{"decision": "block", "reason": "..."}` on stdout** — modern; this is what `log-reminder.py` uses and it works correctly
+  - **PreToolUse:** (a) **exit 2 + reason on stderr** — legacy, still supported; (b) **exit 0 + JSON `{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "..."}}` on stdout** — modern; this is what `git-guardrails.py` and `root-of-trust-guard.py` use. A top-level `{"decision": "block"}` on a PreToolUse hook is the deprecated form, not the modern one
+  - Non-blocking hooks always exit 0. On PreCompact, exit 2 **blocks compaction** — use it only when blocking is the point; plain stdout goes to the debug log, so a user-visible note goes out as a JSON `systemMessage` and diagnostics go to stderr
 - `from __future__ import annotations` for Python 3.8+ compatibility
 - Correct field names from hook input schema (`source` not `type` for SessionStart)
 
@@ -115,6 +117,7 @@ If `guide/workflow-guide.qmd` was modified:
 ```bash
 quarto render guide/workflow-guide.qmd
 cp guide/workflow-guide.html docs/workflow-guide.html
+./scripts/stamp-render.sh   # re-stamp .render-stamp, or the staleness gate fails
 ```
 
 ### PHASE 5: Loop-until-dry or Declare Clean

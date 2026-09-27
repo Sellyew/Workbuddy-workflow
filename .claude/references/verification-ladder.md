@@ -90,7 +90,7 @@ computation rather than on labels.
 
 ---
 
-## Rung 3 — Independence (the fresh-context fork)
+## Rung 3 — Independence (the fresh-context subagent)
 
 A reviewer that has seen the draft cannot un-see it. Three ways to enforce independence, and
 they are **not** interchangeable:
@@ -99,7 +99,7 @@ they are **not** interchangeable:
 |---|---|---|
 | **Critic + fixer** | role tension (critic cannot fix; fixer cannot approve) | presentation and structural defects |
 | **Cross-artifact traversal** | the dependency graph (paper → table → output → script) | paper ↔ code consistency |
-| **CoVe fresh-context fork** | context isolation — the verifier never sees the draft | fabricated citations, wrong numbers, misattribution |
+| **CoVe fresh-context subagent** (its own `Agent` call, never a conversation fork) | context isolation — the verifier never sees the draft | fabricated citations, wrong numbers, misattribution |
 
 Two practices that cost nothing and change outcomes:
 
@@ -107,7 +107,7 @@ Two practices that cost nothing and change outcomes:
   exist before it learns what was promised. Otherwise it grades conformance, not adequacy.
 - **Blind the judge.** Strip revision markers before a comparison, or it grades the diff.
 
-All three mechanisms operate on the **context**. None fences the **environment**: a forked
+All three mechanisms operate on the **context**. None fences the **environment**: a fresh-context
 reviewer with a spotless context still holds the repository checkout — and with it the prior
 round's verdicts and every committed answer key. When the reviewer's output will be compared
 against something, fence the filesystem too:
