@@ -5,7 +5,9 @@ A tracker is only a memory if each problem lives in one place. Before anything i
 created, this runs several searches over OPEN and CLOSED issues (one strict query on
 the title's four most distinctive words, the top three of them alone in titles, every
 --search term you pass, and up to three file paths the title or body names; at most
-eight searches, and any dropped are reported) and lists what it finds. The issue is created only when every candidate has been reviewed and
+eight searches, and any dropped are reported) and lists what it finds. The issue body
+records how many searches of each kind ran and the verdict — not the search text, which
+may hold terms the author did not mean to publish. The issue is created only when every candidate has been reviewed and
 judged distinct, which you record with --checked. The check and its verdict are
 appended to the issue body, so the record shows the search was done.
 
@@ -25,6 +27,7 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import os
 import re
 import shlex
 import shutil
@@ -57,16 +60,20 @@ def keywords(title: str) -> list[str]:
     return sorted(out, key=len, reverse=True)       # longest first: usually the most specific
 
 
-def build_queries(title: str, body: str, extra: list[str]) -> list[str]:
+def build_queries(title: str, body: str, extra: list[str]) -> list[tuple[str, str]]:
+    """(kind, query) pairs, deduplicated by query. The kind — not the query — is what
+    the issue body records, so a --search term or a path never reaches a public issue
+    unless the author wrote it there."""
     kw = keywords(title)
-    qs: list[str] = []
+    qs: list[tuple[str, str]] = []
     if kw:
-        qs.append(" ".join(kw[:4]) + " in:title,body")
-        qs += [f"{k} in:title" for k in kw[:3]]
-    qs += [s for s in extra if s.strip()]
+        qs.append(("the title's words", " ".join(kw[:4]) + " in:title,body"))
+        qs += [("the title's words", f"{k} in:title") for k in kw[:3]]
+    qs += [("--search terms", s) for s in extra if s.strip()]
     for p in list(dict.fromkeys(PATH.findall(title + "\n" + body)))[:3]:
-        qs.append(f'"{p}"')
-    return list(dict.fromkeys(qs))
+        qs.append(("file paths", f'"{p}"'))
+    seen: set[str] = set()
+    return [(k, q) for k, q in qs if not (q in seen or seen.add(q))]
 
 
 def search(query: str, repo: str | None) -> list[dict]:
@@ -118,12 +125,12 @@ def main() -> int:
         return 2
     if len(queries) > MAX_QUERIES:
         print(f"file-issue: running the first {MAX_QUERIES} of {len(queries)} searches "
-              f"(dropped: {queries[MAX_QUERIES:]})", file=sys.stderr)
+              f"(dropped: {[q for _, q in queries[MAX_QUERIES:]]})", file=sys.stderr)
         queries = queries[:MAX_QUERIES]
 
     found: dict[int, dict] = {}
     try:
-        for q in queries:
+        for _, q in queries:
             for it in search(q, a.repo):
                 row = found.setdefault(it["number"], {**it, "hits": 0})
                 row["hits"] += 1
@@ -153,11 +160,14 @@ def main() -> int:
         return 3
 
     today = _dt.date.today().isoformat()
-    qlist = "; ".join(f"`{q}`" for q in queries)
+    kinds: dict[str, int] = {}
+    for k, _ in queries:
+        kinds[k] = kinds.get(k, 0) + 1
+    qsummary = ", ".join(f"{n} on {k}" for k, n in kinds.items())
     verdict = (f"reviewed and judged distinct: {', '.join(f'#{n}' for n in sorted(r['number'] for r in ranked))}"
                if ranked else "no candidates found")
     record = (f"\n\n---\nDuplicate check ({today}, scripts/file-issue.py): {len(queries)} searches "
-              f"of open and closed issues ({qlist}); {verdict}.")
+              f"of open and closed issues ({qsummary}); {verdict}.")
     full = body.rstrip("\n") + record + "\n"
 
     cmd = ["gh", "issue", "create", "--title", a.title]
@@ -171,20 +181,34 @@ def main() -> int:
         print(f"Title: {a.title}")
         print(f"Labels: {', '.join(a.label) or '(none)'}")
         print("Body:\n" + full)
+        print("Searches run (listed here only; the issue records their kinds, not their text):")
+        for _, q in queries:
+            print(f"  {q}")
         print("Would run: " + shlex.join(cmd + ["--body-file", "<body>"]))
         return 0
 
+    # The body can hold unpublished findings, so its temp file is removed once gh has
+    # it; only a refused create keeps it, named, so the author can fix and retry.
     with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
         f.write(full)
         path = f.name
-    r = subprocess.run(cmd + ["--body-file", path], capture_output=True, text=True)
-    sys.stdout.write(r.stdout)
-    if r.returncode != 0:
-        sys.stderr.write(r.stderr)
-        print(f"file-issue: gh refused the create (exit {r.returncode}); the body is at {path}",
-              file=sys.stderr)
-        return 1
-    return 0
+    keep = False
+    try:
+        r = subprocess.run(cmd + ["--body-file", path], capture_output=True, text=True)
+        sys.stdout.write(r.stdout)
+        if r.returncode != 0:
+            keep = True
+            sys.stderr.write(r.stderr)
+            print(f"file-issue: gh refused the create (exit {r.returncode}); the body is kept "
+                  f"at {path} for a retry — delete it when done", file=sys.stderr)
+            return 1
+        return 0
+    finally:
+        if not keep:
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
 
 
 if __name__ == "__main__":

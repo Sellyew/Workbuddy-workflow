@@ -8,11 +8,15 @@ creates the issue only when no candidate is left unreviewed. This guard makes
 that the only route Claude takes: it denies a Bash command that would create an
 issue directly and names the script instead.
 
-Denied (each as a simple command, anywhere in a compound line or a $(...)):
+Denied (each as a simple command, anywhere in a compound line, a $(...), or
+after a shell control word — if/then/else, while/until/do, for, { }, !):
   - gh issue create / gh issue new        (global -R/--repo flags allowed anywhere)
   - gh api ... repos/<o>/<r>/issues       with POST (explicit -X/--method, or
                                           implied by -f/-F/--field/--raw-field/--input)
-  - gh api graphql ... createIssue
+  - gh api graphql ... createIssue        in the command, or in a query file it
+                                          reads (--input FILE, -F key=@FILE); a
+                                          file that cannot be read, or stdin (@-),
+                                          is denied because it cannot be checked
 
 Allowed and silent: everything else, including gh issue list/view/comment/close/
 reopen/edit, and python3 scripts/file-issue.py (its own `gh issue create` runs
@@ -26,8 +30,9 @@ Cost: the `if` filter (Claude Code >= 2.1.85; compound commands >= 2.1.89)
 spawns this hook only for commands that run `gh`. On an older version the
 filter is ignored and the hook runs on every Bash call, still correctly.
 
-No network, no git, no disk: a guard that stalls or crashes fails OPEN, so it
-decides from the command text alone.
+No network and no git: a guard that stalls or crashes fails OPEN, so it decides
+from the command text, plus — only for `gh api graphql` — the query file the
+command names, read from the local disk.
 
 Output: deny → exit 0 + JSON {"hookSpecificOutput": {"hookEventName":
 "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason"}}.
@@ -56,35 +61,109 @@ REASON = (
 SEPARATORS = {";", "&&", "||", "|", "|&", "&", "(", ")", "\n"}
 # Words that run the command after them.
 WRAPPERS = {"command", "builtin", "exec", "nohup", "time", "env", "sudo"}
+# Shell reserved words that can stand before a command in the same segment
+# (`if true; then gh issue create; fi` splits into `then gh issue create`).
+RESERVED = {"if", "then", "else", "elif", "while", "until", "do", "{", "!"}
 # gh flags that take a value (skipped when finding the subcommand words).
 GH_VALUE_FLAGS = {"-R", "--repo", "--hostname"}
 API_BODY_FLAGS = {"-f", "-F", "--field", "--raw-field", "--input"}
 ISSUES_ENDPOINT = re.compile(r"^/?repos/[^/\s]+/[^/\s]+/issues/?(\?.*)?$")
 ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
-# A heredoc opener (<<EOF, <<-'EOF', <<"EOF"), not a here-string (<<<) or a shift.
-HEREDOC = re.compile(r"(?<!<)<<-?(?!<)[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+# A heredoc opener at a given position (<<EOF, <<-'EOF', <<"EOF").
+HEREDOC_AT = re.compile(r"<<-?[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+GQL_FILE_FLAGS = {"-F", "--field"}
+MAX_QUERY_FILE = 1_000_000
 
 
 def strip_heredocs(command: str) -> str:
     """Drop heredoc bodies: they are a command's input, not commands.
 
     Without this, writing a file that merely CONTAINS the text `gh issue create`
-    (a test, a doc, this hook's own battery) was denied. A heredoc fed to a shell
+    (a test, a doc, this hook's own battery) was denied. Only an opener the shell
+    would honour counts — one outside quotes and comments — because a `<<EOF` in
+    a comment or a string does not start a heredoc, and treating it as one hid
+    the real command on the next line (PR #163 review). A heredoc fed to a shell
     (`bash <<EOF ... EOF`) is not inspected; like `sh -c`, that is outside what
     this guard claims to stop.
     """
-    lines = command.split("\n")
-    kept, i = [], 0
-    while i < len(lines):
-        line = lines[i]
-        kept.append(line)
-        i += 1
-        for m in HEREDOC.finditer(line):
-            delim = m.group(2)
-            while i < len(lines) and lines[i].strip() != delim:
+    out: list[str] = []
+    pending: list[str] = []
+    i, n = 0, len(command)
+    in_s = in_d = in_comment = False
+    while i < n:
+        c = command[i]
+        if c == "\n":
+            out.append(c)
+            i += 1
+            in_comment = False
+            if pending and not in_s and not in_d:
+                for delim in pending:       # skip each body up to its delimiter line
+                    while i < n:
+                        j = command.find("\n", i)
+                        line = command[i:] if j < 0 else command[i:j]
+                        i = n if j < 0 else j + 1
+                        if line.strip() == delim:
+                            break
+                pending = []
+            continue
+        if in_comment:
+            i += 1
+            continue
+        if c == "\\" and not in_s:
+            out.append(command[i:i + 2])
+            i += 2
+            continue
+        if c == "'" and not in_d:
+            in_s = not in_s
+        elif c == '"' and not in_s:
+            in_d = not in_d
+        elif not in_s and not in_d:
+            if c == "#" and (i == 0 or command[i - 1] in " \t;&|()"):
+                in_comment = True
                 i += 1
-            i += 1                          # the closing delimiter line
-    return "\n".join(kept)
+                continue
+            if command.startswith("<<", i) and not command.startswith("<<<", i) \
+                    and (i == 0 or command[i - 1] != "<"):
+                m = HEREDOC_AT.match(command, i)
+                if m:
+                    pending.append(m.group(2))
+                    out.append(m.group(0))
+                    i = m.end()
+                    continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def graphql_files_create(args: list[str], cwd: str) -> bool:
+    """True when a query file the command reads holds createIssue — or cannot be read.
+
+    `--input FILE` and `-F key=@FILE` load the request from disk, so the command
+    text alone cannot show a mutation (PR #163 review). Stdin (`-`) and a file
+    that does not exist yet (written earlier in the same line) cannot be checked,
+    so they are denied rather than assumed harmless.
+    """
+    paths = []
+    for i, a in enumerate(args):
+        if a == "--input" and i + 1 < len(args):
+            paths.append(args[i + 1])
+        elif a.startswith("--input="):
+            paths.append(a.split("=", 1)[1])
+        elif a in GQL_FILE_FLAGS and i + 1 < len(args) and "=@" in args[i + 1]:
+            paths.append(args[i + 1].split("=@", 1)[1])
+        elif a.startswith("--field=") and "=@" in a[len("--field="):]:
+            paths.append(a[len("--field="):].split("=@", 1)[1])
+    for p in paths:
+        if p == "-":
+            return True
+        full = os.path.join(cwd, os.path.expanduser(p))
+        try:
+            with open(full, encoding="utf-8", errors="replace") as f:
+                if "createIssue" in f.read(MAX_QUERY_FILE):
+                    return True
+        except OSError:
+            return True
+    return False
 
 
 def deny(reason: str) -> None:
@@ -160,11 +239,11 @@ def substitutions(text: str) -> list[str]:
 
 
 def strip_prefix(words: list[str]) -> list[str]:
-    """Drop leading VAR=value assignments and wrapper words (env, command, ...)."""
+    """Drop leading reserved words, VAR=value assignments and wrappers (env, ...)."""
     i = 0
     while i < len(words):
         w = words[i]
-        if ASSIGNMENT.match(w):
+        if w in RESERVED or ASSIGNMENT.match(w):
             i += 1
         elif w in WRAPPERS:
             i += 1
@@ -191,7 +270,7 @@ def gh_positionals(args: list[str]) -> list[str]:
     return out
 
 
-def creates_issue(words: list[str]) -> bool:
+def creates_issue(words: list[str], cwd: str) -> bool:
     words = strip_prefix(words)
     if not words or os.path.basename(words[0]) != "gh":
         return False
@@ -202,7 +281,7 @@ def creates_issue(words: list[str]) -> bool:
     if pos and pos[0] == "api":
         joined = " ".join(args)
         if len(pos) >= 2 and pos[1] == "graphql":
-            return "createIssue" in joined
+            return "createIssue" in joined or graphql_files_create(args, cwd)
         method = None
         for i, a in enumerate(args):
             if a in ("-X", "--method") and i + 1 < len(args):
@@ -235,7 +314,8 @@ def main() -> int:
     except ValueError:
         # Unbalanced quotes: shlex cannot split it, and neither can the shell.
         return 0
-    if any(creates_issue(seg) for seg in segments):
+    cwd = data.get("cwd") or os.getcwd()
+    if any(creates_issue(seg, cwd) for seg in segments):
         deny(REASON)
     return 0
 

@@ -2649,13 +2649,15 @@ expect_silent   "f18 clean control: no checkpoint, nothing said"
 echo ""
 echo "  (g) issue-guard.py — a new issue cannot skip the duplicate check"
 
-gev() {  # gev <file> <command> [tool]
-    python3 -c 'import json,sys; print(json.dumps({"tool_name": sys.argv[3], "tool_input": {"command": sys.argv[2]}}))' \
-        "$1" "$2" "${3:-Bash}" > "$1"
+gev() {  # gev <file> <command> [tool] [cwd]
+    python3 -c 'import json,sys
+ev = {"tool_name": sys.argv[3], "tool_input": {"command": sys.argv[2]}}
+if sys.argv[4]: ev["cwd"] = sys.argv[4]
+print(json.dumps(ev))' "$1" "$2" "${3:-Bash}" "${4:-}" > "$1"
 }
-gfire() {  # gfire <command> [tool] — each case then states its own expect_ line,
+gfire() {  # gfire <command> [tool] [cwd] — each case then states its own expect_ line,
            # because the derived-counts gate counts expect_ call sites as cases
-    gev "$TMP/g.json" "$1" "${2:-Bash}"
+    gev "$TMP/g.json" "$1" "${2:-Bash}" "${3:-}"
     fire issue-guard.py "$TMP/g.json"
 }
 gfire 'gh issue create --title "x" --body "y"'
@@ -2704,6 +2706,32 @@ expect_silent "g21 CONTROL: a non-Bash tool is ignored"
 printf 'not json' > "$TMP/g-bad.json"
 fire issue-guard.py "$TMP/g-bad.json"
 expect_silent "g22 malformed input fails open, silently"
+
+# PR #163 review (#164): control words, file-based GraphQL, quoted heredoc openers.
+GQ="$TMP/gq"; mkdir -p "$GQ"
+printf '%s\n' 'mutation { createIssue(input: {repositoryId: "R", title: "x"}) { issue { number } } }' > "$GQ/mut.graphql"
+printf '%s\n' '{"query": "mutation { createIssue(input: {}) { issue { number } } }"}' > "$GQ/payload.json"
+printf '%s\n' 'query { repository(owner: "o", name: "r") { issues(first: 5) { nodes { number } } } }' > "$GQ/list.graphql"
+gfire 'if true; then gh issue create -t x; fi'
+expect_deny "g23 a create after if/then is denied"
+gfire '{ gh issue create -t x; }'
+expect_deny "g24 a create inside a { ...; } group is denied"
+gfire '! gh issue create -t x'
+expect_deny "g25 a negated create (! gh ...) is denied"
+gfire 'while false; do gh issue create -t x; done'
+expect_deny "g26 a create in a while/do loop body is denied"
+gfire 'gh api graphql --input payload.json' Bash "$GQ"
+expect_deny "g27 a GraphQL create read from --input FILE is denied"
+gfire 'gh api graphql -F query=@mut.graphql' Bash "$GQ"
+expect_deny "g28 a GraphQL create read from -F query=@FILE is denied"
+gfire 'cat mut.graphql | gh api graphql -F query=@-' Bash "$GQ"
+expect_deny "g29 a GraphQL query read from stdin (@-) cannot be checked, so it is denied"
+gfire $'gh --version # use <<EOF\ngh issue create -t x -b y\nEOF'
+expect_deny "g30 a heredoc opener inside a comment does not hide the create after it"
+gfire $'echo \'x <<EOF\' && gh --version\ngh issue create -t x\nEOF'
+expect_deny "g31 a heredoc opener inside quotes does not hide the create after it"
+gfire 'gh api graphql -F query=@list.graphql' Bash "$GQ"
+expect_silent "g32 CONTROL: a GraphQL read query loaded from a file is allowed"
 
 # ── (h) open-issues (opt-in) ─────────────────────────────────────────────────
 # A fake `gh` on PATH answers the one API call the hook makes. The hook must be
@@ -2857,6 +2885,15 @@ fi_run "$TMP/i8.log" FAKE_GH_MATCH=standard FAKE_GH_HITS="$TMP/i-one.json" -- \
        --title "$TITLE" --body-file "$TMP/i-body.md" --checked 31 --dry-run
 verdict "$(fi_rc "$TMP/i8.log")"
 expect_contains "i8 --dry-run creates nothing" "exit=0 created=0"
+# PR #163 review (#164): the public body records kinds of search, not their text,
+# and the temp file holding the body is gone once gh has it.
+ITMP="$TMP/i-tmpdir"; mkdir -p "$ITMP"
+fi_run "$TMP/i9.log" TMPDIR="$ITMP" -- --title "$TITLE" --body-file "$TMP/i-body.md" \
+       --search "unpublished-internal-term"
+verdict "exit=$RC leaked=$(sed -n '/^BODY-START/,$p' "$TMP/i9.log" | grep -c 'unpublished-internal-term') kinds=$(grep -c '1 on --search terms' "$TMP/i9.log")"
+expect_contains "i9 a --search term is searched but never written into the public issue body" "exit=0 leaked=0 kinds=1"
+verdict "left-behind=$(find "$ITMP" -type f | wc -l | tr -d ' ')"
+expect_contains "i10 the temp file holding the body is removed after the create" "left-behind=0"
 
 # ── (e) the battery's own isolation from git's hook environment ────────────
 # This battery runs INSIDE .githooks/pre-commit. Everything above is worthless
