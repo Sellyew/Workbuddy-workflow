@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Pedro H. C. Sant’Anna">
-<meta name="dcterms.date" content="2026-09-26">
+<meta name="dcterms.date" content="2026-09-27">
 
 <title>My Claude Code Setup</title>
 <style>
@@ -2565,7 +2565,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 26, 2026</p>
+      <p class="date">September 27, 2026</p>
     </div>
   </div>
   
@@ -2895,7 +2895,8 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <div class="callout-body-container callout-body">
 <p><strong>Claude Pro or Max subscription</strong>: Includes Claude Code usage with generous limits. Check <a href="https://claude.ai">claude.ai</a> for current pricing and tier details. Best for most academics.</p>
 <p><strong>API access</strong> (pay per token): For heavy users or CI/CD. Use <a href="#sec-effort">effort levels</a> and the <a href="#multi-model-strategy-cost-vs-quality">multi-model strategy</a> to control costs.</p>
-<p>Claude Code itself is free to install (the source is public on GitHub, but under Anthropic’s commercial terms — not an open-source license). You pay only for the Claude model usage.</p>
+<p>Claude Code itself is free to install (the source is public on GitHub, but it is not open source; which Anthropic terms govern your use depends on your account — see below). You pay only for the Claude model usage.</p>
+<p><strong>Which terms apply to your work.</strong> A personal Free, Pro or Max account runs under Anthropic’s consumer terms, Claude Code included, and whether your conversations may be used for model training is a setting you choose there — check it. Team, Enterprise and Education plans, and the API, run under commercial terms. Read the current terms at <a href="https://www.anthropic.com/legal">anthropic.com/legal</a> rather than relying on this guide, and check your institution’s and your data agreements’ rules before restricted or confidential material enters a session.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -4565,7 +4566,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p><strong>Three patterns that compose well:</strong></p>
 <ul>
 <li><strong>Side question without polluting context:</strong> <code>/btw why does Quarto need ::: for callouts?</code> — get the answer, dismiss, keep working.</li>
-<li><strong>Long session, want to switch tasks:</strong> <code>/checkpoint current-work</code> then <code>/clear</code> then start the new task. Resume the first with <code>claude --resume</code>.</li>
+<li><strong>Stopping, or switching to unrelated work:</strong> <code>/checkpoint current-work</code>, then <code>/clear</code> for the new task. To come back to the first, start a fresh <code>claude</code>: the handoff hook gives the newest checkpoint (or <code>/compress-session</code> note, within 7 days) to the next fresh session, once. If a fresh session has opened since, or a newer checkpoint was written, tell Claude to read <code>quality_reports/checkpoints/&lt;file&gt;</code> instead. Or <code>claude --resume</code> reopens the old conversation with its full context (the hook does not deliver the checkpoint there).</li>
 <li><strong>Plan mid-edit:</strong> During plan mode, <code>Ctrl+G</code> to edit the plan file directly — faster than dictating revisions back to Claude.</li>
 </ul>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -5183,10 +5184,11 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
   +-- Step 6: Save initial session log (capture context while fresh)
   +-- Step 7: You invoke the implementing skill; the orchestrator runs inside it (see Pattern 2)
   +-- Step 8: Update session log + plan status to COMPLETED</code></pre>
+<p><strong>An optional second read.</strong> For a plan that changes a deliverable’s substance, hand the saved plan file to a fresh agent before you approve it. Ask it for irreversible steps, steps that depend on data or approvals nobody has confirmed, what not to do, and whether the objective itself is wrong. Stop after two rounds. Its findings are concerns for you to rank; a clean read is not evidence that the plan is sound.</p>
 </section>
 <section id="context-preservation" class="level3" data-number="5.1.3">
 <h3 data-number="5.1.3" class="anchored" data-anchor-id="context-preservation"><span class="header-section-number">5.1.3</span> Context Preservation</h3>
-<p>Plans are saved to disk specifically so they survive context compression. The rule: <strong>avoid <code>/clear</code></strong> — prefer auto-compression. Use <code>/clear</code> only when context is genuinely polluted.</p>
+<p>Plans are saved to disk specifically so they survive context compression. The rule: <strong>within a task, let compaction carry you</strong> (steer it with <code>/compact &lt;what to keep&gt;</code>); <strong>between unrelated tasks, <code>/clear</code></strong>. Either way the plan is still on disk.</p>
 <p>For details on how the system automatically preserves and restores context during compaction, see <a href="#context-survival-system-advanced">Context Survival System</a> in the Building Blocks section.</p>
 </section>
 <section id="session-logging" class="level3" data-number="5.1.4">
@@ -5721,9 +5723,9 @@ Phase 4: QUALITY GATE
 <td>Spawn agents for each simulation</td>
 </tr>
 <tr class="odd">
-<td>Debating research design</td>
-<td>Consider DiD, then SC, then RDD</td>
-<td>3 agents, each advocating one approach</td>
+<td>Weighing competing framings</td>
+<td>Draft framing 1, then 2, then 3</td>
+<td>3 agents, each making the strongest case for one framing</td>
 </tr>
 </tbody>
 </table>
@@ -5745,9 +5747,9 @@ Phase 4: QUALITY GATE
 <h4 data-number="5.9.1.4" class="anchored" data-anchor-id="watching-parallel-agents-claude-agents-may-2026"><span class="header-section-number">5.9.1.4</span> Watching parallel agents: <code>claude agents</code> (May 2026)</h4>
 <p>When several review agents run in parallel (the two <code>/review-paper --peer</code> referees, or <code>/slide-excellence</code>’s visual + pedagogy + proofread fan-out), use <strong><code>claude agents</code></strong> (Week 20, v2.1.139) to watch them on a single screen. Replaces the old workflow of opening one terminal per agent. See the Anthropic Utilities section below for the full description.</p>
 </section>
-<section id="agent-debates" class="level4" data-number="5.9.1.5">
-<h4 data-number="5.9.1.5" class="anchored" data-anchor-id="agent-debates"><span class="header-section-number">5.9.1.5</span> Agent Debates</h4>
-<p>A powerful variant: give each parallel agent a <strong>distinct methodological perspective</strong> and have them argue. Instead of asking “which estimator should I use?”, spawn 3 agents — one advocates for DiD, one for synthetic control, one for RDD — each arguing why their approach fits your research question best and critiquing the others. Synthesize the debate into a decision matrix. This produces genuinely diverse perspectives that a single conversation cannot, because each agent commits fully to its position.</p>
+<section id="independent-advocates" class="level4" data-number="5.9.1.5">
+<h4 data-number="5.9.1.5" class="anchored" data-anchor-id="independent-advocates"><span class="header-section-number">5.9.1.5</span> Independent Advocates</h4>
+<p>A useful variant when a decision has several defensible answers: give each agent <strong>one position</strong> and ask for the strongest case for it — three framings of a paper’s contribution, say, or three ways to order a lecture sequence. Each advocate works in its own fresh context and never sees the others; agents that read each other’s arguments tend to converge by imitation rather than by being right. A separate pass then reads their outputs as data and sets out where they disagree and what each one assumes. <strong>You decide</strong>; the comparison is a starting point for your own reading, not a verdict. (Whether an identification strategy is sound is a question for <code>/review-paper</code>, not for a debate.)</p>
 </section>
 <section id="what-a-delegated-agent-needs-before-it-starts" class="level4" data-number="5.9.1.6">
 <h4 data-number="5.9.1.6" class="anchored" data-anchor-id="what-a-delegated-agent-needs-before-it-starts"><span class="header-section-number">5.9.1.6</span> What a delegated agent needs before it starts</h4>
@@ -6800,6 +6802,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 <div class="callout-body-container callout-body">
 <p>If you write <strong>papers</strong>: start with clo-author (adversarial review pairs) or ClaudeCodeTools (seven-audit protocol, see <a href="#pattern-15-sequential-audits">Pattern 15</a>). If you give <strong>presentations</strong>: MixtapeTools. If you run <strong>computational experiments</strong>: autoresearch. If you’re a <strong>non-technical academic</strong>: claudeblattman. All of them build on the same foundation patterns from this template — the <a href="#sec-system">orchestrator</a>, <a href="#sec-quality">quality gates</a>, and <a href="#the-adversarial-pattern-critic-fixer">adversarial review</a>.</p>
+<p>Whatever you take from these projects, read it before you copy it in — see <a href="#extending-with-plugins">Extending with Plugins</a>.</p>
 </div>
 </div>
 <p>Here is what each project does and when you should use it.</p>
@@ -6847,7 +6850,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>Executive assistant workflows</strong> — morning briefings (weather, calendar, inbox, VIP tracking), smart email triage with 14 phases, daily check-in ritual, schedule queries, todo management</li>
 <li><strong>Proposal writing</strong> — donor profiles, voice packs (maintain consistent writing style across documents), template gates, resubmission handling with reviewer comment categorization</li>
 <li><strong>Fresh-context critique</strong> — the intellectual centerpiece: spin up a fresh-context agent to review your work without self-bias (see Pattern 8)</li>
-<li><strong>Agent debates</strong> — multiple agents with distinct identities argue about research design, producing genuinely novel perspectives (see Pattern 9)</li>
+<li><strong>Parallel critics with a separate synthesis</strong> — agents with distinct perspectives each work alone, and a separate pass compares what they found (see Pattern 9)</li>
 <li><strong>Tips pipeline</strong> — self-improving system: capture tips by emailing yourself, <code>/tips-curate</code> quality-filters them, <code>/tips-integrate</code> converts them into concrete configuration changes</li>
 <li><strong>Depth calibration</strong> — Light/Standard/Deep thoroughness levels that prevent over-engineering simple requests</li>
 <li><strong>Graceful degradation</strong> — every skill works with partial infrastructure. Missing MCP integrations produce explanations, not errors</li>
@@ -7361,7 +7364,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p>For capabilities beyond file editing and shell commands — web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Add them with <code>claude mcp add</code> (use <code>--scope project</code> to write a shared <code>.mcp.json</code> at the repo root, or <code>--scope user</code> to make a server available in all your projects; the default <code>local</code> scope keeps it private to you in this project). Start with skills and agents first; add MCP when you need external integrations.</p>
 <section id="extending-with-plugins" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="extending-with-plugins"><span class="header-section-number">7.6</span> Extending with Plugins</h2>
-<p>Claude Code supports <strong>plugins</strong> — bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use <code>/plugin</code> to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins.</p>
+<p>Claude Code supports <strong>plugins</strong> — bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use <code>/plugin</code> to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. <strong>Read before you install:</strong> a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template’s broad allow rules (<code>Bash(*)</code>, <code>WebFetch(*)</code>) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project.</p>
 </section>
 </div>
 </div>

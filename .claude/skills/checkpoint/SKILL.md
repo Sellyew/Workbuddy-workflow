@@ -136,7 +136,10 @@ Print, to chat:
 ✓ Checkpoint saved: quality_reports/checkpoints/YYYY-MM-DD_<slug>.md
   Branch: <branch>     Status: <in_progress|paused|ready-to-merge>
   Active plan: <path or none>     Open questions: <count>
-  Resume command: claude --continue   (or paste the file's "Resume prompt" into a fresh session)
+  Resume: the next fresh `claude` here receives this checkpoint once from the session-handoff
+          hook (within 7 days, unless a newer checkpoint or /compress-session note is written
+          first). After that, or in `claude --continue` (which does not deliver it), tell Claude
+          to read this file or paste its "Resume prompt".
 ```
 
 If memory candidates were proposed, summarise which (if any) the user accepted.
@@ -159,7 +162,7 @@ If memory candidates were proposed, summarise which (if any) the user accepted.
 3. Capture: branch `feat/v1.8.0-polisci-apr2026`, 4 commits ahead of main, 8 files modified.
 4. Write `quality_reports/checkpoints/2026-04-27_v180-polisci.md` with file pointers to the half-drafted `methods-referee.md` and the un-started `journal-profiles.md` poli-sci block.
 5. Propose 1 candidate `[LEARN:scope]` entry on the linear-cost of disciplinary breadth.
-**Result:** Next session: `claude --continue`, then `read quality_reports/checkpoints/2026-04-27_v180-polisci.md and start at action 1`.
+**Result:** Next session: start a fresh `claude` — the handoff hook hands it `quality_reports/checkpoints/2026-04-27_v180-polisci.md` — and start at action 1.
 
 ### Example 2 — Mid-plan model switch
 **User says:** "I want to switch to Sonnet for the cheap doc edits — checkpoint first"

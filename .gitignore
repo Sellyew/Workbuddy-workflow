@@ -69,6 +69,8 @@ quality_reports/checkpoints/*
 quality_reports/preregistrations/*
 quality_reports/audits/*
 quality_reports/diagnoses/*
+# /triage-inbox digests: email subjects, senders, referee manuscript IDs — never committed.
+quality_reports/inbox/*
 !quality_reports/plans/.gitkeep
 !quality_reports/specs/.gitkeep
 !quality_reports/session_logs/.gitkeep

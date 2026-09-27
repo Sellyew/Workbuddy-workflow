@@ -39,6 +39,8 @@ A skill cannot stop to ask mid-write, so gather all interactivity up front (the 
 4. **Tools** — does the body Read? Write? Grep/Glob? run `Bash`? fan out to a subagent (Agent)? hit the web via `WebSearch`/`WebFetch`? Only declare what it actually uses.
 5. **Output** — a written file (where?), a chat report, or an in-place edit? Should it be read-only?
 6. **Scope boundary** — the one or two things it explicitly does NOT do (and which sibling owns those).
+7. **Side effects** — which steps send, post or upload anything (email, GitHub, an external model, cloud sync) or cannot be undone by git? Each such step shows the user what it will do and waits for a yes before it runs; restricted data follows [`confidential-data.md`](../../rules/confidential-data.md).
+8. **Fresh eyes** — does the skill critique something this session produced? That part runs in a fresh-context subagent, never a conversation fork ([`post-flight-verification.md`](../../rules/post-flight-verification.md)).
 
 Echo a one-paragraph **design brief** back for confirmation before writing.
 

@@ -57,9 +57,12 @@ Format: Status (DRAFT/APPROVED/COMPLETED), approach, files to modify, verificati
 ## Context Management
 
 ### General Principles
-- Prefer auto-compression over `/clear`
+- Within a task, let compaction carry you — steer it with `/compact <what to keep>`
+- Between unrelated tasks, `/clear`
 - Save important context to disk before it's lost
-- `/clear` only when context is genuinely polluted
+- To stop or hand off: `/checkpoint`, quit, then start a fresh `claude` — the session-handoff
+  hook hands the newest checkpoint, once, to the next fresh start (not to `--continue` /
+  `--resume`); after that, ask Claude to read the checkpoint file
 
 ### Context Survival Strategy
 

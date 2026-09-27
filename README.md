@@ -81,7 +81,7 @@ You don't craft a perfect prompt — you **state a goal and let the work loop to
 - **A real orchestration runtime.** Reviews fan out to forked specialist agents, reduce over a shared finding schema, judge with a hallucination gate, and loop until dry — see [`orchestrator-protocol.md`](.claude/rules/orchestrator-protocol.md).
 - **Ground truth as a process.** A mismatch isn't always a failure: a defensible, *named* alternative is recorded as `EXPLAINED` and carried into your response-to-referees, while genuine errors stay fail-closed.
 
-This is **not** an autonomous daemon — the loop is always you- or skill-initiated, and you stay the auditor. Scheduled automation handles recurring chores and notifies only on findings — cloud [Routines](.claude/references/scheduled-routines.md) for committed-repo checks (weekly lit-delta, inbox triage), Desktop scheduled tasks for anything touching local data (the nightly reproducibility check's home).
+This is **not** an autonomous daemon — the loop is always you- or skill-initiated, and you stay the auditor. Scheduled automation handles recurring chores and notifies only on findings — cloud [Routines](.claude/references/scheduled-routines.md) for committed-repo checks (weekly lit-delta), Desktop scheduled tasks for anything touching local data (inbox triage, and the nightly reproducibility check).
 
 ### Contractor Mode
 
@@ -423,7 +423,7 @@ Research groups across economics, energy, political science, and engineering hav
 **Extended workflows:**
 
 - **[clo-author](https://github.com/hugosantanna/clo-author)** by Hugo Sant'Anna (UAB) — Paper-centric research workflows with 21 specialized agents (7 worker-critic pairs plus referees, data-engineer, verifier), simulated blind peer review, AEA replication compliance, and full research lifecycle management. **The `/review-paper --peer <journal>` pipeline in this template is adapted from clo-author with Hugo's permission** (pipeline shape, 6-way disposition taxonomy, journal-calibration schema, paper-type branching). Thanks, Hugo.
-- **[claudeblattman](https://github.com/chrisblattman/claudeblattman)** by Chris Blattman (U Chicago) — Comprehensive guide for non-technical academics: executive assistant workflows, proposal writing, agent debates, and self-improving configuration
+- **[claudeblattman](https://github.com/chrisblattman/claudeblattman)** by Chris Blattman (U Chicago) — Comprehensive guide for non-technical academics: executive assistant workflows, proposal writing, parallel critics with a separate synthesis, and self-improving configuration
 - **[MixtapeTools](https://github.com/scunning1975/MixtapeTools)** by Scott Cunningham (Baylor) — The Rhetoric of Decks: philosophy and practice of beautiful, rhetorically effective academic presentations
 - **[autoresearch](https://github.com/karpathy/autoresearch)** by Andrej Karpathy — Constraint-based autonomous research with `program.md` as constitutional document
 - **[ClaudeCodeTools](https://github.com/aspi6246/ClaudeCodeTools)** — "The Editor" persona: seven-audit sequential paper review protocol
