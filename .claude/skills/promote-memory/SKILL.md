@@ -74,7 +74,7 @@ Each critic returns YES/NO + rationale. The promotion threshold is **majority (3
 
 ### Step 1: Read candidate entries
 
-If `$ARGUMENTS` is `all`, read every `[LEARN:*]` entry in `~/.claude/projects/<project>/memory/`. Otherwise treat `$ARGUMENTS` as a substring filter (e.g., `r-code` matches all `[LEARN:r-code]` entries).
+If `$ARGUMENTS` is `all`, read every topic file in `~/.claude/projects/<project>/memory/` (skip the `MEMORY.md` there: it is only an index pointing at the topic files); each topic file is one candidate. Otherwise treat `$ARGUMENTS` as a substring filter on a topic file's filename, `description`, or type (e.g., `latex` matches `feedback_latex_texinputs.md`, and `feedback` matches every feedback memory). Auto memory does not store entries in `[LEARN:category]` form; a candidate is rewritten into that shape only for the proposal in Step 4.
 
 ### Step 2: Spawn the council
 

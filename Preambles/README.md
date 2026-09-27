@@ -29,7 +29,7 @@ TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode YourLecture.t
 
 Color names in `header.tex` **must** match the SCSS variable names in [`../Quarto/theme-template.scss`](../Quarto/theme-template.scss) so Beamer and Quarto renderings use the same palette.
 
-The `scripts/check-palette-sync.sh` script greps both files and reports any divergence:
+The `scripts/check-palette-sync.sh` script (a thin wrapper around `scripts/check-palette-sync.py`) compares the color names and HEX values in both files and reports any divergence:
 
 ```bash
 ./scripts/check-palette-sync.sh
@@ -46,9 +46,9 @@ When you customize the palette for your project:
 ## What's inside
 
 - **Palette** — 11 named colors matching the SCSS.
-- **Beamer theme assignments** — structure, titles, itemize, alert, blocks, minimal footer. Applied only under Beamer (`\@ifundefined{beamertemplate}`).
+- **Beamer theme assignments** — structure, titles, itemize, alert, blocks, minimal footer. Applied only under Beamer (`\@ifclassloaded{beamer}`, wrapped in `\makeatletter`/`\makeatother`).
 - **TikZ libraries** — `arrows.meta, positioning, calc, decorations.pathreplacing, fit, shapes.geometric, backgrounds`.
-- **Shared TikZ styles** — `dag-node`, `decision-node`, `observed-edge`, `counterfactual-edge`, `confound-edge`, `observed-dot`, `counterfactual-dot`. Used by `templates/tikz-snippets/` and reusable in hand-written diagrams.
+- **Shared TikZ styles** — `dag-node`, `decision-node`, `observed-edge`, `counterfactual-edge`, `confound-edge`, `observed-dot`, `counterfactual-dot`. For diagrams written inside a lecture that does `\input{header}`. The `templates/tikz-snippets/` gallery does not load them: each snippet defines its own palette and styles inline so it compiles standalone, so swap in these names when you move a snippet into a lecture.
 - **Convenience macros** — `\muted{...}`, `\key{...}`, `\good{...}`, `\bad{...}`, `\transitionslide{...}`.
 
 ## Extending

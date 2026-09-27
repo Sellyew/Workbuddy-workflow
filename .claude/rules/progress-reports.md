@@ -10,7 +10,7 @@ Three durable stores, each for a different kind of thing:
 | Store | Holds | Survives |
 |---|---|---|
 | **GitHub issues** | authenticated defects and open questions, with evidence | forever, searchable, linkable |
-| **Progress reports** (`quality_reports/`) | what was done, why, what remains | forever, in-repo |
+| **Progress reports** (`quality_reports/`) | what was done, why, what remains | on disk; this template's `.gitignore` keeps `session_logs/`, `plans/`, `specs/`, `merges/` out of git — `git add -f` one a coauthor needs |
 | **`MEMORY.md`** | generalisable lessons worth carrying to the *next* project | forever, committed |
 
 Everything else — the reasoning, the false starts, the dialogue — is disposable, and should be.
@@ -19,8 +19,8 @@ Everything else — the reasoning, the false starts, the dialogue — is disposa
 
 An issue is not a to-do list entry. It is **the durable record of a defect, its evidence, its
 repair, and the limits of that repair**, written so that none of it can disappear into a
-branch, a chat, or a commit message. Full evidence standard and the seven-section closure
-comment: [`issue-ledger.md`](issue-ledger.md).
+branch, a chat, or a commit message. Which work gets an issue, the evidence standard, and the
+closing comment: [`issue-ledger.md`](issue-ledger.md).
 
 **Open one when** a bounded check authenticates a violation of a documented contract, a
 statistical law, an invariant, a reproducibility requirement, or a user-facing promise.
@@ -51,6 +51,8 @@ A useful report is short and answers four questions:
 Longer-lived records go beside it: `quality_reports/plans/` for approach before work,
 `quality_reports/specs/` for requirements, `quality_reports/qualification/LEDGER.md` for what
 has been proven to detect anything, `quality_reports/merges/` for release-time reports.
+Of these only `LEDGER.md` is committed by default — the template's `.gitignore` keeps
+`session_logs/`, `plans/`, `specs/` and `merges/` local, so `git add -f` any a coauthor needs.
 
 > **Write it before you need it.** A report written while the reasoning is live takes five
 > minutes. Reconstructed from a diff a month later, it takes an hour and is wrong.
@@ -82,7 +84,9 @@ When results are re-run at higher fidelity, the new artifact **supersedes** the 
 
 Commit and push each stage as it lands — **including failures, plainly labelled**. Then a
 coauthor, a second machine, or you-in-three-weeks needs only `git pull` to know where things
-stand. No status email, no summary to write, no memory to trust.
+stand — through the commits, the issues and whatever records you have committed (session logs
+and plans are gitignored in this template; force-add the ones others need). No status email,
+no summary to write, no memory to trust.
 
 ## Cross-references
 

@@ -1,6 +1,6 @@
 # Discipline Cards
 
-Short reference cards naming each discipline's dominant paper-type frequencies, top journals, preregistration norms, and method conventions. Read by `/research-ideation`, `/interview-me`, `/preregister`, and the `editor` agent (in `/review-paper --peer`) when the user gives a `paper_type` or domain hint without specifying a target journal.
+Short reference cards naming each discipline's dominant paper-type frequencies, top journals, preregistration norms, and method conventions. Read by `/research-ideation`, `/interview-me`, and `/preregister` when the user gives a `paper_type` or domain hint without specifying a target journal.
 
 **Scope.** v1.8.0 ships two cards: **economics** and **political science**. Other social sciences (psychology, sociology, public health) are deferred indefinitely (owner-set scope, 2026-06-10: econ + closely related fields — do not build without an explicit owner ask). To add your own discipline, copy a card section, fill the four fields (paper-type frequencies, journals, preregistration norms, method conventions), and reference the new short-name from `journal-profiles.md` and `methods-referee.md`.
 
@@ -71,7 +71,7 @@ Short reference cards naming each discipline's dominant paper-type frequencies, 
 - **`/research-ideation`** — when the user names a topic without a discipline, the skill may infer one from context (citation style, vocabulary). The card supplies the default `paper_type` distribution to bias hypothesis generation.
 - **`/interview-me`** — Phase 1 paper-type question uses the card's frequency table to order the option list (most-likely-first per discipline).
 - **`/preregister`** — `--style` defaults to the card's preregistration-norms suggestion (e.g., `osf` for poli-sci, `aea-rct` for econ field experiments).
-- **`editor`** (`/review-paper --peer`) — when the user gives `--peer` without naming a specific journal but with a discipline hint, the editor uses the card's "Dominant journals" list as the candidate set and asks for clarification.
+- **`/review-paper --peer`** does **not** read these cards: `--peer` requires a journal short name from `journal-profiles.md`, and the pre-flight halts on an unknown or missing journal. Use the card's "Dominant journals" list yourself to pick that short name.
 
 ---
 
@@ -111,4 +111,4 @@ Then:
 
 - **File:** `.claude/references/discipline-cards.md`
 - **Schema parallel:** `.claude/references/journal-profiles.md` (per-journal) and `.claude/references/audit-pet-peeves.md` (living-catalogue format).
-- **Consumed by:** `/research-ideation`, `/interview-me`, `/preregister`, `editor` agent.
+- **Consumed by:** `/research-ideation`, `/interview-me`, `/preregister`.

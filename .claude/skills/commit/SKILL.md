@@ -1,13 +1,17 @@
 ---
 name: commit
-description: Stage, commit, push, open a PR, and merge to main. Use ONLY on explicit commit intent — user says "commit", "ship it", "push this", "open a PR", "merge to main", "let's commit this", or prefixes with `/commit`. Do NOT auto-invoke on vague end-of-task phrases ("we're done", "wrap up") — those require explicit confirmation first. Runs the standard commit-PR-merge cycle; never force-pushes or skips hooks.
-argument-hint: "[optional: commit message]"
+description: Commit the current work — runs the quality, consistency and passport gates, branches off main if needed, stages specific files, and writes a commit whose subject states what is now true. Pushes and opens a pull request only with --pr or when the user asks; never merges — a merge happens only when the user explicitly says to merge. Use ONLY on explicit commit intent — user says "commit", "let's commit this", "open a PR", or prefixes with `/commit`. Do NOT auto-invoke on vague end-of-task phrases ("we're done", "wrap up") — those require explicit confirmation first. Never force-pushes or skips hooks.
+argument-hint: "[optional: commit message] [--pr]"
 allowed-tools: ["Bash", "Read", "Glob", "Agent", "Task"]
 ---
 
-# Commit, PR, and Merge
+# Commit
 
-Stage changes, verify quality gates, commit with a descriptive message, create a PR, and merge to main.
+Verify the gates, then commit. **A commit is not a pull request, and a pull request is not a merge.**
+This skill stops after the commit. It pushes and opens a pull request only with `--pr` or when the
+user asks, and it **never merges** — a merge happens only when the user explicitly says to merge
+that pull request (see "Merging" below). Reviewers such as Codex and Copilot comment after a pull
+request opens; merging before they report skips their review.
 
 ## Steps
 
@@ -19,14 +23,14 @@ Stage changes, verify quality gates, commit with a descriptive message, create a
 python3 scripts/quality_score.py <changed-file-paths>
 ```
 
-- If any file scores below **80**, halt and report the findings. The user must either fix the issues or explicitly override with phrases like *"commit anyway"* or *"skip quality gate"*.
+- If any file scores below **80**, halt and report the findings. The user must either fix the issues or explicitly override with phrases like *"commit anyway"* or *"skip quality gate"*. Once `./scripts/install-hooks.sh` has been run, `.githooks/pre-commit` re-runs the same ≥80 gate on the staged `.qmd`/`.tex`/`.R` files, so carry an approved override into Step 4 as `SKIP_QUALITY_GATE=1 git commit ...` and record the override reason in the commit message. That variable skips only the quality score; the backtest still runs. Never fall back to `git commit --no-verify`.
 - If all files score 80+, continue.
 
 Spawn the **verifier** agent (via the `Agent` tool with `subagent_type=verifier`) to run compilation/render checks on the changed files. Report pass/fail before committing.
 
 ### Step 0b: Consistency Gate (Pre-Commit)
 
-**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 60 skills, 37 rules, 9 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
+**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 61 skills, 37 rules, 11 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
 
 ```bash
 ./scripts/backtest.sh
@@ -47,7 +51,10 @@ git diff --stat
 git log --oneline -5
 ```
 
-### Step 2: Create a branch
+### Step 2: Create a branch (when on main)
+
+Never commit directly to `main`. If the current branch is `main`, create one; if you are already on
+a feature branch, commit there.
 
 ```bash
 git checkout -b <short-descriptive-branch-name>
@@ -76,7 +83,10 @@ EOF
 )"
 ```
 
-### Step 5: Push and create PR
+### Step 5: Push and open a pull request — only with `--pr` or when the user asks
+
+Without `--pr`, and without the user asking for a pull request, skip this step: the commit stays
+local and the report says so.
 
 ```bash
 git push -u origin <branch-name>
@@ -95,7 +105,17 @@ EOF
 )"
 ```
 
-### Step 6: Merge and clean up
+### Step 6: Report
+
+Report the commit (hash and subject), the branch, and — if a pull request was opened — its URL.
+Say plainly that nothing was merged.
+
+## Merging — only when the user says so
+
+A merge is never a step of this skill. Merge only when the user explicitly asks to merge a specific
+pull request ("merge #155"); "ship it", "done" or "commit" are not a merge instruction. Before
+merging, check that the pull request's CI is green and that its reviews (human, Codex, Copilot)
+have been read and answered.
 
 ```bash
 gh pr merge <pr-number> --merge --delete-branch
@@ -136,14 +156,17 @@ simple command.
 It is not the routine remedy, and reaching for it because the block is inconvenient is the
 behavior the check exists to prevent.
 
-### Step 7: Report
-
-Report the PR URL and what was merged.
-
 ## Important
 
 - **Never skip Step 0.** Quality gates catch broken compilation, bad citations, and hardcoded paths before they reach `main`. If the user insists on skipping, record their override reason in the commit message.
-- Always create a NEW branch — never commit directly to main.
+- Never commit directly to `main`; branch off it first.
+- Never push, open a pull request, or merge unless asked — see Step 5 and "Merging".
 - Exclude `settings.local.json` and sensitive files from staging.
-- Use `--merge` (not `--squash` or `--rebase`) unless asked otherwise.
+- When the user does ask to merge, use `--merge` (not `--squash` or `--rebase`) unless they say otherwise.
 - If the commit message from `$ARGUMENTS` is provided, use it exactly.
+
+## Flags
+
+| Flag | Effect |
+|---|---|
+| `--pr` | After the commit, push the branch and open a pull request (Step 5). Never merges. |

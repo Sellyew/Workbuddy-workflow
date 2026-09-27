@@ -11,7 +11,7 @@ reimplementing a method, upgrading a package version, or adopting externally-sou
 
 ## 1. Name your oracles, with roles and pinned commits
 
-Not "we compared against R." A table, in a `PROVENANCE.md` at the repo root:
+Not "we compared against R." A table, in `quality_reports/PROVENANCE.md` (copy `templates/PROVENANCE.md`; a root-level copy fails `check-repo-hygiene.py` as root clutter unless you add it to `ROOT_ALLOW`):
 
 | Reference | Role | Observed ref |
 |---|---|---|

@@ -1,7 +1,7 @@
 # Provenance
 
 <!--
-  Copy to your repo root and fill in. This is the answer to "the numbers match — match WHAT?"
+  Copy to quality_reports/PROVENANCE.md and fill in (a root-level PROVENANCE.md fails the repo-hygiene gate). This is the answer to "the numbers match — match WHAT?"
   Protocol: .claude/references/provenance-and-ground-truth.md
 -->
 

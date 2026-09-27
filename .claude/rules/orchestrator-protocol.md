@@ -145,7 +145,7 @@ A forked subagent cannot stop to ask the user a question. So every interactive c
 | `/qa-quarto` | critic → fix → re-audit, **loop-until-dry** | Beamer↔Quarto parity; hard gates = CRITICAL roll-up |
 | `/review-paper --adversarial` | critic → fix → re-audit, **loop-until-dry** | Manuscript review (same primitive as qa-quarto) |
 | `/review-paper --peer` / `--variance` | RUN_CONFIG → editor → fan-out referees → editor synthesis **+ hallucination gate** | Cross-artifact pre-flight as Phase 0 |
-| `/deep-audit` | mechanical checks → fan-out (4) → fix, **loop-until-dry** | Repo-wide consistency |
+| `/deep-audit` | decompose → fan-out (one finder per component) → judge → reduce → fix → re-verify, **loop-until-dry** | Adversarial audit of any artifact (proof, paper, codebase, claim set); repo-wide consistency is one application (mechanical checks → 4 lenses, in `references/repo-infrastructure-audit.md`) |
 | `/create-lecture`, `/data-analysis` | Pre-Flight → draft → verify | Pre-Flight required |
 
 ## What is NOT automatic
@@ -167,5 +167,5 @@ When the user says "just do it" / "handle it" (within an already-invoked skill):
 - [`.claude/references/agent-fleet.md`](../references/agent-fleet.md) — the reviewer fleet + model tiers.
 - [`.claude/rules/plan-first-workflow.md`](plan-first-workflow.md) — when to enter plan mode before invoking a skill.
 - [`.claude/rules/quality-gates.md`](quality-gates.md) — threshold definitions + the pre-commit hook.
-- [`.claude/rules/post-flight-verification.md`](post-flight-verification.md) — the forked-verifier mechanism the hallucination gate reuses.
+- [`.claude/rules/post-flight-verification.md`](post-flight-verification.md) — the fresh-context verifier mechanism the hallucination gate reuses.
 - [`.claude/rules/cross-artifact-review.md`](cross-artifact-review.md) — paper ↔ code dependency-graph pattern.

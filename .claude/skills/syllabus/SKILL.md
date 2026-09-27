@@ -48,7 +48,7 @@ Echo a short **Intake Report** (level, weeks, cadence, N topics / N readings, an
 
 ## Output format
 
-Write to `syllabus.md` (or a user-specified path):
+Write to `quality_reports/teaching/[course]_syllabus.md` (or a user-specified path; not the repo root, where `syllabus.md` fails the repo-hygiene gate as root clutter):
 
 ```markdown
 # [Course title] — [Term, Year]

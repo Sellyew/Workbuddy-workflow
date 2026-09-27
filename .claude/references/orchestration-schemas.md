@@ -131,7 +131,7 @@ run_config:
   dispositions: [SKEPTIC, MEASUREMENT]    # --peer/--variance: sampled before launch (else null)
   n_referees: 3                           # --variance N (else null)
   peeves: { critical: 2, constructive: 1 }# referee peeve budget (stress doubles critical)
-  fresh_context: true                     # re-audit rounds run in a fresh fork
+  fresh_context: true                     # re-audit rounds run in a fresh Agent context (never a fork)
   max_rounds: 5                           # loop-until-dry FALLBACK cap (not the primary stop)
   cross_artifact: true                    # auto-invoke /review-r + /audit-reproducibility
   novelty_check: true                     # editor WebSearch probe (Post-Flight-verified)
@@ -146,7 +146,7 @@ Gather it, echo it back as the **Pre-Flight Report**, and only then spawn the fl
 
 - [`.claude/rules/orchestrator-protocol.md`](../rules/orchestrator-protocol.md) — the runtime that consumes these schemas.
 - [`.claude/references/agent-fleet.md`](agent-fleet.md) — which agent fills which lens, at which model tier.
-- [`.claude/rules/post-flight-verification.md`](../rules/post-flight-verification.md) — the forked-verifier mechanism the §4 gate reuses.
+- [`.claude/rules/post-flight-verification.md`](../rules/post-flight-verification.md) — the fresh-context verifier mechanism the §4 gate reuses.
 - [`.claude/rules/summary-parity.md`](../rules/summary-parity.md) — the two-strikes rule the loop reuses for repeatedly-flagged findings.
 
 

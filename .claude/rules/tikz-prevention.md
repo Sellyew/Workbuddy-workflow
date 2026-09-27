@@ -129,7 +129,6 @@ This keeps each diagram small enough that the measurement rules are tractable.
 
 ## Enforcement
 
-- `/extract-tikz` runs a prevention pre-check as **Step 1** before compiling. Violations of P1 (boxed nodes only), P3 (bare `scale=`), or P4 (missing directional keyword on edge labels) halt the pipeline and report the offending block. P2 (coordinate map) and P5–P6 are reviewer concerns, not grep-checkable.
-- `/new-diagram` runs the same Step 1 grep patterns before its standalone compile — both skills use identical regexes so behavior doesn't drift.
+- `/extract-tikz` (Step 1, before compiling) and `/new-diagram` (Step 4, before its standalone compile) both run the shared checker `python3 scripts/check-tikz-prevention.py`, a multi-line-aware Python parser rather than a line grep, so the two skills cannot drift. It halts on P3 (bare `scale=` without node scaling) and P4 (edge label without a directional keyword) and reports the offending file, line and snippet. It does not check P1, P2 or P5–P6: those are reviewer concerns, and `tikz-reviewer` flags P1 (boxed-node dimensions) and P2 (coordinate map) during its visual review (Step 8 in `/extract-tikz`, Step 6 in `/new-diagram`).
 - `tikz-reviewer` cites these rules by name when reporting CRITICAL/MAJOR issues.
 - Quality scoring is defined in `scripts/quality_score.py` and mirrored in [`quality-gates.md`](quality-gates.md). The Quarto rubric deducts −5 for a TikZ label-overlap finding (which is typically the symptom of a P1/P3/P4 violation that reached production); it does **not** currently deduct per-rule, and no detector emits the overlap row — a reviewer's finding is the enforcement.

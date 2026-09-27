@@ -9,6 +9,8 @@ paths:
   - "master_supporting_docs/**"
   - "quality_reports/qualification/**"
   - "quality_reports/passports/**"
+  - "quality_reports/replication-log.md"
+  - "quality_reports/spec-ledger.md"
   - "quality_reports/audits/**"
   - "quality_reports/oracle_audits/**"
   # AUTHORING-TIME, one file: the input contract that already implements the
@@ -23,8 +25,8 @@ paths:
 **A reviewer is only as blind as its working directory.**
 [`verification-ladder.md`](../references/verification-ladder.md) rung 3 gives three ways to make
 a reviewer independent — critic/fixer role tension, cross-artifact traversal, and the CoVe
-fresh-context fork — and all three operate on the **context**. None of them touches the
-filesystem the reviewer is standing on. A forked referee with a spotless context still holds the
+fresh-context verifier — and all three operate on the **context**. None of them touches the
+filesystem the reviewer is standing on. A fresh-context referee with a spotless context still holds the
 repository checkout, and that checkout contains the earlier round's referee reports, the judge's
 verdict, the passport recording every number the paper claims, and the stamp recording what the
 current render was built from.
@@ -36,7 +38,8 @@ independence. It is an honour system with a search tool.
 > would reveal if it looked — then remove that, rather than instructing it not to look.
 
 **Where this rule loads.** Fencing is a *dispatch-time* obligation, so the `paths:` above name
-the manuscripts, qualification ledger, passports and audit reports a fenced run is pointed at —
+the manuscripts, qualification ledger, passports, replication and specification logs, and audit
+reports a fenced run is pointed at —
 the session that dispatches referees at `manuscript.tex` is the one that has to make the call.
 It deliberately does **not** claim every `SKILL.md`: a rule that binds every skill, none of which
 implements it, is an unenforced obligation, and `scripts/check-skill-integrity.py` (check 5) now
@@ -128,11 +131,13 @@ a tracked file has demonstrated `grep`, not reproduction, and the control that w
 qualify the check now reads green for the wrong reason. Verify by **re-deriving, not re-asking**
 ([`research-agent-laws.md`](../references/research-agent-laws.md) law 1).
 
-This template commits three answer keys of its own:
+This template commits five answer keys of its own:
 
 | Answer key | What it pins |
 |---|---|
 | `quality_reports/passports/<paper-slug>.yaml` | the expected value of every verified numeric claim ([`replication-protocol.md`](replication-protocol.md)) |
+| `quality_reports/replication-log.md` | the reported and computed value of every audited claim, with the exact accessor that computed it ([`/audit-reproducibility`](../skills/audit-reproducibility/SKILL.md)) |
+| `quality_reports/spec-ledger.md` | the estimate of every specification run, when its optional `Estimate` cell is filled ([`/data-analysis`](../skills/data-analysis/SKILL.md)) |
 | `.render-stamp` | the source and output fingerprints a current render must match |
 | `quality_reports/qualification/LEDGER.md` | which defects a qualification run planted, and what the checker scored against them |
 
@@ -169,7 +174,7 @@ neutral copy does for the checkout.
 ## Cross-references
 
 - [`../references/verification-ladder.md`](../references/verification-ladder.md) — rung 0 (qualify the checker), rung 3 (the three context-level mechanisms this rule extends)
-- [`post-flight-verification.md`](post-flight-verification.md) — the CoVe protocol and the forked verifier
+- [`post-flight-verification.md`](post-flight-verification.md) — the CoVe protocol and the fresh-context verifier
 - [`../agents/claim-verifier.md`](../agents/claim-verifier.md) — the input contract this rule generalizes
 - [`../references/external-oracle-process.md`](../references/external-oracle-process.md) — external consults: blind the judge, verify the transport
 - [`../skills/vaccinate/SKILL.md`](../skills/vaccinate/SKILL.md) — seeded-defect qualification, where an unfenced answer key is fatal

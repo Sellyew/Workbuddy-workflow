@@ -14,7 +14,7 @@ A ready-to-fork foundation for AI-assisted academic work. You describe what you 
 
 ## Quick Start (5–10 minutes, plus ~30 min for first-time installs)
 
-> **Before you start:** Claude Code + git are the minimum. To run the included `HelloWorld` demos end-to-end you also need XeLaTeX (Beamer sample) and Quarto (Quarto sample). R and the GitHub CLI are recommended. Python 3 runs the gate suite (`./scripts/backtest.sh` — 10 checkers) and the quality scorer, and is pre-installed on macOS/Linux. Full list in [Prerequisites](#prerequisites) below. Fastest path: clone first, then run `./scripts/validate-setup.sh` — it reports exactly what's missing with install links.
+> **Before you start:** Claude Code, git and Python 3 are the minimum. Python 3 runs the hooks, the gate suite (`./scripts/backtest.sh` — 10 checkers) and the quality scorer, and is pre-installed on macOS/Linux. To run the included `HelloWorld` demos end-to-end you also need XeLaTeX (Beamer sample) and Quarto (Quarto sample). R and the GitHub CLI are recommended. Full list in [Prerequisites](#prerequisites) below. Fastest path: clone first, then run `./scripts/validate-setup.sh` — it reports exactly what's missing with install links.
 >
 > **Only need Python/R/markdown?** You don't need XeLaTeX or Quarto. The agents, rules, skills, and orchestration patterns work for any text/code artifact. Skip the `HelloWorld` demos and head straight to `/data-analysis`, `/review-paper`, `/lit-review`, or `/review-r`.
 >
@@ -39,7 +39,7 @@ claude
 
 **Using VS Code?** Open the Claude Code panel instead. Everything works the same — see the [full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-setup) for details.
 
-> **Avoid prompt fatigue.** On Claude Code ≥ 2.1.283, new interactive sessions start in **auto mode** by default (classifier-gated — most actions run, risky ones prompt; on earlier versions this applied to Pro/Max/Team); where auto is unavailable, Manual mode prompts per risky tool call. If you still see too many prompts, toggle **Auto-accept edits** mode (a keybinding; see the [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks) of the guide) or run `claude --permission-mode acceptEdits`. **Bypass** mode skips permission prompts and safety checks (deny rules still apply), and Anthropic scopes it to isolated containers and VMs; it takes effect from the CLI flag, `--settings`, or user/managed settings (`~/.claude/settings.json`) — a bypass default in a project's `.claude/settings.json` is not honoured (the session starts in Manual). The template's `.claude/settings.json` sets no default mode (terminal sessions get the platform's auto mode); its `.vscode/settings.json` does start VS Code sessions in bypass — delete its two permission keys if you want auto there too — and the `.claude/settings.json` ships broad catch-all allows (`Bash(*)`, `Edit(**)`, `Write(**)` — 7 wildcard rules, not a curated list), so in Manual mode almost nothing prompts; auto mode drops the blanket `Bash(*)` and routes shell commands through its classifier. Working with restricted data? Add deny rules — see [TROUBLESHOOTING](TROUBLESHOOTING.md#keep-restricted-data-off-the-model).
+> **Avoid prompt fatigue.** On Claude Code ≥ 2.1.283, new interactive sessions start in **auto mode** by default (classifier-gated — most actions run, risky ones prompt; on earlier versions this applied to Pro/Max/Team); where auto is unavailable, Manual mode prompts per risky tool call. If you still see too many prompts, toggle **Auto-accept edits** mode (a keybinding; see the [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks) of the guide) or run `claude --permission-mode acceptEdits`. **Bypass** mode skips permission prompts and safety checks (deny rules still apply), and Anthropic scopes it to isolated containers and VMs; it takes effect from the CLI flag, `--settings`, or user/managed settings (`~/.claude/settings.json`) — a bypass default in a project's `.claude/settings.json` is not honoured (the session starts in Manual). The template's `.claude/settings.json` sets no default mode (terminal sessions get the platform's auto mode); its `.vscode/settings.json` carries two bypass keys, but the current VS Code extension ignores them (it reads `claudeCode.initialPermissionMode` and `claudeCode.allowDangerouslySkipPermissions` only from your VS Code *user* settings, and never reads the unprefixed `allowDangerouslySkipPermissions` key), so VS Code sessions also start in auto unless your user settings say otherwise — set both `claudeCode.` keys there if you want bypass in VS Code — and the `.claude/settings.json` ships broad catch-all allows (`Bash(*)`, `Edit(**)`, `Write(**)` — 7 wildcard rules, not a curated list), so in Manual mode almost nothing prompts; auto mode drops the blanket `Bash(*)` and routes shell commands through its classifier. Working with restricted data? Add deny rules — see [TROUBLESHOOTING](TROUBLESHOOTING.md#keep-restricted-data-off-the-model).
 
 Then paste the [starter prompt](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session) from the guide, filling in your project details:
 
@@ -76,7 +76,7 @@ If both succeed, delete `Slides/HelloWorld.tex` and `Quarto/HelloWorld.qmd` and 
 
 You don't craft a perfect prompt — you **state a goal and let the work loop toward it under gates**. Specialist agents do the labor; enforcing gates decide when it's good enough; you adjudicate the disagreements they surface. Three things make that trustworthy:
 
-- **Real gates, not reminders.** One command — `./scripts/backtest.sh` — runs **ten gates**: surface-sync, skill integrity, model currency against the SSoT, link and anchor resolution, Agent Skills spec conformance, staleness (including source-vs-published divergence), repo hygiene, derived counts (enumerable claims re-counted from disk), ledger coverage (the qualification ledger and the checks that actually run must agree in both directions, and every hook declared in settings must exist and be invocable — a one-character path typo no longer disables a hook in silence), and a seeded hook battery (every active guard hook is re-fired against the failure it targets, alongside clean controls, on every run). A version-controlled pre-commit hook (run `./scripts/install-hooks.sh` once) runs it plus the quality check (≥80) on *every* commit — bypassing the skill no longer bypasses the review. A `git-guardrails` hook blocks destructive git (`reset --hard`, `clean -f`, `push --force`, `add -A`) and refuses a merge, rebase, or pull while the tree is dirty — reading the tree as it is rather than predicting what a chained command might do to it, so `git stash && git merge` is denied too and you run the two steps separately (`ALLOW_DIRTY_MERGE=1` if you mean it); like its sibling it is a textual check over the command line, so an op carried inside an interpreter, an alias, or a script is outside what it can see, and its docstring says which forms those are. Its sibling `root-of-trust-guard` denies the common shell write paths into the files that define the gates themselves (`.claude/settings*.json`, `.claude/hooks/`, `.githooks/`) — redirection, `tee`, `cp`/`mv`/`rm`, in-place `sed` — and, because it already unwraps `bash -c` and `env -S` payloads for those rules, it hands the unwrapped payload to the *same* destructive-git deny list, so `bash -c 'git reset --hard'` and `bash -c 'git clean -fdx'` no longer fall between the two hooks. **Read that one as a tripwire, not a lock, and read the name as a filename rather than a claim:** it is a best-effort textual scan that fails open on its own errors, and the files it watches stay replaceable through channels the template deliberately allows — an `Edit`/`Write`/`MultiEdit`, a branch switch, a clean merge, or a bug in the hook itself. What it buys is a change of *channel* — a change to a gate arrives as a reviewable diff instead of an invisible overwrite — not a guarantee that the gates cannot be disabled. Nothing here recovers anything either: the transcript and `git reflog` are an audit trail and a commit-history aid, and neither holds the bytes of an uncommitted edit or an untracked file. The review runtime re-checks any reviewer-introduced "fatal" finding before it counts.
+- **Real gates, not reminders.** One command — `./scripts/backtest.sh` — runs **ten gates**: surface-sync, skill integrity, model currency against the SSoT, link and anchor resolution, Agent Skills spec conformance, staleness (including source-vs-published divergence), repo hygiene, derived counts (enumerable claims re-counted from disk), ledger coverage (the qualification ledger and the checks that actually run must agree in both directions, and every hook declared in settings must exist and be invocable — a one-character path typo no longer disables a hook in silence), and a seeded hook battery (every active guard hook is re-fired against the failure it targets, alongside clean controls, on every run). A version-controlled pre-commit hook (run `./scripts/install-hooks.sh` once) runs it plus the quality check (≥80) on *every* commit (the hook battery only when a hook, its settings or the battery itself is staged; CI always runs everything) — bypassing the skill no longer bypasses the review. A `git-guardrails` hook blocks destructive git (`reset --hard`, `clean -f`, `push --force`, `add -A`) and refuses a merge, rebase, or pull while the tree is dirty — reading the tree as it is rather than predicting what a chained command might do to it, so `git stash && git merge` is denied too and you run the two steps separately (`ALLOW_DIRTY_MERGE=1` if you mean it); like its sibling it is a textual check over the command line, so an op carried inside an interpreter, an alias, or a script is outside what it can see, and its docstring says which forms those are. Its sibling `root-of-trust-guard` denies the common shell write paths into the files that define the gates themselves (`.claude/settings*.json`, `.claude/hooks/`, `.githooks/`) — redirection, `tee`, `cp`/`mv`/`rm`, in-place `sed` — and, because it already unwraps `bash -c` and `env -S` payloads for those rules, it hands the unwrapped payload to the *same* destructive-git deny list, so `bash -c 'git reset --hard'` and `bash -c 'git clean -fdx'` no longer fall between the two hooks. **Read that one as a tripwire, not a lock, and read the name as a filename rather than a claim:** it is a best-effort textual scan that fails open on its own errors, and the files it watches stay replaceable through channels the template deliberately allows — an `Edit`/`Write`/`MultiEdit`, a branch switch, a clean merge, or a bug in the hook itself. What it buys is a change of *channel* — a change to a gate arrives as a reviewable diff instead of an invisible overwrite — not a guarantee that the gates cannot be disabled. Nothing here recovers anything either: the transcript and `git reflog` are an audit trail and a commit-history aid, and neither holds the bytes of an uncommitted edit or an untracked file. The review runtime re-checks any reviewer-introduced "fatal" finding before it counts.
 - **Every gate is qualified, and the ledger is itself a gate.** Each one has been shown a planted defect and confirmed to go red, with recall and false-alarm rate recorded in [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md) — and that ledger is now load-bearing rather than aspirational: a registered check with no row there fails the build, and a row naming a checker that no longer exists fails too. Checks that have *not* been qualified are listed there by name as visible debt — because an unqualified check is not weak evidence, it is none. Run [`/vaccinate`](.claude/skills/vaccinate/SKILL.md) to qualify one.
 - **A real orchestration runtime.** Reviews fan out to forked specialist agents, reduce over a shared finding schema, judge with a hallucination gate, and loop until dry — see [`orchestrator-protocol.md`](.claude/rules/orchestrator-protocol.md).
 - **Ground truth as a process.** A mismatch isn't always a failure: a defensible, *named* alternative is recorded as `EXPLAINED` and carried into your response-to-referees, while genuine errors stay fail-closed.
@@ -125,9 +125,9 @@ For *forced* compression (long pipelines, mid-plan handoffs), `/compress-session
 Multiple complementary verification layers run before submission:
 
 - **`/verify-claims`** (v1.7.0) — Chain-of-Verification with a fresh-context verifier that cannot self-confirm because it has never seen the draft. v1.9.0 adds HIGH/MED/LOW-WARN severity tiers; HIGH-WARN findings (fabricated citation, numerical contradiction) fail the verification closed — the draft is never reported as verified; `/commit` does not read these verdicts, so resolving them before committing is on you.
-- **`/audit-reproducibility`** (v1.7.0; Stata coverage v1.9.0) — every numeric claim in the manuscript is cross-checked against the script output that produced it. v1.9.0 adds `passport.yaml` — a per-paper YAML state file with PASS/FAIL/STALE/UNVERIFIED status per claim.
+- **`/audit-reproducibility`** (v1.4.0; Stata coverage v1.9.0) — every numeric claim in the manuscript is cross-checked against the script output that produced it. v1.9.0 adds `passport.yaml` — a per-paper YAML state file with PASS/FAIL/STALE/UNVERIFIED status per claim.
 - **`/humanize`** (v1.9.0) — detect AI-voice tells (boilerplate transitions, hedging stacking, sycophancy) before submission. Read-only by design; auto-rewriting degrades quality.
-- **`/review-paper --variance N`** (v1.9.0) — runs N referees with sampled dispositions and reports a **decision distribution**, not a point estimate. Motivated by AgentReview (EMNLP 2024) finding 37% of decisions vary purely from disposition sampling.
+- **`/review-paper --peer <journal> --variance N`** (v1.9.0) — runs N referees with sampled dispositions and reports a **decision distribution**, not a point estimate. Motivated by AgentReview (EMNLP 2024) finding 37% of decisions vary purely from disposition sampling.
 
 ---
 
@@ -154,7 +154,7 @@ The guide covers Claude Code's latest capabilities:
 - **`claude agents` dashboard** (v1.9.0; Anthropic May 2026) — single screen for parallel review work (`/review-paper --peer`, `/slide-excellence`).
 - **Cost-Conscious Composition** — prompt-cache TTL (5-min default on API keys; **1-hour automatic on Claude subscriptions**), 70/20/10 model routing (Haiku/Sonnet/Opus), `/cost` + `/usage` monitoring, Agent SDK credit-pool split (2026-06-15).
 - **Skill frontmatter** — `effort`, `context: fork`, `agent`, `hooks`, `disable-model-invocation` (v1.8.0+), `disallowed-tools` (the *actual* tool restriction — `allowed-tools` only pre-approves), `paths` (glob-scoped auto-activation), and dynamic content (`$ARGUMENTS`, `!command` syntax)
-- **Permission modes** — Normal, Auto-accept, Plan, **Auto** (classifier-gated; since 2026-08-14 the *default* starting mode for new interactive sessions on Pro, Max, and Team, and available on Bedrock / Google Cloud / Foundry without an opt-in flag), Bypass
+- **Permission modes** — Manual (config value `default`), Accept edits, Plan, **Auto** (classifier-gated; the built-in starting mode for new interactive terminal and VS Code sessions on Claude Code ≥ 2.1.283 — on earlier versions, on Pro, Max, and Team since 2026-08-14 — and available on Bedrock / Google Cloud / Foundry without an opt-in flag), Bypass
 - **Hook handler types** — command, prompt, and HTTP handlers with 20+ hook events; hooks see `effort.level` and `$CLAUDE_EFFORT` (Apr 2026 Week 19)
 - **Advanced agent configuration** — model, maxTurns, isolation, tool restrictions; `model-routing.md` rule codifies per-agent tier (v1.9.0)
 - **Worktree base ref** (v1.9.0; Anthropic Apr 2026) — `worktree.baseRef` setting controls `fresh` (default; remote default-branch) vs `head` (local HEAD) for new worktrees
@@ -190,7 +190,7 @@ This workflow is designed as a **single hub for an entire research program** —
 ## What's Included
 
 <details>
-<summary><strong>18 agents, 60 skills, 37 rules, 9 hooks</strong> (click to expand)</summary>
+<summary><strong>18 agents, 61 skills, 37 rules, 11 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -230,7 +230,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/review-r` | Launch R code reviewer |
 | `/qa-quarto` | Adversarial critic-fixer loop (loops until dry; 5-round cap is a fallback) |
 | `/slide-excellence` | Combined multi-agent review |
-| `/translate-to-quarto` | Full Beamer-to-Quarto translation — Phase 0 pre-flight plus 11 translation phases |
+| `/translate-to-quarto` | Full Beamer-to-Quarto translation — Phase 0 pre-flight plus 12 translation phases (1–11 and a 6.5 pedagogy review) |
 | `/vaccinate` | Measure whether a check, gate, or AI reviewer actually detects the failure it targets — seeds defects + a clean control, reports recall and false-positive rate into a qualification ledger |
 | `/adjudicate-review` | Turn incoming findings — AI review, referee report, linter, second model — into verified fixes. Every finding is a CANDIDATE until checked against the source |
 | `/blast-radius` | Before and after changing anything shared (return value, schema, default, units), enumerate every consumer and actually run them |
@@ -242,7 +242,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/validate-bib` | Cross-reference citations against bibliography |
 | `/devils-advocate` | Challenge design decisions before committing |
 | `/create-lecture` | Full lecture creation workflow |
-| `/commit` | Stage, commit, create PR, and merge to main |
+| `/commit` | Run the gates, then commit on a branch; `--pr` also pushes and opens a pull request. Never merges — that waits for your say-so |
 | `/lit-review` | Literature search, synthesis, and gap identification |
 | `/research-ideation` | Generate research questions and empirical strategies |
 | `/interview-me` | Interactive interview to formalize a research idea |
@@ -250,7 +250,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/data-analysis` | End-to-end R analysis with publication-ready output |
 | `/learn` | Extract non-obvious discoveries into persistent skills |
 | `/context-status` | Show session health and context usage |
-| `/deep-audit` | Repository-wide consistency audit |
+| `/deep-audit` | Adversarial audit of a theory, proof, paper, codebase or set of claims — decompose, independent skeptics, a separate judge per finding, fix, re-verify; repo-wide consistency is one application |
 | `/permission-check` | Diagnose permission layers when prompts fire unexpectedly |
 | `/audit-reproducibility` | Enforce tolerance thresholds on paper ↔ code numeric claims |
 | `/new-diagram` | Scaffold a TikZ diagram from the snippet gallery with prevention + review |
@@ -281,6 +281,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/respond-to-eval` (v2.0) | Teaching analogue of `/respond-to-referees` — clusters course-eval comments into themes, weights by frequency (signal vs noise), classifies Keep / Change / Investigate / Out-of-scope, and drafts concrete changes mapped to the syllabus + slide decks; saves the plan to `quality_reports/teaching/` |
 | `/scaffold-exercises` (v2.0) | Scaffold a graded problem set across analytical/empirical/coding types, with worked solutions and "why this matters" explainers emitted to a separate solution key |
 | `/new-skill` (v2.0) | Scaffold a new skill that follows this repo's conventions — interviews for purpose, triggers, and tools, writes `.claude/skills/<name>/SKILL.md` from the template with frontmatter/body that pass `check-skill-integrity.py` first try, then reminds to add the surface-table rows |
+| `/issues` (v2.6) | GitHub issues as the project's to-do list and memory — files each confirmed finding as its own issue after checking open and closed issues for a duplicate, lists what is open for the work at hand, and closes an issue with a comment recording what was wrong, what was tried, and how it was fixed; shows every draft and posts nothing without a yes; warns before posting to a public repository |
 
 ### Research Workflow
 
@@ -328,22 +329,22 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `orchestrator-research` | `*.R`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
 | `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
 | `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
-| `tikz-prevention` (v1.4.x) | `Slides/**`, `Figures/**`, `Preambles/**` | TikZ pre-flight grep checks (P3/P4 collision avoidance) |
+| `tikz-prevention` (v1.3.0) | `Slides/**`, `Figures/**`, `Preambles/**` | TikZ pre-flight grep checks (P3/P4 collision avoidance) |
 | `agent-authored-code` (v2.5) | `**/*.sh`, `**/*.py`, `**/*.R`, `**/*.do` | The bugs are usually ours: dry-run before any bulk edit, resolve paths before `cd`, monitor by PID file not `pgrep`, cover every terminal state |
 | `writing-with-ai` (v2.5) | `**/*.tex`, `**/*.qmd`, `**/*.md`, `**/*.Rmd` | Internal vs external-facing documents; why a model cannot make its own output stop reading as model output; the human-readable standard |
-| `issue-ledger` (v2.5) | `.github/**` | Evidence standard for an issue: denominator, positive/negative control, explicit non-scope, and a seven-section closure comment |
-| `tikz-measurement` (v1.5.x) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
-| `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Pre-Flight Reports — proves inputs were read before work |
-| `cross-artifact-review` (v1.7.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
+| `issue-ledger` (v2.5) | `.github/**` | Which work gets a GitHub issue (shipped bugs, deferred improvements, blocking owner decisions, one summary issue per review round; never restricted data), the evidence standard — denominator, positive/negative control, explicit non-scope — and the closing comment |
+| `tikz-measurement` (v1.3.0) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
+| `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Numbered invariants INV-1–INV-12 (palette sync, Beamer↔Quarto notation parity, no overlays, at most two boxes per slide, `set.seed` once, relative paths, …) that critics cite by number |
+| `cross-artifact-review` (v1.4.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
 | `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with a fresh-context verifier |
-| `summary-parity` (v1.8.x) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |
+| `summary-parity` (v1.7.0) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |
 | `model-routing` (v1.9.0) | `.claude/agents/**/*.md`, `.claude/skills/**/SKILL.md` | 70/20/10 architect/editor split (Haiku/Sonnet/Opus) |
 | `review-fencing` (v2.5.1) | `.tex`/`.qmd`, `master_supporting_docs/`, `quality_reports/` audit dirs, `claim-verifier.md` | Reviewer independence is a property of the environment — neutral copy outside the checkout, prior verdicts excluded, own reading first, positive controls fenced from committed answer keys |
 | `stata-code-conventions` (v1.9.0) | `**/*.do`, `scripts/stata/**` | Stata header scaffold, numbered pipeline, esttab, clustering discipline, AEA compliance |
 | `simulation-conventions` (v1.10.0) | `**/*simulation*.R`, `**/*_sim.R`, `explorations/**` | Monte Carlo discipline: DGP/estimand, L'Ecuyer seeding, Monte Carlo SE, coverage-vs-truth, raw-result storage |
 | `r-package-conventions` (v1.10.0) | `R/**`, `tests/**`, `DESCRIPTION`, `NAMESPACE`, `man/**` | R package-source standards: no `library()` in `R/`, roxygen NAMESPACE, Imports/Suggests, testthat 3e, CRAN policy |
 | `confidential-data` (v2.0) | `data/**`, `**/*.dta`, `**/restricted/**`, `**/confidential/**` | Restricted/IRB-data protocol: never commit raw data, disclosure clearance before release, restricted-data-safe multi-author git topology |
-| `inference-robustness` (v2.0) | `scripts/**/*.R`, `**/*.do`, `**/*.py` | Multiple-testing (FWER/Romano-Wolf vs FDR/Anderson sharpened-q, pre-register the family) + specification-curve / leave-one-out / wild-cluster-bootstrap robustness |
+| `inference-robustness` (v2.0) | `scripts/**/*.R`, `scripts/**/*.do`, `scripts/**/*.py` | Multiple-testing (FWER/Romano-Wolf vs FDR/Anderson sharpened-q, pre-register the family) + specification-curve / leave-one-out / wild-cluster-bootstrap robustness |
 
 ### Templates (`templates/`)
 
@@ -386,7 +387,7 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 
 **Minimum to run the included HelloWorld demos end-to-end:** add XeLaTeX (for `/compile-latex HelloWorld`) and Quarto (for `/deploy HelloWorld`).
 
-**Your real lectures may need more** — R for `scripts/R/` analyses, pdf2svg if you use TikZ extraction, gh CLI if you use the PR-based commit workflow, Playwright if you want slide overflow measured in a browser. `./scripts/validate-setup.sh` reports which of these are installed and what each unlocks.
+**Your real lectures may need more** — R for `scripts/R/` analyses, pdf2svg if you use TikZ extraction, gh CLI if you use the PR-based commit workflow, Playwright if you want slide overflow measured in a browser. `./scripts/validate-setup.sh` reports whether R, the gh CLI and Playwright are installed; it does not check pdf2svg (`command -v pdf2svg` does).
 
 ---
 
@@ -435,7 +436,7 @@ See the [guide's ecosystem section](https://psantanna.com/claude-code-my-workflo
 
 - **What's new:** see [CHANGELOG.md](CHANGELOG.md). We follow loose semver — breaking changes get major bumps so you can decide when to pull updates.
 - **How to contribute:** see [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md). PRs welcome for generalizable improvements; fork-specific work stays in your fork.
-- **Pin to a version:** `git checkout $(git describe --tags --abbrev=0)` pins the newest tag (v2.6.0 once this release is tagged — see [CHANGELOG.md](CHANGELOG.md)).
+- **Pin to a version:** `git checkout $(git describe --tags --abbrev=0)` pins the newest release tag; [CHANGELOG.md](CHANGELOG.md) says what each one contains.
 
 ---
 

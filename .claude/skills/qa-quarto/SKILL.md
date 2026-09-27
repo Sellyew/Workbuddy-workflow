@@ -56,7 +56,7 @@ This is the **loop-until-dry** primitive from [`orchestrator-protocol.md`](../..
 
 - **Fallback cap:** 5 rounds bounds a non-converging loop, then escalate to the user with remaining issues.
 - **Two-strikes:** the same gate failing in rounds N and N+2 is flagged for the user, not patched again ([`summary-parity.md`](../../rules/summary-parity.md)).
-- APPROVED iff every hard gate passes (zero CRITICAL).
+- APPROVED iff every hard gate passes and no CRITICAL or MAJOR finding remains (minor ones are listed for the user).
 
 ## Final Report
 

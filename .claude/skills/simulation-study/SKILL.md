@@ -194,4 +194,4 @@ write_csv(summary_tbl, "output/[name]_summary.csv")
 
 ## Long-running simulations: use the Monitor tool
 
-Large grids (many scenarios × large `R`) can run for many minutes. Background-launch via Bash with `run_in_background: true`, capture the `bash_id`, and use the **Monitor tool** to stream R stdout (e.g., a `progressr` milestone or process exit) instead of polling with `sleep`. See [`data-analysis/SKILL.md`](../data-analysis/SKILL.md) and the guide's Cost-Conscious Parallelism section.
+Large grids (many scenarios × large `R`) can run for many minutes. Background-launch via Bash with `run_in_background: true`, writing R stdout and stderr to a log (e.g. `Rscript scripts/R/[name].R > output/[name].log 2>&1`), and run the **Monitor tool** with a command that tails that log through `grep --line-buffered`, matching progress milestones (e.g. a `progressr` update) and failure signatures (`Error`, `Execution halted`), instead of polling with `sleep`. Monitor has no job-id parameter: the stdout of its own command is the event stream. See [`data-analysis/SKILL.md`](../data-analysis/SKILL.md) and the guide's Cost-Conscious Parallelism section.

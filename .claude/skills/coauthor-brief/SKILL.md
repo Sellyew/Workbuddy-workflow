@@ -94,15 +94,15 @@ branch: [current branch]
 
 ## Reproduce locally
 1. Clone + branch: `git checkout <branch>`
-2. Restore environment: `Rscript -e 'renv::restore()'` (or `pip install -r requirements.txt` / Stata `do _setup.do`).
-3. Run the pipeline: `Rscript scripts/R/00_run_all.R` (or `00_master.do` / `make all`).
+2. Restore environment: `Rscript -e 'renv::restore()'` (or `pip install -r requirements.txt` / Stata `do scripts/stata/00_install.do`).
+3. Run the pipeline: `Rscript scripts/R/00_run_all.R` (or Stata `do scripts/stata/99_run_all.do` / `make all`).
 4. Verify: `/audit-reproducibility manuscript.tex` should report 0 FAIL.
 
 ## Restricted-data access (if applicable)
 [Process to obtain access — DUA/IRB/enclave/openICPSR-restricted steps. NO actual data, paths to live extracts, or credentials. See confidential-data.md.]
 
 ## Recommended git topology for this project
-- One **feature branch per author** (`feat/<author>-<topic>`); rebase on `main`, open a PR, merge via `/commit`.
+- One **feature branch per author** (`feat/<author>-<topic>`); rebase on `main`, commit and open a PR with `/commit --pr`, and merge only when the co-authors agree.
 - `MEMORY.md` is **committed** — generic learnings sync to everyone.
 - Native auto memory (`~/.claude/projects/<project>/memory/`) and `.claude/state/` stay **local** — never expect a co-author to have yours (see meta-governance.md).
 - Pull before you brief; brief before you hand off.
@@ -138,7 +138,7 @@ A single Markdown handoff doc at `quality_reports/handoffs/YYYY-MM-DD_coauthor-b
 
 ## What this skill does NOT do
 
-- **Push, PR, or merge.** It writes a doc. Branch/PR/merge is [`/commit`](../commit/SKILL.md)'s job.
+- **Push, PR, or merge.** It writes a doc. Branch, commit and PR are [`/commit`](../commit/SKILL.md)'s job; a merge is the user's call.
 - **Run the pipeline or audit numbers.** It *reports* passport status if one exists; it does not re-run analysis or re-verify claims — that's [`/audit-reproducibility`](../audit-reproducibility/SKILL.md).
 - **Capture the environment.** It locates and links existing lockfiles; generating them is [`/capture-environment`](../capture-environment/SKILL.md).
 - **Expose restricted data.** It describes the *access process* only — never copies confidential values, live data paths, or credentials into a brief that may be emailed or committed.

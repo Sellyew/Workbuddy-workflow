@@ -162,8 +162,8 @@ If ANY of these fail, the verdict is **REJECTED**:
 
 | Verdict | Condition |
 |---------|-----------|
-| **APPROVED** | Every hard gate passes and zero critical issues remain (the `qa-quarto` gate); list any open major/minor issues in the report for the user (the fixer runs only on a non-APPROVED verdict) |
-| **NEEDS REVISION** | Any critical issue remains |
+| **APPROVED** | Every hard gate passes and no critical or major issue remains; list any open minor issues in the report for the user |
+| **NEEDS REVISION** | Any critical or major issue remains — the `qa-quarto` fixer runs only on a non-APPROVED verdict, so a major issue left under APPROVED would never be fixed |
 | **REJECTED** | Hard gate failure |
 
 ---

@@ -28,7 +28,8 @@ def n_tikz():
     return len([f for f in os.listdir(d) if f.endswith(".tex")]) if os.path.isdir(d) else 0
 
 def n_translate_phases():
-    ph = set(re.findall(r'^#{2,4} Phase (\d+)', read(".claude/skills/translate-to-quarto/SKILL.md"), re.M))
+    # \d+(?:\.\d+)? so an inserted phase (6.5) counts as its own phase, not as a second "6"
+    ph = set(re.findall(r'^#{2,4} Phase (\d+(?:\.\d+)?)', read(".claude/skills/translate-to-quarto/SKILL.md"), re.M))
     return len(ph - {"0"})            # Phase 0 is pre-flight, not a translation phase
 
 def n_gates():

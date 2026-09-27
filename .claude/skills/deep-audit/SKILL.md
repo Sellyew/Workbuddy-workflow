@@ -2,6 +2,7 @@
 name: deep-audit
 description: Comprehensive adversarial audit of a theory, proof, math/econ paper, codebase, or set of claims — decompose into components, fan out independent skeptics that must return CONCRETE defects, adjudicate every finding with a separate judge, fix all confirmed defects, then re-verify. Use when correctness must be bulletproof and single-pass or round-by-round review is too slow and too shallow. Invoke for "audit this rigorously", "find ALL the bugs/gaps", "make this rock solid", "converge faster on correctness".
 allowed-tools: ["Read", "Grep", "Glob", "Bash", "Write", "Edit", "Agent", "Task"]
+disable-model-invocation: true
 metadata:
   protocol: threat-prioritization
 ---
@@ -59,8 +60,8 @@ Written arguments can read soundly while the object they define is wrong. For **
 If a component cannot be fixed under the stated assumptions, that is a *finding*, not a failure of the audit: report the exact remaining gap (the precise missing hypothesis or broken step) and the honest options (weaken the claim, add the hypothesis, restrict scope). Do not search for a favorable reading, and do not let an agent paper over a theorem-strength gap as "routine."
 
 ## Orchestration
-- Use a **Workflow** for the fan-out: `pipeline(components, finder, judge)` so each component's findings are judged the moment its finder returns (no barrier), then synthesize. Return the confirmed list; do the fixing yourself afterward.
-- **Model division:** finders = the strong *execution/analysis* model (find and attack); judges = the strong *adjudication* model. Match to the local convention (here: Opus finds, Fable judges). Keep judges to one-per-component (adjudicating all that component's findings at once) to conserve the scarcer judging model.
+- Fan out with parallel `Agent` calls in one message (one finder per component), then one judge per component over that component's findings, then synthesize; see [`orchestrator-protocol.md`](../../rules/orchestrator-protocol.md). Where the Workflow tool is available (e.g. an `ultracode` session), `pipeline(components, finder, judge)` is an optional accelerator that judges each component's findings the moment its finder returns (no barrier); it is never a requirement. Return the confirmed list; do the fixing yourself afterward.
+- **Model division:** finders = the strong *execution/analysis* model (find and attack); judges = the strong *adjudication* model. Match to the local convention in [`model-routing.md`](../../rules/model-routing.md) (here: both roles run on the Opus tier, and a judge gets more effort before any change of tier; the Fable tier is a per-session choice, never the fleet default). Keep judges to one-per-component (adjudicating all that component's findings at once) to conserve the judging budget.
 - Set finder `effort` high; give each the exact labels/locations to read and its specific attack list.
 - **Persist.** Don't return "best effort" or a list of why it's hard. Return the confirmed defects (and, once fixed, a clean re-audit) — or the single strongest remaining gap stated exactly.
 
@@ -79,7 +80,7 @@ every other verification surface uses and a third copy would drift:
 - **Independence and correlated errors** — agreement between models is not confirmation; they
   fail the same way. → [`verification-ladder.md`](../../references/verification-ladder.md) rung 3.
 - **The five credibility questions** — evidence for one never clears another.
-  → [`verification-ladder.md`](../../references/verification-ladder.md) §6 and [`external-oracle-process.md`](../../references/external-oracle-process.md) §6.
+  → [`external-oracle-process.md`](../../references/external-oracle-process.md) §6.
 
 ## Auditing this repository itself
 

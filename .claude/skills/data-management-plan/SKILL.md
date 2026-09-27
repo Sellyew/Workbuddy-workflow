@@ -13,7 +13,7 @@ Produce a Data Management Plan ready to paste into a funder portal. This skill w
 
 ## When to use
 
-- **Writing a grant proposal.** Every NSF, NIH, ERC, and Horizon Europe proposal needs a DMP (NSF), DMS Plan (NIH 2023 policy), or Data Management Plan (ERC/Horizon). `/grant-proposal` calls this skill for that section.
+- **Writing a grant proposal.** Every NSF, NIH, ERC, and Horizon Europe proposal needs a DMP (NSF), DMS Plan (NIH 2023 policy), or Data Management Plan (ERC/Horizon). `/grant-proposal` follows this skill for that section, through an Agent that reads this SKILL.md (the skill is user-invoked only, so it is followed, not invoked).
 - **Before data collection on a funded project.** The plan is a commitment you make at award time and report against at renewal.
 - **When restricted or human-subjects data is involved.** The access/sharing and preservation sections change materially — see Phase 2.
 
@@ -113,7 +113,7 @@ The **funder checklist** is a table: each required section → present? → comp
 - `.claude/skills/disclosure-check/SKILL.md` — pre-release disclosure scan the plan commits released outputs to.
 - `.claude/skills/capture-environment/SKILL.md` — the environment-capture mechanism Phase 3 references.
 - `.claude/skills/replication-package/SKILL.md` — the replication-package builder Phase 3 commits to.
-- `.claude/skills/grant-proposal/SKILL.md` — calls this skill for the proposal's data-management section.
+- `.claude/skills/grant-proposal/SKILL.md` — follows this skill (via an Agent that reads this SKILL.md) for the proposal's data-management section.
 - [`.claude/skills/preregister/SKILL.md`](../preregister/SKILL.md) — sibling document-generator; shares the MUST/`[CLARIFY:]` + post-flight conventions.
 - [`.claude/rules/replication-protocol.md`](../../rules/replication-protocol.md) — the reproducibility contract the deposited package must satisfy.
 

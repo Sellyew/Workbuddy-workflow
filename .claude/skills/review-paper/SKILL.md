@@ -483,6 +483,13 @@ verification, so known false alarms never reach the judge. The verifier pass is
 **refute-biased** and sets each finding's `verdict` (reviewers leave it unset): only `verdict: "confirmed"` findings ship; anything it cannot ground is
 dropped, not downgraded to a warning.
 
+## Tracking what the review found
+
+After the report, offer `/issues file <report>`: it turns the confirmed findings that affect
+correctness or a stated requirement into GitHub issues, one per root cause, each checked against
+open and closed issues first. Nothing is filed without the user's yes; on a public repository it
+warns first, since unpublished weaknesses would be visible to anyone.
+
 ## Cross-references
 
 - [`.claude/skills/audit-reproducibility/SKILL.md`](../audit-reproducibility/SKILL.md) — numeric-claim verification (auto-invoked on referenced scripts).

@@ -40,7 +40,7 @@ Preregistration is a written commitment to your hypotheses, design, and analysis
 
 Two input modes:
 
-1. **`--input <path>`** — a research spec produced by `/interview-me` (saved under `quality_reports/specs/`) or any structured Markdown file. Read the spec and extract: research question, hypotheses (directional!), data source, design, sample, analysis approach. If the spec already has a `paper_type:` field (e.g., `survey-experiment`), use it to bias the style choice.
+1. **`--input <path>`** — a research spec produced by `/interview-me` (saved under `quality_reports/specs/`) or any structured Markdown file. Read the spec and extract: research question, hypotheses (directional!), data source, design, sample, analysis approach. If the spec records a paper type (`/interview-me` writes it on a `**Paper type:**` line, e.g. `survey-experiment`), use it to bias the style choice.
 2. **No `--input`** — prompt the user for a 1–3 paragraph description of the study, then proceed. If the description omits a directional hypothesis, ask once. Do not fabricate.
 
 Refusal conditions (must be checked before any drafting):
@@ -54,7 +54,7 @@ Default per field (used when `--style` is not given):
 
 | Field signal | Default style |
 |---|---|
-| `paper_type: survey-experiment` or political-science / psychology context | `osf` |
+| `**Paper type:** survey-experiment` or political-science / psychology context | `osf` |
 | Field experiment in econ / labelled "RCT" / IRB-approved randomised intervention | `aea-rct` |
 | 9-question quick-form ask, lab psych experiment, time-pressure | `aspredicted` |
 | Anything else | `osf` |
@@ -99,7 +99,7 @@ For each failure, the document gets a `[CLARIFY: …]` placeholder; the document
 
 ### PHASE 5 — Post-flight verification
 
-If the document cites prior literature in the rationale section (e.g., "Building on Hainmueller et al. 2014, we expect …"), invoke `/verify-claims` via the `Agent` tool to fact-check those citations. Pass the draft path and a list of explicit citations. The `claim-verifier` agent (forked context, never sees the draft) returns PASS / PARTIAL / FAIL per citation. Surface any FAIL/PARTIAL in the output summary.
+If the document cites prior literature in the rationale section (e.g., "Building on Hainmueller et al. 2014, we expect …"), invoke `/verify-claims` via the `Agent` tool to fact-check those citations. Pass the draft path and a list of explicit citations. The `claim-verifier` agent (fresh context, never sees the draft) returns PASS / PARTIAL / FAIL per citation. Surface any FAIL/PARTIAL in the output summary.
 
 Skip post-flight if:
 
@@ -137,7 +137,7 @@ Include the registry URL: OSF → `osf.io/registries`, AsPredicted → `aspredic
 ### Example 1 — Poli-sci survey experiment from a spec
 **User says:** "Preregister this study" (with `--input quality_reports/specs/2026-04-15_priming-effects.md`)
 **Actions:**
-1. Read spec; `paper_type: survey-experiment` → default style `osf`.
+1. Read spec; `**Paper type:** survey-experiment` → default style `osf`.
 2. Extract 2 directional hypotheses, MTurk N=1,200, OLS with treatment dummies.
 3. Generate OSF document, all MUST sections filled, 1 MAY left blank.
 4. No prior-lit citations beyond the spec — skip post-flight.

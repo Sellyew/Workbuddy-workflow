@@ -410,7 +410,7 @@ def measure_deck(html: Path, out: Path, tol: float, screenshots: bool):
                                "offenders": top3(res["offenders"], key=lambda o: o["by_px"]),
                                "clipped": top3(res["clipped"], key=lambda c: max(c["hidden_x"], c["hidden_y"])),
                                "images_not_loaded": pos["unloaded"], "broken_images": pos["broken"],
-                               "_urls": pos["urls"],
+                               "_urls": pos["urls"], "_spill": spill,
                                "screenshot": str(shot) if shot else None})
         finally:
             browser.close()
@@ -432,8 +432,11 @@ def measure_deck(html: Path, out: Path, tol: float, screenshots: bool):
         urls = sl.pop("_urls")
         sl["broken_assets"] = sorted({str(to_path(u)) for u in urls if u.startswith("file:") and str(to_path(u)) in bad_local}
                                      | {u for u in urls if u in bad_remote})
-        if (sl["broken_assets"] or sl["broken_images"]) and sl["verdict"] == "ok":
-            sl["verdict"] = "broken-asset"
+        # Each defect is tracked on its own: a slide that overflows AND hides content
+        # in a scrolling element must show both, or the second is found a run later.
+        sl["defects"] = ([d for d, on in (("overflow", sl.pop("_spill")), ("clipped", bool(sl["clipped"])),
+                                          ("broken-asset", bool(sl["broken_assets"] or sl["broken_images"]))) if on])
+        sl["verdict"] = sl["defects"][0] if sl["defects"] else "ok"
     return slides, engine, math, (w, h), {"missing": missing, "wrong_case": wrong_case}
 
 
@@ -476,14 +479,18 @@ def main() -> int:
         slides, engine, math, (w, h), assets = measure_deck(html, out, tol, not args.no_screenshots)
     except Exception as e:                  # anything that stops the run is "could not run", never "overflow"
         return fail(f"could not measure {html.name}: {e}")
+    if math == "not-typeset":               # measurements would describe raw TeX, not the deck
+        return fail(f"{html.name} has math that never rendered (MathJax/KaTeX did not load — offline, or "
+                    "blocked?), so every formula would be measured as raw TeX. Connect to the network, or render "
+                    "with `embed-resources: true`, and re-run.")
 
     bad = [s for s in slides if s["verdict"] != "ok"]
     asset_problems = bool(assets["missing"] or assets["wrong_case"])
     report = {
         "deck": str(html), "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "browser": engine, "math": math, "slide_size": [w, h], "tolerance_px": tol,
-        "summary": {"slides": len(slides), "overflow": sum(s["verdict"] == "overflow" for s in slides),
-                    "clipped": sum(s["verdict"] == "clipped" for s in slides),
+        "summary": {"slides": len(slides), "overflow": sum("overflow" in s["defects"] for s in slides),
+                    "clipped": sum("clipped" in s["defects"] for s in slides),
                     "broken_asset": sum(bool(s["broken_images"] or s["broken_assets"]) for s in slides),
                     "missing_files": len(assets["missing"]), "wrong_case_files": len(assets["wrong_case"])},
         "assets": assets,
@@ -497,9 +504,6 @@ def main() -> int:
           f"{report['summary']['clipped']} with clipped content, "
           f"{report['summary']['broken_asset']} with a broken asset; "
           f"{len(assets['missing'])} missing and {len(assets['wrong_case'])} wrong-case local files.**", ""]
-    if math == "not-typeset":
-        md += ["> **Math was not typeset** (MathJax/KaTeX never loaded — offline, or blocked?). "
-               "Formula measurements describe raw TeX, not rendered math.", ""]
     missing = [s["n"] for s in slides if s["images_not_loaded"]]
     if missing:
         md += [f"> Images still loading after 8s on slide(s) {', '.join(map(str, missing))} — "
@@ -510,12 +514,13 @@ def main() -> int:
         for s in bad:
             o = s["overflow_px"]
             where = "; ".join(f"`{x['element']}` +{x['by_px']}px “{x['text']}”" for x in s["offenders"])
-            where = where or "; ".join(f"`{c['element']}` hides {c['hidden_x']}×{c['hidden_y']}px “{c['text']}”"
-                                       for c in s["clipped"])
+            hidden = "; ".join(f"`{c['element']}` hides {c['hidden_x']}×{c['hidden_y']}px “{c['text']}”"
+                               for c in s["clipped"])
+            where = "; ".join(filter(None, [where, hidden]))
             broken = ([f"image did not load: `{b}`" for b in s["broken_images"]]
                       + [f"broken asset: `{rel(b)}`" for b in s["broken_assets"]])
             where = "; ".join(filter(None, [where] + broken))    # listed whatever the verdict
-            md.append(f"| {s['n']} | {s['title'] or '—'} | {s['verdict']} | "
+            md.append(f"| {s['n']} | {s['title'] or '—'} | {' + '.join(s['defects'])} | "
                       f"{o['bottom']} / {o['right']} / {o['top']} / {o['left']} | {where} | "
                       f"{rel(s['screenshot']) or '—'} |")
     else:

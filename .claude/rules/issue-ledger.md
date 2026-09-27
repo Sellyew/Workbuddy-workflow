@@ -12,12 +12,31 @@ limits of that repair** cannot disappear into a branch, a chat window, or a comm
 
 A defect that lives only in a conversation is a defect you will rediscover.
 
+## What gets an issue
+
+The tracker is the project's memory across sessions and machines, so work that should outlive a
+session goes there:
+
+| Situation | Issue? |
+|---|---|
+| A defect in code or docs already on the main branch, or reported by anyone | Yes — open it **before** fixing, to the standard below |
+| An improvement worth doing but not being done now | Yes — label it `enhancement`, rather than adding a line to a local backlog file |
+| A decision that belongs to the owner and blocks work | Yes — state the decision and what waits on it |
+| A review round over an unmerged branch (many findings, all fixed before merge) | One summary issue for the round, with a checklist of the confirmed findings, closed with the pull request |
+| A mistake you made and fixed inside the same unmerged change | No — the commit and the pull request record it |
+
+**Never put restricted data in an issue** — no values, identifiers, file paths or screenshots
+from data covered by a data-use agreement ([`confidential-data.md`](confidential-data.md)).
+Describe the defect abstractly; the evidence stays where the data lives.
+
 ## When to open one
 
 Open **one issue per root cause** when a bounded check authenticates behaviour that violates a
 documented contract, a statistical law, an invariant, a reproducibility requirement, or a
 user-facing promise. Search open *and* closed issues first; link related symptoms rather than
-duplicating them.
+duplicating them. In this template that search is enforced: a new issue is created through
+`scripts/file-issue.py`, which runs several searches and records them in the issue body, and the
+`issue-guard` hook denies a raw `gh issue create` ([`/issues`](../skills/issues/SKILL.md)).
 
 The initial report must carry:
 
@@ -53,9 +72,14 @@ harness, the invariant fingerprint comparison, and the full suite. **Never re-bl
 fingerprint merely to obtain a green gate; attribute every movement first**
 ([`provenance-and-ground-truth.md`](../references/provenance-and-ground-truth.md)).
 
-## The closure comment — seven required sections
+## The closure comment
 
-Before closing as completed, post one final comment containing:
+Before closing as completed, post one final comment. For a defect that can move a result, a
+number, or a user-facing promise, it has all seven sections below. For a small fix — a typo, a
+stale sentence, a broken link — a short comment is enough: what was wrong, the commit that fixed
+it, and how you checked.
+
+The seven sections:
 
 1. **Corrected diagnosis and root cause.** What was actually wrong, and which earlier
    hypothesis measurement refuted.
@@ -89,8 +113,10 @@ At every coherent checkpoint, triage new review threads against current source. 
 failure is not an empty inbox.** Review tooling must never auto-reply or auto-resolve.
 
 Before any handoff, verify that every defect found in the round is either represented by an
-open issue or has a completed issue whose final comment meets the seven sections above. Record
-exceptions in the handoff rather than silently changing issue state.
+open issue or has a completed issue whose final comment meets the closure standard above — all
+seven sections for a defect that can move a result, a number, or a user-facing promise, and the
+short form for a small fix. Record exceptions in the handoff rather than silently changing issue
+state.
 
 ## Cross-references
 

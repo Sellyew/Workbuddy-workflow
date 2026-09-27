@@ -36,7 +36,11 @@ TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode FILENAME.tex 
 
 ### For `.R` files (R scripts):
 ```bash
-Rscript scripts/R/FILENAME.R 2>&1 | tail -20
+# Pipeline stages share one environment, and 02_clean.R through 05_figures.R
+# stop() when run on their own: verify a change to any stage through the orchestrator.
+Rscript scripts/R/00_run_all.R 2>&1 | tail -20
+# A standalone script (not sourced by 00_run_all.R) may be run by itself:
+Rscript path/to/FILENAME.R 2>&1 | tail -20
 ```
 - Check exit code
 - Verify output files (PDF, RDS) were created

@@ -172,7 +172,7 @@ Top 3 paragraphs by finding density:
 
 - **Single-mention idioms.** "Moreover," appearing once in a 30-page draft is fine.
 - **Discipline-legitimate constructions.** Political science accepts "In this paper, we…" abstracts; economics doesn't. Calibrate. If you can't infer discipline from the file, default to MED.
-- **Author's documented voice.** If the user has a `style-profile.md` or similar reference file, respect documented preferences (e.g., "I use em-dashes deliberately"). When in doubt, flag and let the user decide.
+- **Author's documented voice.** If `voice-profile.md` exists at the repo root (written by `/voice-profile`), respect documented preferences (e.g., "I use em-dashes deliberately"). When in doubt, flag and let the user decide.
 
 ## Calibration heuristics
 

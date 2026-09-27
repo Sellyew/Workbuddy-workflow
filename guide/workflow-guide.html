@@ -2433,9 +2433,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#plans-compression-resistant-task-memory" id="toc-plans-compression-resistant-task-memory" class="nav-link" data-scroll-target="#plans-compression-resistant-task-memory"><span class="header-section-number">4.8.1</span> Plans — Compression-Resistant Task Memory</a></li>
   <li><a href="#session-logs-why-not-just-what-history-auto-written" id="toc-session-logs-why-not-just-what-history-auto-written" class="nav-link" data-scroll-target="#session-logs-why-not-just-what-history-auto-written"><span class="header-section-number">4.8.2</span> Session Logs — Why-Not-Just-What History (auto-written)</a></li>
-  <li><a href="#how-it-all-fits-together" id="toc-how-it-all-fits-together" class="nav-link" data-scroll-target="#how-it-all-fits-together"><span class="header-section-number">4.8.3</span> How It All Fits Together</a></li>
-  <li><a href="#hooks---automated-enforcement" id="toc-hooks---automated-enforcement" class="nav-link" data-scroll-target="#hooks---automated-enforcement"><span class="header-section-number">4.8.4</span> Hooks — Automated Enforcement</a></li>
-  <li><a href="#context-survival-system-advanced" id="toc-context-survival-system-advanced" class="nav-link" data-scroll-target="#context-survival-system-advanced"><span class="header-section-number">4.8.5</span> Context Survival System (Advanced)</a></li>
+  <li><a href="#github-issues-memory" id="toc-github-issues-memory" class="nav-link" data-scroll-target="#github-issues-memory"><span class="header-section-number">4.8.3</span> GitHub Issues — the Project’s To-Do List and Memory</a></li>
+  <li><a href="#how-it-all-fits-together" id="toc-how-it-all-fits-together" class="nav-link" data-scroll-target="#how-it-all-fits-together"><span class="header-section-number">4.8.4</span> How It All Fits Together</a></li>
+  <li><a href="#hooks---automated-enforcement" id="toc-hooks---automated-enforcement" class="nav-link" data-scroll-target="#hooks---automated-enforcement"><span class="header-section-number">4.8.5</span> Hooks — Automated Enforcement</a></li>
+  <li><a href="#context-survival-system-advanced" id="toc-context-survival-system-advanced" class="nav-link" data-scroll-target="#context-survival-system-advanced"><span class="header-section-number">4.8.6</span> Context Survival System (Advanced)</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-patterns" id="toc-sec-patterns" class="nav-link" data-scroll-target="#sec-patterns"><span class="header-section-number">5</span> Workflow Patterns</a>
@@ -2500,9 +2501,9 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#step-1-build-your-knowledge-base" id="toc-step-1-build-your-knowledge-base" class="nav-link" data-scroll-target="#step-1-build-your-knowledge-base"><span class="header-section-number">7.1</span> Step 1: Build Your Knowledge Base</a>
   <ul class="collapse">
-  <li><a href="#notation-registry" id="toc-notation-registry" class="nav-link" data-scroll-target="#notation-registry"><span class="header-section-number">7.1.1</span> Notation Registry</a></li>
-  <li><a href="#applications-database" id="toc-applications-database" class="nav-link" data-scroll-target="#applications-database"><span class="header-section-number">7.1.2</span> Applications Database</a></li>
-  <li><a href="#validated-design-principles" id="toc-validated-design-principles" class="nav-link" data-scroll-target="#validated-design-principles"><span class="header-section-number">7.1.3</span> Validated Design Principles</a></li>
+  <li><a href="#notation-registry-and-symbol-reference" id="toc-notation-registry-and-symbol-reference" class="nav-link" data-scroll-target="#notation-registry-and-symbol-reference"><span class="header-section-number">7.1.1</span> Notation Registry and Symbol Reference</a></li>
+  <li><a href="#empirical-applications" id="toc-empirical-applications" class="nav-link" data-scroll-target="#empirical-applications"><span class="header-section-number">7.1.2</span> Empirical Applications</a></li>
+  <li><a href="#design-principles" id="toc-design-principles" class="nav-link" data-scroll-target="#design-principles"><span class="header-section-number">7.1.3</span> Design Principles</a></li>
   </ul></li>
   <li><a href="#step-2-create-your-domain-reviewer" id="toc-step-2-create-your-domain-reviewer" class="nav-link" data-scroll-target="#step-2-create-your-domain-reviewer"><span class="header-section-number">7.2</span> Step 2: Create Your Domain Reviewer</a></li>
   <li><a href="#step-3-adapt-your-theme" id="toc-step-3-adapt-your-theme" class="nav-link" data-scroll-target="#step-3-adapt-your-theme"><span class="header-section-number">7.3</span> Step 3: Adapt Your Theme</a></li>
@@ -2571,7 +2572,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 26, 2026</p>
+      <p class="date-modified">September 27, 2026</p>
     </div>
   </div>
     
@@ -2628,7 +2629,7 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Orchestrator runtime</td>
-<td>Specific skills (<code>/qa-quarto</code>, <code>/review-paper --adversarial</code>, <code>/create-lecture</code>, …) run a real fan-out → reduce → judge → loop-until-dry runtime internally</td>
+<td>Specific skills (<code>/seven-pass-review</code>, <code>/deep-audit</code>, <code>/review-paper --peer</code>, …) run a real fan-out → reduce → judge runtime internally; <code>/qa-quarto</code> and <code>/review-paper --adversarial</code> run its critic → fix → loop-until-dry half</td>
 </tr>
 <tr class="even">
 <td>Multi-agent workflows</td>
@@ -2700,19 +2701,19 @@ window.Quarto = {
 <pre><code>You: &quot;Review my lecture slides and fix all issues before tomorrow&#39;s class&quot;
      ↓
 Claude invokes /slide-excellence, which internally:
-  → Runs /proofread (grammar, typos, consistency)
-  → Runs /visual-audit (overflow, layout, spacing)
-  → Runs /pedagogy-review (narrative flow, notation clarity)
-  → Synthesizes findings into prioritized fix list
-  → Applies fixes (critical → major → minor)
-  → Re-verifies everything compiles
-  → Scores against quality gates
+  → Spawns the proofreader, slide-auditor and pedagogy-reviewer agents
+    (plus TikZ, parity and R reviewers when the deck calls for them, and a
+    substance review, required for a Beamer deck)
+  → Synthesizes their findings into one prioritized report
      ↓
-You see: &quot;Done. Fixed 12 issues. Score: 88/100. Ready to commit?&quot;
+Claude applies the fixes (critical → major → minor), recompiles,
+and scores the deck (quality_score.py)
+     ↓
+You see: &quot;Done. Fixed 12 issues; the deck compiles. Score: 88/100. Ready to commit?&quot;
 You: &quot;Yes&quot;
      ↓
 Claude runs /commit (only because you explicitly approved)</code></pre>
-<p><em>One skill (<code>/slide-excellence</code>) runs the loop. There is no repo-wide orchestrator picking sub-skills à la carte; the orchestration lives inside the invoked skill.</em></p>
+<p><em>One skill (<code>/slide-excellence</code>) runs the review fan-out; the fixes happen afterwards, in your session. There is no repo-wide orchestrator picking sub-skills à la carte; the orchestration lives inside the invoked skill.</em></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href>Paper Review</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href>Data Analysis</a></li></ul>
 <div class="tab-content">
@@ -2720,26 +2721,24 @@ Claude runs /commit (only because you explicitly approved)</code></pre>
 <pre><code>You: &quot;Review my paper draft and prepare it for submission&quot;
      ↓
 Claude invokes /review-paper, which internally:
-  → Runs the substantive review (argument structure, methods, citations)
-  → Spawns /proofread (grammar, consistency, formatting)
-  → Spawns /validate-bib (cross-reference citations)
-  → Synthesizes findings into prioritized fix list
-  → Applies fixes (critical → major → minor)
-  → Re-verifies everything compiles
-  → Scores against quality gates
+  → Runs the substantive review (six dimensions, plus 3–5 referee objections)
+  → Auto-invokes /review-r and /audit-reproducibility on the scripts
+    the paper cites (unless --no-cross-artifact)
+  → Writes a prioritized review report to quality_reports/
+  → With --adversarial: loops critic → fixer → re-audit until dry
      ↓
-You see: &quot;Done. Fixed 18 issues. Score: 91/100. Ready to commit?&quot;</code></pre>
+You see: &quot;Review saved: 4 major concerns, 3 referee objections. Start on the fixes?&quot;</code></pre>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <pre><code>You: &quot;Analyze this dataset and produce publication-ready output&quot;
      ↓
 Claude invokes /data-analysis, which internally:
   → Explores, models, builds tables and figures
-  → Spawns /review-r (code quality, reproducibility)
-  → Produces R script, tables, and figures
-  → Scores against quality gates
+  → Produces numbered R scripts, tables, and figures, and logs each
+    specification to quality_reports/spec-ledger.md
+  → Runs the r-reviewer agent on the scripts and addresses its critical/high issues
      ↓
-You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</code></pre>
+You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 </div>
 </div>
 </div>
@@ -2770,7 +2769,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>You talk, Claude orchestrates.</strong> The 18 agents, 60 skills, and 37 rules exist so you don’t have to think about them. Describe your goal, approve the plan, and let the system work.</p>
+<p><strong>You talk, Claude orchestrates.</strong> The 18 agents, 61 skills, and 37 rules exist so you don’t have to think about them. Describe your goal, approve the plan, and let the system work.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2783,7 +2782,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This guide describes the full system — 18 agents, 60 skills, 37 rules. That is the ceiling, not the floor. <strong>Start with just CLAUDE.md and 2–3 skills</strong> (<code>/compile-latex</code>, <code>/proofread</code>, <code>/commit</code>). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you’re ready.</p>
+<p>This guide describes the full system — 18 agents, 61 skills, 37 rules. That is the ceiling, not the floor. <strong>Start with just CLAUDE.md and 2–3 skills</strong> (<code>/compile-latex</code>, <code>/proofread</code>, <code>/commit</code>). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you’re ready.</p>
 </div>
 </div>
 <hr>
@@ -2957,8 +2956,8 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 <div class="callout-body-container callout-body">
 <p>The fastest way to <em>believe</em> the verification layer is to watch it catch you. From a fresh clone:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all ten gates green on a clean tree</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="st">&#39;s/60 skills/61 skills/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i without &#39;&#39;)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: claim says 61, disk says 60</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="at">-E</span> <span class="st">&#39;s/[0-9]+ skills/99 skills/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i -E, no &#39;&#39;)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 skills, disk has fewer</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">--</span> README.md      <span class="co"># undo</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># green again</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>That loop — green, seeded defect, red, restore, green — is the whole philosophy in four commands. Every gate in this repo has been through it; the results live in <code>quality_reports/qualification/LEDGER.md</code>.</p>
@@ -3041,7 +3040,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures. Score: 85/100.&quot;</cod
 <li><strong>Applications database</strong> — datasets, papers, and R packages you reference</li>
 <li><strong>Design principles</strong> — what you’ve approved and what you’ve overridden</li>
 </ol>
-<p><strong>Configure permissions</strong> — Review <code>.claude/settings.json</code>. The template includes permissions for git, LaTeX, Quarto, R, and utility scripts. Add any additional tools you use.</p>
+<p><strong>Configure permissions</strong> — Review <code>.claude/settings.json</code>. The template ships seven catch-all allow rules (<code>Bash(*)</code>, <code>Edit(**)</code>, <code>Write(**)</code>, <code>MultiEdit(**)</code>, <code>Read(**)</code>, <code>WebFetch(*)</code>, <code>WebSearch</code>) and an empty <code>deny</code> list, so you do not need to add tools. Customizing means narrowing it: trim the allows you don’t want, or add <code>deny</code> rules (for example, to keep restricted data off the model; see “Keep restricted data off the model” in <code>TROUBLESHOOTING.md</code>).</p>
 <p><strong>Test it:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In Claude Code, type:</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/compile-latex</span> MyFirstLecture</span>
@@ -3285,8 +3284,8 @@ APPROVED   NEEDS WORK
 <section id="the-orchestrator-a-runtime-not-a-daemon" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="the-orchestrator-a-runtime-not-a-daemon"><span class="header-section-number">3.3</span> The Orchestrator: A Runtime, Not a Daemon</h2>
 <p>Individual agents are specialists. Skills like <code>/slide-excellence</code> and <code>/qa-quarto</code> coordinate a few agents for specific tasks. In day-to-day work, you don’t have to think about which agents to run — the right skill runs the right agents for you.</p>
-<p>The <strong>orchestrator protocol</strong> (<code>.claude/rules/orchestrator-protocol.md</code>) is a <strong>real runtime</strong>, built on the <code>Agent</code> subagent primitive every Claude Code session has: skills fan out to forked reviewers, reduce their typed findings through a deterministic gate, judge with a post-judge hallucination guard, and loop until dry. What is <strong>not</strong> automatic is the <em>trigger</em>: nothing launches this loop on its own, and there is no background daemon — plan approval does NOT auto-trigger it. You invoke a skill (e.g., <code>/create-lecture</code>, <code>/qa-quarto</code>, <code>/review-paper --adversarial</code>) and the skill runs the runtime within its own scope. The human is the auditor of the disagreements the loop surfaces; this is explicitly not an autonomous daemon.</p>
-<p>What’s mechanically implemented today: <code>/commit</code> (verifier + quality_score), <code>/qa-quarto</code> (critic-fixer loop), <code>/review-paper --adversarial</code> (critic-fixer loop), <code>/slide-excellence</code> (multi-agent fanout), <code>/review-paper --peer</code> (editor + 2 referees + cross-artifact). See <a href="#pattern-2-contractor-mode-orchestrator">Pattern 2</a> for the complete workflow.</p>
+<p>The <strong>orchestrator protocol</strong> (<code>.claude/rules/orchestrator-protocol.md</code>) is a <strong>real runtime</strong>, built on the <code>Agent</code> subagent primitive every Claude Code session has: skills fan out to forked reviewers, reduce their typed findings through a deterministic gate, judge with a post-judge hallucination guard, and loop until dry. What is <strong>not</strong> automatic is the <em>trigger</em>: nothing launches this loop on its own, and there is no background daemon — plan approval does NOT auto-trigger it. You invoke a skill (e.g., <code>/qa-quarto</code>, <code>/review-paper --adversarial</code>, <code>/seven-pass-review</code>) and the skill runs the runtime within its own scope. The human is the auditor of the disagreements the loop surfaces; this is explicitly not an autonomous daemon.</p>
+<p>What’s mechanically implemented today: <code>/commit</code> (verifier + quality_score), <code>/qa-quarto</code> (critic-fixer loop), <code>/review-paper --adversarial</code> (critic-fixer loop), <code>/slide-excellence</code> (multi-agent fanout), <code>/review-paper --peer</code> (editor + 2 referees + cross-artifact), <code>/seven-pass-review</code> (7-lens fan-out + hallucination gate), <code>/deep-audit</code> (fan-out → judge → fix, loop-until-dry). See <a href="#pattern-2-contractor-mode-orchestrator">Pattern 2</a> for the complete workflow.</p>
 </section>
 <section id="sec-quality" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-quality"><span class="header-section-number">3.4</span> Quality Review: The 80/90/95 System</h2>
@@ -3380,7 +3379,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="mandatory-verification" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored"><span class="header-section-number">3.4.2</span> Mandatory Verification</h3>
-<p>The verification protocol (<code>.claude/rules/verification-protocol.md</code>) requires that Claude compile, render, or otherwise verify every output before reporting a task as complete. Skills that implement the orchestrator pattern enforce this as Step 2: VERIFY. This means Claude <strong>cannot</strong> say “done” from within those skills without actually checking the output. One honest caveat: the <em>mechanical</em> quality gate is static analysis plus a best-effort render — when Quarto or XeLaTeX is unavailable or times out, it records <code>UNVERIFIED</code> rather than failing. Treat <code>UNVERIFIED</code> notes as <em>not cleared</em>, and rely on the verifier agent (which actually compiles) for execution-level assurance.</p>
+<p>The verification protocol (<code>.claude/rules/verification-protocol.md</code>) requires that Claude compile, render, or otherwise verify every output before reporting a task as complete. Skills that implement the orchestrator pattern enforce this as Step 2: VERIFY. This means Claude <strong>cannot</strong> say “done” from within those skills without actually checking the output. One honest caveat: the <em>mechanical</em> quality gate is static analysis plus best-effort tool checks — <code>.tex</code> files are checked statically and never compiled, and when Quarto (render) or Rscript (parse) is unavailable or times out (<code>QUALITY_QUARTO_TIMEOUT</code>, <code>QUALITY_RSCRIPT_TIMEOUT</code>), the gate lists the check under “Unverified checks” rather than failing. Treat those unverified notes as <em>not cleared</em>, and rely on the verifier agent (which actually compiles) for execution-level assurance.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3437,6 +3436,22 @@ APPROVED   NEEDS WORK
 <td>hook message</td>
 </tr>
 <tr class="even">
+<td>Root-of-trust guard</td>
+<td>PreToolUse hook (<code>Bash</code>)</td>
+<td><em>silent shell</em> writes into <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, <code>.githooks/</code> in-session (a best-effort tripwire; <code>Edit</code>/<code>Write</code> still pass)</td>
+<td><strong>closed</strong> — call blocked</td>
+<td><code>ALLOW_ROOT_OF_TRUST_WRITE=1</code></td>
+<td>hook message</td>
+</tr>
+<tr class="odd">
+<td>Issue guard</td>
+<td>PreToolUse hook (<code>Bash</code>, spawned only for <code>gh</code> commands)</td>
+<td><code>gh issue create</code>, or a REST/GraphQL issue create, in-session (a best-effort tripwire, not a security boundary)</td>
+<td><strong>closed</strong> — call blocked, pointed to <code>scripts/file-issue.py</code></td>
+<td>run <code>gh</code> yourself in a terminal</td>
+<td>hook message; the duplicate check recorded in the issue body</td>
+</tr>
+<tr class="even">
 <td>Numeric-claim passport</td>
 <td>script + skill</td>
 <td>claims declared per paper</td>
@@ -3448,7 +3463,7 @@ APPROVED   NEEDS WORK
 <td><code>/verify-claims</code></td>
 <td>fresh-context verifier agent</td>
 <td>citations, numbers in a draft</td>
-<td>HIGH-WARN = must-fix</td>
+<td>HIGH-WARN fails the report closed (never reported as verified); <strong>not</strong> a commit gate — the author decides</td>
 <td>explicit <code>--no-fail-closed</code></td>
 <td>verification report</td>
 </tr>
@@ -3470,7 +3485,7 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>Two design rules behind this table: everything <strong>closed</strong> is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template does <strong>not</strong> pile on session-time enforcement hooks beyond the git guard: each one slows every single interaction, and the cost lands on you every minute you work.</p>
+<p>Two design rules behind this table: everything <strong>closed</strong> is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template does <strong>not</strong> pile on session-time enforcement hooks beyond its three <code>PreToolUse</code> guards — the destructive-git guard, the root-of-trust tripwire, and the issue guard. A guard that runs on every call slows every single interaction, and the cost lands on you every minute you work; that is why the issue guard is spawned only for <code>gh</code> commands.</p>
 <section id="dont-skip-verification" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="dont-skip-verification"><span class="header-section-number">3.5</span> Don’t Skip Verification</h2>
 <p>In Econ 730, verification caught unverified TikZ diagrams that would have deployed with overlapping labels, broken SVGs in Quarto slides that wouldn’t display, and R scripts with missing intercept terms that produced silently wrong estimates.</p>
@@ -3490,12 +3505,12 @@ APPROVED   NEEDS WORK
 <p>Anthropic publicly acknowledged a model-quality regression in <a href="https://www.anthropic.com/engineering">their Apr 23, 2026 engineering post “An update on recent Claude Code quality reports”</a>. The post identifies three contributing changes and is unusually candid about the limits of internal evals. Implication for our workflow: do not treat any given model checkpoint as a stable baseline.</p>
 <p>The defences in this template all assume <strong>model quality drifts</strong>:</p>
 <ul>
-<li><strong><code>/verify-claims</code></strong> with the Chain-of-Verification forked-verifier (the verifier cannot self-confirm even if the orchestrator’s checkpoint regressed).</li>
+<li><strong><code>/verify-claims</code></strong> with the Chain-of-Verification fresh-context verifier (the verifier cannot self-confirm even if the orchestrator’s checkpoint regressed).</li>
 <li><strong><code>/audit-reproducibility</code></strong> with <code>passport.yaml</code> (numeric claims are anchored to specific script output values, not to the model’s recall of the values).</li>
 <li><strong>The cross-artifact review rule</strong> (a paper’s claims are checked against the code that produced them, not against the model’s intuition about whether they’re “plausible”).</li>
 <li><strong>HIGH-WARN fails closed in the report</strong> — a fabricated citation or numerical contradiction is surfaced first and the draft is never presented as verified, even if the model “feels confident.” (This is a reporting rule: <code>/commit</code> and the pre-commit hook do not read <code>/verify-claims</code> verdicts, so resolving a HIGH-WARN before committing is the author’s call.)</li>
 </ul>
-<p>Anthropic’s post is also a useful reminder that running <code>/review-paper --variance N</code> (Pass 2C E) is the empirical answer to “should I trust this output?” — a single point estimate of model quality on a single task hides variance that the template’s adversarial-review patterns surface.</p>
+<p>Anthropic’s post is also a useful reminder that running <code>/review-paper --peer &lt;journal&gt; --variance N</code> (Pass 2C E) is the empirical answer to “should I trust this output?” — a single point estimate of model quality on a single task hides variance that the template’s adversarial-review patterns surface.</p>
 </div>
 </div>
 </section>
@@ -3698,7 +3713,7 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>These are <em>complementary</em>, not redundant. A paper can pass <code>/proofread</code> (clean grammar) and fail <code>/humanize</code> (the prose reads as AI-drafted). It can pass <code>/humanize</code> (your own voice) and fail <code>/verify-claims</code> (citation fabricated). It can pass <code>/verify-claims</code> (citations real) and fail <code>/audit-reproducibility</code> (Table 2 doesn’t match the code). Run all four before submission; reach for <code>/review-paper --variance N</code> for the simulated peer-review verdict on top.</p>
+<p>These are <em>complementary</em>, not redundant. A paper can pass <code>/proofread</code> (clean grammar) and fail <code>/humanize</code> (the prose reads as AI-drafted). It can pass <code>/humanize</code> (your own voice) and fail <code>/verify-claims</code> (citation fabricated). It can pass <code>/verify-claims</code> (citations real) and fail <code>/audit-reproducibility</code> (Table 2 doesn’t match the code). Run all four before submission; reach for <code>/review-paper --peer &lt;journal&gt; --variance N</code> for the simulated peer-review verdict on top.</p>
 <p><strong><code>/humanize</code> design choice</strong>: detect-only, no <code>--rewrite</code> mode. Auto-rewriting AI tells degrades prose quality (cross-vendor research finding) and introduces new tells. The author reads the report and edits — that manual step is the price of preserving voice. If the report flags 8+ HIGH-severity tells per 1000 words, rewrite the affected paragraph from scratch rather than patching tell-by-tell.</p>
 </section>
 </section>
@@ -3832,16 +3847,16 @@ APPROVED   NEEDS WORK
 ├── plan-first-workflow.md       # ~83 lines — plan before you build
 ├── session-logging.md           # ~23 lines — three logging triggers
 ├── prompt-shaping.md            # ~7 lines — shape informal asks before acting
-├── progress-reports.md          # ~92 lines — GitHub as memory: issues, reports, MEMORY.md
-└── repo-hygiene.md              # ~74 lines — scratch must not become main</code></pre>
+├── progress-reports.md          # ~96 lines — GitHub as memory: issues, reports, MEMORY.md
+└── repo-hygiene.md              # ~95 lines — scratch must not become main</code></pre>
 <p><strong>Path-scoped rules</strong> load only when relevant:</p>
 <pre><code>.claude/rules/
-├── r-code-conventions.md        # paths: [&quot;**/*.R&quot;] — R standards
-├── quality-gates.md             # paths: [&quot;*.tex&quot;, &quot;*.qmd&quot;, &quot;*.R&quot;] — scoring
-├── verification-protocol.md     # paths: [&quot;*.tex&quot;, &quot;*.qmd&quot;, &quot;docs/&quot;] — verify before done
-├── replication-protocol.md      # paths: [&quot;scripts/**/*.R&quot;] — replicate first
+├── r-code-conventions.md        # paths: [&quot;Figures/**/*.R&quot;, &quot;scripts/**/*.R&quot;, &quot;explorations/**/*.R&quot;] — R analysis-script standards
+├── quality-gates.md             # paths: [&quot;Slides/**/*.tex&quot;, &quot;Quarto/**/*.qmd&quot;, &quot;scripts/**/*.R&quot;] — scoring
+├── verification-protocol.md     # paths: [&quot;Slides/**/*.tex&quot;, &quot;Quarto/**/*.qmd&quot;, &quot;docs/**&quot;] — verify before done
+├── replication-protocol.md      # paths: [&quot;scripts/**/*.R&quot;, &quot;Figures/**/*.R&quot;] — replicate first
 ├── exploration-folder-protocol.md  # paths: [&quot;explorations/**&quot;] — sandbox rules
-├── orchestrator-research.md     # paths: [&quot;scripts/**/*.R&quot;, &quot;explorations/**&quot;] — simple loop
+├── orchestrator-research.md     # paths: [&quot;scripts/**/*.R&quot;, &quot;explorations/**&quot;, &quot;Figures/**/*.R&quot;] — simple loop
 ├── orchestrator-protocol.md     # paths: [&quot;.claude/skills/**&quot;, &quot;.claude/agents/**&quot;, ...] — review runtime
 ├── meta-governance.md           # paths: [top-level docs, &quot;guide/**&quot;, &quot;.claude/**&quot;, ...] — template vs working project
 └── ...32 path-scoped rules total</code></pre>
@@ -3852,9 +3867,9 @@ APPROVED   NEEDS WORK
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="example-path-scoped-r-code-conventions-rule"><span class="header-section-number">4.2.1</span> Example: Path-Scoped R Code Conventions Rule</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paths</span><span class="kw">:</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;**/*.R&quot;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;Figures/**/*.R&quot;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;scripts/**/*.R&quot;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;Figures/**/*.R&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;scripts/**/*.R&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;explorations/**/*.R&quot;</span></span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># R Code Standards</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3865,8 +3880,8 @@ APPROVED   NEEDS WORK
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visual Identity</span></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>primary_blue  &lt;- &quot;#012169&quot;</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>primary_gold  &lt;- &quot;#f2a900&quot;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>paths:</code> block means this rule only loads when Claude reads or edits an <code>.R</code> file. When Claude works on a <code>.tex</code> file, this rule doesn’t consume any of the instruction budget.</p>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>primary_gold  &lt;- &quot;#b9975b&quot;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>paths:</code> block means this rule only loads when Claude reads or edits an analysis-script <code>.R</code> file under <code>scripts/</code>, <code>Figures/</code>, or <code>explorations/</code>. R package source (<code>R/</code>, <code>tests/</code>) loads <code>r-package-conventions</code> instead, and when Claude works on a <code>.tex</code> file neither rule consumes any of the instruction budget.</p>
 </section>
 </section>
 <section id="constitutional-governance-optional" class="level2" data-number="4.3">
@@ -3955,7 +3970,7 @@ APPROVED   NEEDS WORK
 </tr>
 <tr class="odd">
 <td><code>/commit</code></td>
-<td>Stage, commit, PR, merge</td>
+<td>Gates, then commit on a branch; <code>--pr</code> opens a PR; never merges</td>
 <td>After any completed task</td>
 </tr>
 </tbody>
@@ -3970,7 +3985,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Claude Code ships with built-in skills beyond this template’s 60 (as of Aug 2026): <code>/batch</code> orchestrates parallel refactoring across your codebase (using git worktrees for isolation), <code>/simplify</code> reviews recent changes for simplification opportunities, and <code>/debug</code> helps troubleshoot sessions. These complement the academic skills above.</p>
+<p>Claude Code ships with built-in skills beyond this template’s 61 (as of Aug 2026): <code>/batch</code> orchestrates parallel refactoring across your codebase (using git worktrees for isolation), <code>/simplify</code> reviews recent changes for simplification opportunities, and <code>/debug</code> helps troubleshoot sessions. These complement the academic skills above.</p>
 </div>
 </div>
 </section>
@@ -4024,7 +4039,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A single Claude prompt trying to check grammar, layout, math, and code simultaneously will do a mediocre job at all of them. Specialized agents focus on one dimension and do it thoroughly. The <code>/slide-excellence</code> skill runs them all in parallel, then synthesizes results.</p>
+<p>A single Claude prompt trying to check grammar, layout, math, and code simultaneously will do a mediocre job at all of them. Specialized agents focus on one dimension and do it thoroughly. The <code>/slide-excellence</code> skill runs the review agents that apply to the file in parallel, then synthesizes results.</p>
 <p>Claude Code also offers experimental <strong>Agent Teams</strong> — multiple independent sessions that coordinate, share findings, and challenge each other’s approaches. This is a research preview feature (as of Aug 2026); the orchestrator + subagent pattern described here is more mature for academic workflows.</p>
 </div>
 </div>
@@ -4233,7 +4248,7 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>Set per-agent via <code>model:</code> in <code>.claude/agents/&lt;name&gt;.md</code> frontmatter. Typical savings vs. all-Opus in our use: <strong>50–80% on routed skills</strong>, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in <a href="https://augmentcode.com">Augment Code’s routing data</a> and aligns with Aider’s architect/editor split; we cite Anthropic’s <a href="https://www.anthropic.com/engineering">Apr 8 2026 “Decoupling brain from hands”</a> as the primary-source endorsement of the pattern.</p>
-<p><strong>3. Effort budgeting.</strong> The Effort Levels section earlier covered the <code>low | medium | high | xhigh | max</code> ladder. <strong>The current Opus tier defaults to <code>medium</code></strong> — and its <code>medium</code> matches or beats the prior Opus generation at <code>high</code> (Anthropic’s evaluations), while at any given level it thinks more per turn. So: let <code>medium</code> be the default; pin <code>high</code> only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as <code>/audit-reproducibility</code>, <code>/seven-pass-review</code>, and <code>/simulation-study</code> — the full list is in <code>model-routing.md</code>); drop to <code>low</code> for mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); <code>ultracode</code> (xhigh + dynamic workflows) for repo-scale autonomous tasks. On a fixed grant budget, <code>maxEffortLevel</code> in settings caps effort everywhere.</p>
+<p><strong>3. Effort budgeting.</strong> The <a href="#sec-effort">Effort Levels</a> section below covers the <code>low | medium | high | xhigh | max</code> ladder. <strong>The current Opus tier defaults to <code>medium</code></strong> — and its <code>medium</code> matches or beats the prior Opus generation at <code>high</code> (Anthropic’s evaluations), while at any given level it thinks more per turn. So: let <code>medium</code> be the default; pin <code>high</code> only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as <code>/audit-reproducibility</code>, <code>/seven-pass-review</code>, and <code>/simulation-study</code> — the full list is in <code>model-routing.md</code>); drop to <code>low</code> for mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); <code>ultracode</code> (xhigh + dynamic workflows) for repo-scale autonomous tasks. On a fixed grant budget, <code>maxEffortLevel</code> in settings caps effort everywhere.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4268,29 +4283,33 @@ APPROVED   NEEDS WORK
 </section>
 <section id="settings---permissions-and-hooks" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="settings---permissions-and-hooks"><span class="header-section-number">4.6</span> Settings — Permissions and Hooks</h2>
-<p><code>.claude/settings.json</code> controls what Claude is allowed to do. Here is a simplified excerpt — the template includes additional permission entries for git, GitHub CLI, PDF tools, and more:</p>
+<p><code>.claude/settings.json</code> controls what Claude is allowed to do. The template ships a catch-all allow list rather than a curated one: seven wildcard rules, with no deny rules and no default mode. Here is the permissions block plus one of its hooks:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allow&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git status *)&quot;</span><span class="ot">,</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(xelatex *)&quot;</span><span class="ot">,</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(Rscript *)&quot;</span><span class="ot">,</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(quarto render *)&quot;</span><span class="ot">,</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(./scripts/sync_to_docs.sh *)&quot;</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Stop&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\&quot;</span><span class="st">/.claude/hooks/log-reminder.py&quot;</span><span class="fu">,</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">]</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(**)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Write(**)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;MultiEdit(**)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;WebFetch(*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;WebSearch&quot;</span><span class="ot">,</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**)&quot;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;deny&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Stop&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\&quot;</span><span class="st">/.claude/hooks/log-reminder.py&quot;</span><span class="fu">,</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">10</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In Manual mode almost nothing prompts. Auto mode drops the blanket <code>Bash(*)</code> and routes shell commands through its classifier. To tighten this, for example to keep restricted data off the model, add <code>deny</code> rules: see “Keep restricted data off the model” in <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model">TROUBLESHOOTING.md</a>.</p>
 <p><strong>Permission modes.</strong> Claude Code has six permission modes that control how much autonomy Claude gets:</p>
 <table class="caption-top table">
 <colgroup>
@@ -4432,7 +4451,7 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <p>Approving a plan via <code>ExitPlanMode</code> hands the session to the mode set at the approval prompt — current Claude Code versions present explicit choices there (approve into auto mode, approve with manual edit review, keep planning); on a bypass setup the approved plan proceeds without per-tool prompts. Once there, any subsequent tool call (Edit, Write, Bash) executes under the full allowlist in your <code>settings.json</code>, not a scope derived from the plan. A mistaken implementation can still edit unrelated files or run destructive shell commands with no second checkpoint.</p>
-<p>Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, keep <code>defaultMode: &quot;default&quot;</code> and approve each high-risk tool individually, or run the whole session in <code>plan</code> mode and copy actions out manually.</p>
+<p>Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, set <code>permissions.defaultMode: &quot;default&quot;</code> (Manual — the template’s <code>.claude/settings.json</code> sets no default mode, so on Claude Code ≥ 2.1.283 sessions start in auto) and remove the template’s wildcard <code>Bash(*)</code>, <code>Edit(**)</code> and <code>Write(**)</code> allows, or add <code>ask</code>/<code>deny</code> rules for high-risk tools, so each one prompts individually. In VS Code, also delete the two bypass keys from <code>.vscode/settings.json</code>. Alternatively, run the whole session in <code>plan</code> mode and copy actions out manually.</p>
 </div>
 </div>
 <p>The flow:</p>
@@ -4464,7 +4483,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </section>
 <section id="sec-session-management" class="level3" data-number="4.6.4">
 <h3 data-number="4.6.4" class="anchored" data-anchor-id="sec-session-management"><span class="header-section-number">4.6.4</span> Session Management</h3>
-<p>A handful of recent Mar–Apr 2026 commands cut friction in the actual editing loop. Worth knowing before you reach for them in a panic:</p>
+<p>A handful of commands cut friction in the actual editing loop. Worth knowing before you reach for them in a panic:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -4559,13 +4578,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By default, Claude saves plans to a global directory (<code>~/.claude/plans/</code>), not your project. To keep plans with your project, add this to <code>.claude/settings.json</code> (this template gitignores <code>quality_reports/plans/</code> — plans are local working records):</p>
+<p>By default, Claude Code saves plans to a global directory (<code>~/.claude/plans/</code>), not your project. This template already keeps them with the project: its <code>.claude/settings.json</code> sets <code>plansDirectory</code> to <code>quality_reports/plans</code> (and the template gitignores <code>quality_reports/plans/</code> — plans are local working records). If you adopt this workflow into another repository, add the same setting to that repository’s <code>.claude/settings.json</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;plansDirectory&quot;</span><span class="fu">:</span> <span class="st">&quot;quality_reports/plans&quot;</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p>The <strong>Stop hook</strong> runs a fast Python script after every response. No LLM call, no latency. It checks whether the session log is current and reminds Claude to update it if not. Behavioral rules like verification and Beamer-Quarto sync are enforced via auto-loaded rules in <code>.claude/rules/</code>, which is the right tool for nuanced judgment that Claude can evaluate in-context.</p>
+<p>The <strong>Stop hook</strong> runs a fast Python script (<code>.claude/hooks/log-reminder.py</code>) after every response. No LLM call, no latency. When the working tree has changed since its last entry, it appends an entry (changed files, active plan, any <code>Slides/*.tex</code> or <code>Quarto/*.qmd</code> newer than its compiled output) to <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code>; set <code>CLAUDE_COMPILE_GATE=block</code> to make uncompiled artifacts block the stop. Behavioral rules like verification and Beamer-Quarto sync are enforced via auto-loaded rules in <code>.claude/rules/</code>, which is the right tool for nuanced judgment that Claude can evaluate in-context.</p>
 </section>
 </section>
 <section id="sec-effort" class="level2" data-number="4.7">
@@ -4685,9 +4704,23 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>Because relying on instructions alone is fragile (Claude forgets during long sessions), a <strong>Stop hook</strong> (<code>.claude/hooks/log-reminder.py</code>) fires after every response. In v2.0 it no longer merely nags — it <strong>auto-writes a session-log scaffold</strong> (changed files, active plan, timestamp) for every meaningful change-set, so a log always <em>exists</em>. The <strong>why</strong> — decisions, rejected alternatives — is appended incrementally per the session-logging rule; the hook guarantees the file, not the reasoning.</p>
 <p>New sessions can read these logs to understand not just the current state of the project, but the reasoning behind it. See Pattern 1 in <a href="#sec-patterns">Workflow Patterns</a> for the full protocol.</p>
 </section>
-<section id="how-it-all-fits-together" class="level3" data-number="4.8.3">
-<h3 data-number="4.8.3" class="anchored" data-anchor-id="how-it-all-fits-together"><span class="header-section-number">4.8.3</span> How It All Fits Together</h3>
-<p>With CLAUDE.md, MEMORY.md, plans, and session logs, the system has four distinct memory layers. Here is what each one does and when it matters:</p>
+<section id="github-issues-memory" class="level3" data-number="4.8.3">
+<h3 data-number="4.8.3" class="anchored" data-anchor-id="github-issues-memory"><span class="header-section-number">4.8.3</span> GitHub Issues — the Project’s To-Do List and Memory</h3>
+<p>Plans and session logs record one task and one session. A project also needs a record that outlives both: what is wrong, what has been tried, and what is still open. Keep that in GitHub issues.</p>
+<p><strong>The habit.</strong> Every problem worth fixing becomes its own issue — a claim in the paper that misleads, a number that disagrees with its table, a figure that is hard to read, a bug, an improvement for later. The open issues are the to-do list. When you come back to the project, you start from them. When a fix lands, you close the issue <strong>with a comment</strong>: what was wrong, what you tried (including what did not work, and why), what fixed it, and how you checked. Read back months later, the closed issues are the project’s memory — searchable, linked to the commits that did the work, and the same on every machine and for every co-author, which a chat transcript or a notes file on one laptop is not.</p>
+<p>For a paper, it looks like this:</p>
+<blockquote class="blockquote">
+<p><strong>#41 Intro overstates the sample: 3,412 in §1, 3,142 in Table 1</strong> <em>What’s wrong:</em> §1 line 18 says “3,412 counties”; Table 1 and the log say 3,142. <em>Done when:</em> the text matches <code>output/sample.csv</code>.</p>
+<p><em>Closing comment:</em> The 3,412 was the pre-restriction count, copied before the balanced-panel filter. Tried re-deriving from the log — it matched 3,142. Fixed in a1b2c3d: §1 now cites the filtered count and names the filter. Checked: <code>/audit-reproducibility</code> passes the sample-size claim.</p>
+</blockquote>
+<p><strong>The skill.</strong> <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/skills/issues/SKILL.md"><code>/issues</code></a> makes the habit cheap. <code>/issues file &lt;report&gt;</code> turns a review’s confirmed findings into issues (<code>/review-paper</code>, <code>/seven-pass-review</code> and <code>/adjudicate-review</code> offer it at the end); <code>/issues list</code> shows what is open for the work at hand and suggests what to take next; <code>/issues close 41</code> drafts the closing comment from the commits that mention the issue. It shows every draft and posts nothing without your yes.</p>
+<p><strong>Duplicates are checked every time, not by good intentions.</strong> An issue tracker stops being a memory when the same problem lives in three places. So every new issue goes through <code>scripts/file-issue.py</code>, which searches open <em>and</em> closed issues several ways before creating anything — the title’s most distinctive words together and the top three alone, any terms you add, and up to three file paths the issue names, at most eight searches — and refuses until each candidate it finds has been reviewed. The issue body records the searches and the verdict. The <code>issue-guard</code> hook denies a raw <code>gh issue create</code> from Claude and points to the script; it is spawned only for <code>gh</code> commands, so the rest of the session pays nothing for it.</p>
+<p><strong>Starting a session from the list (optional).</strong> Set <code>CLAUDE_ISSUES_AT_START=1</code> — under <code>env</code> in <code>.claude/settings.local.json</code> to turn it on for your machine only — and the <code>open-issues</code> hook lists the open issues’ numbers and titles at startup. It is off by default: it calls GitHub on every startup (about half a second, which delays Claude’s first reply, not your typing), and a fork without issues gains nothing from it. It lists only issues opened by the owner and collaborators, titles only, because anyone can open an issue on a public repository and its text is not an instruction.</p>
+<p><strong>Two cautions.</strong> Issues on a public repository are public: keep paper work in a <strong>private</strong> repository, or unpublished results and the weaknesses you are fixing are visible to anyone. And never put restricted data in an issue — no values, identifiers, paths or screenshots from data under a data-use agreement; describe the problem abstractly and keep the evidence where the data lives. The rule behind all of this is <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/issue-ledger.md"><code>issue-ledger.md</code></a>: what gets an issue, what a report must carry, and what the closing comment must say.</p>
+</section>
+<section id="how-it-all-fits-together" class="level3" data-number="4.8.4">
+<h3 data-number="4.8.4" class="anchored" data-anchor-id="how-it-all-fits-together"><span class="header-section-number">4.8.4</span> How It All Fits Together</h3>
+<p>With CLAUDE.md, MEMORY.md, plans, session logs, and GitHub issues, the system has five persistent memory layers. Here is what each one does and when it matters:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -4735,6 +4768,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <td>Record <em>why</em> decisions were made</td>
 </tr>
 <tr class="odd">
+<td>Open and finished work</td>
+<td>GitHub issues</td>
+<td>Yes (on GitHub)</td>
+<td>Per problem found or fixed</td>
+<td>The to-do list, and what was tried on each item</td>
+</tr>
+<tr class="even">
 <td>Conversation</td>
 <td>Claude’s context window</td>
 <td><strong>No</strong> (compressed)</td>
@@ -4743,12 +4783,12 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </tr>
 </tbody>
 </table>
-<p>The first four layers are your safety net. Anything written to disk survives indefinitely. The conversation context is ephemeral — auto-compression will eventually discard details. The workflow’s design ensures that anything worth keeping is written to one of the four persistent layers before compression can erase it.</p>
+<p>The first five layers are your safety net. Anything written to disk survives indefinitely. The conversation context is ephemeral — auto-compression will eventually discard details. The workflow’s design ensures that anything worth keeping is written to one of the five persistent layers before compression can erase it.</p>
 </section>
-<section id="hooks---automated-enforcement" class="level3" data-number="4.8.4">
-<h3 data-number="4.8.4" class="anchored" data-anchor-id="hooks---automated-enforcement"><span class="header-section-number">4.8.4</span> Hooks — Automated Enforcement</h3>
+<section id="hooks---automated-enforcement" class="level3" data-number="4.8.5">
+<h3 data-number="4.8.5" class="anchored" data-anchor-id="hooks---automated-enforcement"><span class="header-section-number">4.8.5</span> Hooks — Automated Enforcement</h3>
 <p>The session log reminder above is one example of a broader pattern: using <strong>hooks</strong> to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in <code>.claude/settings.json</code> and fire every time, regardless of context state.</p>
-<p>The template includes 9 hooks for logging, notifications, context survival, git safety, and protection of the configuration that defines the gates (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>):</p>
+<p>The template includes 11 hooks for logging, notifications, context survival, git safety, issue tracking, and protection of the configuration that defines the gates (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 23%">
@@ -4764,9 +4804,9 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Session log reminder</td>
+<td>Session log auto-writer</td>
 <td><code>Stop</code></td>
-<td>Reminds about session logs after every response</td>
+<td>Appends a session-log entry (timestamp, changed files, active plan) to <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> whenever the working-tree status changed since the last entry</td>
 </tr>
 <tr class="even">
 <td>Desktop notification</td>
@@ -4795,13 +4835,23 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </tr>
 <tr class="odd">
 <td>Git guardrails</td>
-<td><code>PreToolUse[Bash]</code></td>
-<td>Blocks destructive git (<code>reset --hard</code>, <code>clean -f</code>, <code>push --force</code>, <code>add -A</code>), and refuses a merge, rebase, or pull while the tree is dirty — including chains that would clean it first</td>
+<td><code>PreToolUse[Bash|Write|Edit|MultiEdit]</code></td>
+<td>Blocks destructive git (<code>reset --hard</code>, <code>clean -f</code>, <code>push --force</code>, <code>add -A</code>), and refuses a merge, rebase, or pull while the tree is dirty — including chains that would clean it first; on <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code> of code files (<code>.R</code>, <code>.Rmd</code>, <code>.qmd</code>, <code>.do</code>, <code>.py</code>) it warns on hardcoded machine paths (<code>/Users/…</code>, <code>/home/…</code>), and denies them when <code>CLAUDE_STRICT_PATHS=1</code></td>
 </tr>
 <tr class="even">
 <td>Claim reconcile</td>
 <td><code>PostToolUse[Write|Edit|MultiEdit]</code></td>
 <td>Flags stale numeric claims when analysis scripts change</td>
+</tr>
+<tr class="odd">
+<td>Issue guard</td>
+<td><code>PreToolUse[Bash]</code>, spawned only for <code>gh</code> commands (<code>&quot;if&quot;: &quot;Bash(gh *)&quot;</code>)</td>
+<td>Denies a new GitHub issue created without the duplicate check (<code>gh issue create</code>/<code>new</code>, or a REST or GraphQL create) and points to <code>scripts/file-issue.py</code>, which searches open and closed issues first</td>
+</tr>
+<tr class="even">
+<td>Open issues (opt-in)</td>
+<td><code>SessionStart[startup]</code></td>
+<td>With <code>CLAUDE_ISSUES_AT_START=1</code>, lists the open issues’ numbers and titles — by the owner and collaborators only — so a session starts knowing the to-do list; off by default</td>
 </tr>
 <tr class="odd">
 <td>Root-of-trust guard</td>
@@ -4837,7 +4887,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>Picture a lab’s shared template that registers a guard hook to refuse writes to its instrument-calibration files. Someone reorganises the hooks directory and updates <code>settings.json</code> to match, but types <code>.claude/hooks/calibration_guard.py</code> where the file on disk is <code>calibration-guard.py</code>.</p>
 <p>What is lost is the <em>guarding</em>, and the symptom that replaces it is never legible as <em>a hook is misconfigured</em>. Which symptom you get depends on how the hook was registered, and both are bad in their own way. This template registers all but one of its hooks as <code>python3 &lt;path&gt;</code>; a path Python cannot open exits <strong>2</strong>, and exit 2 from a <code>PreToolUse</code> hook means BLOCK (the handler table below states that contract). So a typo on one of the guards would deny <em>every</em> matching call, and the reason handed back is an interpreter error about a missing file — the loudest possible failure, and still not one a reader parses as a settings typo. Registered as a bare path instead, the missing file exits 127 (126 if it exists but is not executable): a non-blocking error that scrolls past while the session continues, tools are allowed, and the only thing that changed is the one thing nobody was watching. That is the lab’s case. The guard is in the settings file, in the README, and in the onboarding doc. It is not in the process. Weeks later a calibration file is overwritten by an agent that the hook had been written to stop.</p>
 <p>Gate 9, ledger coverage, is the check that would have caught it: it opens every hook registered in <code>.claude/settings.json</code> and requires the file to exist, be invocable, and be tracked in git. Nothing else in the repo reads the settings file against the disk, so <strong>a hook can be wired to nothing while every gate in the suite stays green</strong> — the failure has no detector of its own. That is what Gate 9 is worth: a mistyped path fails the build the moment it is committed, instead of waiting for the day the guard was supposed to fire.</p>
-<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 253 cases, and it finishes in seconds.</p>
+<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 312 cases, and it finishes in seconds.</p>
 </div>
 </div>
 </div>
@@ -4858,13 +4908,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <tbody>
 <tr class="odd">
 <td><strong><code>command</code></strong></td>
-<td>Runs a shell script. Exit 0 = allow, exit 2 = block (PreToolUse only)</td>
+<td>Runs a shell script. Exit 0 = allow, exit 2 = block on events that can block (PreToolUse, UserPromptSubmit, Stop, …)</td>
 <td>File protection, state capture, notifications</td>
 </tr>
 <tr class="even">
 <td><strong><code>prompt</code></strong></td>
-<td>Injects text into Claude’s conversation — no script needed</td>
-<td>Soft reminders: “Check that equations compile before saving”</td>
+<td>Sends the hook input plus your prompt to a fast Claude model (Haiku by default) for a single-turn check; the model returns <code>{&quot;ok&quot;: true/false, &quot;reason&quot;: &quot;...&quot;}</code> as an allow/block decision — no script needed</td>
+<td>Judgment gates that are hard to script: “Are all requested tasks actually finished?” on <code>Stop</code></td>
 </tr>
 <tr class="odd">
 <td><strong><code>http</code></strong></td>
@@ -4894,15 +4944,15 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Use <strong>command hooks</strong> for fast, mechanical checks (file exists? counter threshold?). Use <strong>prompt hooks</strong> for soft guidance that doesn’t need a script. Use <strong>rules</strong> for nuanced judgment (did Claude verify correctly?). Avoid prompt hooks that fire on high-frequency events — the injected text adds up in context.</p>
+<p>Use <strong>command hooks</strong> for fast, mechanical checks (file exists? counter threshold?). Use <strong>prompt hooks</strong> when an allow/block decision needs a model’s judgment rather than a script (is the work really finished before <code>Stop</code>?). Use <strong>rules</strong> for guidance Claude should carry in context (did Claude verify correctly?). Avoid prompt hooks on high-frequency events — each firing is a separate model call that adds latency and cost, and on <code>PreToolUse</code>/<code>PostToolUse</code> an <code>ok: false</code> ends the turn unless <code>continueOnBlock</code> is set.</p>
 </div>
 </div>
 </section>
-<section id="context-survival-system-advanced" class="level3" data-number="4.8.5">
-<h3 data-number="4.8.5" class="anchored" data-anchor-id="context-survival-system-advanced"><span class="header-section-number">4.8.5</span> Context Survival System (Advanced)</h3>
+<section id="context-survival-system-advanced" class="level3" data-number="4.8.6">
+<h3 data-number="4.8.6" class="anchored" data-anchor-id="context-survival-system-advanced"><span class="header-section-number">4.8.6</span> Context Survival System (Advanced)</h3>
 <p>When context compaction happens, Claude loses working memory. The <strong>context survival system</strong> ensures you can recover seamlessly.</p>
-<section id="how-it-works" class="level4" data-number="4.8.5.1">
-<h4 data-number="4.8.5.1" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">4.8.5.1</span> How It Works</h4>
+<section id="how-it-works" class="level4" data-number="4.8.6.1">
+<h4 data-number="4.8.6.1" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">4.8.6.1</span> How It Works</h4>
 <p>Two hooks work together to preserve and restore state:</p>
 <pre><code>Session running → context fills up → PreCompact fires
                                            ↓
@@ -4920,8 +4970,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
                                     • Prints context summary
                                     • Claude knows where it left off</code></pre>
 </section>
-<section id="what-gets-saved" class="level4" data-number="4.8.5.2">
-<h4 data-number="4.8.5.2" class="anchored" data-anchor-id="what-gets-saved"><span class="header-section-number">4.8.5.2</span> What Gets Saved</h4>
+<section id="what-gets-saved" class="level4" data-number="4.8.6.2">
+<h4 data-number="4.8.6.2" class="anchored" data-anchor-id="what-gets-saved"><span class="header-section-number">4.8.6.2</span> What Gets Saved</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 26%">
@@ -4949,7 +4999,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <tr class="odd">
 <td>Recent decisions</td>
 <td>Session cache</td>
-<td>Last 3 decision-like entries from session log</td>
+<td>Up to 3 decision-like entries (the first found) in the last 50 lines of the newest session log</td>
 </tr>
 <tr class="even">
 <td>Compaction note</td>
@@ -4959,8 +5009,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </tbody>
 </table>
 </section>
-<section id="context-monitoring" class="level4" data-number="4.8.5.3">
-<h4 data-number="4.8.5.3" class="anchored" data-anchor-id="context-monitoring"><span class="header-section-number">4.8.5.3</span> Context Monitoring</h4>
+<section id="context-monitoring" class="level4" data-number="4.8.6.3">
+<h4 data-number="4.8.6.3" class="anchored" data-anchor-id="context-monitoring"><span class="header-section-number">4.8.6.3</span> Context Monitoring</h4>
 <p>The <code>context-monitor.py</code> hook tracks approximate context usage and provides progressive warnings:</p>
 <table class="caption-top table">
 <colgroup>
@@ -4996,8 +5046,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>Use <code>/context-status</code> to check current session health at any time.</p>
 <p>Note: the monitor estimates context from transcript size (falling back to a tool-call count), so warnings may appear earlier or later than actual compaction; the status line prefers Claude Code’s own <code>context_window.used_percentage</code> where available.</p>
 </section>
-<section id="recovery-after-compaction" class="level4" data-number="4.8.5.4">
-<h4 data-number="4.8.5.4" class="anchored" data-anchor-id="recovery-after-compaction"><span class="header-section-number">4.8.5.4</span> Recovery After Compaction</h4>
+<section id="recovery-after-compaction" class="level4" data-number="4.8.6.4">
+<h4 data-number="4.8.6.4" class="anchored" data-anchor-id="recovery-after-compaction"><span class="header-section-number">4.8.6.4</span> Recovery After Compaction</h4>
 <p>If compaction happens mid-task, Claude will automatically see:</p>
 <ol type="1">
 <li><strong>Restoration message</strong> — what plan was active, what task was in progress</li>
@@ -5008,8 +5058,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>“We just had compaction. Read <code>quality_reports/plans/2026-02-06_translate-lecture5.md</code> and continue from where we left off.”</p>
 </blockquote>
 </section>
-<section id="distil-before-compaction-compress-session-v1.9.0" class="level4" data-number="4.8.5.5">
-<h4 data-number="4.8.5.5" class="anchored" data-anchor-id="distil-before-compaction-compress-session-v1.9.0"><span class="header-section-number">4.8.5.5</span> Distil before compaction: <code>/compress-session</code> (v1.9.0)</h4>
+<section id="distil-before-compaction-compress-session-v1.9.0" class="level4" data-number="4.8.6.5">
+<h4 data-number="4.8.6.5" class="anchored" data-anchor-id="distil-before-compaction-compress-session-v1.9.0"><span class="header-section-number">4.8.6.5</span> Distil before compaction: <code>/compress-session</code> (v1.9.0)</h4>
 <p>Auto-compaction is <em>lossy</em> — it keeps recent turns and drops earlier ones, with no preservation of <em>what was decided</em> mid-session. For long pipelines (long debug sessions, multi-decision refactors, end-of-working-day handoffs), <code>/compress-session</code> is the <strong>distil-not-truncate</strong> alternative: structured note with Active state, Decisions made, Files touched, Open questions, Next actions, and explicitly <strong>Discarded as noise</strong> (failed hypotheses that should NOT carry forward).</p>
 <p><code>/compress-session</code> and <code>/checkpoint</code> are companions, not substitutes:</p>
 <table class="caption-top table">
@@ -5044,7 +5094,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <tr class="even">
 <td><strong><code>[LEARN]</code> proposals</strong></td>
 <td>Optional</td>
-<td>Always proposes (distillation is when lessons surface)</td>
+<td>Proposes 0–3 when the session surfaced a lesson; a quiet session proposes none</td>
 </tr>
 </tbody>
 </table>
@@ -5059,7 +5109,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Now that you understand the building blocks, here’s what’s new: Claude Code has added <a href="#sec-effort">effort levels</a> for cost control, <a href="#hooks---automated-enforcement">expanded hook events</a>, <a href="#skill-frontmatter">skill frontmatter fields</a> for fine-grained skill configuration, <a href="#settings---permissions-and-hooks">permission modes</a> for controlling Claude’s autonomy, <a href="#sec-agent-config">advanced agent configuration</a>, plugins, <code>/batch</code> for parallel refactoring, and headless CLI mode. Each is covered in its respective section above.</p>
+<p>Now that you understand the building blocks, here’s what’s new: Claude Code has added <a href="#sec-effort">effort levels</a> for cost control, <a href="#hooks---automated-enforcement">expanded hook events</a>, <a href="#skill-frontmatter">skill frontmatter fields</a> for fine-grained skill configuration, <a href="#settings---permissions-and-hooks">permission modes</a> for controlling Claude’s autonomy, <a href="#sec-agent-config">advanced agent configuration</a>, <a href="#extending-with-plugins">plugins</a>, <code>/batch</code> for parallel refactoring, and headless CLI mode. Each has its own section: most are above, while skill frontmatter and plugins are covered later, in <a href="#sec-customize">Customizing for Your Domain</a>.</p>
 </div>
 </div>
 <hr>
@@ -5209,17 +5259,21 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
         |  +--- proofreader ------+
         |  +--- slide-auditor ----+  (parallel)
         |  +--- pedagogy-reviewer +
-        |  +--- quarto-critic ----+  (needs others first)
+        |  +--- quarto-critic ----+  (when a Beamer/Quarto pair exists)
         |
-        Step 4: FIX
-        |  Apply fixes: Critical -&gt; Major -&gt; Minor
-        |  For quarto-critic issues: invoke quarto-fixer
+        Step 4: REDUCE + JUDGE
+        |  Stack scorecards; gate predicate -&gt; verdict
+        |  (CRITICAL -&gt; BLOCK, MAJOR -&gt; REVISE, else PASS)
+        |  Post-judge hallucination gate on judge-introduced CRITICALs
         |
-        Step 5: RE-VERIFY
-        |  Render again, confirm fixes are clean
+        Step 5: FIX
+        |  Apply `mechanical: true` findings: Critical -&gt; Major -&gt; Minor
+        |  (quarto-critic issues: quarto-fixer applies them and re-renders)
+        |  Anything touching an estimand, assumption, specification,
+        |  inference or reporting language returns to you
         |
         Step 6: SCORE
-        |  Apply quality-gates rubric
+        |  quality_score.py / hard-gate roll-up
         |
         +-- Converged? (2 consecutive rounds add 0 new Critical/Major)
               YES -&gt; Present summary to user
@@ -5267,7 +5321,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Agents that are independent of each other run in parallel. The quarto-critic runs after other agents because it may need their context.</p>
+<p>Agents that are independent of each other run in parallel. The quarto-critic joins the same parallel wave whenever the deck has a Beamer/Quarto counterpart; its extra input is the slide-qa report, not the other reviewers’ output.</p>
 </section>
 <section id="just-do-it-mode" class="level3" data-number="5.2.4">
 <h3 data-number="5.2.4" class="anchored" data-anchor-id="just-do-it-mode"><span class="header-section-number">5.2.4</span> “Just Do It” Mode</h3>
@@ -5308,20 +5362,24 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </section>
 <section id="pattern-3-creating-a-new-lecture" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="pattern-3-creating-a-new-lecture"><span class="header-section-number">5.3</span> Pattern 3: Creating a New Lecture</h2>
-<p>The <code>/create-lecture</code> skill guides you through a structured lecture creation workflow — from gathering source material to deploying polished slides:</p>
+<p>The <code>/create-lecture</code> skill guides you through a structured lecture creation workflow — from reading your source material to a compiled, reviewed Beamer deck:</p>
 <pre><code>/create-lecture
   |
-  +-- Phase 1: Gather materials (papers, outlines)
-  +-- Phase 2: Design slide structure
-  +-- Phase 3: Draft Beamer slides
-  +-- Phase 4: Generate R figures
-  +-- Phase 5: Polish and verify
-  |     +-- /slide-excellence (domain + visual + pedagogy)
-  |     +-- /proofread (grammar/typos)
-  |     +-- /visual-audit (layout)
-  +-- Phase 6: Deploy
-        +-- /translate-to-quarto (optional)
-        +-- /deploy</code></pre>
+  +-- Phase 0: Intake &amp; context (Pre-Flight Report required)
+  |     +-- knowledge base, content invariants, sources, previous lecture
+  +-- Phase 1: Paper analysis (when papers provided)
+  +-- Phase 2: Structure proposal  [GATE: you approve before drafting]
+  +-- Phase 3: Draft Beamer slides (batches of 5-10)
+  +-- Phase 4: Figures &amp; code (R scripts, TikZ in the Beamer source)
+  +-- Phase 5: Polish &amp; compile
+        +-- Full 3-pass compilation
+        +-- /devils-advocate
+        +-- Substance review (if a domain reviewer is configured)
+        +-- Update knowledge base with new notation
+
+Follow-up skills you invoke yourself afterwards:
+  /slide-excellence  /proofread  /visual-audit     (review)
+  /translate-to-quarto -&gt; /qa-quarto -&gt; /deploy     (publish to the web)</code></pre>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5336,7 +5394,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <ul>
 <li><strong><a href="https://github.com/pedrohcgs/claude-code-my-workflow/tree/main/templates/tikz-snippets"><code>templates/tikz-snippets/</code></a></strong> — 8 production-ready standalone diagrams (DAG basic, DAG mediation, two-period DiD, event study, timeline, regression scatter, 3-step flowchart, supply-demand). Each embeds the prevention rules (explicit node dimensions, coordinate map, directional edge labels) by construction.</li>
 <li><strong>Rules <code>tikz-prevention.md</code> + <code>tikz-measurement.md</code></strong> — Upstream authoring rules (P1–P6) and the six-pass collision protocol with formulas (Bézier depth, character widths, 0.4 cm boundary clearance). Adapted from Scott Cunningham’s <a href="https://github.com/scunning1975/MixtapeTools">MixtapeTools</a>.</li>
-<li><strong><a href="#all-skills"><code>/new-diagram</code></a> skill</strong> — Scaffolds from the gallery, runs the P3/P4 grep pre-check before compiling, invokes <code>tikz-reviewer</code> with measurement citations, loops until APPROVED.</li>
+<li><strong><a href="#all-skills"><code>/new-diagram</code></a> skill</strong> — Scaffolds from the gallery, runs the P3/P4 pre-check (<code>scripts/check-tikz-prevention.py</code>) before compiling, invokes <code>tikz-reviewer</code> with measurement citations, loops until APPROVED.</li>
 </ul>
 <p>For existing diagrams in a Beamer deck, <code>/extract-tikz</code> runs the same pre-check plus the SVG pipeline.</p>
 </div>
@@ -5347,11 +5405,12 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p>Translation preserves all content while adapting format, converting TikZ to SVG and ggplot to interactive Plotly charts:</p>
 <pre><code>/translate-to-quarto Lecture5_Topic.tex
   |
-  +-- Phase 1-3: Environment mapping + content translation
-  +-- Phase 4-5: Figure conversion (TikZ -&gt; SVG)
-  +-- Phase 6-7: Interactive charts (ggplot -&gt; plotly)
-  +-- Phase 8-9: Render + verify
-  +-- Phase 10-11: /qa-quarto adversarial QA
+  +-- Phase 0: Pre-flight (environment parity, TikZ freshness, RDS + citation inventory)
+  +-- Phase 1-3: Preparation + slide-by-slide translation
+  +-- Phase 4-5: Figures (TikZ -&gt; SVG, ggplot -&gt; plotly)
+  +-- Phase 6-9: Render + fidelity check, pedagogy review, visual polish, proofread, final verify
+  +-- Phase 10: Beamer source sync
+  +-- Phase 11: /qa-quarto adversarial parity QA
         +-- Critic: finds issues
         +-- Fixer: applies fixes
         +-- Critic: re-audits
@@ -5585,7 +5644,7 @@ Phase 4: QUALITY GATE
 </div>
 <div id="callout-40" class="callout-40-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A stronger variant: when Claude reviews its own work in the same conversation, it suffers <strong>confirmation bias</strong> — it has internalized its own reasoning and will systematically find the work acceptable. The fix: spawn a new agent via the Task tool with NO access to the original conversation. Give it only the artifact and a critique prompt. The fresh agent has no sunk cost in the work and will be ruthless.</p>
+<p>A stronger variant: when Claude reviews its own work in the same conversation, it suffers <strong>confirmation bias</strong> — it has internalized its own reasoning and will systematically find the work acceptable. The fix: spawn a new agent via the <code>Agent</code> tool with NO access to the original conversation. Give it only the artifact and a critique prompt. The fresh agent has no sunk cost in the work and will be ruthless.</p>
 <blockquote class="blockquote">
 <p>“Spawn a new agent. Have it read only my paper draft — not our conversation. Ask it to find the 5 weakest points and suggest how a hostile referee would attack each one.”</p>
 </blockquote>
@@ -5596,7 +5655,7 @@ Phase 4: QUALITY GATE
 <section id="fresh-context-is-not-a-fresh-environment" class="level4" data-number="5.8.0.1">
 <h4 data-number="5.8.0.1" class="anchored" data-anchor-id="fresh-context-is-not-a-fresh-environment"><span class="header-section-number">5.8.0.1</span> Fresh context is not a fresh environment</h4>
 <p>A forked reviewer is independent in <em>context</em>. It is not independent in <em>filesystem</em>. It still holds the repository checkout, and that checkout contains the previous round’s review reports, the judge’s verdict, the passport recording every number the paper claims, the ledger of what each checker has been shown to detect, and the render stamp saying what the current build came from. Telling an agent to “review this independently” while it can <code>grep</code> for the answer is an honour system with a search tool attached.</p>
-<p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/review-fencing.md"><code>review-fencing.md</code></a> (v2.5.1, path-scoped to agent and skill definitions) states the rule as a question to ask before dispatch: what would this reviewer’s <em>environment</em> reveal if it looked — and then remove that, rather than instructing it not to look. In practice that means a copy of the artifact placed outside the checkout under a neutral filename (<code>artifact-a.tex</code>, not <code>paper_round3_after_referee_fixes.tex</code> — a filename announcing the round has already reported what was found last time), prior verdicts withheld, and the reviewer’s own reading recorded before it is shown anyone else’s findings. Fencing is for reviews whose output is about to be <strong>compared</strong> against something; an in-repo review is right when the repository context is the point, as in cross-artifact traversal from paper to table to output to script.</p>
+<p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/review-fencing.md"><code>review-fencing.md</code></a> (v2.5.1, path-scoped to the artifacts and answer keys a fenced run touches — <code>*.tex</code>, <code>*.qmd</code>, <code>master_supporting_docs/</code>, the qualification ledger, passports, the replication and specification logs, and audit reports — plus the <code>claim-verifier</code> agent) states the rule as a question to ask before dispatch: what would this reviewer’s <em>environment</em> reveal if it looked — and then remove that, rather than instructing it not to look. In practice that means a copy of the artifact placed outside the checkout under a neutral filename (<code>artifact-a.tex</code>, not <code>paper_round3_after_referee_fixes.tex</code> — a filename announcing the round has already reported what was found last time), prior verdicts withheld, and the reviewer’s own reading recorded before it is shown anyone else’s findings. Fencing is for reviews whose output is about to be <strong>compared</strong> against something; an in-repo review is right when the repository context is the point, as in cross-artifact traversal from paper to table to output to script.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -5613,7 +5672,7 @@ Phase 4: QUALITY GATE
 <p><code>-0.07314</code>, in nine seconds. Correct to the last printed digit. That is what a team qualifying its reproduction agent got back from a positive control — reproduce a pinned coefficient from a published analysis and report it.</p>
 <p>The transcript shows what happened. The agent never opened the analysis script. It ran one <code>grep</code> across the checkout, hit the claim’s row in <code>passports/marsh-carbon.yaml</code> — where the verified value is recorded, because that is what a passport is for — and reported it. The run demonstrated that <code>grep</code> works.</p>
 <p>Re-run fenced: the analysis code and the input data copied into a scratch directory outside the repository, no passport, no ledger, no reports, no stamp. Four minutes. The value comes back <code>-0.07319</code>, differing from the pinned figure in the fifth decimal — a real, small, and entirely explicable difference in an iterative estimator’s convergence-tolerance default, which is exactly the kind of thing a positive control exists to surface, and exactly what the first run’s perfect answer had hidden.</p>
-<p>The passport, the ledger, and the render stamp are this template’s own answer keys. They exist to be authoritative, which is precisely why an independence-critical reviewer must not be standing next to them.</p>
+<p>The passport, the replication and specification logs, the qualification ledger, and the render stamp are this template’s own answer keys. They exist to be authoritative, which is precisely why an independence-critical reviewer must not be standing next to them.</p>
 </div>
 </div>
 </div>
@@ -5624,7 +5683,7 @@ Phase 4: QUALITY GATE
 <p>Patterns 1–8 apply broadly, with course materials as the primary example. The next four patterns are designed for <strong>research projects</strong> — papers, simulations, and empirical analysis — where the rhythm is different: ideas are uncertain, experiments may fail, and code is often written to answer a question rather than to ship. Patterns 13–14 then extend the foundation to reproducibility standards and presentation rhetoric, and Patterns 15–19 build the credibility layer: independent adversarial audits, preregistration, reviewer vaccination, the external oracle, and the assumption blast radius.</p>
 <section id="pattern-9-parallel-agents" class="level3" data-number="5.9.1">
 <h3 data-number="5.9.1" class="anchored" data-anchor-id="pattern-9-parallel-agents"><span class="header-section-number">5.9.1</span> Pattern 9: Parallel Agents for Research Tasks</h3>
-<p>Claude Code can spawn <strong>multiple agents simultaneously</strong> using the Task tool. This is not limited to review — you can use it for any research or analysis task where independent subtasks can run at the same time.</p>
+<p>Claude Code can spawn <strong>multiple agents simultaneously</strong> using the <code>Agent</code> tool. This is not limited to review — you can use it for any research or analysis task where independent subtasks can run at the same time.</p>
 <section id="when-to-use-parallel-agents" class="level4" data-number="5.9.1.1">
 <h4 data-number="5.9.1.1" class="anchored" data-anchor-id="when-to-use-parallel-agents"><span class="header-section-number">5.9.1.1</span> When to Use Parallel Agents</h4>
 <table class="caption-top table">
@@ -5671,12 +5730,12 @@ Phase 4: QUALITY GATE
 </section>
 <section id="how-it-works-1" class="level4" data-number="5.9.1.2">
 <h4 data-number="5.9.1.2" class="anchored" data-anchor-id="how-it-works-1"><span class="header-section-number">5.9.1.2</span> How It Works</h4>
-<p>You do not need to manage this manually. Skills that implement the orchestrator pattern (<code>/create-lecture</code>, <code>/review-paper --peer</code>, <code>/slide-excellence</code>, etc.) can recognize independent subtasks within their scope and spawn parallel subagents via <code>context: fork</code> — both during implementation (Step 1) and review (Step 3). For example, when <code>/slide-excellence</code> runs on a deck, it spawns the visual / pedagogy / proofread agents in parallel; when <code>/review-paper --peer</code> runs, it spawns the two referees in parallel. The parallelism is built into the skill’s logic, not into a repo-wide daemon.</p>
+<p>You do not need to manage this manually. Skills that fan out (<code>/review-paper --peer</code>, <code>/slide-excellence</code>, <code>/seven-pass-review</code>, etc.) recognize independent review lenses within their scope and spawn them as parallel <code>Agent</code> calls in a single message, each in its own fresh context (never a conversation fork) — this is the fan-out review step (Step 3) of the orchestrator loop. For example, when <code>/slide-excellence</code> runs on a deck, it spawns the visual / pedagogy / proofread agents in parallel; when <code>/review-paper --peer</code> runs, it spawns the two referees in parallel. The parallelism is built into the skill’s logic, not into a repo-wide daemon.</p>
 <p>You can also request parallelism explicitly:</p>
 <blockquote class="blockquote">
 <p>“Read these three papers in parallel. For each, extract the key identification assumption, the main estimator, and whether they have a replication package. Summarize in a table.”</p>
 </blockquote>
-<p>Either way, Claude spawns up to 3 Task agents, each processing one paper simultaneously, then synthesizes the results.</p>
+<p>Either way, Claude spawns up to 3 subagents (via the <code>Agent</code> tool), each processing one paper simultaneously, then synthesizes the results.</p>
 </section>
 <section id="long-running-tasks-the-monitor-tool-apr-2026" class="level4" data-number="5.9.1.3">
 <h4 data-number="5.9.1.3" class="anchored" data-anchor-id="long-running-tasks-the-monitor-tool-apr-2026"><span class="header-section-number">5.9.1.3</span> Long-running tasks: the Monitor tool (Apr 2026)</h4>
@@ -5684,7 +5743,7 @@ Phase 4: QUALITY GATE
 </section>
 <section id="watching-parallel-agents-claude-agents-may-2026" class="level4" data-number="5.9.1.4">
 <h4 data-number="5.9.1.4" class="anchored" data-anchor-id="watching-parallel-agents-claude-agents-may-2026"><span class="header-section-number">5.9.1.4</span> Watching parallel agents: <code>claude agents</code> (May 2026)</h4>
-<p>When several review agents run in parallel (the <code>/review-paper --peer</code> editor + 2 referees, or <code>/slide-excellence</code>’s visual + pedagogy + proofread fan-out), use <strong><code>claude agents</code></strong> (Week 20, v2.1.139) to watch them on a single screen. Replaces the old workflow of opening one terminal per agent. See the Anthropic Utilities section below for the full description.</p>
+<p>When several review agents run in parallel (the two <code>/review-paper --peer</code> referees, or <code>/slide-excellence</code>’s visual + pedagogy + proofread fan-out), use <strong><code>claude agents</code></strong> (Week 20, v2.1.139) to watch them on a single screen. Replaces the old workflow of opening one terminal per agent. See the Anthropic Utilities section below for the full description.</p>
 </section>
 <section id="agent-debates" class="level4" data-number="5.9.1.5">
 <h4 data-number="5.9.1.5" class="anchored" data-anchor-id="agent-debates"><span class="header-section-number">5.9.1.5</span> Agent Debates</h4>
@@ -5732,7 +5791,7 @@ Phase 4: QUALITY GATE
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Parallel agents multiply token usage. For cost-sensitive tasks, run the expensive work (Opus agents) sequentially and the cheap work (Sonnet agents) in parallel. The orchestrator already does this: it runs Sonnet-level reviewers in parallel, then the Opus-level critic sequentially.</p>
+<p>Parallel agents multiply token usage. For cost-sensitive tasks, run the expensive work (Opus agents) sequentially and the cheap work (Sonnet agents) in parallel. The orchestrator does not do this for you: a fan-out skill spawns all its lenses in one parallel wave whatever their tier (in <code>/slide-excellence</code>, the Opus-tier quarto-critic, tikz-reviewer and domain-reviewer run alongside the Sonnet-tier lenses). To save cost, run the Opus-tier lenses in a separate, later call.</p>
 </div>
 </div>
 </section>
@@ -5889,18 +5948,18 @@ Decision point (1-2 hours):
 </tr>
 <tr class="even">
 <td><code>structural</code></td>
-<td>model identification, counterfactual credibility, fit</td>
-<td>moment-matching, sensitivity to functional form, out-of-sample</td>
+<td>model specification, parameter identification, estimation</td>
+<td>parameter plausibility, fit to moments not used in calibration, counterfactuals within support, a formal identification argument</td>
 </tr>
 <tr class="odd">
 <td><code>theory+empirics</code></td>
-<td>model-data correspondence</td>
-<td>does the empirical estimand identify the theoretical object?</td>
+<td>model-data correspondence, prediction sharpness, test design</td>
+<td>prediction sharpness, test power, honest reporting of non-confirming predictions</td>
 </tr>
 <tr class="even">
 <td><code>descriptive</code></td>
-<td>measurement validity, generalisability</td>
-<td>sampling frame, missingness, comparator choice</td>
+<td>construct validity, construction, validation</td>
+<td>construct validity, construction transparency, validation against related measures</td>
 </tr>
 <tr class="odd">
 <td><code>formal-theory</code> (v1.8.0)</td>
@@ -6030,6 +6089,9 @@ Decision point (1-2 hours):
 <section id="the-workflow" class="level4" data-number="5.9.4.2">
 <h4 data-number="5.9.4.2" class="anchored" data-anchor-id="the-workflow"><span class="header-section-number">5.9.4.2</span> The Workflow</h4>
 <pre><code>1. CREATE WORKTREE
+   echo &quot;.worktrees/&quot; &gt;&gt; .git/info/exclude   # once per clone, BEFORE the first worktree:
+                                             # otherwise porcelain always shows `?? .worktrees/`,
+                                             # no stash clears it, and every merge below is denied
    git worktree add .worktrees/lecture-06-quarto -b quarto/lecture-06
    cd .worktrees/lecture-06-quarto
          ↓
@@ -6058,35 +6120,38 @@ Decision point (1-2 hours):
 </section>
 <section id="commands-reference" class="level4" data-number="5.9.4.3">
 <h4 data-number="5.9.4.3" class="anchored" data-anchor-id="commands-reference"><span class="header-section-number">5.9.4.3</span> Commands Reference</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a worktree with new branch</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree add .worktrees/<span class="pp">[</span><span class="ss">name</span><span class="pp">]</span> <span class="at">-b</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Once per clone: keep nested worktrees out of the primary&#39;s porcelain</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;.worktrees/&quot;</span> <span class="op">&gt;&gt;</span> .git/info/exclude</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List active worktrees</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree list</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a worktree with new branch</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree add .worktrees/<span class="pp">[</span><span class="ss">name</span><span class="pp">]</span> <span class="at">-b</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a worktree (after merging or abandoning)</span></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree remove .worktrees/<span class="pp">[</span><span class="ss">name</span><span class="pp">]</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># List active worktrees</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree list</span>
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Delete the branch (after removal)</span></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-D</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span>   <span class="co"># -D needed after --squash (no merge ancestry)</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a worktree (after merging or abandoning)</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> worktree remove .worktrees/<span class="pp">[</span><span class="ss">name</span><span class="pp">]</span></span>
 <span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Squash-merge into main</span></span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="pp">[</span><span class="ss">primary</span><span class="pp">-</span><span class="ss">worktree</span><span class="pp">]</span>         <span class="co"># main lives in the primary worktree</span></span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># empty, or the merge is denied — clear it first (below)</span></span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="co"># ...if the primary worktree is dirty, either stash around the merge:</span></span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;pre-merge: in-flight edits&quot;</span>   <span class="co"># -u, or untracked files stay behind</span></span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
-<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
-<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="co"># ...or, ONLY if porcelain shows no `??` lines, let git stash the tracked changes:</span></span>
-<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># no `??` entries, or --autostash is denied too</span></span>
-<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="at">--autostash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>The primary worktree is normally dirty when you reach the sync step, and that is the pattern working, not failing.</strong> You used a worktree so you could keep editing on <code>main</code> while the other branch ran; those edits are still sitting there. The <code>git-guardrails</code> hook denies <code>git merge</code> on a non-empty <code>git status --porcelain</code>, so the merge is refused exactly when the pattern did its job. Clear the tree first — stash with a label, merge, pop. That sequence works whatever porcelain shows, which is why it is the recipe above rather than the fallback. <code>--autostash</code> is the shorter route on a tree whose dirt is <em>only tracked</em>: the hook reads porcelain and allows it when there is no <code>??</code> entry, and denies it when there is, because <code>git stash</code> does not stash untracked files — so an autostash over a <code>??</code> line would start the merge on the same dirty tree the check exists to refuse. Two consequences follow. When porcelain is free of <code>??</code> lines, <code>--autostash</code> is allowed and the merge result comes back <em>staged</em> while your restored in-flight edits are <em>unstaged</em>, so the plain <code>git commit</code> above records the merge and leaves your work alone. When porcelain shows any <code>??</code> line — the ordinary case for a worktree you have been editing in — use the explicit <code>-u</code> stash; git’s own behaviour agrees, since a branch that adds a file at a path you are holding untracked aborts with <em>“untracked working tree files would be overwritten”</em> after the autostash has already been taken. Both forms have to be <strong>standalone</strong> commands either way: chaining the stash and the merge onto one line is denied under rule 0, whichever route you pick.</p>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Delete the branch (after removal)</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-D</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span>   <span class="co"># -D needed after --squash (no merge ancestry)</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Squash-merge into main</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="pp">[</span><span class="ss">primary</span><span class="pp">-</span><span class="ss">worktree</span><span class="pp">]</span>         <span class="co"># main lives in the primary worktree</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># empty, or the merge is denied — clear it first (below)</span></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ...if the primary worktree is dirty, either stash around the merge:</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;pre-merge: in-flight edits&quot;</span>   <span class="co"># -u, or untracked files stay behind</span></span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ...or, ONLY if porcelain shows no `??` lines, let git stash the tracked changes:</span></span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># no `??` entries, or --autostash is denied too</span></span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="at">--autostash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
+<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>The primary worktree is normally dirty when you reach the sync step, and that is the pattern working, not failing.</strong> You used a worktree so you could keep editing on <code>main</code> while the other branch ran; those edits are still sitting there. The <code>git-guardrails</code> hook denies <code>git merge</code> on a non-empty <code>git status --porcelain</code>, so the merge is refused exactly when the pattern did its job. Clear the tree first — stash with a label, merge, pop. That sequence clears in-flight edits whether they are tracked or untracked, which is why it is the recipe above rather than the fallback. It cannot clear the worktree directory itself: a worktree nested at <code>.worktrees/</code> shows in the primary’s porcelain as <code>?? .worktrees/</code>, <code>git stash push -u</code> skips it (<em>“Ignoring path .worktrees/lecture-06-quarto/”</em>), and the merge is then denied — which is why step 1 excludes <code>.worktrees/</code> before it creates the worktree. <code>--autostash</code> is the shorter route on a tree whose dirt is <em>only tracked</em>: the hook reads porcelain and allows it when there is no <code>??</code> entry, and denies it when there is, because <code>git stash</code> does not stash untracked files — so an autostash over a <code>??</code> line would start the merge on the same dirty tree the check exists to refuse. Two consequences follow. When porcelain is free of <code>??</code> lines, <code>--autostash</code> is allowed and the merge result comes back <em>staged</em> while your restored in-flight edits are <em>unstaged</em>, so the plain <code>git commit</code> above records the merge and leaves your work alone. When porcelain shows any <code>??</code> line — the ordinary case for a worktree you have been editing in — use the explicit <code>-u</code> stash; git’s own behaviour agrees, since a branch that adds a file at a path you are holding untracked aborts with <em>“untracked working tree files would be overwritten”</em> after the autostash has already been taken. Both forms have to be <strong>standalone</strong> commands either way: chaining the stash and the merge onto one line is denied under rule 0, whichever route you pick.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -6277,8 +6342,8 @@ Decision point (1-2 hours):
 │   ├── 01_dataprep/        # Data cleaning
 │   ├── 02_analysis/        # Main results
 │   └── 03_appendix/        # Appendix results
-└── results/                # Output tables, figures</code></pre>
-<p>These standards load automatically via the path-scoped rule mechanism: when Claude edits files matching <code>replication-protocol.md</code>’s path globs, the rule is injected into context without any manual invocation. Ask Claude to <em>“prepare a replication package”</em> and the rule’s directory structure and checklist above guide the work from the first file touched.</p>
+└── output/                 # Tables, figures, logs, sessionInfo.txt</code></pre>
+<p>These standards do not load on their own. <code>replication-protocol.md</code> is path-scoped to R scripts (<code>scripts/**/*.R</code>, <code>Figures/**/*.R</code>); it covers the replication-first phases, the tolerance thresholds and the <code>passport.yaml</code> claims provenance, but not the checklist or directory structure above. To build the deposit, ask Claude to <em>“prepare a replication package”</em> or run <a href="#all-skills"><code>/replication-package</code></a>. It writes the README and captures the environment first, then calls <code>/audit-reproducibility</code> and stops on any FAIL; only then does it assemble the rest of the DCAS tree under <code>replication_package/</code> (<code>data/</code>, <code>code/</code>, <code>output/</code>) and write a <code>DCAS_checklist.md</code> that marks each item PASS / FAIL / <code>[FILL]</code>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -6302,7 +6367,7 @@ Decision point (1-2 hours):
 <li><strong>MEMORY.md</strong> = corrections and accumulated learning</li>
 </ul>
 <p>The <code>/learn</code> skill already implements version-controlled knowledge accumulation: each discovery saved as a SKILL.md file with problem, solution, and verification steps — the same pattern sometimes called “structured knowledge bases.”</p>
-<p>Key insight: <em>“For a fixed pipeline version and fixed inputs, the workflow produces identical numerical outputs and retains a complete audit trail of intermediate artifacts and logs”</em> — <strong>given a captured environment</strong>: package versions, BLAS, thread counts, and RNG streams all move low-order digits, which is exactly what <a href="#all-skills"><code>/capture-environment</code></a> records.</p>
+<p>Key insight: <em>“For a fixed pipeline version and fixed inputs, the workflow produces identical numerical outputs and retains a complete audit trail of intermediate artifacts and logs”</em> — <strong>given a captured environment</strong>: package versions, BLAS, thread counts, and RNG streams all move low-order digits. <a href="#all-skills"><code>/capture-environment</code></a> records package versions, seeds and RNG kind (R’s <code>sessionInfo()</code> also names the BLAS); thread counts you pin and state yourself.</p>
 </div>
 </div>
 </div>
@@ -6383,7 +6448,7 @@ Decision point (1-2 hours):
 </section>
 <section id="how-existing-agents-support-this" class="level4" data-number="5.10.2.4">
 <h4 data-number="5.10.2.4" class="anchored" data-anchor-id="how-existing-agents-support-this"><span class="header-section-number">5.10.2.4</span> How Existing Agents Support This</h4>
-<p>The <code>/slide-excellence</code> skill already invokes the pedagogy-reviewer and slide-auditor, which enforce many of these principles automatically. To enforce <em>all</em> of them — including title-as-assertion and MB/MC smoothness — customize the <strong>domain-reviewer</strong> agent (<code>.claude/agents/domain-reviewer.md</code>) with rhetoric-of-decks lenses. The orchestrator will then apply them during every review cycle without manual invocation.</p>
+<p>The <code>/slide-excellence</code> skill already invokes the pedagogy-reviewer and slide-auditor, which enforce many of these principles automatically. To enforce <em>all</em> of them — including title-as-assertion and MB/MC smoothness — customize the <strong>domain-reviewer</strong> agent (<code>.claude/agents/domain-reviewer.md</code>) with rhetoric-of-decks lenses. <code>/slide-excellence</code> then applies them through its substance-review agent whenever you run it on a deck (<code>/seven-pass-review</code> also uses domain-reviewer, for its methods lens).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-51-contents" aria-controls="callout-51" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -6421,7 +6486,7 @@ Decision point (1-2 hours):
 </section>
 <section id="how-to-implement" class="level4" data-number="5.10.3.2">
 <h4 data-number="5.10.3.2" class="anchored" data-anchor-id="how-to-implement"><span class="header-section-number">5.10.3.2</span> How to Implement</h4>
-<p>Use <code>/review-paper</code> for a comprehensive single-pass review. When you need deeper, independent audits (e.g., before journal submission), run each audit as a separate skill invocation with <code>context: fork</code> to ensure isolation:</p>
+<p>Use <code>/review-paper</code> for a comprehensive single-pass review. When you need deeper, independent audits (e.g., before journal submission), run <code>/seven-pass-review [manuscript]</code>. It spawns seven fresh-context reviewers in a single message, so none of them sees another’s report, one reviewer per lens: abstract, introduction, methods / identification, results + tables, robustness, prose and citations. This lens set differs from the ClaudeCodeTools list above. The skill then reduces their validated findings through the gate and a hallucination check into one prioritized revision checklist at <code>quality_reports/seven_pass_[stem]/_SYNTHESIS.md</code>:</p>
 <pre><code>You: &quot;Run the seven-audit protocol on my paper&quot;
 Claude: [Runs 7 parallel forked reviews, each blind to the others]
        → Produces 7 independent reports
@@ -6485,7 +6550,7 @@ Claude: [Runs 7 parallel forked reviews, each blind to the others]
 <h4 data-number="5.10.4.3" class="anchored" data-anchor-id="the-workflow-1"><span class="header-section-number">5.10.4.3</span> The workflow</h4>
 <pre><code>/interview-me                       /preregister --style osf
    ↓                                   ↓
-research-spec.md  ─────────────→  preregistration-draft.md
+research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.md
    ↓                                   ↓
 (quality_reports/specs/)         (quality_reports/preregistrations/)
                                        ↓
@@ -6496,12 +6561,18 @@ research-spec.md  ─────────────→  preregistration-dr
                                   /checkpoint preregistration-submitted
                                        ↓
                                   data collection begins</code></pre>
-<p><code>/preregister</code> reads your <code>/interview-me</code> spec frontmatter (the <code>paper_type:</code> field flows in from there if you set it) and produces a registry-formatted draft with <strong>MUST / SHOULD / MAY</strong> annotations on every section. Pre-flight checks: directional hypothesis declared, named estimator, ex-ante exclusion rules, sample-size stopping rule.</p>
+<p><code>/preregister --input &lt;spec&gt;</code> reads your <code>/interview-me</code> spec (the paper type it records on its <code>**Paper type:**</code> line, e.g. <code>survey-experiment</code>, biases the style choice) and produces a registry-formatted draft with <strong>MUST / SHOULD / MAY</strong> annotations on every section. Pre-flight checks: directional hypothesis declared, named estimator, ex-ante exclusion rules, sample-size stopping rule.</p>
 </section>
 <section id="mandatory-fields-per-registry-style" class="level4" data-number="5.10.4.4">
 <h4 data-number="5.10.4.4" class="anchored" data-anchor-id="mandatory-fields-per-registry-style"><span class="header-section-number">5.10.4.4</span> Mandatory fields per registry style</h4>
-<p>The <code>--style</code> flag determines the mandatory section list. The template enforces these via the pre-flight check:</p>
+<p>The <code>--style</code> flag picks which registry form <code>/preregister</code> fills in. Each section’s MUST / SHOULD / MAY level comes from that form in <code>templates/preregistration-template.md</code>. The pre-flight check (Phase 4 of the skill) is the same for every style: a draft is not marked ready until every hypothesis has a direction, a specific estimator and primary outcome are named, the sample plan is numeric (a target N, a stopping rule or a power target), exclusion rules are stated ex ante, and the design is internally consistent. The remaining rows below are template annotations, not pre-flight checks:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 27%">
+<col style="width: 27%">
+<col style="width: 27%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Field</th>
@@ -6520,7 +6591,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="even">
 <td>Sampling frame + recruitment</td>
 <td style="text-align: center;">MUST</td>
-<td style="text-align: center;">SHOULD</td>
+<td style="text-align: center;">—</td>
 <td style="text-align: center;">MUST</td>
 </tr>
 <tr class="odd">
@@ -6533,37 +6604,37 @@ research-spec.md  ─────────────→  preregistration-dr
 <td>Named primary estimator</td>
 <td style="text-align: center;">MUST</td>
 <td style="text-align: center;">MUST</td>
-<td style="text-align: center;">MUST</td>
+<td style="text-align: center;">MAY (PAP)*</td>
 </tr>
 <tr class="odd">
 <td>Pre-specified covariate set</td>
-<td style="text-align: center;">SHOULD</td>
-<td style="text-align: center;">MAY</td>
 <td style="text-align: center;">MUST</td>
+<td style="text-align: center;">MAY</td>
+<td style="text-align: center;">MAY (PAP)</td>
 </tr>
 <tr class="even">
 <td>Multiple-comparison adjustment plan</td>
-<td style="text-align: center;">SHOULD</td>
-<td style="text-align: center;">SHOULD</td>
-<td style="text-align: center;">MUST</td>
+<td style="text-align: center;">MUST (if H &gt; 1)</td>
+<td style="text-align: center;">MAY</td>
+<td style="text-align: center;">MAY (PAP)</td>
 </tr>
 <tr class="odd">
 <td>Ex-ante exclusion rules</td>
 <td style="text-align: center;">MUST</td>
 <td style="text-align: center;">MUST</td>
-<td style="text-align: center;">MUST</td>
+<td style="text-align: center;">MAY (PAP)*</td>
 </tr>
 <tr class="even">
 <td>Robustness specifications (named in advance)</td>
-<td style="text-align: center;">SHOULD</td>
+<td style="text-align: center;">MUST (numbered specs)</td>
 <td style="text-align: center;">MAY</td>
-<td style="text-align: center;">SHOULD</td>
+<td style="text-align: center;">MAY (PAP)</td>
 </tr>
 <tr class="odd">
 <td>Data-sharing plan</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
 <td style="text-align: center;">SHOULD</td>
-<td style="text-align: center;">MAY</td>
-<td style="text-align: center;">MUST</td>
 </tr>
 <tr class="even">
 <td>Intervention description (RCTs)</td>
@@ -6573,6 +6644,7 @@ research-spec.md  ─────────────→  preregistration-dr
 </tr>
 </tbody>
 </table>
+<p>* The AEA form puts this item in the optional Pre-Analysis Plan attachment, but pre-flight requires it in every style, so an AEA draft without it is flagged INCOMPLETE.</p>
 <p><code>/preregister</code> refuses to draft a “retrospective preregistration” — if your description contains realised results or post-hoc reasoning, the skill halts and explains why. That refusal is the point.</p>
 </section>
 <section id="pairing-with-checkpoint" class="level4" data-number="5.10.4.5">
@@ -6580,14 +6652,14 @@ research-spec.md  ─────────────→  preregistration-dr
 <p><code>/checkpoint</code> is the structured companion to the narrative session-log workflow. For preregistration specifically:</p>
 <ul>
 <li><strong>Before submitting</strong> to the registry: <code>/checkpoint preregistration-pre-submit</code> snapshots the draft state, the spec it derives from, and the next-action (“upload to OSF and record registration ID”).</li>
-<li><strong>After submission</strong>: <code>/checkpoint preregistration-submitted [registration-id]</code> records the registry ID and the date in the structured snapshot. The plan and session log link to it.</li>
+<li><strong>After submission</strong>: <code>/checkpoint preregistration-submitted</code> snapshots the post-upload state, and its <code>date:</code> frontmatter records the day. There is no field for the registry ID, and anything typed after <code>/checkpoint</code> becomes the filename slug, so write the ID into the snapshot’s “Recent decisions” yourself. Checkpoints are gitignored and point back to the plan and session log, not the other way round, so also record the registration ID in a committed file as the durable record — a tracked project file, or a plan or session log force-added with <code>git add -f</code>, since both directories are gitignored by default.</li>
 <li><strong>On data arrival</strong>: <code>/checkpoint data-arrived</code> marks the boundary between “things I could legitimately commit to” and “things I learned from looking.” Anything that follows is exploratory unless explicitly anchored in the preregistered plan.</li>
 </ul>
 <p><code>/checkpoint</code> files live at <code>quality_reports/checkpoints/YYYY-MM-DD_&lt;slug&gt;.md</code> (gitignored — they’re session-state, not version-controlled artifacts). Optional <code>--no-memory</code> flag suppresses the auto-proposal of <code>[LEARN]</code> entries to MEMORY.md.</p>
 </section>
 <section id="post-flight-verification" class="level4" data-number="5.10.4.6">
 <h4 data-number="5.10.4.6" class="anchored" data-anchor-id="post-flight-verification"><span class="header-section-number">5.10.4.6</span> Post-flight verification</h4>
-<p>Any cited literature in the preregistration runs through <code>/verify-claims</code> (Chain-of-Verification, forked-verifier context, fresh) before the draft is considered ready. Hallucinated citations are the most common preregistration failure mode and the hardest to fix after submission — gate-refusing them at draft time pays back many-fold.</p>
+<p>Any cited literature in the preregistration runs through <code>/verify-claims</code> (Chain-of-Verification: a fresh-context verifier) after the readiness checks (Phase 5, skippable with <code>--no-verify</code>); FAIL and PARTIAL citations are listed in the output summary, so clear them before you upload. Hallucinated citations are the most common preregistration failure mode and the hardest to fix after submission — catching them at draft time pays back many-fold.</p>
 </section>
 <section id="what-this-pattern-protects-against" class="level4" data-number="5.10.4.7">
 <h4 data-number="5.10.4.7" class="anchored" data-anchor-id="what-this-pattern-protects-against"><span class="header-section-number">5.10.4.7</span> What this pattern protects against</h4>
@@ -6869,7 +6941,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <li><strong>Ultraplan</strong> (Week 15) — draft a plan in the cloud from your CLI, review and comment on it in a web editor, then run it remotely or pull it back local. Useful for plans that need stakeholder review (e.g., a co-author signing off on an analysis approach before the actual run).</li>
 <li><strong><code>/loop</code> self-pacing</strong> (Apr 2026 Week 15) — run a prompt or slash command on a recurring interval, or omit the interval to let the model self-pace until a stopping condition is met. Useful for status-polling tasks (“check the deploy every 5 minutes”) that pair with the Monitor tool above. The alias <code>/proactive</code> was added in Week 16.</li>
 <li><strong><code>/goal &lt;verifiable condition&gt;</code></strong> (May 2026 Week 20, v2.1.139) — the “keep working until X holds” command. Claude continues across turns until a fast model confirms the condition is satisfied. Distinct from <code>/loop</code> (which is interval-based) and from plan mode (which approves a strategy rather than enforcing an outcome). Pairs naturally with <code>/commit</code>’s quality gates: <code>/goal &quot;all sections pass /verify-claims with no HIGH-WARN findings&quot;</code> then commit. Works in interactive, <code>claude -p</code>, and Remote Control.</li>
-<li><strong><code>claude agents</code></strong> (May 2026 Week 20, v2.1.139) — one-screen dashboard for all background sessions. Replaces the multi-terminal pattern for parallel review work. Directly aligned with our <code>/review-paper --peer</code> and <code>/qa-quarto</code> parallel-reviewer setup; you can launch the referees and watch their progress from a single view.</li>
+<li><strong><code>claude agents</code></strong> (May 2026 Week 20, v2.1.139) — one-screen dashboard for all background sessions. Replaces the multi-terminal pattern for parallel review work. Directly aligned with our <code>/review-paper --peer</code> and <code>/seven-pass-review</code> parallel-reviewer setup; you can launch the referees and watch their progress from a single view.</li>
 <li><strong><code>/fewer-permission-prompts</code></strong> (Apr 2026 Week 16) — scans recent transcripts for read-only Bash and MCP calls and proposes a project-local allowlist. Sibling to our <code>/permission-check</code>: <code>/permission-check</code> <em>diagnoses</em> the prompt-fatigue source, <code>/fewer-permission-prompts</code> <em>remediates</em> it.</li>
 </ul>
 <p>These are external to this template — invoke directly, no installation needed. Mention them as off-ramps when this template’s scope doesn’t fit.</p>
@@ -6903,28 +6975,31 @@ research-spec.md  ─────────────→  preregistration-dr
 <li><strong>Economics</strong> — top-5 journal profiles (AER, QJE, JPE, ECMA, ReStud), R-centric <code>r-code-conventions.md</code>, econometrics example in domain-reviewer.md.</li>
 <li><strong>Political Science</strong> — APSR, AJPS, JOP journal profiles (v1.8.0), <code>formal-theory</code> + <code>survey-experiment</code> paper types in methods-referee, poli-sci example in domain-reviewer.md.</li>
 </ul>
-<p>Both fields are wired into <code>.claude/references/discipline-cards.md</code>, which <code>/research-ideation</code>, <code>/interview-me</code>, <code>/preregister</code>, and the editor agent read when you give them a discipline without a target journal. Cards document paper-type frequency, dominant journals, preregistration norms (OSF / AsPredicted / AEA RCT / ClinicalTrials.gov), significance-stars conventions, SE conventions, and dominant code language (R / Stata / Python).</p>
-<p><strong>Forking for psych, sociology, public health, or other fields:</strong> add ~3 journal profiles, 2–3 paper types, 1 discipline card. The infrastructure (orchestrator, hooks, quality gates, peer-review pipeline) is field-agnostic and transfers without modification. The v2.0 backlog (<code>.claude/references/v2.0-backlog.md</code>) lists psychology, sociology, and public-health as candidate next breadth additions.</p>
+<p>Both fields are wired into <code>.claude/references/discipline-cards.md</code>, which <code>/research-ideation</code>, <code>/interview-me</code>, and <code>/preregister</code> read when you give them a discipline without a target journal. Cards document paper-type frequency, dominant journals, preregistration norms (OSF / AsPredicted / AEA RCT Registry), significance-stars conventions, SE conventions, and dominant code language (R / Stata / Python).</p>
+<p><strong>Forking for psych, sociology, public health, or other fields:</strong> add ~3 journal profiles, 2–3 paper types, 1 discipline card. The infrastructure (orchestrator, hooks, quality gates, peer-review pipeline) is field-agnostic and transfers without modification. The v2.0 backlog (<code>.claude/references/v2.0-backlog.md</code>) records psychology, sociology, and public health as deferred indefinitely (owner-set scope, 2026-06-10: econ and closely related fields), so adding them is a fork-side customization rather than a planned template release.</p>
 </div>
 </div>
 <section id="step-1-build-your-knowledge-base" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="step-1-build-your-knowledge-base"><span class="header-section-number">7.1</span> Step 1: Build Your Knowledge Base</h2>
 <p>The knowledge base (<code>.claude/rules/knowledge-base-template.md</code>) is the most domain-specific component — it’s a <a href="#rules---domain-knowledge-that-auto-loads">path-scoped rule</a> that loads automatically when Claude works on your content files. It provides skeleton tables for notation conventions, lecture progression, applications, design principles, anti-patterns, and R code pitfalls. Fill them in as you develop your project — you don’t need everything upfront.</p>
-<section id="notation-registry" class="level3" data-number="7.1.1">
-<h3 data-number="7.1.1" class="anchored" data-anchor-id="notation-registry"><span class="header-section-number">7.1.1</span> Notation Registry</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|-------------|</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span> Don&#39;t use $b$ <span class="pp">|</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\hat{\theta}$ <span class="pp">|</span> Estimator <span class="pp">|</span> Lecture 2 <span class="pp">|</span> Don&#39;t use $\hat{\beta}$ for different estimand <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="notation-registry-and-symbol-reference" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="notation-registry-and-symbol-reference"><span class="header-section-number">7.1.1</span> Notation Registry and Symbol Reference</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rule <span class="pp">|</span> Convention <span class="pp">|</span> Example <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-----------|---------|-------------|</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Estimators wear hats <span class="pp">|</span> $\hat{\theta}$ is always an estimate <span class="pp">|</span> $\hat{\beta}$ from OLS <span class="pp">|</span> $\hat{\beta}$ for a different estimand <span class="pp">|</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="applications-database" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="applications-database"><span class="header-section-number">7.1.2</span> Applications Database</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Package <span class="pp">|</span> Lecture <span class="pp">|</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|---------|--------|</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> <span class="in">`fixest`</span> <span class="pp">|</span> 3 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="empirical-applications" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="empirical-applications"><span class="header-section-number">7.1.2</span> Empirical Applications</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Lecture(s) <span class="pp">|</span> Purpose <span class="pp">|</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|-----------|---------|</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> 3 <span class="pp">|</span> First worked example of a before–after comparison <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="validated-design-principles" class="level3" data-number="7.1.3">
-<h3 data-number="7.1.3" class="anchored" data-anchor-id="validated-design-principles"><span class="header-section-number">7.1.3</span> Validated Design Principles</h3>
+<section id="design-principles" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="design-principles"><span class="header-section-number">7.1.3</span> Design Principles</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
@@ -6940,7 +7015,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <p>The template includes matching LaTeX and Quarto palettes. To customize:</p>
 <ol type="1">
 <li>Edit <code>Preambles/header.tex</code> (Beamer/TikZ) <strong>and</strong> <code>Quarto/theme-template.scss</code> (Quarto) together — same color names, matching HEX values.</li>
-<li>Run <code>./scripts/check-palette-sync.sh</code> to confirm they agree. The check is also invoked by <code>./scripts/validate-setup.sh</code> after any palette edit.</li>
+<li>Run <code>./scripts/check-palette-sync.sh</code> to confirm they agree. <code>./scripts/validate-setup.sh</code> also runs it (non-blocking) when you run that script; no hook or CI gate runs it for you, so rerun it yourself after any palette edit.</li>
 <li>Update CSS class names in the SCSS if needed.</li>
 <li>Modify the <code>beamer-translator</code> environment mapping to match your classes.</li>
 </ol>
@@ -6948,7 +7023,7 @@ research-spec.md  ─────────────→  preregistration-dr
 </section>
 <section id="sec-create-skills" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="sec-create-skills"><span class="header-section-number">7.4</span> Step 4: Creating Custom Skills</h2>
-<p>The guide includes 60 <a href="#skills---reusable-slash-commands">skills</a> for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.</p>
+<p>The guide includes 61 <a href="#skills---reusable-slash-commands">skills</a> for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.</p>
 <section id="when-to-create-a-skill" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="when-to-create-a-skill"><span class="header-section-number">7.4.1</span> When to Create a Skill</h3>
 <p>Create a skill when: - You repeatedly explain the same 3+ step workflow to Claude - You need domain-specific quality checks (citation style, notation consistency, lab protocols) - You enforce field-specific output formats (thesis structure, journal templates) - You coordinate multi-tool workflows (data → analysis → manuscript)</p>
@@ -7217,9 +7292,11 @@ research-spec.md  ─────────────→  preregistration-dr
 <section id="quick-start" class="level3" data-number="7.4.7">
 <h3 data-number="7.4.7" class="anchored" data-anchor-id="quick-start"><span class="header-section-number">7.4.7</span> Quick Start</h3>
 <ol type="1">
-<li><p><strong>Copy the template:</strong></p>
+<li><p><strong>Start from the template</strong> — or run <code>/new-skill</code>, which interviews you and writes frontmatter that passes the gates:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .claude/skills/your-skill-name</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> templates/skill-template.md .claude/skills/your-skill-name/SKILL.md</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then paste ONLY the fenced markdown block under &quot;Template Structure&quot; in</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># templates/skill-template.md into .claude/skills/your-skill-name/SKILL.md</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (it starts with the --- frontmatter); set name: to the directory name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p><strong>Customize for your domain:</strong></p>
 <ul>
 <li>Replace trigger phrases with your field’s terminology</li>
@@ -7239,7 +7316,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <li>If output wrong: Add validation steps</li>
 </ul></li>
 </ol>
-<p><strong>Full template:</strong> See <code>templates/skill-template.md</code> for comprehensive examples from biology, economics, and physics.</p>
+<p><strong>Full template:</strong> See <code>templates/skill-template.md</code> for worked examples (a citation checker, economics, biology).</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -7250,7 +7327,7 @@ research-spec.md  ─────────────→  preregistration-dr
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <code>/deep-audit</code> skill was itself extracted from a repeating workflow using <code>/learn</code>. After running 7 rounds of manual consistency audits — each time launching 4 parallel agents to check guide accuracy, hook code quality, skills/rules consistency, and cross-document counts — the pattern was codified into a skill. Now <code>/deep-audit</code> launches those same 4 agents, triages findings, applies fixes, and loops until clean (loop-until-dry: converges after 2 dry rounds, with a fallback cap). It also encodes a table of known bug patterns from past audits so future rounds catch regressions faster.</p>
+<p>The <code>/deep-audit</code> skill was itself extracted from a repeating workflow using <code>/learn</code>. After running 7 rounds of manual consistency audits — each time launching 4 parallel agents to check guide accuracy, hook code quality, skills/rules consistency, and cross-document counts — the pattern was codified into a skill. That repo sweep now lives on as <code>/deep-audit</code>’s repo-infrastructure application (<code>.claude/skills/deep-audit/references/repo-infrastructure-audit.md</code>): it launches those same 4 agents, triages findings, applies fixes, and loops until clean (loop-until-dry: converges after 2 dry rounds, with a fallback cap), and it encodes a table of known bug patterns from past audits so future rounds catch regressions faster. The skill itself has since generalised into a component-by-component adversarial audit — decompose the artifact, one independent finder per component, a separate judge for every finding, fix, re-verify — for papers, proofs, codebases, and sets of claims.</p>
 <p>This is the <code>/learn</code> lifecycle in action: discover a repeating workflow → extract it → never repeat the manual steps again.</p>
 </div>
 </div>
@@ -7281,7 +7358,7 @@ research-spec.md  ─────────────→  preregistration-dr
 </div>
 <div id="callout-58" class="callout-58-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For capabilities beyond file editing and shell commands — web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Configure them in <code>.claude/settings.json</code> under <code>&quot;mcpServers&quot;</code>. Start with skills and agents first; add MCP when you need external integrations.</p>
+<p>For capabilities beyond file editing and shell commands — web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Add them with <code>claude mcp add</code> (use <code>--scope project</code> to write a shared <code>.mcp.json</code> at the repo root, or <code>--scope user</code> to make a server available in all your projects; the default <code>local</code> scope keeps it private to you in this project). Start with skills and agents first; add MCP when you need external integrations.</p>
 <section id="extending-with-plugins" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="extending-with-plugins"><span class="header-section-number">7.6</span> Extending with Plugins</h2>
 <p>Claude Code supports <strong>plugins</strong> — bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use <code>/plugin</code> to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins.</p>
@@ -7532,7 +7609,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="odd">
 <td><code>/commit</code></td>
 <td><code>.claude/skills/commit/</code></td>
-<td>Stage, commit, PR, and merge</td>
+<td>Run the gates and commit; <code>--pr</code> pushes and opens a pull request; never merges</td>
 </tr>
 <tr class="even">
 <td><code>/lit-review</code></td>
@@ -7582,7 +7659,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="odd">
 <td><code>/deep-audit</code></td>
 <td><code>.claude/skills/deep-audit/</code></td>
-<td>Repository-wide consistency audit</td>
+<td>Adversarial audit of a theory, proof, paper, codebase or set of claims (decompose, independent skeptics, a separate judge per finding, fix, re-verify); the repo-consistency audit is one application, in <code>references/repo-infrastructure-audit.md</code></td>
 </tr>
 <tr class="even">
 <td><code>/seven-pass-review</code></td>
@@ -7685,36 +7762,41 @@ research-spec.md  ─────────────→  preregistration-dr
 <td>Triage academic email + calendar (Gmail/Calendar MCP) into a prioritized digest + referee-obligations tracker; human-gated actions only (v2.0)</td>
 </tr>
 <tr class="even">
+<td><code>/issues</code></td>
+<td><code>.claude/skills/issues/</code></td>
+<td>File findings as GitHub issues (deduplicated against open and closed ones), list what is open, and close an issue with a comment on what was tried and how it was fixed; posts nothing without a yes (v2.6)</td>
+</tr>
+<tr class="odd">
 <td><code>/syllabus</code></td>
 <td><code>.claude/skills/syllabus/</code></td>
 <td>Build a course syllabus from a topic/reading list (schedule, objectives, assessment + rubric, per-week <code>/create-lecture</code> work-list) (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/teach-from-paper</code></td>
 <td><code>.claude/skills/teach-from-paper/</code></td>
 <td>Turn a paper into a lecture outline, teachable results, slide skeleton (→ <code>/create-lecture</code>), discussion questions, exercise brief (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/respond-to-eval</code></td>
 <td><code>.claude/skills/respond-to-eval/</code></td>
 <td>Turn student course evaluations into a classified teaching-improvement plan (Keep/Change/Investigate/Out-of-scope) (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/scaffold-exercises</code></td>
 <td><code>.claude/skills/scaffold-exercises/</code></td>
 <td>Scaffold a graded problem set (analytical/empirical/coding) with worked solutions; clean student set + separate solution key (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/new-skill</code></td>
 <td><code>.claude/skills/new-skill/</code></td>
 <td>Scaffold a convention-compliant skill (interview → write <code>SKILL.md</code> with gate-passing frontmatter) (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/diagnose</code></td>
 <td><code>.claude/skills/diagnose/</code></td>
-<td>Root-cause a wrong or failing empirical result — reproduce → minimise → bisect → instrument → fix; <code>--no-fix</code> localizes without editing (v2.0)</td>
+<td>Root-cause a wrong or failing empirical result — reproduce → minimise → hypothesise → instrument (bisect) → fix; <code>--no-fix</code> localizes without editing (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/submission-disclosures</code></td>
 <td><code>.claude/skills/submission-disclosures/</code></td>
 <td>Submission-time disclosure block: journal-matched AI-use, CRediT roles, conflict-of-interest, and data-availability statements (v2.1)</td>
@@ -7799,12 +7881,12 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="even">
 <td>Agent-Authored Code</td>
 <td><code>agent-authored-code.md</code></td>
-<td><code>**/*.sh</code>, <code>**/*.py</code></td>
+<td><code>**/*.sh</code>, <code>**/*.py</code>, <code>**/*.R</code>, <code>**/*.do</code></td>
 </tr>
 <tr class="odd">
 <td>Inference Robustness</td>
 <td><code>inference-robustness.md</code></td>
-<td><code>scripts/**/*.R</code>, <code>scripts/**/*.do</code></td>
+<td><code>scripts/**/*.R</code>, <code>scripts/**/*.do</code>, <code>scripts/**/*.py</code></td>
 </tr>
 <tr class="even">
 <td>Issue Ledger</td>
@@ -7814,7 +7896,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="odd">
 <td>Writing With AI</td>
 <td><code>writing-with-ai.md</code></td>
-<td><code>**/*.tex</code>, <code>**/*.qmd</code></td>
+<td><code>**/*.tex</code>, <code>**/*.qmd</code>, <code>**/*.md</code>, <code>**/*.Rmd</code></td>
 </tr>
 <tr class="even">
 <td>Single Source of Truth</td>
@@ -7929,7 +8011,7 @@ research-spec.md  ─────────────→  preregistration-dr
 <tr class="even">
 <td>Simulation Conventions</td>
 <td><code>simulation-conventions.md</code></td>
-<td><code>**/*simulation*.R</code>, <code>**/*_sim.R</code>, <code>explorations/**</code> — Monte Carlo discipline: DGP/estimand, L’Ecuyer seeding, Monte Carlo SE, coverage-vs-truth, raw-result storage (v1.10.0); <strong>assumption-regime discipline</strong> — a per-script header naming the estimand, the maintained assumptions, the single one being relaxed, and how correct specification was verified, plus the in-/out-of-assumption firewall and relax-exactly-one over a severity grid (v2.5.1)</td>
+<td><code>**/*simulation*.R</code>, <code>**/*_sim.R</code>, <code>**/*_mc.R</code>, <code>scripts/**/simulations/**</code>, <code>explorations/**/*.R</code> — Monte Carlo discipline: DGP/estimand, L’Ecuyer seeding, Monte Carlo SE, coverage-vs-truth, raw-result storage (v1.10.0); <strong>assumption-regime discipline</strong> — a per-script header naming the estimand, the maintained assumptions, the single one being relaxed, and how correct specification was verified, plus the in-/out-of-assumption firewall and relax-exactly-one over a severity grid (v2.5.1)</td>
 </tr>
 <tr class="odd">
 <td>R Package Conventions</td>
@@ -8001,6 +8083,16 @@ research-spec.md  ─────────────→  preregistration-dr
 <td><code>.claude/hooks/claim-reconcile.py</code> — flags stale numeric claims when scripts change, including edits to a declared <code>appears_in</code> display</td>
 </tr>
 <tr class="odd">
+<td>Issue guard</td>
+<td>PreToolUse[Bash], only for <code>gh</code> commands (<code>if: Bash(gh *)</code>) (command)</td>
+<td><code>.claude/hooks/issue-guard.py</code> — denies a raw <code>gh issue create</code>/<code>new</code>, or a REST/GraphQL issue create, and points to <code>scripts/file-issue.py</code>, which checks for duplicates first</td>
+</tr>
+<tr class="even">
+<td>Open issues (opt-in)</td>
+<td>SessionStart[startup] (command)</td>
+<td><code>.claude/hooks/open-issues.py</code> — with <code>CLAUDE_ISSUES_AT_START=1</code>, lists open issues’ numbers and titles (owner and collaborators only) at startup; off by default</td>
+</tr>
+<tr class="odd">
 <td>Root-of-trust guard</td>
 <td>PreToolUse (command)</td>
 <td><code>.claude/hooks/root-of-trust-guard.py</code> — best-effort tripwire against <em>silent</em> shell writes to <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, <code>.githooks/</code>, plus the destructive-git deny list applied to <code>bash -c</code> / <code>env -S</code> payloads; reads and <code>Edit</code>/<code>Write</code> still pass, so it changes the channel rather than locking the files (<code>ALLOW_ROOT_OF_TRUST_WRITE=1</code>)</td>
@@ -8023,56 +8115,51 @@ research-spec.md  ─────────────→  preregistration-dr
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>UserPromptSubmit</code></td>
-<td>Before user message is processed</td>
-<td>Input validation, auto-routing</td>
-</tr>
-<tr class="even">
 <td><code>PermissionRequest</code></td>
 <td>When permission dialog appears</td>
 <td>Auto-approve patterns, logging</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>PostToolUseFailure</code></td>
 <td>When a tool call fails</td>
 <td>Error tracking, retry logic</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SubagentStart</code></td>
 <td>When a subagent spawns</td>
 <td>Resource tracking</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SubagentStop</code></td>
 <td>When a subagent completes</td>
 <td>Result aggregation</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>PostCompact</code></td>
 <td>After context compaction</td>
 <td>Post-compaction cleanup</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SessionEnd</code></td>
 <td>When session closes</td>
 <td>Final state saving, cleanup</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>WorktreeCreate</code></td>
 <td>When a git worktree is created</td>
 <td>Branch tracking</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>WorktreeRemove</code></td>
 <td>When a git worktree is removed</td>
 <td>Cleanup verification</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>TaskCompleted</code></td>
 <td>When a background task finishes</td>
 <td>Progress notifications</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>ConfigChange</code></td>
 <td>When settings are modified</td>
 <td>Audit logging</td>
@@ -8119,12 +8206,9 @@ research-spec.md  ─────────────→  preregistration-dr
 </section>
 <section id="plans-saved-to-wrong-directory" class="level3" data-number="8.5.8">
 <h3 data-number="8.5.8" class="anchored" data-anchor-id="plans-saved-to-wrong-directory"><span class="header-section-number">8.5.8</span> Plans Saved to Wrong Directory</h3>
-<p><strong>Symptom:</strong> Plans save to <code>~/.claude/plans/</code> instead of your project directory. Can’t track plans in git.</p>
-<p><strong>Fix:</strong> Add to <code>.claude/settings.json</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;plansDirectory&quot;</span><span class="fu">:</span> <span class="st">&quot;quality_reports/plans&quot;</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This tells Claude Code to save plans inside your project where they can be version-controlled.</p>
+<p><strong>Symptom:</strong> Plans save to <code>~/.claude/plans/</code> instead of your project directory.</p>
+<p><strong>Fix:</strong> This template’s <code>.claude/settings.json</code> already sets <code>&quot;plansDirectory&quot;: &quot;quality_reports/plans&quot;</code>. The setting needs Claude Code 2.1.9 or later (<code>claude --version</code>); Claude Code reads the path relative to the project root and falls back to <code>~/.claude/plans/</code> when the path points outside the project. If you adopted the workflow into another repository, add the same line to that repository’s <code>.claude/settings.json</code>.</p>
+<p>Plans then land in the project but are <strong>not</strong> committed: the template’s <code>.gitignore</code> excludes <code>quality_reports/plans/*</code>, because plans are local working records. To version a plan, <code>git add -f</code> it, or remove that line from your fork’s <code>.gitignore</code>.</p>
 <hr>
 </section>
 </section>
