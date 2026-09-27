@@ -146,6 +146,8 @@ absent; the debt was drift between files.
   `CLAUDE.md` and the landing page checked 865 statements and confirmed 44 more, also corrected —
   among them the guide's worked examples, which showed `/slide-excellence`, `/review-paper` and
   `/data-analysis` doing steps they do not do (#162).
+- **Fixed:** `/deep-audit` lost `disable-model-invocation: true` when the v2.5 verification skills
+  were merged, so a vague "audit this" could start its repo-wide fix loop; the flag is restored.
 - **Fixed:** `/preregister` looked for a `paper_type:` field that `/interview-me` never writes (it
   writes a `**Paper type:**` line), so the paper type never reached the style choice.
 - **Fixed:** `check-derived-counts.py` counted `/translate-to-quarto`'s Phase 6.5 as a second
@@ -268,7 +270,7 @@ absent; the debt was drift between files.
   across lenses); all confirmed findings are fixed. **The loop was stopped after round 2 by
   owner decision, so convergence (two consecutive rounds with nothing new) is not claimed.**
 - **Gates:** `./scripts/backtest.sh` passes all 10 gates, including the hook battery
-  (308 cases, seconds to run; the new case fails against the hook's old watch pattern).
+  (312 cases, seconds to run; the new case fails against the hook's old watch pattern).
   Every checker this release changed was re-qualified on seeded defects with clean controls
   (ledger rows): `check-model-versions.sh` 5/5 recall, 0/4 false positives;
   `validate-findings.py --fill-ids` 4/4; `check-derived-counts.py` seven-pass pattern 1/1,

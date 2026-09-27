@@ -124,7 +124,7 @@ Set this flag whenever the skill writes a **persistent, load-bearing file** that
 
 - Create new persistent source files (`/create-lecture` → new `.tex`, `/new-diagram` → new TikZ source).
 - Write a self-modifying artifact (`/learn` → new SKILL.md, `/checkpoint` → state snapshot, `/preregister` → preregistration document).
-- Run a long, file-writing cycle (`/simulation-study` → seeded Monte Carlo run and results, `/vaccinate` → qualification-ledger row).
+- Run a long, file-writing cycle (`/simulation-study` → seeded Monte Carlo run and results, `/vaccinate` → qualification-ledger row, `/deep-audit` → audit-and-fix loop).
 
 **Don't set it for skills that:**
 

@@ -64,6 +64,9 @@ WRAPPERS = {"command", "builtin", "exec", "nohup", "time", "env", "sudo"}
 # Shell reserved words that can stand before a command in the same segment
 # (`if true; then gh issue create; fi` splits into `then gh issue create`).
 RESERVED = {"if", "then", "else", "elif", "while", "until", "do", "{", "!"}
+# Wrapper options that consume the next word (sudo -u USER, env -u VAR, env -C DIR).
+WRAPPER_VALUE_OPTS = {"-u", "-g", "-h", "-p", "-C", "-D", "-r", "-t", "-U", "-S",
+                      "--user", "--group", "--chdir", "--unset"}
 # gh flags that take a value (skipped when finding the subcommand words).
 GH_VALUE_FLAGS = {"-R", "--repo", "--hostname"}
 API_BODY_FLAGS = {"-f", "-F", "--field", "--raw-field", "--input"}
@@ -118,7 +121,7 @@ def strip_heredocs(command: str) -> str:
         elif c == '"' and not in_s:
             in_d = not in_d
         elif not in_s and not in_d:
-            if c == "#" and (i == 0 or command[i - 1] in " \t;&|()"):
+            if c == "#" and (i == 0 or command[i - 1] in " \t\n;&|()"):
                 in_comment = True
                 i += 1
                 continue
@@ -151,6 +154,8 @@ def graphql_files_create(args: list[str], cwd: str) -> bool:
             paths.append(a.split("=", 1)[1])
         elif a in GQL_FILE_FLAGS and i + 1 < len(args) and "=@" in args[i + 1]:
             paths.append(args[i + 1].split("=@", 1)[1])
+        elif a.startswith("-F") and not a.startswith("--") and "=@" in a[2:]:
+            paths.append(a[2:].split("=@", 1)[1])     # attached form: -Fquery=@FILE
         elif a.startswith("--field=") and "=@" in a[len("--field="):]:
             paths.append(a[len("--field="):].split("=@", 1)[1])
     for p in paths:
@@ -245,10 +250,12 @@ def strip_prefix(words: list[str]) -> list[str]:
         w = words[i]
         if w in RESERVED or ASSIGNMENT.match(w):
             i += 1
+        elif w == "function":
+            i += 2                          # function NAME { ... }
         elif w in WRAPPERS:
             i += 1
             while i < len(words) and words[i].startswith("-"):
-                i += 1                      # env -i, sudo -E, ...
+                i += 2 if words[i] in WRAPPER_VALUE_OPTS else 1   # sudo -u USER, env -i
         else:
             break
     return words[i:]

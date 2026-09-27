@@ -2732,6 +2732,15 @@ gfire $'echo \'x <<EOF\' && gh --version\ngh issue create -t x\nEOF'
 expect_deny "g31 a heredoc opener inside quotes does not hide the create after it"
 gfire 'gh api graphql -F query=@list.graphql' Bash "$GQ"
 expect_silent "g32 CONTROL: a GraphQL read query loaded from a file is allowed"
+# PR #163 second review (#164): line-start comments, attached -F, function bodies, sudo -u.
+gfire $'gh --version\n# <<EOF\ngh issue create -t x\nEOF'
+expect_deny "g33 a heredoc opener in a comment at the start of a later line does not hide the create"
+gfire 'gh api graphql -Fquery=@mut.graphql' Bash "$GQ"
+expect_deny "g34 a GraphQL create read through the attached form -Fquery=@FILE is denied"
+gfire 'function f { gh issue create -t x; }; f'
+expect_deny "g35 a create inside a function declared and called on the line is denied"
+gfire 'sudo -u analyst gh issue create -t x'
+expect_deny "g36 a create behind sudo -u USER is denied"
 
 # ── (h) open-issues (opt-in) ─────────────────────────────────────────────────
 # A fake `gh` on PATH answers the one API call the hook makes. The hook must be

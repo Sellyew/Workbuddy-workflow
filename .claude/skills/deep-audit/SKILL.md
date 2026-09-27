@@ -2,6 +2,7 @@
 name: deep-audit
 description: Comprehensive adversarial audit of a theory, proof, math/econ paper, codebase, or set of claims — decompose into components, fan out independent skeptics that must return CONCRETE defects, adjudicate every finding with a separate judge, fix all confirmed defects, then re-verify. Use when correctness must be bulletproof and single-pass or round-by-round review is too slow and too shallow. Invoke for "audit this rigorously", "find ALL the bugs/gaps", "make this rock solid", "converge faster on correctness".
 allowed-tools: ["Read", "Grep", "Glob", "Bash", "Write", "Edit", "Agent", "Task"]
+disable-model-invocation: true
 metadata:
   protocol: threat-prioritization
 ---
