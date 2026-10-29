@@ -20,7 +20,7 @@ warn=0
 fail=0
 
 echo ""
-echo -e "${BOLD}Validating Claude Code Academic Workflow setup...${RESET}"
+echo -e "${BOLD}Validating WorkBuddy Academic Workflow setup...${RESET}"
 echo ""
 
 check_required() {
@@ -50,7 +50,9 @@ check_optional() {
 }
 
 echo -e "${BOLD}Required tools:${RESET}"
-check_required "Claude Code"  "claude"   "https://claude.ai/install"
+# WorkBuddy 是桌面客户端，shell 里没有可探测的命令，所以这一项不计入通过数：
+# 以前这里是 `check_required "Claude Code" "claude"`，会让用户以为要先装 Claude Code。
+echo -e "  ${BOLD}·${RESET} WorkBuddy (desktop app) — open this folder as the task workspace"
 check_required "XeLaTeX"      "xelatex"  "https://tug.org/texlive/ (or MacTeX: https://tug.org/mactex/)"
 check_required "Quarto"       "quarto"   "https://quarto.org/docs/get-started/"
 check_required "git"          "git"      "https://git-scm.com/downloads"
@@ -180,7 +182,6 @@ echo ""
 # Which tools did we actually find? Gate the next-step suggestions accordingly.
 # Use string flags (not command names) so shellcheck is happy and `if` bodies
 # read naturally.
-has_claude="false";  command -v claude  >/dev/null 2>&1 && has_claude="true"
 has_xelatex="false"; command -v xelatex >/dev/null 2>&1 && has_xelatex="true"
 has_quarto="false";  command -v quarto  >/dev/null 2>&1 && has_quarto="true"
 has_r="false";       command -v R       >/dev/null 2>&1 && has_r="true"
@@ -189,29 +190,25 @@ if [ "$fail" -gt 0 ]; then
     echo -e "${RED}Some required tools are missing.${RESET}"
     echo ""
     echo -e "${BOLD}What you CAN do right now:${RESET}"
-    if [ "$has_claude" = "true" ]; then
-        echo "  - Open Claude Code:                      claude"
+    # 载体是 WorkBuddy 桌面客户端：没有「运行 claude」这一步，只有「把本目录选成工作空间」。
+    echo "  - In WorkBuddy: new task → 选择工作空间 → pick this directory"
+    echo ""
+    echo "  ${BOLD}Inside WorkBuddy${RESET} (these are slash-commands, NOT shell commands):"
+    if [ "$has_quarto" = "true" ]; then
+        echo "    /deploy HelloWorld         # render Quarto sample"
+    fi
+    if [ "$has_xelatex" = "true" ]; then
+        echo "    /compile-latex HelloWorld  # compile Beamer sample"
+    fi
+    if [ "$has_r" = "true" ]; then
+        echo "    /data-analysis             # orchestrate R analysis"
+    fi
+    if [ "$has_xelatex" != "true" ]; then
         echo ""
-        echo "  ${BOLD}Inside Claude Code${RESET} (these are slash-commands, NOT shell commands):"
-        if [ "$has_quarto" = "true" ]; then
-            echo "    /deploy HelloWorld         # render Quarto sample"
-        fi
-        if [ "$has_xelatex" = "true" ]; then
-            echo "    /compile-latex HelloWorld  # compile Beamer sample"
-        fi
-        if [ "$has_r" = "true" ]; then
-            echo "    /data-analysis             # orchestrate R analysis"
-        fi
-        if [ "$has_xelatex" != "true" ]; then
-            echo ""
-            echo "  (Beamer workflow disabled until you install XeLaTeX: https://tug.org/texlive/)"
-        fi
-        if [ "$has_quarto" != "true" ]; then
-            echo "  (Quarto deploy disabled until you install Quarto: https://quarto.org/docs/get-started/)"
-        fi
-    else
-        echo "  - Install Claude Code first: https://claude.ai/install"
-        echo "    (Everything else in this template is orchestrated through Claude.)"
+        echo "  (Beamer workflow disabled until you install XeLaTeX: https://tug.org/texlive/)"
+    fi
+    if [ "$has_quarto" != "true" ]; then
+        echo "  (Quarto deploy disabled until you install Quarto: https://quarto.org/docs/get-started/)"
     fi
     echo ""
     echo -e "${BOLD}Next:${RESET} install the missing required tool(s) listed above, then re-run this script."
@@ -219,7 +216,7 @@ if [ "$fail" -gt 0 ]; then
 fi
 
 echo -e "${GREEN}Setup looks good!${RESET} Next steps:"
-echo "  1. Open Claude Code in this directory:  claude"
+echo "  1. In WorkBuddy: new task → 选择工作空间 → pick this directory"
 echo "  2. Compile the sample deck:              /compile-latex HelloWorld"
 echo "  3. Deploy the Quarto sample:             /deploy HelloWorld"
 echo ""

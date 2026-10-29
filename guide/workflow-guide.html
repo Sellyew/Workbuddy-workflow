@@ -2407,7 +2407,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-blocks" id="toc-sec-blocks" class="nav-link" data-scroll-target="#sec-blocks"><span class="header-section-number">4</span> 构成部件</a>
   <ul class="collapse">
-  <li><a href="#claude.md-你项目的宪法" id="toc-claude.md-你项目的宪法" class="nav-link" data-scroll-target="#claude.md-你项目的宪法"><span class="header-section-number">4.1</span> CLAUDE.md — 你项目的宪法</a></li>
+  <li><a href="#codebuddy.md-你项目的宪法" id="toc-codebuddy.md-你项目的宪法" class="nav-link" data-scroll-target="#codebuddy.md-你项目的宪法"><span class="header-section-number">4.1</span> CODEBUDDY.md — 你项目的宪法</a></li>
   <li><a href="#rules---domain-knowledge-that-auto-loads" id="toc-rules---domain-knowledge-that-auto-loads" class="nav-link" data-scroll-target="#rules---domain-knowledge-that-auto-loads"><span class="header-section-number">4.2</span> 规则 — 自动加载的领域知识</a>
   <ul class="collapse">
   <li><a href="#例子按路径作用域的-r-代码规范规则" id="toc-例子按路径作用域的-r-代码规范规则" class="nav-link" data-scroll-target="#例子按路径作用域的-r-代码规范规则"><span class="header-section-number">4.2.1</span> 例子：按路径作用域的 R 代码规范规则</a></li>
@@ -2628,7 +2628,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>持久记忆</td>
-<td>CLAUDE.md + MEMORY.md 跨会话存活</td>
+<td>CODEBUDDY.md + MEMORY.md 跨会话存活</td>
 </tr>
 <tr class="odd">
 <td>编排器运行时</td>
@@ -2785,7 +2785,7 @@ Claude 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>本指南描述的是完整系统 — 19 个代理、63 个技能、37 条规则。那是上限，不是起点。<strong>先只用 CLAUDE.md 加 2–3 个技能</strong>（<code>/compile-latex</code>、<code>/proofread</code>、<code>/commit</code>）。发现需要什么，再补规则与代理。这套模板是按渐进采用设计的：fork 下来，把占位符填上，就开始干活。其余的东西，等你需要时都在那儿。</p>
+<p>本指南描述的是完整系统 — 19 个代理、63 个技能、37 条规则。那是上限，不是起点。<strong>先只用 CODEBUDDY.md 加 2–3 个技能</strong>（<code>/compile-latex</code>、<code>/proofread</code>、<code>/commit</code>）。发现需要什么，再补规则与代理。这套模板是按渐进采用设计的：fork 下来，把占位符填上，就开始干活。其余的东西，等你需要时都在那儿。</p>
 </div>
 </div>
 <hr>
@@ -2829,18 +2829,18 @@ Claude 调用 /data-analysis，它在内部：
 <tbody>
 <tr class="odd">
 <td><strong>WorkBuddy</strong></td>
-<td>支撑这套工作流的 AI 工具</td>
-<td><code>curl -fsSL https://claude.ai/install.sh | bash</code>（<a href="https://code.claude.com/docs/en/overview">文档</a>）</td>
+<td>支撑这套工作流的桌面客户端</td>
+<td>装好客户端（<a href="https://www.workbuddy.cn/">官网</a>）；本仓库不代管产品安装链接</td>
 </tr>
 <tr class="even">
-<td><strong>Node.js 18+</strong></td>
-<td>只在走 npm 安装路线时需要 —— 推荐的原生安装器自带运行时</td>
-<td><a href="https://nodejs.org">nodejs.org</a></td>
+<td><strong>Python 3</strong></td>
+<td>门禁脚本、钩子与质量打分器都靠它</td>
+<td>macOS/Linux 一般自带；<a href="https://python.org">python.org</a></td>
 </tr>
 <tr class="odd">
-<td><strong>Claude 账号</strong>（仅走 CLI 时需要）</td>
-<td>Claude 的认证</td>
-<td><a href="https://claude.ai">Claude Pro 或 Max 订阅</a> 或 <a href="https://console.anthropic.com">Anthropic API key</a>（按 token 付费）</td>
+<td><strong>WorkBuddy 账号</strong></td>
+<td>登录客户端</td>
+<td>首次启动客户端时按提示登录</td>
 </tr>
 <tr class="even">
 <td><strong>git</strong></td>
@@ -2896,6 +2896,9 @@ Claude 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p><strong>先分清两份合同。</strong> 这一段讲的是<strong>上游 Claude 那一侧</strong>的账（订阅、API 计费、使用条款）。本平台是 WorkBuddy，费用与条款以客户端内和官网的说明为准，两者不是同一份合同。</p>
+</blockquote>
 <p><strong>Claude Pro 或 Max 订阅</strong>：包含 Claude Code 用量，额度宽松。当前价格与档位细节见 <a href="https://claude.ai">claude.ai</a>。对多数学者是最优选择。</p>
 <p><strong>API 访问</strong>（按 token 付费）：适合重度用户或 CI/CD。用<a href="#sec-effort">深度档位</a>与<a href="#multi-model-strategy-cost-vs-quality">多模型策略</a>控制成本。</p>
 <p>Claude Code 本身安装免费（源码在 GitHub 公开，但不是开源软件；你的使用受 Anthropic 哪套条款约束取决于你的账号 — 见下）。你只为 Claude 模型的用量付费。</p>
@@ -2913,12 +2916,12 @@ Claude 调用 /data-analysis，它在内部：
 </div>
 <div class="callout-body-container callout-body">
 <ul class="task-list">
-<li><label><input type="checkbox">安装 WorkBuddy：<code>curl -fsSL https://claude.ai/install.sh | bash</code></label></li>
+<li><label><input type="checkbox">装好 WorkBuddy 桌面客户端（<a href="https://www.workbuddy.cn/">官网</a>）</label></li>
 <li><label><input type="checkbox">fork 仓库并 clone 到本地</label></li>
 <li><label><input type="checkbox">跑一次 <code>./scripts/install-hooks.sh</code>（接上真正的 pre-commit 门禁 — 不跑它就一直空转）</label></li>
-<li><label><input type="checkbox">在项目目录里运行 <code>claude</code>（首次运行会提示认证）</label></li>
+<li><label><input type="checkbox">新建任务，点输入框左下角的<strong>选择工作空间</strong>，选中这个项目目录</label></li>
 <li><label><input type="checkbox">粘入起始提示词（填上你的项目细节）</label></li>
-<li><label><input type="checkbox">等 WorkBuddy 按你的项目改好 <code>CLAUDE.md</code></label></li>
+<li><label><input type="checkbox">等 WorkBuddy 按你的项目改好 <code>CODEBUDDY.md</code></label></li>
 <li><label><input type="checkbox">批准配置计划</label></li>
 <li><label><input type="checkbox">让 WorkBuddy 干点事：<em>「审一遍我的幻灯片」</em> 或 <em>「做一讲讲 [topic]」</em></label></li>
 <li><label><input type="checkbox">批准任务计划，看它干活，审读产出</label></li>
@@ -2938,8 +2941,8 @@ Claude 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>「command not found: claude」：</strong>先装 WorkBuddy：<code>curl -fsSL https://claude.ai/install.sh | bash</code>（原生安装器 — 不需要 Node.js；只有 npm 路线才要 Node 18+）。</p>
-<p><strong>WorkBuddy 似乎无视了配置文件：</strong>确认你是在项目目录里（而不是父目录里）运行的 <code>claude</code>。WorkBuddy 从当前工作目录读取 <code>.codebuddy/</code> 与 <code>CLAUDE.md</code>。</p>
+<p><strong>找不到「选择工作空间」：</strong>它在新建任务的输入框左下角。客户端没有命令行安装器，也没有 <code>claude</code> 这类命令 — 那是上游 Claude Code 的入口，不是本平台的。</p>
+<p><strong>WorkBuddy 似乎无视了配置文件：</strong>确认任务的工作空间选的是项目目录<strong>本身</strong>，而不是它的父目录。WorkBuddy 从工作空间的根目录读取 <code>.codebuddy/</code> 与 <code>CODEBUDDY.md</code>，在父目录里开会话等于一份都没读到。</p>
 <p><strong>钩子不触发（没有通知、没有提醒）：</strong>检查 Python 3 是否装上（<code>python3 --version</code>），以及钩子文件是否可执行（<code>chmod +x .codebuddy/hooks/*</code>）。</p>
 <p><strong>「批准计划长什么样？」</strong>WorkBuddy 会给出一个带编号的计划并征求你的意见。你说「批准」、「看着不错」，或者「第 3 步改一下」。就这样 — 不需要什么特殊命令。</p>
 <p>更多内容见附录里的<a href="#troubleshooting">故障排查</a>。</p>
@@ -2978,7 +2981,7 @@ Claude 调用 /data-analysis，它在内部：
 </section>
 <section id="sec-first-session" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-first-session"><span class="header-section-number">2.3</span> 第 2 步：启动 WorkBuddy 并粘入这段提示词</h2>
-<p>在项目目录里打开终端，运行 <code>claude</code>，把下面这段粘进去。把<strong>加粗的占位符</strong>换成本项目的细节：</p>
+<p>新建任务并把工作空间选成项目目录，然后把下面这段粘进输入框。把<strong>加粗的占位符</strong>换成本项目的细节：</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -3008,12 +3011,12 @@ Claude 调用 /data-analysis，它在内部：
 <div class="callout-body-container callout-body">
 <p>我正在这个仓库里开始做 <strong>[PROJECT NAME]</strong>。<strong>[用 2–3 句话描述你的项目 — 你在做什么、给谁用、用什么工具（例如 LaTeX/Beamer、R、Quarto）。]</strong></p>
 <p>我希望我们的协作是有结构、精确、严谨的 — 哪怕多花点时间。做视觉材料时，一切都要打磨到位、可直接发表。我不想反复重复自己，所以我们的工作流应当善于记住决定、并从纠正中学习。</p>
-<p>我已经装好了这套 WorkBuddy 学术工作流（fork 自 <code>pedrohcgs/claude-code-my-workflow</code>）。配置文件都在这个仓库里（<code>.codebuddy/</code>、<code>CLAUDE.md</code>、templates、scripts）。请读一遍，理解这套工作流，然后<strong>把所有配置文件改成适合我这个项目的样子</strong> — 填上 <code>CLAUDE.md</code> 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。</p>
+<p>我已经装好了这套 WorkBuddy 学术工作流（fork 自 <code>pedrohcgs/claude-code-my-workflow</code>）。配置文件都在这个仓库里（<code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、templates、scripts）。请读一遍，理解这套工作流，然后<strong>把所有配置文件改成适合我这个项目的样子</strong> — 填上 <code>CODEBUDDY.md</code> 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。</p>
 <p>之后，对所有非琐碎任务都走计划先行的工作流。一旦我批准计划，就切到包工头模式 — 自主协调一切，只在有歧义或需要决策时才回来找我。最初几次会话，多跟我确认一下，好让我学会这套工作流怎么跑。</p>
 <p>进入计划模式，从为本项目适配工作流配置开始。</p>
 </div>
 </div>
-<p><strong>这段提示词做了什么：</strong> WorkBuddy 会读 <code>CLAUDE.md</code> 与全部规则，填上你的项目名、机构、Beamer 环境、CSS 类与项目状态表，然后针对你的具体用例提出规则调整。你批准计划，WorkBuddy 处理其余一切。从那以后，你只管描述想做什么。</p>
+<p><strong>这段提示词做了什么：</strong> WorkBuddy 会读 <code>CODEBUDDY.md</code> 与全部规则，填上你的项目名、机构、Beamer 环境、CSS 类与项目状态表，然后针对你的具体用例提出规则调整。你批准计划，WorkBuddy 处理其余一切。从那以后，你只管描述想做什么。</p>
 </section>
 <section id="可选手工配置" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="可选手工配置"><span class="header-section-number">2.4</span> 可选：手工配置</h2>
@@ -3030,7 +3033,7 @@ Claude 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>定制 CLAUDE.md</strong> — 打开 <code>CLAUDE.md</code>，替换所有 <code>[BRACKETED PLACEHOLDERS]</code>：</p>
+<p><strong>定制 CODEBUDDY.md</strong> — 打开 <code>CODEBUDDY.md</code>，替换所有 <code>[BRACKETED PLACEHOLDERS]</code>：</p>
 <ol type="1">
 <li><strong>项目名与机构</strong></li>
 <li><strong>文件夹结构</strong>（按你的布局调整）</li>
@@ -3059,11 +3062,11 @@ Claude 调用 /data-analysis，它在内部：
 <h2 data-number="2.5" class="anchored" data-anchor-id="sec-adopt-existing"><span class="header-section-number">2.5</span> 在已有项目里采用这套模板</h2>
 <p>你不一定要从 fork 开始。要把这套工作流搬进手头已有的仓库：</p>
 <ol type="1">
-<li><strong>拷进来</strong> <code>.codebuddy/</code>、<code>scripts/</code>、<code>templates/</code>、<code>.githooks/</code>、<code>Preambles/</code>、<code>CLAUDE.md</code>、<code>MEMORY.md</code>、<code>TROUBLESHOOTING.md</code> 与 <code>CHANGELOG.md</code>（模板里的文件会链接到后两个），再加上 <code>quality_reports/</code> — 只要它的文件夹骨架与 <code>qualification/LEDGER.md</code>，不要模板自己的计划与日志。把模板的 <code>.gitignore</code> 合并进你的。</li>
-<li><strong>为你的项目重写 <code>CLAUDE.md</code></strong> — 名字、文件夹树、当前状态。它是 WorkBuddy 读的第一个文件。它指向模板 README 技能表的那个链接（<code>README.md#skills-claudeskills</code>）在你的仓库里解析不了；改成指向你自己的索引，或者删掉。</li>
+<li><strong>拷进来</strong> <code>.codebuddy/</code>、<code>scripts/</code>、<code>templates/</code>、<code>.githooks/</code>、<code>Preambles/</code>、<code>CODEBUDDY.md</code>、<code>MEMORY.md</code>、<code>TROUBLESHOOTING.md</code> 与 <code>CHANGELOG.md</code>（模板里的文件会链接到后两个），再加上 <code>quality_reports/</code> — 只要它的文件夹骨架与 <code>qualification/LEDGER.md</code>，不要模板自己的计划与日志。把模板的 <code>.gitignore</code> 合并进你的。</li>
+<li><strong>为你的项目重写 <code>CODEBUDDY.md</code></strong> — 名字、文件夹树、当前状态。它是 WorkBuddy 读的第一个文件。它指向模板 README 技能表的那个链接（<code>README.md#skills-claudeskills</code>）在你的仓库里解析不了；改成指向你自己的索引，或者删掉。</li>
 <li><strong>把卫生门禁该知道的文件夹与根文件告诉它。</strong> 把你自己的每个顶层文件夹（<code>paper/</code>、<code>code/</code>……）加进 <code>scripts/check-repo-hygiene.py</code> 里的 <code>ROOT_ALLOW_DIRS</code>，把根目录里尚未被允许的每个文件（一个 <code>Makefile</code>、一个 <code>.Rproj</code>……）加进 <code>ROOT_ALLOW</code>，各带一行理由。布局类文件夹（<code>output/</code>、<code>data/</code>、<code>R/</code>、<code>tests/</code>）与常见的 R、Python 环境文件（<code>DESCRIPTION</code>、<code>renv.lock</code>、<code>requirements.txt</code>……）已经默认允许。</li>
 <li><strong>删掉那两项读模板自家文档的检查。</strong> 从 <code>scripts/backtest.sh</code> 里删掉 <code>run &quot;surface-sync&quot;</code> 与 <code>run &quot;derived-counts&quot;</code> 两行：它们数的是模板 README、指南与变更日志里的技能、门禁与用例数，你的项目没有这些。其余每项检查都照原样适用于你的工作。</li>
-<li><strong>按名字暂存拷进来的文件</strong> — <code>git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>。台账检查要求钩子文件被跟踪，而模板自带的防线拒绝一刀切的 <code>git add -A</code>。</li>
+<li><strong>按名字暂存拷进来的文件</strong> — <code>git add .codebuddy .githooks scripts templates Preambles CODEBUDDY.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>。台账检查要求钩子文件被跟踪，而模板自带的防线拒绝一刀切的 <code>git add -A</code>。</li>
 <li><strong>运行</strong> <code>./scripts/validate-setup.sh</code>，然后 <code>./scripts/install-hooks.sh</code>，然后 <code>./scripts/backtest.sh</code>。</li>
 </ol>
 <p>我们在一个自带 README、<code>paper/</code> 与 <code>code/</code> 文件夹以及根目录 <code>Makefile</code> 的项目上测过这些步骤。照抄下来时，套件里有五项检查失败。做完第 1–5 步，全套通过，钩子用例集也在内。</p>
@@ -3145,7 +3148,7 @@ Claude：「我先澄清几点：
 </tr>
 <tr class="even">
 <td><strong>1 — 可重复</strong></td>
-<td>定制过的 <code>CLAUDE.md</code> + 你真会反复用的 2–3 个技能</td>
+<td>定制过的 <code>CODEBUDDY.md</code> + 你真会反复用的 2–3 个技能</td>
 <td>每次都同样的质量，不必重新解释</td>
 <td>你的活主要是写作与幻灯片</td>
 </tr>
@@ -3793,10 +3796,10 @@ APPROVED   NEEDS WORK
 <section id="sec-blocks" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> 构成部件</h1>
 <p>理解这些配置层，有助于你定制这套工作流、在出问题时排查。WorkBuddy 的力量来自五层协同工作的配置 — 把它们想成你学术项目的操作系统。</p>
-<section id="claude.md-你项目的宪法" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="claude.md-你项目的宪法"><span class="header-section-number">4.1</span> CLAUDE.md — 你项目的宪法</h2>
-<p><code>CLAUDE.md</code> 是最重要的单个文件。WorkBuddy 在每次会话开始时读它。但关键洞见在这里：<strong>WorkBuddy 能可靠遵循大约 100–150 条自定义指令。</strong> 你的系统提示已经用掉约 50 条，剩下约 100–150 条给你的项目。CLAUDE.md 与常驻规则共享这份预算。</p>
-<p>这意味着 CLAUDE.md 应当是一部<strong>精瘦的宪法</strong> — 短短的指令与指针，而不是详尽的文档。目标约 120 行：</p>
+<section id="codebuddy.md-你项目的宪法" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="codebuddy.md-你项目的宪法"><span class="header-section-number">4.1</span> CODEBUDDY.md — 你项目的宪法</h2>
+<p><code>CODEBUDDY.md</code> 是最重要的单个文件。WorkBuddy 在每次会话开始时读它。但关键洞见在这里：<strong>WorkBuddy 能可靠遵循大约 100–150 条自定义指令。</strong> 你的系统提示已经用掉约 50 条，剩下约 100–150 条给你的项目。CODEBUDDY.md 与常驻规则共享这份预算。</p>
+<p>这意味着 CODEBUDDY.md 应当是一部<strong>精瘦的宪法</strong> — 短短的指令与指针，而不是详尽的文档。目标约 120 行：</p>
 <ul>
 <li><strong>核心原则</strong> — 4–5 条（计划先行、事后核验、质量门禁、LEARN 标签）</li>
 <li><strong>文件夹结构</strong> — 什么住在哪里</li>
@@ -3834,7 +3837,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>CLAUDE.md 每次会话都加载。保持精瘦 — 官方指引建议控制在约 200 行以内，行数越长遵循度越低（过载的文件会静悄悄丢掉规则）。把详细标准放进按路径作用域的规则（<code>.codebuddy/rules/</code>）— 它们只在 WorkBuddy 处理匹配文件时加载，因此不争夺注意力。</p>
+<p>CODEBUDDY.md 每次会话都加载。保持精瘦 — 官方指引建议控制在约 200 行以内，行数越长遵循度越低（过载的文件会静悄悄丢掉规则）。把详细标准放进按路径作用域的规则（<code>.codebuddy/rules/</code>）— 它们只在 WorkBuddy 处理匹配文件时加载，因此不争夺注意力。</p>
 </div>
 </div>
 </section>
@@ -4208,7 +4211,7 @@ APPROVED   NEEDS WORK
 <section id="sec-cost" class="level3" data-number="4.5.4">
 <h3 data-number="4.5.4" class="anchored" data-anchor-id="sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：缓存、路由与诊断</h3>
 <p>成本在你看月账单之前是看不见的。三个杠杆，按影响排序：</p>
-<p><strong>1. 提示缓存。</strong> Anthropic 的提示缓存让重复的前缀 token（系统提示、CLAUDE.md、大块上下文）走缓存路径，只按输入价格的一小部分计费。fork 的人该知道两件事：</p>
+<p><strong>1. 提示缓存。</strong> Anthropic 的提示缓存让重复的前缀 token（系统提示、CODEBUDDY.md、大块上下文）走缓存路径，只按输入价格的一小部分计费。fork 的人该知道两件事：</p>
 <ul>
 <li><strong>默认 TTL 在 2026 年初从 60 分钟降到 5 分钟。</strong> 一条轮次之间要花 12 分钟的 <code>/review-paper --peer</code> 长流水线，如今第二轮开始时缓存已经冷了。对 API / Bedrock / Vertex / Foundry 套餐上的长流水线，选择启用的 <code>ENABLE_PROMPT_CACHING_1H</code> 环境变量可恢复 1 小时 TTL。在 Claude Pro / Max 订阅上，WorkBuddy 自动申请 1 小时 TTL，不额外收费。</li>
 <li><strong><code>cache_miss_reason</code></strong>（Anthropic 公开测试，2026-05-13）现已在 Messages 请求上暴露。用它诊断一条长跑的流水线为什么拿不到缓存命中（最常见：某个钩子注入了时间戳，破坏了前缀；或轮次之间系统提示发生了漂移）。</li>
@@ -4685,7 +4688,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <ol type="1">
 <li><strong>通用性</strong> — 一个非经济学的 fork 者会受益吗？</li>
 <li><strong>时效性</strong> — 它与当前代码矛盾吗（<code>grep</code> 被引用的文件）？</li>
-<li><strong>冗余</strong> — 它已经在 MEMORY.md、CLAUDE.md 或某条规则里了吗？</li>
+<li><strong>冗余</strong> — 它已经在 MEMORY.md、CODEBUDDY.md 或某条规则里了吗？</li>
 <li><strong>证据</strong> — 它引用了原始事故 / 文件 / 原因吗？</li>
 <li><strong>格式</strong> — 它遵循 <code>[LEARN:category] wrong → right</code> 吗？</li>
 </ol>
@@ -4724,7 +4727,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </section>
 <section id="一切如何咬合" class="level3" data-number="4.8.4">
 <h3 data-number="4.8.4" class="anchored" data-anchor-id="一切如何咬合"><span class="header-section-number">4.8.4</span> 一切如何咬合</h3>
-<p>有了 CLAUDE.md、MEMORY.md、计划、会话日志与 GitHub issue，系统有五层持久记忆。下面说明每一层做什么、何时要紧：</p>
+<p>有了 CODEBUDDY.md、MEMORY.md、计划、会话日志与 GitHub issue，系统有五层持久记忆。下面说明每一层做什么、何时要紧：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -4745,7 +4748,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <tbody>
 <tr class="odd">
 <td>项目上下文</td>
-<td><code>CLAUDE.md</code></td>
+<td><code>CODEBUDDY.md</code></td>
 <td>是（在磁盘上）</td>
 <td>很少</td>
 <td>项目规则、文件夹结构、命令</td>
@@ -6920,7 +6923,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <h2 data-number="6.9" class="anchored" data-anchor-id="anthropic-在-2026-年-4-月前后发布的实用命令"><span class="header-section-number">6.9</span> Anthropic 在 2026 年 4 月前后发布的实用命令</h2>
 <p>这些是一方（first-party）Claude Code 命令，不用 fork 任何东西就能直接调。值得知道，是因为它们补上了本模板<strong>有意</strong>不去填的那些空档：</p>
 <ul>
-<li><strong><code>/team-onboarding</code></strong>（第 15 周）— 把你本地的 Claude Code 配置（CLAUDE.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 <code>/team-onboarding</code> 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。</li>
+<li><strong><code>/team-onboarding</code></strong>（第 15 周）— 把你本地的 Claude Code 配置（CODEBUDDY.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 <code>/team-onboarding</code> 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。</li>
 <li><strong><code>/autofix-pr</code></strong>（第 15 周）— 在 GitHub PR 上跑 Claude Code，套用 CI 式的常规修法（lint、类型、简单的测试失败）。如果你推了 PR，想在审阅前再来一轮自动清理，它和我们的 <code>/commit</code> 流程配合得很好。</li>
 <li><strong><code>/powerup</code></strong>（2026 年 3、4 月第 14 周）— 互动式课程，用动画演示讲 Claude Code 的各项特性（钩子、技能、MCP、插件）。推荐给刚 fork 完、想弄懂模板定制<strong>底层原语</strong>的人。</li>
 <li><strong>Ultraplan</strong>（第 15 周）— 在 CLI 里起草计划并放到云端，在网页编辑器里审阅、批注，然后远程执行或拉回本地。适合需要干系人过目的计划（比如让合作者在真正开跑前认可某个分析方案）。</li>
@@ -6939,7 +6942,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>能源</strong> — 尼泊尔与全球能源经济学、光伏组件可靠性</li>
 <li><strong>教学</strong> — ECN 152 课程开发、Econ 730 因果面板数据</li>
 </ul>
-<p>每一次改造都走同一条路子：fork 模板、填 <code>CLAUDE.md</code> 占位符、自定义领域审阅者、加领域专属技能。基础设施（编排器、钩子、质量门禁）可以不加修改地平移。</p>
+<p>每一次改造都走同一条路子：fork 模板、填 <code>CODEBUDDY.md</code> 占位符、自定义领域审阅者、加领域专属技能。基础设施（编排器、钩子、质量门禁）可以不加修改地平移。</p>
 <hr>
 </section>
 </section>
@@ -7332,15 +7335,15 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="迭代-6-个会话之后的经验" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="迭代-6-个会话之后的经验"><span class="header-section-number">7.5</span> 迭代 6+ 个会话之后的经验</h2>
 <ol type="1">
-<li><strong>CLAUDE.md 控制在 150 行以内。</strong> WorkBuddy 能可靠遵循约 150 条指令。400 行的 CLAUDE.md 意味着有些规则会被悄悄忽略。详细标准放进按路径生效的规则里。</li>
+<li><strong>CODEBUDDY.md 控制在 150 行以内。</strong> WorkBuddy 能可靠遵循约 150 条指令。400 行的 CODEBUDDY.md 意味着有些规则会被悄悄忽略。详细标准放进按路径生效的规则里。</li>
 <li><strong>规则增量添加。</strong> 别想着一次把所有规则写完。发现模式时再加。用 <code>paths:</code> frontmatter 让它们只在相关时才加载。</li>
 <li><strong>用 [LEARN] 格式。</strong> 每次纠正都打标签并落进 MEMORY.md。这样跨会话不会重复同样的错。</li>
 <li><strong>相信对抗式模式。</strong> 批评者-修复者回路能抓到你看不到的东西。让它跑。</li>
 <li><strong>什么都核一遍。</strong> 核验规则的存在有它的道理。绝不跳过编译或渲染检查。</li>
 <li><strong>会话日志很重要。</strong> 记录设计决策，而不只是「改了什么」。将来的你会感谢现在的你。</li>
 <li><strong>魔鬼代言人要早做。</strong> 在地基不稳时先别盖 50 张幻灯片，先挑战结构。</li>
-<li><strong>渐进式披露。</strong> 从 CLAUDE.md + 2–3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。</li>
-<li><strong>用 <code>CLAUDE.local.md</code> 放个人覆盖项。</strong> 这个文件会自动被 gitignore，并与 <code>CLAUDE.md</code> 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 — 它们不会污染共享仓库。</li>
+<li><strong>渐进式披露。</strong> 从 CODEBUDDY.md + 2–3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。</li>
+<li><strong>用 <code>CLAUDE.local.md</code> 放个人覆盖项。</strong> 这个文件会自动被 gitignore，并与 <code>CODEBUDDY.md</code> 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 — 它们不会污染共享仓库。</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-58-contents" aria-controls="callout-58" aria-expanded="false" aria-label="Toggle callout">
