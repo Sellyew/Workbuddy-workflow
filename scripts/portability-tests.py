@@ -57,6 +57,16 @@ def main() -> int:
     # them: the real gates in backtest.sh must keep judging the index being committed.
     for k in [k for k in os.environ if k.startswith("GIT_") and k != "GIT_EXEC_PATH"]:
         del os.environ[k]
+    # Same defect, one variable over: scripts/backtest.py exports
+    # CODEBUDDY_PROJECT_DIR (and CLAUDE_PROJECT_DIR) pointing at THIS repository
+    # to every child it starts, and root-of-trust-guard.py reads that variable
+    # before anything else. So under the gate every case that fires the guard got
+    # the real repo as its project, judged its own fixture to be "another tree",
+    # and ALLOWED the write it was born to check — 24 cases passed on a Mac and
+    # failed on Linux, where they actually run. hook-battery.sh already unsets
+    # both for exactly this reason; a case that wants a project dir passes its own.
+    for k in ("CODEBUDDY_PROJECT_DIR", "CLAUDE_PROJECT_DIR"):
+        os.environ.pop(k, None)
     sys.path.insert(0, SUITE)
     suite = unittest.defaultTestLoader.discover(SUITE, pattern="test_*.py", top_level_dir=SUITE)
     if suite.countTestCases() == 0:

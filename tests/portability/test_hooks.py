@@ -659,6 +659,12 @@ class SessionHandoffStdin(_Tmp):
 
 
 @_winsim.needs_posix_sh
+@unittest.skipIf(os.name == "nt",
+                 "夹具的 gh 是一个 `#!/bin/sh` 脚本：Windows 的 CreateProcess 只认 "
+                 ".exe，找不到没有扩展名的脚本；改放 .cmd 垫片也不行——钩子传给 gh "
+                 "的参数里有 `&`，cmd 会把它拆成第二条命令，于是哪个垫片都交不出夹具的"
+                 "输出，钩子转而调用开发者本机真实的 gh。缺陷本身在 POSIX 宿主上照样"
+                 "被钉住：用例用 PYTHONUTF8=0 与 cp936 模拟代码页解码。")
 class OpenIssuesGhOutput(_Tmp):
     """nonguard-hooks-stdin-silent (open-issues): `gh api` output was decoded with the
     locale code page; one title holding ” made the whole list disappear on Windows."""
@@ -834,7 +840,13 @@ class StatusLine(_Tmp):
             self.assertIn(part, out)
 
     def test_ctx_fallback_found_for_non_ascii_project_dir(self):
-        pd = "/x/Đorđe ção/repo"
+        # [宿主适配] 夹具路径原来写作 `/x/Đorđe ção/repo`。在 Git Bash 里那是一个
+        # POSIX 绝对路径，MSYS 会在把它交给子进程之前改写成 `X:/Đorđe ção/repo`
+        # ——于是状态栏算出的哈希和夹具算出的必然不同，用例在 Windows 上永远红，
+        # 而且红的原因与它要钉的缺陷（非 ASCII 项目路径哈希到错误的会话目录）无关。
+        # 换成盘符写法：MSYS 不转换它，非 ASCII 内容与「从环境变量读」这两个前提
+        # 都还在，缺陷照旧会把它打红（用 stdin 传路径时 cp1252 会毁掉它）。
+        pd = "C:\\Users\\Đorđe ção\\repo"
         d = os.path.join(self.home, ".workbuddy", "sessions", hashlib.md5(pd.encode()).hexdigest()[:8])
         os.makedirs(d)
         with open(os.path.join(d, "context-pct.txt"), "w", encoding="utf-8") as f:

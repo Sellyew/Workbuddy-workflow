@@ -18,10 +18,19 @@ INPUT="$(cat)"
 
 # Parse every field in a single python invocation. Status line renders
 # on every turn; avoid several forks when one suffices.
+# [WorkBuddy 适配] 解释器用 `python` 而不是上游的 `python3`：Windows 上
+# `python3` 往往是 Microsoft Store 的 App Execution Alias，执行时只打印一句提示
+# 并以 49 退出——状态栏会整体变空，而空状态栏看起来和「没有内容要显示」一样。
+# The JSON is UTF-8 bytes and bash reads the fields back as UTF-8 bytes, so both
+# ends are pinned: Windows Python decodes and encodes a pipe with the ANSI code
+# page, and on a CJK one (cp932/936/950) a multibyte character swallowed the
+# backslash of the next JSON escape — the parse failed and the [BYPASS] badge,
+# the model and ctx % all vanished. newline='\n' keeps a CR off each field.
 parsed="$(printf '%s' "$INPUT" | python -c "
 import sys, json
+sys.stdout.reconfigure(encoding='utf-8', newline='\n')
 try:
-    d = json.load(sys.stdin)
+    d = json.loads(sys.stdin.buffer.read().decode('utf-8', 'replace'))
 except Exception:
     d = {}
 pct = (d.get('context_window') or {}).get('used_percentage')
@@ -81,8 +90,10 @@ fi
 # Most-recent plan's status (DRAFT / APPROVED / COMPLETED), read from its
 # Status FIELD — the same rule as pre-compact.py / post-compact-restore.py. A
 # whole-file grep mis-read a DRAFT plan whose body mentioned "COMPLETED".
+# Looked up from the repo top, like the gate above: from the session cwd, a
+# session sitting in Slides/ or scripts/R/ lost the badge.
 plan_badge=""
-latest_plan="$(ls -t "$cwd"/quality_reports/plans/*.md 2>/dev/null | head -1)"
+latest_plan="$(ls -t "${top:-$cwd}"/quality_reports/plans/*.md 2>/dev/null | head -1)"
 if [ -n "$latest_plan" ]; then
     pstatus="$(grep -m1 -oiE '^[[:space:]]*\**[[:space:]]*status[[:space:]]*\**[[:space:]]*:[[:space:]]*\**[[:space:]]*(draft|approved|completed|implemented|in[ -]?progress)' "$latest_plan" 2>/dev/null \
                | sed -E 's/.*:[[:space:]]*\**[[:space:]]*//' | tr '[:upper:]' '[:lower:]')"
@@ -98,15 +109,20 @@ fi
 # md5(project_dir)[:8] (older Claude Code versions, or null early in a session).
 ctx=""
 [ -n "$native_pct" ] && ctx="ctx ${native_pct}%"
-# Mirror context-monitor.py's get_session_dir() EXACTLY: CODEBUDDY_PROJECT_DIR set →
+# Mirror context-monitor.py's get_session_dir() EXACTLY: the project-dir variable set →
 # hash it; unset/empty → the writer falls back to sessions/default/, so do the same
 # (hashing the git toplevel here would point at the wrong folder on that path).
-if [ -n "${CODEBUDDY_PROJECT_DIR:-}" ]; then
-    hash="$(printf '%s' "$CODEBUDDY_PROJECT_DIR" | python -c 'import sys,hashlib; print(hashlib.md5(sys.stdin.read().encode()).hexdigest()[:8])' 2>/dev/null)"
+# Read from the ENVIRONMENT, as the writer reads it: piped through stdin, Windows
+# Python decoded the path with the ANSI code page, so a non-ASCII project path
+# hashed to a different folder (or to "" on a byte cp1252 leaves undefined).
+# [WorkBuddy 适配] 两个变量名都认（CODEBUDDY_ 优先），与其余钩子一致；会话目录
+# 是 ~/.workbuddy —— context-monitor.py 写在那里，这里读 .codebuddy 就永远读不到。
+if [ -n "${CODEBUDDY_PROJECT_DIR:-}" ] || [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    hash="$(python -c 'import os,sys,hashlib; pd=os.environ.get("CODEBUDDY_PROJECT_DIR") or os.environ.get("CLAUDE_PROJECT_DIR") or ""; sys.stdout.write(hashlib.md5(pd.encode()).hexdigest()[:8])' 2>/dev/null)"
 else
     hash="default"
 fi
-pct_file="$HOME/.codebuddy/sessions/${hash}/context-pct.txt"
+pct_file="$HOME/.workbuddy/sessions/${hash}/context-pct.txt"
 [ -z "$ctx" ] && [ -f "$pct_file" ] && ctx="ctx ~$(cat "$pct_file" 2>/dev/null)%"
 set -e
 

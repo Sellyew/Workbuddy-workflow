@@ -20,9 +20,19 @@ echo "Repo root: $REPO_ROOT"
 cd "$QUARTO_DIR"
 
 if [ -n "$1" ]; then
-    # Render specific lecture
+    # Render specific lecture. 名字里带空格是合法的（"Aula 1"），所以每个展开都要
+    # 加引号：`ls ${1}_*.qmd ${1}.qmd` 会把 "Aula 1" 拆成两段词，再去 glob 出
+    # `1.qmd` —— 于是一次针对 Aula 1 的渲染，实际渲染了另一份讲义，且不报错。
+    # 精确名优先于带后缀的：Lecture2.qmd 胜过 Lecture2_Intro.qmd。
     echo "Rendering $1..."
-    matched_qmd=$(ls ${1}_*.qmd ${1}.qmd 2>/dev/null | head -1)
+    matched_qmd=""
+    if [ -f "${1}.qmd" ]; then
+        matched_qmd="${1}.qmd"
+    else
+        for cand in "${1}"_*.qmd; do
+            [ -f "$cand" ] && { matched_qmd="$cand"; break; }
+        done
+    fi
     if [ -n "$matched_qmd" ]; then
         quarto render "$matched_qmd"
     else

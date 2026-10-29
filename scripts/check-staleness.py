@@ -175,6 +175,15 @@ def main():
     return 1 if bad else 0
 
 if __name__ == "__main__":
+    # Every finding line carries an em dash, which a cp932/cp949 pipe (Japanese,
+    # Korean Windows) cannot encode: a real finding became "internal error" (#171).
+    # errors=replace keeps the finding readable and the exit code honest; without
+    # it the encode raises inside print, the handler below catches it, and a tree
+    # with 3 real findings exits 2 ("could not check") instead of 1 ("stale").
+    try:
+        sys.stdout.reconfigure(errors="replace")
+    except (AttributeError, ValueError):
+        pass
     try:
         sys.exit(main())
     except Exception as e:                      # promised exit 2 now exists
