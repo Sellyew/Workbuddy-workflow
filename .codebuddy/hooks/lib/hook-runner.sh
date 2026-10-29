@@ -19,7 +19,13 @@ set -uo pipefail
 
 # --- 1. 由脚本自身位置推导仓库根，不依赖调用方 cwd ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# This file lives at <root>/.codebuddy/hooks/lib/hook-runner.sh — THREE levels
+# below the repository root, not two. Until 2026-10-30 it said `../..`, which
+# resolved to <root>/.codebuddy, so HOOK_PATH became
+# <root>/.codebuddy/.codebuddy/hooks/<name> and EVERY registered hook exited 0
+# with "hook 文件不存在". Fail-open kept the failure invisible: no guardrail
+# denied, no PostToolUse state was written, PreCompact never captured a plan.
+ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 export CODEBUDDY_PROJECT_DIR="${CODEBUDDY_PROJECT_DIR:-$ROOT}"
 export CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$ROOT}"

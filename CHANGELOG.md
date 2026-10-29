@@ -6,6 +6,33 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## Unreleased — 钩子接线断了，而且是静默的
+
+### Fixed — `hook-runner.sh` 的仓库根少算一级
+
+`hook-runner.sh` 位于 `<repo>/.codebuddy/hooks/lib/`，却用 `SCRIPT_DIR/../..`
+推导仓库根，结果停在 `<repo>/.codebuddy`。于是每条注册命令拼出的路径都是
+`<repo>/.codebuddy/.codebuddy/hooks/<name>`，文件不存在，**exit 0**。
+
+影响面是全部：7 个事件、12 条命令，自迁移提交 e547c5c 起一次都没有真正执行过。
+`git-guardrails` 不拦、`root-of-trust-guard` 不拦、`claim-reconcile` 不写状态、
+`pre-compact` 不存盘、`log-reminder` 不记日志。fail-open 的设计是对的
+（钩子坏了不该阻断会话），但它让「一条都没跑」和「全跑过了」在外部表现上
+完全一致——只有 stderr 的一行，而没有人读 stderr。
+
+修法是一行：`SCRIPT_DIR/../..` → `SCRIPT_DIR/../../..`，并在文件里写明这段历史。
+修复后两个护栏立即回到运行级：`git add -A` 被 `git-guardrails` 拒，
+`sed -i` 改该文件被 `root-of-trust-guard` 拒。
+
+### Added — `check-hooks.py` 测「接线」，不只测「逻辑」
+
+原来的 25 条用例全部**直接调用 hook 文件**，从不经过 settings.json 里注册的
+命令字符串。它证明钩子逻辑正确，不证明钩子被接上。新增的 `check_wiring()`
+逐条执行注册命令，stderr 出现「hook 文件不存在」或「未找到可用的 Python」
+即 FAIL——这正是本次缺陷的形状。
+
+---
+
 ## Unreleased — 平台事实有了唯一出处
 
 ### Added — `references/platform-facts.md`
