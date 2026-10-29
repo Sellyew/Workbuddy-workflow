@@ -167,6 +167,31 @@ WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文�
 - 双语化的直接收益：`check-surface-sync` 立刻抓到指南里**残留的陈旧计数**
   （`18 个代理、61 个技能`），而这处在中文化之前一直是绿的。
 
+### Fixed — 可移植性硬化回补（P9）
+
+迁移时只搬了文件、没搬硬化：`pre-commit`、`validate-setup.sh`、`file-issue.py`、
+`check-staleness.py`、`notify.sh`、`statusline.sh` 六处落地的是上游**加固前**的版本。
+这些差异在本机被跳过、在 Linux CI 上逐条变红，所以「本地全绿」覆盖不到它们。
+
+- **暂存清单按字节读。** `pre-commit` 恢复 `-z` 读取、大小写与 Unicode 折叠的路径
+  冲突探测、stash 归属校验、`ACMRT` 过滤与悬空符号链接的名点。非 ASCII、带引号、
+  带反斜杠的暂存名此前既不触发钩子电池、也不进质量评分，且全程静默。
+- **`validate-setup.sh` 读它自己的仓库**，`core.hooksPath` 按目录比较而不是字符串
+  比较（`./.githooks`、`.githooks/`、绝对路径都算已激活）；可执行位只对 `.sh` 查。
+- **代码页不再是可发现性的前提。** `file-issue.py` 改回字节读取并在入口把 stdout
+  设为 UTF-8；`check-staleness.py` 补回 `reconfigure(errors="replace")`。此前一次
+  日文/韩文 Windows 管道会把自己的「发现」变成「内部错误」，退出码也从 1 变成 2。
+- **`notify.sh` 回到上游契约。** 之前的中文化重写丢掉了 MINGW 分支的 OSC 9
+  `terminalSequence`，Git Bash 上等于完全不通知；jq 缺失时上游本就有默认文案回退。
+- **`statusline.sh` 的三处硬化恢复**（UTF-8 字节解析、从仓库根找 plan、从环境变量
+  读项目路径），并修掉一个真实缺陷：会话目录应读 `~/.workbuddy` ——
+  `context-monitor.py` 写在那里，之前指向 `.codebuddy/`，上下文百分比永远不显示。
+- **`sync_to_docs.sh` 不再拆讲次名。** `Aula 1` 被空格拆成两段后去 glob，渲染的是
+  `1.qmd`，且不报错。
+- **门禁第 11 门隔离调用方的项目目录变量。** `backtest.py` 给每个子进程都设了
+  `CODEBUDDY_PROJECT_DIR=<仓库根>`，而守卫优先读它，于是每个模拟用例的项目根都被
+  换成真实仓库、判成「另一个树」而放行。与已有的 `GIT_*` 清理并列，现在一并清掉。
+
 ### Removed
 
 - `.claude/`（163 个文件）与根目录 `CLAUDE.md`：内容已全部移植到 `.codebuddy/` 与
