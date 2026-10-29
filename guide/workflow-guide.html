@@ -2423,10 +2423,11 @@ window.Quarto = {
   <li><a href="#multi-model-strategy-cost-vs-quality" id="toc-multi-model-strategy-cost-vs-quality" class="nav-link" data-scroll-target="#multi-model-strategy-cost-vs-quality"><span class="header-section-number">4.5.2</span> 多模型策略：成本 vs 质量</a></li>
   <li><a href="#sec-agent-config" id="toc-sec-agent-config" class="nav-link" data-scroll-target="#sec-agent-config"><span class="header-section-number">4.5.3</span> 高级代理配置</a></li>
   <li><a href="#sec-cost" id="toc-sec-cost" class="nav-link" data-scroll-target="#sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：缓存、路由与诊断</a></li>
+  <li><a href="#sec-headless" id="toc-sec-headless" class="nav-link" data-scroll-target="#sec-headless"><span class="header-section-number">4.5.5</span> 无头运行：桌面客户端没有命令行</a></li>
   </ul></li>
   <li><a href="#settings---permissions-and-hooks" id="toc-settings---permissions-and-hooks" class="nav-link" data-scroll-target="#settings---permissions-and-hooks"><span class="header-section-number">4.6</span> 设置 — 权限与钩子</a>
   <ul class="collapse">
-  <li><a href="#六层权限栈" id="toc-六层权限栈" class="nav-link" data-scroll-target="#六层权限栈"><span class="header-section-number">4.6.1</span> 六层权限栈</a></li>
+  <li><a href="#六层权限栈上游的层栈本平台不解析它" id="toc-六层权限栈上游的层栈本平台不解析它" class="nav-link" data-scroll-target="#六层权限栈上游的层栈本平台不解析它"><span class="header-section-number">4.6.1</span> 六层权限栈（上游的层栈，本平台不解析它）</a></li>
   <li><a href="#故障排查设了-bypasspermissions-却仍然弹提示" id="toc-故障排查设了-bypasspermissions-却仍然弹提示" class="nav-link" data-scroll-target="#故障排查设了-bypasspermissions-却仍然弹提示"><span class="header-section-number">4.6.2</span> 故障排查：设了 <code>bypassPermissions</code> 却仍然弹提示</a></li>
   <li><a href="#计划-执行的交接推荐的日常驱动" id="toc-计划-执行的交接推荐的日常驱动" class="nav-link" data-scroll-target="#计划-执行的交接推荐的日常驱动"><span class="header-section-number">4.6.3</span> 计划 → 执行的交接（推荐的日常驱动）</a></li>
   <li><a href="#sec-session-management" id="toc-sec-session-management" class="nav-link" data-scroll-target="#sec-session-management"><span class="header-section-number">4.6.4</span> 会话管理</a></li>
@@ -2575,7 +2576,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 29, 2026</p>
+      <p class="date-modified">October 30, 2026</p>
     </div>
   </div>
     
@@ -2601,7 +2602,7 @@ window.Quarto = {
 </section>
 <section id="workbuddy-的不同之处" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="workbuddy-的不同之处"><span class="header-section-number">1.2</span> WorkBuddy 的不同之处</h2>
-<p>WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完整访问权。它以 <strong>CLI 工具</strong>、<strong>VS Code 扩展</strong>或<strong>桌面应用</strong>的形式工作 —— 同一套核心工作流，不同的界面（权限模式与少数配置键确实因界面而异；请查阅你所用户界面的权限模式文档）。以下是它带来的能力：</p>
+<p>WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完整访问权。本平台的本体是<strong>桌面客户端</strong>：新建任务、选中工作空间，剩下的都在对话里完成。同一引擎还有一条<strong>独立安装</strong>的命令行产品线（CodeBuddy Code CLI），用于无头与脚本化运行——它不是桌面端的一部分，见<a href="#sec-headless">「无头运行」</a>。以下是它带来的能力：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -2643,8 +2644,8 @@ window.Quarto = {
 <td><code>/commit</code> 内部给出建议性打分（越线即停并请示是否覆盖）；目标值：80 分提交、90 分 PR、95 分优秀</td>
 </tr>
 <tr class="even">
-<td>CLI/无头模式</td>
-<td>从脚本里跑：<code>claude -p &quot;compile all lectures&quot;</code></td>
+<td>无头 / 脚本化</td>
+<td>桌面端没有。需另装 CodeBuddy Code CLI，再 <code>codebuddy -p &quot;compile all lectures&quot; -y</code></td>
 </tr>
 <tr class="odd">
 <td>浏览器桥接</td>
@@ -4268,17 +4269,22 @@ APPROVED   NEEDS WORK
 <p>任何 <code>/review-paper --peer</code> 流水线跑完都跑一次 <code>/cost</code>。如果第二、三轮的缓存命中率低于 60%，你几乎肯定是挨了 5 分钟 TTL 的刀。</p>
 </div>
 </div>
+</section>
+<section id="sec-headless" class="level3" data-number="4.5.5">
+<h3 data-number="4.5.5" class="anchored" data-anchor-id="sec-headless"><span class="header-section-number">4.5.5</span> 无头运行：桌面客户端没有命令行</h3>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Agent SDK 额度池拆分 — 2026-06-15
+Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>自 2026-06-15 起，<code>claude -p</code> 无头子进程调用（<code>scripts/run-skill-eval.sh</code> 以及任何以 <code>-p</code> 模式调 WorkBuddy 的脚本或例行任务所用）从<strong>独立的月度 Agent SDK 额度池</strong>支取，与交互式额度脱钩。如果一次无头运行因额度耗尽而失败、而你的交互会话却正常，那就是 Agent SDK 池空了。迁移细节见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md">TROUBLESHOOTING.md</a>。</p>
+<p>WorkBuddy 桌面客户端<strong>不提供命令行入口</strong>——它只有工作空间与任务。要在脚本、cron 或例行任务里跑这套工作流，需要另装一条独立的产品线：CodeBuddy Code CLI（<code>npm i -g @tencent-ai/codebuddy-code</code>，命令 <code>codebuddy</code> 或 <code>cbc</code>，配置目录 <code>~/.codebuddy</code>，文档 <a href="https://www.workbuddy.cn/docs/cli/headless" class="uri">https://www.workbuddy.cn/docs/cli/headless</a>），非交互调用必须带 <code>-y</code>。两者共用引擎，所以 <code>-p</code>、<code>--output-format</code>、<code>--setting-sources</code>、<code>--disallowedTools</code> 这些标志都成立；但<strong>配置目录是分开的</strong>，装之前先读官方那句「与 WorkBuddy 共存时避免配置冲突」。</p>
+<p>本仓库里唯一依赖它的是 <code>scripts/run-skill-eval.sh</code>（技能 A/B 评测：同一个提示词跑两遍，带技能与不带技能，看技能到底有没有改变输出）。它按 <code>EVAL_CLI</code> → <code>codebuddy</code> → <code>cbc</code> → <code>claude</code> 的顺序探测，一个都找不到时以 <code>2</code> 退出并给出安装命令——<strong>它不参与任何门禁</strong>，没装 CLI 完全不影响这套模板的正常使用。</p>
+<p>无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端<strong>不设置</strong> <code>CLAUDE_CODE_ENTRYPOINT</code>（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 <code>CLAUDE_HANDOFF=off</code> 与 <code>CLAUDE_ISSUES_AT_START=off</code>——不要指望平台帮你判断。</p>
 </div>
 </div>
 </section>
@@ -4362,15 +4368,15 @@ APPROVED   NEEDS WORK
 <tr class="even">
 <td><strong>Bypass</strong></td>
 <td><code>bypassPermissions</code></td>
-<td>跳过<strong>全部</strong>权限提示与安全检查（deny 规则仍然生效）— 包括对受保护路径（<code>.git</code>、<code>.vscode</code>、<code>.idea</code>、<code>.husky</code>、<code>.claude</code>）的写入。Anthropic 文档建议只把它留给隔离环境</td>
+<td>跳过<strong>全部</strong>权限提示与安全检查（deny 规则仍然生效）— 包括对受保护路径（<code>.git</code>、<code>.vscode</code>、<code>.idea</code>、<code>.husky</code>、<code>.codebuddy</code>）的写入（旧信任根 <code>.claude</code> 同样受保护，迁移期双保护）。Anthropic 文档建议只把它留给隔离环境</td>
 <td>CI/CD、无头脚本，以及 — 睁着眼睛上的话 — 可信仓库的日常使用：什么都不弹，所以配上计划先行与自带的 <code>git-guardrails</code> 钩子 — 后者收窄常见事故，而不是替代你关掉的那个提示</td>
 </tr>
 </tbody>
 </table>
-<p>设置方式：CLI 标志（<code>claude --permission-mode plan</code>）、<code>/config</code> 命令，或 <code>settings.json</code> 里的 <code>permissions.defaultMode</code>。</p>
-<section id="六层权限栈" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="六层权限栈"><span class="header-section-number">4.6.1</span> 六层权限栈</h3>
-<p>权限模式不是从单个文件解析出来的。WorkBuddy 认<strong>六层</strong>，后面的层覆盖前面的层：</p>
+<p>设置方式：输入框旁的模式选择，或 <code>Shift+Tab</code> 循环；要让新会话默认以 bypass 启动，写在 <code>~/.workbuddy/settings.json</code> 里（项目设置里写的默认值不被承认）。<code>--permission-mode</code> 是命令行那条产品线的东西，桌面客户端没有命令行。</p>
+<section id="六层权限栈上游的层栈本平台不解析它" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="六层权限栈上游的层栈本平台不解析它"><span class="header-section-number">4.6.1</span> 六层权限栈（上游的层栈，本平台不解析它）</h3>
+<p>上游 Claude Code 把权限模式解析成<strong>六层</strong>，后面的层覆盖前面的层。<strong>本平台没有这套层栈</strong>：桌面客户端只从 <code>.codebuddy/settings.json</code> 与 <code>settings.local.json</code> 里读 <code>hooks</code> 段——<code>permissions.*</code> 与 <code>claudeCode.*</code> 写进任何一层都不会报错，只是静默地什么都不做。所以下面这张表照抄上游，用途是<strong>对照</strong>：它解释的是「照着上游文档改配置，为什么一点反应都没有」。要判断某个动作到底被谁拦下，跑 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md"><code>/permission-check</code></a>。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -4391,42 +4397,41 @@ APPROVED   NEEDS WORK
 <td>1</td>
 <td>VSCode 用户</td>
 <td><code>~/Library/Application Support/Code/User/settings.json</code>（macOS）、<code>~/.config/Code/User/settings.json</code>（Linux）、<code>%APPDATA%/Code/User/settings.json</code>（Windows）</td>
-<td><code>claudeCode.initialPermissionMode</code></td>
+<td><code>claudeCode.initialPermissionMode</code> — 上游 VS Code 扩展层，本平台不读</td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>VSCode 工作区</td>
 <td><code>&lt;repo&gt;/.vscode/settings.json</code></td>
-<td><code>claudeCode.initialPermissionMode</code></td>
+<td>同一个键 — 上游层；本仓库不再提供这个文件</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>CLI 用户</td>
 <td><code>~/.workbuddy/settings.json</code></td>
-<td><code>permissions.defaultMode</code></td>
+<td><code>permissions.defaultMode</code> — 上游层，本平台不读</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>CLI 项目</td>
 <td><code>&lt;repo&gt;/.codebuddy/settings.json</code></td>
-<td><code>permissions.defaultMode</code></td>
+<td><code>permissions.defaultMode</code> — 本平台读这个文件，但只读 <code>hooks</code></td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>CLI 项目本地（已 gitignore）</td>
 <td><code>&lt;repo&gt;/.codebuddy/settings.local.json</code></td>
-<td><code>permissions.defaultMode</code></td>
+<td>同一个键 — 同样只有 <code>hooks</code> 有意义</td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td><strong>会话内运行时</strong></td>
 <td>（临时）</td>
-<td>用 <code>Shift+Tab</code>（CLI）或模式指示器（VS Code）切换</td>
+<td>用 <code>Shift+Tab</code> 或输入框旁的模式切换</td>
 </tr>
 </tbody>
 </table>
-<p><strong>第 6 层是权威</strong>，这一点最让人措手不及。<code>initialPermissionMode</code> 只在<strong>会话开始时</strong>生效 — 如果你（或者 <code>Shift+Tab</code>）在会话中途改了模式，所有文件层在那次会话结束前都被无视。</p>
-<p><strong>两个让人意外的例外</strong>（2026-09-26 对照 Anthropic 的权限模式文档复核）：第 4、5 层 — 项目的 <code>.codebuddy/settings.json</code> 与 <code>.codebuddy/settings.local.json</code> — <strong>不</strong>认可 <code>auto</code> 或 <code>bypassPermissions</code> 作为起始模式（项目级的 bypass 被忽略，会话以 Manual 启动），而 VS Code 扩展根本不读项目设置来决定它的起始模式。要在第 3 层设置 bypass，或用 <code>--permission-mode bypassPermissions</code>；在 VS Code 里，设 <code>claudeCode.initialPermissionMode</code> 并打开扩展的 <em>Allow dangerously skip permissions</em> 开关。没有任何覆盖时，本平台以 auto 模式启动。</p>
+<p><strong>真正决定起始模式的是第 6 层</strong>，这一点最让人措手不及：模式在<strong>会话开始时</strong>定下，中途改只对当次会话有效。上游那两个「让人意外的例外」（项目级 <code>.codebuddy/</code> 里的 <code>defaultMode</code> 不被承认、VS Code 扩展不读项目设置）在本平台表现为更简单的一条规则——<strong>项目文件里根本没有生效的默认模式</strong>。要让新会话默认以 bypass 启动，只有一条路：写进 <code>~/.workbuddy/settings.json</code>。没有任何覆盖时，本平台以 auto 模式启动。</p>
 </section>
 <section id="故障排查设了-bypasspermissions-却仍然弹提示" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="故障排查设了-bypasspermissions-却仍然弹提示"><span class="header-section-number">4.6.2</span> 故障排查：设了 <code>bypassPermissions</code> 却仍然弹提示</h3>
@@ -4453,11 +4458,11 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <p>通过 <code>ExitPlanMode</code> 批准计划，会把会话交给批准提示处设定的模式 — 当前版本在那里给出显式选项（批准进入 auto 模式、批准但保留人工审阅编辑、继续规划）；在 bypass 配置下，被批准的计划不再逐工具弹提示地往下走。一旦到了那里，此后任何工具调用（Edit、Write、Bash）都在你 <code>settings.json</code> 的完整允许清单下执行，而不是在由计划推导出的范围里。一次错误的实现仍可能改动无关文件，或跑出破坏性的 shell 命令，没有第二个检查点。</p>
-<p>把这条流程当作便捷模式，不是安全控制。如果你需要一道硬性强制边界，就设 <code>permissions.defaultMode: &quot;default&quot;</code>（Manual — 模板的 <code>.codebuddy/settings.json</code> 没设默认模式，所以会话以 auto 启动），并删掉模板里的通配 <code>Bash(*)</code>、<code>Edit(**)</code> 与 <code>Write(**)</code> 允许项，或给高风险工具加 <code>ask</code>/<code>deny</code> 规则，让每一个都单独弹提示。在 VS Code 里，还要从 <code>.vscode/settings.json</code> 删掉那两个 bypass 键。或者，整个会话都跑在 <code>plan</code> 模式下，手工把动作复制出来执行。</p>
+<p>把这条流程当作便捷模式，不是安全控制。如果你需要一道硬性强制边界，就在模式选择里切到 Plan（模板的 <code>.codebuddy/settings.json</code> 没设默认模式，所以会话以 auto 启动），并删掉模板里的通配 <code>Bash(*)</code>、<code>Edit(**)</code> 与 <code>Write(**)</code> 允许项，或给高风险工具加 <code>ask</code>/<code>deny</code> 规则，让每一个都单独弹提示。或者，整个会话都跑在 <code>plan</code> 模式下，手工把动作复制出来执行。</p>
 </div>
 </div>
 <p>流程如下：</p>
-<pre><code>Start session in plan mode  (Shift+Tab at startup, or claude --permission-mode plan)
+<pre><code>Start session in plan mode  (pick Plan in the mode selector, or Shift+Tab at startup)
      |
      | Read-only exploration + planning
      |   Claude can Read, Grep, run Bash readonly, spawn Explore/Plan agents
@@ -4481,7 +4486,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <li>不需要会话中途切换 — 批准提示是唯一的交接点（把它的选项读一遍；它们设定计划后的模式）。</li>
 <li>与本仓库强制的计划先行规则严丝合缝。</li>
 </ul>
-<p><strong>前提：</strong> 要无提示版本，bypass 必须可用 — 在你用户设置（<code>~/.workbuddy/settings.json</code>）里设，或用 <code>--permission-mode bypassPermissions</code>，因为项目设置不认它。更安全的日常驱动，是把计划批准进 <strong>auto 模式</strong>：常规动作在执行时仍不逐工具弹提示，而有风险的那些之间还隔着一个分类器。</p>
+<p><strong>前提：</strong> 要无提示版本，bypass 必须可用 — 在输入框旁的模式选择里切，或把 bypass 写进 <code>~/.workbuddy/settings.json</code>，因为项目设置里写的默认值不被承认。更安全的日常驱动，是把计划批准进 <strong>auto 模式</strong>：常规动作在执行时仍不逐工具弹提示，而有风险的那些之间还隔着一个分类器。</p>
 </section>
 <section id="sec-session-management" class="level3" data-number="4.6.4">
 <h3 data-number="4.6.4" class="anchored" data-anchor-id="sec-session-management"><span class="header-section-number">4.6.4</span> 会话管理</h3>
@@ -4526,9 +4531,9 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <td>你想精确微调计划，而不必把指令打回给 WorkBuddy</td>
 </tr>
 <tr class="even">
-<td><code>claude --continue</code> / <code>claude --resume</code></td>
-<td>续接最近一次对话（<code>--continue</code>）或从最近几次里挑（<code>--resume</code>）；用 <code>/rename</code> 改名</td>
-<td>接续一个跨多天的项目 — 把会话当分支用</td>
+<td>点任务卡片继续</td>
+<td>回到一个已有任务接着聊——侧边栏的任务列表就是「最近几次对话」，不需要记 id</td>
+<td>接续一个跨多天的项目 — 把任务当分支用</td>
 </tr>
 <tr class="odd">
 <td><code>/checkpoint &lt;slug&gt;</code></td>
@@ -4561,13 +4566,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <ul>
 <li><strong>子代理在后台运行，且分叉模式在交互式会话里默认开启</strong> — 子代理跑的时候 WorkBuddy 继续干活，<code>/fork</code> 把对话复制进一个后台会话。分叉<em>继承那段对话</em>，所以必须独立的审读（断言核验、审稿人）要用独立上下文子代理，绝不用分叉。</li>
 <li><strong>输出风格：</strong><code>/output-style</code> 切换 WorkBuddy 的写法。<strong>Concise</strong> 先给结果、跳过开场白；<strong>Learning</strong> 留一部分给你自己写 — 配合 <code>/scaffold-exercises</code> 用于教学很合适。</li>
-<li><strong><code>/skill-doctor</code></strong> 显示每个技能的上下文成本与使用情况；<strong><code>claude plugin eval</code></strong> 让一个插件对测试用例打分，并与无插件基线比较。</li>
+<li><strong><code>/skill-doctor</code></strong> 显示每个技能的上下文成本与使用情况。<strong><code>plugin eval</code></strong>（给一个插件对测试用例打分，并与无插件基线比较）属于上游命令行那条产品线的能力，桌面客户端没有对应命令；本仓库可用的度量工具是 <code>scripts/run-skill-eval.sh</code>，见<a href="#sec-headless">上文「无头运行」</a>。</li>
 <li><strong>截止安全的更新：</strong>在 <code>~/.workbuddy/settings.json</code> 里设 <code>&quot;autoUpdatesChannel&quot;: &quot;stable&quot;</code>（以及 <code>minimumVersion</code>）— 见 TROUBLESHOOTING。本平台没有给深度封顶的设置：深度由档位决定（<code>lite</code> / <code>default</code> / <code>reasoning</code>）。</li>
 </ul>
 <p><strong>三种配合得好的模式：</strong></p>
 <ul>
 <li><strong>问旁支问题而不污染上下文：</strong> <code>/btw why does Quarto need ::: for callouts?</code> — 拿到答案，关掉浮层，继续干活。</li>
-<li><strong>停工，或切到无关工作：</strong>先 <code>/checkpoint current-work</code>，再对新任务 <code>/clear</code>。要回到第一个任务，就新开一个 <code>claude</code>：交接钩子把最新的检查点（或 7 天内的 <code>/compress-session</code> 注记）交给下一个全新会话，只交一次。如果此后已经开过一个新会话，或写了更新的检查点，就让 WorkBuddy 改去读 <code>quality_reports/checkpoints/&lt;file&gt;</code>。或者用 <code>claude --resume</code> 连同完整上下文重开旧对话（在这种情况下钩子不会递送检查点）。</li>
+<li><strong>停工，或切到无关工作：</strong>先 <code>/checkpoint current-work</code>，再对新任务 <code>/clear</code>。要回到第一个任务，就新建一个任务：交接钩子把最新的检查点（或 7 天内的 <code>/compress-session</code> 注记）交给下一个全新会话，只交一次。如果此后已经开过一个新会话，或写了更新的检查点，就让 WorkBuddy 改去读 <code>quality_reports/checkpoints/&lt;file&gt;</code>。或者直接点回那个任务卡片接着聊（那条路上钩子不会递送检查点）。</li>
 <li><strong>编辑到一半要改计划：</strong>计划模式期间按 <code>Ctrl+G</code> 直接编辑计划文件 — 比把修订口述回给 WorkBuddy 快。</li>
 </ul>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -5740,9 +5745,9 @@ Phase 4: QUALITY GATE
 <h4 data-number="5.9.1.3" class="anchored" data-anchor-id="长跑任务monitor-工具2026-年-4-月"><span class="header-section-number">5.9.1.3</span> 长跑任务：Monitor 工具（2026 年 4 月）</h4>
 <p>对真正长的活 — 一次 30 分钟的 R 拟合、一批跨多张表的 <code>/audit-reproducibility</code>、一份 200 页幻灯片的 Quarto 渲染 — <strong>Monitor 工具</strong>（2026 年 4 月第 15 周）让 WorkBuddy 实时跟踪一个后台进程的 stdout，并在有值得注意的事情时作出反应。模式是：把长任务放到后台（Bash 加 <code>run_in_background: true</code>），然后让 WorkBuddy 监控到某个条件触发（报错、里程碑、结束）。没有轮询循环，没有 sleep 周期。在 <code>/data-analysis</code> 里的回归步、以及在 <code>/audit-reproducibility</code> 重跑整套脚本时都有用。</p>
 </section>
-<section id="看并行代理claude-agents2026-年-5-月" class="level4" data-number="5.9.1.4">
-<h4 data-number="5.9.1.4" class="anchored" data-anchor-id="看并行代理claude-agents2026-年-5-月"><span class="header-section-number">5.9.1.4</span> 看并行代理：<code>claude agents</code>（2026 年 5 月）</h4>
-<p>当几个审阅代理并行跑时（<code>/review-paper --peer</code> 的两位审稿人，或 <code>/slide-excellence</code> 的视觉 + 教学法 + 校对扇出），用 <strong><code>claude agents</code></strong>（第 20 周，v2.1.139）在一块屏幕上盯着它们。它取代了以前每个代理开一个终端的老做法。完整说明见下面的 Anthropic 工具一节。</p>
+<section id="看并行代理侧边栏的任务列表上游叫-claude-agents" class="level4" data-number="5.9.1.4">
+<h4 data-number="5.9.1.4" class="anchored" data-anchor-id="看并行代理侧边栏的任务列表上游叫-claude-agents"><span class="header-section-number">5.9.1.4</span> 看并行代理：侧边栏的任务列表（上游叫 <code>claude agents</code>）</h4>
+<p>当几个审阅代理并行跑时（<code>/review-paper --peer</code> 的两位审稿人，或 <code>/slide-excellence</code> 的视觉 + 教学法 + 校对扇出），进度在侧边栏的任务列表里看：每次扇出是独立上下文里的子代理，它们的产出会随结果一起回到这次对话。上游 CLI 有一个专门的单屏仪表盘（<code>claude agents</code>，第 20 周，v2.1.139），本平台的桌面客户端没有这条命令，也不需要它——任务列表就是那个视图。</p>
 </section>
 <section id="独立辩护人" class="level4" data-number="5.9.1.5">
 <h4 data-number="5.9.1.5" class="anchored" data-anchor-id="独立辩护人"><span class="header-section-number">5.9.1.5</span> 独立辩护人</h4>
@@ -6904,7 +6909,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="stata-mcp执行-stata-的-mcp-服务器" class="level2" data-number="6.7">
 <h2 data-number="6.7" class="anchored" data-anchor-id="stata-mcp执行-stata-的-mcp-服务器"><span class="header-section-number">6.7</span> stata-mcp：执行 Stata 的 MCP 服务器</h2>
 <p><strong>仓库：</strong> <a href="https://github.com/SepineTam/stata-mcp">SepineTam/stata-mcp</a> <strong>作者：</strong> SepineTam（171+ star、91 个 release，2026 年 5 月时为 v1.17.3）</p>
-<p>一个成熟的 MCP 服务器，让 Claude Code 通过带命令守卫的接口执行 Stata <code>.do</code> 文件 — 拒绝破坏性 shell 操作（<code>!/shell/erase</code> 等）、监控内存，并与 Stata Language Server 配合。<strong>每个用户装一次即可：</strong> <code>claude mcp add stata-mcp --scope user -- uvx stata-mcp</code>（需要 <code>uv</code> 和本地安装的 Stata）。</p>
+<p>一个成熟的 MCP 服务器，让本平台的代理通过带命令守卫的接口执行 Stata <code>.do</code> 文件 — 拒绝破坏性 shell 操作（<code>!/shell/erase</code> 等）、监控内存，并与 Stata Language Server 配合。<strong>每个用户装一次即可：</strong>在左侧「插件 → MCP 服务器 → 配置 MCP」里添加，或写进 <code>~/.workbuddy/mcp.json</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;stata-mcp&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;uvx&quot;</span><span class="fu">,</span> <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;stata-mcp&quot;</span><span class="ot">]</span> <span class="fu">}</span> <span class="fu">}</span> <span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>需要 <code>uv</code> 和本地安装的 Stata。（上游用的是 <code>claude mcp add</code> 那条命令，本平台没有对应实现。）</p>
 <p><strong>为何本模板需要它：</strong> v1.9.0 为 Stata 优先的项目加了 <a href="#sec-appendix"><code>/stata-replication</code></a>，该技能依赖这个 MCP 服务器。R 优先的项目（本模板最初的关注点）继续用 <a href="#sec-appendix"><code>/data-analysis</code></a>；两个技能是平行的 — 流水线形状相同，只是源语言不同。原始复现包用 Stata 写的 AEA 投稿，就是它的典型用例。</p>
 <p>端到端的 Stata 工作流见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md"><code>.codebuddy/rules/stata-code-conventions.md</code></a>（文件头脚手架、带编号的流水线、esttab 表格、聚类纪律、AEA Data Editor 合规）。</p>
 </section>
@@ -6922,6 +6929,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="anthropic-在-2026-年-4-月前后发布的实用命令" class="level2" data-number="6.9">
 <h2 data-number="6.9" class="anchored" data-anchor-id="anthropic-在-2026-年-4-月前后发布的实用命令"><span class="header-section-number">6.9</span> Anthropic 在 2026 年 4 月前后发布的实用命令</h2>
 <p>这些是一方（first-party）Claude Code 命令，不用 fork 任何东西就能直接调。值得知道，是因为它们补上了本模板<strong>有意</strong>不去填的那些空档：</p>
+<p><strong>先注意载体：</strong>这一节列的是上游 Claude Code 的<strong>命令行</strong>能力。本平台的桌面客户端没有命令行，所以这些命令在这里不能直接敲——列出来是因为它们的设计思路值得借鉴，其中一部分在本模板里已有技能形式的对应实现（会在条目里点明）。</p>
 <ul>
 <li><strong><code>/team-onboarding</code></strong>（第 15 周）— 把你本地的 Claude Code 配置（CODEBUDDY.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 <code>/team-onboarding</code> 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。</li>
 <li><strong><code>/autofix-pr</code></strong>（第 15 周）— 在 GitHub PR 上跑 Claude Code，套用 CI 式的常规修法（lint、类型、简单的测试失败）。如果你推了 PR，想在审阅前再来一轮自动清理，它和我们的 <code>/commit</code> 流程配合得很好。</li>
@@ -6972,26 +6980,26 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p>知识库（<code>.codebuddy/rules/knowledge-base-template.md</code>）是与领域关系最紧的部件 — 它是一条<a href="#rules---domain-knowledge-that-auto-loads">按路径生效的规则</a>，当 WorkBuddy 处理你的内容文件时会自动加载。它提供了若干骨架表：记号约定、讲义推进路线、应用案例、设计原则、反模式，以及 R 代码易踩的坑。边做项目边填即可 — 不必一开始就填满。</p>
 <section id="记号登记表与符号速查" class="level3" data-number="7.1.1">
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="记号登记表与符号速查"><span class="header-section-number">7.1.1</span> 记号登记表与符号速查</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rule <span class="pp">|</span> Convention <span class="pp">|</span> Example <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-----------|---------|-------------|</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Estimators wear hats <span class="pp">|</span> $\hat{\theta}$ is always an estimate <span class="pp">|</span> $\hat{\beta}$ from OLS <span class="pp">|</span> $\hat{\beta}$ for a different estimand <span class="pp">|</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rule <span class="pp">|</span> Convention <span class="pp">|</span> Example <span class="pp">|</span> Anti-Pattern <span class="pp">|</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-----------|---------|-------------|</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Estimators wear hats <span class="pp">|</span> $\hat{\theta}$ is always an estimate <span class="pp">|</span> $\hat{\beta}$ from OLS <span class="pp">|</span> $\hat{\beta}$ for a different estimand <span class="pp">|</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span> Introduced <span class="pp">|</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|------------|</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\beta$ <span class="pp">|</span> Regression coefficient <span class="pp">|</span> Lecture 1 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="实证应用案例" class="level3" data-number="7.1.2">
 <h3 data-number="7.1.2" class="anchored" data-anchor-id="实证应用案例"><span class="header-section-number">7.1.2</span> 实证应用案例</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Lecture(s) <span class="pp">|</span> Purpose <span class="pp">|</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|-----------|---------|</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> 3 <span class="pp">|</span> First worked example of a before–after comparison <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Application <span class="pp">|</span> Paper <span class="pp">|</span> Dataset <span class="pp">|</span> Lecture(s) <span class="pp">|</span> Purpose <span class="pp">|</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-------|---------|-----------|---------|</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimum Wage <span class="pp">|</span> Card &amp; Krueger (1994) <span class="pp">|</span> NJ/PA fast food <span class="pp">|</span> 3 <span class="pp">|</span> First worked example of a before–after comparison <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="设计原则" class="level3" data-number="7.1.3">
 <h3 data-number="7.1.3" class="anchored" data-anchor-id="设计原则"><span class="header-section-number">7.1.3</span> 设计原则</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Principle <span class="pp">|</span> Evidence <span class="pp">|</span> Lectures Applied <span class="pp">|</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|-----------------|</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Motivation before formalism <span class="pp">|</span> DA challenge: &quot;students lost&quot; <span class="pp">|</span> All <span class="pp">|</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Max 3 new symbols per slide <span class="pp">|</span> Pedagogy review caught overload <span class="pp">|</span> 2, 4 <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="第-2-步造你的领域审阅者" class="level2" data-number="7.2">
@@ -7031,27 +7039,27 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="技能的结构" class="level3" data-number="7.4.2">
 <h3 data-number="7.4.2" class="anchored" data-anchor-id="技能的结构"><span class="header-section-number">7.4.2</span> 技能的结构</h3>
 <p>每个技能是 <code>.codebuddy/skills/</code> 下的一个目录，内含一个 <code>SKILL.md</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> your-skill-name</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> [What it does] + [When to use] + [Key capabilities]</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="an">argument-hint:</span><span class="co"> &quot;[brief hint for user]&quot;</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="an">allowed-tools:</span><span class="co"> [&quot;Read&quot;, &quot;Write&quot;, &quot;Edit&quot;, &quot;Bash&quot;, &quot;Task&quot;]</span></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># Your Skill Name</span></span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Instructions</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>Step 1: <span class="co">[</span><span class="ot">First action with details</span><span class="co">]</span></span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>Step 2: <span class="co">[</span><span class="ot">Second action</span><span class="co">]</span></span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples</span></span>
-<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>Example 1: <span class="co">[</span><span class="ot">Common scenario</span><span class="co">]</span></span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting</span></span>
-<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>Error: <span class="co">[</span><span class="ot">Common error</span><span class="co">]</span></span>
-<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>Solution: <span class="co">[</span><span class="ot">How to fix</span><span class="co">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> your-skill-name</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> [What it does] + [When to use] + [Key capabilities]</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="an">argument-hint:</span><span class="co"> &quot;[brief hint for user]&quot;</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="an">allowed-tools:</span><span class="co"> [&quot;Read&quot;, &quot;Write&quot;, &quot;Edit&quot;, &quot;Bash&quot;, &quot;Task&quot;]</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># Your Skill Name</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Instructions</span></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>Step 1: <span class="co">[</span><span class="ot">First action with details</span><span class="co">]</span></span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>Step 2: <span class="co">[</span><span class="ot">Second action</span><span class="co">]</span></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples</span></span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>Example 1: <span class="co">[</span><span class="ot">Common scenario</span><span class="co">]</span></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting</span></span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>Error: <span class="co">[</span><span class="ot">Common error</span><span class="co">]</span></span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>Solution: <span class="co">[</span><span class="ot">How to fix</span><span class="co">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="skill-frontmatter" class="level3" data-number="7.4.3">
 <h3 data-number="7.4.3" class="anchored" data-anchor-id="skill-frontmatter"><span class="header-section-number">7.4.3</span> Frontmatter 完整参考</h3>
@@ -7219,10 +7227,10 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </tbody>
 </table>
 <p><strong>动态上下文注入</strong>，语法为 <code>!`command`</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Context</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>Current git status: !<span class="in">`git status --short`</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>Recent changes: !<span class="in">`git log --oneline -5`</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>Available lectures: !<span class="in">`ls Slides/*.tex`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Context</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>Current git status: !<span class="in">`git status --short`</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>Recent changes: !<span class="in">`git log --oneline -5`</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>Available lectures: !<span class="in">`ls Slides/*.tex`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>WorkBuddy 加载技能时会执行这些命令，并把实时输出注入技能文本。对于需要适配项目当前状态的技能，这非常有用。</p>
 </section>
 <section id="写出有效的触发描述" class="level3" data-number="7.4.5">
@@ -7236,23 +7244,23 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ol>
 <p><strong>示例：把一段弱描述改写成 A 级描述。</strong></p>
 <p>改写前（弱 — 技能存在，但 WorkBuddy 不会自动挑它）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Run the proofreading protocol on lecture files. Checks grammar, typos, overflow, consistency.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Run the proofreading protocol on lecture files. Checks grammar, typos, overflow, consistency.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>改写后（强 — 冷启动的提示词也能匹配上）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Read-only proofreading pass over lecture .tex or .qmd files.</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="at">  Checks grammar, typos, overflow, terminology consistency, and academic</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="at">  writing quality; produces a report without editing. Use when user says</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="st">&quot;proofread&quot;</span><span class="at">, &quot;check for typos&quot;, &quot;look for grammar issues&quot;, &quot;copy-edit</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="at">  this&quot;, &quot;any writing errors?&quot;, or before a lecture release.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Read-only proofreading pass over lecture .tex or .qmd files.</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="at">  Checks grammar, typos, overflow, terminology consistency, and academic</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="at">  writing quality; produces a report without editing. Use when user says</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="st">&quot;proofread&quot;</span><span class="at">, &quot;check for typos&quot;, &quot;look for grammar issues&quot;, &quot;copy-edit</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="at">  this&quot;, &quot;any writing errors?&quot;, or before a lecture release.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>检验方法：</strong> 设想一位从没见过你技能清单的同事敲下 <code>&quot;can you look for writing errors in Lecture 3?&quot;</code>。你的描述里词汇重合度够不够，让 WorkBuddy 能把它从竞争技能里挑出来？不够，就多加几句触发语。</p>
 <p><strong>另一个好例子（划清界限）：</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Interactive interview that formalizes a fuzzy research idea into</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="at">  a structured spec (RQ, hypotheses, identification, data needs, empirical</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="at">  strategy). Use when user says &quot;interview me&quot;, &quot;help me think through this</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="at">  idea&quot;, &quot;I have a half-baked idea&quot;. Multi-turn Q&amp;A; saves spec to disk.</span></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="at">  NOT for lit review (/lit-review) or ideation from scratch (/research-ideation).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Interactive interview that formalizes a fuzzy research idea into</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="at">  a structured spec (RQ, hypotheses, identification, data needs, empirical</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="at">  strategy). Use when user says &quot;interview me&quot;, &quot;help me think through this</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="at">  idea&quot;, &quot;I have a half-baked idea&quot;. Multi-turn Q&amp;A; saves spec to disk.</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="at">  NOT for lit review (/lit-review) or ideation from scratch (/research-ideation).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>最后那句 — 「NOT for X, use /Y instead」— 就是划界从句。两个描述重叠的技能会分掉 WorkBuddy 的路由概率；一句明确的「不适用于」能把这一票定下来。</p>
 <p><strong>差（太含糊 — 永远不会被自动调用）：</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Helps with citations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Helps with citations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>发布新技能前的清单：</strong></p>
 <ul class="task-list">
 <li><label><input type="checkbox">以动词 + 对象开头。</label></li>
@@ -7292,10 +7300,10 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <h3 data-number="7.4.7" class="anchored" data-anchor-id="快速上手"><span class="header-section-number">7.4.7</span> 快速上手</h3>
 <ol type="1">
 <li><p><strong>从模板起步</strong> — 或者跑 <code>/new-skill</code>，它会访谈你并写出能过门禁的 frontmatter：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .codebuddy/skills/your-skill-name</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then paste ONLY the fenced markdown block under &quot;Template Structure&quot; in</span></span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># templates/skill-template.md into .codebuddy/skills/your-skill-name/SKILL.md</span></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (it starts with the --- frontmatter); set name: to the directory name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .codebuddy/skills/your-skill-name</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then paste ONLY the fenced markdown block under &quot;Template Structure&quot; in</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># templates/skill-template.md into .codebuddy/skills/your-skill-name/SKILL.md</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (it starts with the --- frontmatter); set name: to the directory name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p><strong>按你的领域定制：</strong></p>
 <ul>
 <li>把触发语换成你领域的术语</li>
@@ -7343,7 +7351,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>会话日志很重要。</strong> 记录设计决策，而不只是「改了什么」。将来的你会感谢现在的你。</li>
 <li><strong>魔鬼代言人要早做。</strong> 在地基不稳时先别盖 50 张幻灯片，先挑战结构。</li>
 <li><strong>渐进式披露。</strong> 从 CODEBUDDY.md + 2–3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。</li>
-<li><strong>用 <code>CLAUDE.local.md</code> 放个人覆盖项。</strong> 这个文件会自动被 gitignore，并与 <code>CODEBUDDY.md</code> 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 — 它们不会污染共享仓库。</li>
+<li><strong>用 <code>.codebuddy/settings.local.json</code> 放个人覆盖项。</strong> 这个文件已被 gitignore，并与 <code>.codebuddy/settings.json</code> 一起被读取。机器专属路径、个人偏好、本地工具版本都写这儿 — 它们不会污染共享仓库。（上游的习惯是 <code>CLAUDE.local.md</code>；本仓库没有 <code>CLAUDE.md</code>，那条路径在这里不存在。）</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-58-contents" aria-controls="callout-58" aria-expanded="false" aria-label="Toggle callout">
@@ -7357,7 +7365,12 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 <div id="callout-58" class="callout-58-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>对于文件编辑与 shell 命令之外的能力 — 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）— WorkBuddy 支持 <a href="https://modelcontextprotocol.io">MCP 服务器</a>。用 <code>claude mcp add</code> 添加（<code>--scope project</code> 会在仓库根目录写一个共享的 <code>.mcp.json</code>；<code>--scope user</code> 则让服务器在你的所有项目里可用；默认的 <code>local</code> 作用域只对你、只对本项目生效）。先技能与代理，真需要外部集成时再上 MCP。</p>
+<p>对于文件编辑与 shell 命令之外的能力 — 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）— WorkBuddy 支持 <a href="https://modelcontextprotocol.io">MCP 服务器</a>。入口是<strong>左侧「插件 → MCP 服务器 → 配置 MCP」</strong>，落盘在两个位置之一：</p>
+<ul>
+<li><code>~/.workbuddy/mcp.json</code> —— 用户级，所有项目都能用；</li>
+<li><code>&lt;项目&gt;/.workbuddy/mcp.json</code> —— 项目级，可以提交进仓库让协作者共享。</li>
+</ul>
+<p>两处都是标准的 <code>{&quot;mcpServers&quot;: {...}}</code> 结构，存盘后在 MCP 列表里看状态：绿色是连上了，红色是配置有错。先技能与代理，真需要外部集成时再上 MCP。（上游用 <code>claude mcp add</code> 加 <code>--scope</code> 参数区分作用域，本平台没有这条命令，作用域由你写入哪个文件决定。）</p>
 <section id="extending-with-plugins" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="extending-with-plugins"><span class="header-section-number">7.6</span> 扩展：插件</h2>
 <p>WorkBuddy 支持<strong>插件</strong> — 可打包安装的技能、代理、钩子与 MCP 服务器集合，可从 git 仓库安装。用 <code>/plugin</code> 浏览与管理插件（其中有一个 Discover 页签用于发现新插件）。插件是较新的扩展点；先把手里的技能与规则（这些你完全掌控）用起来，再考虑引入第三方插件。<strong>装之前先读：</strong> 来自别的仓库的技能、代理、钩子或插件，就是你的会话将要执行的指令。在本模板宽泛的允许规则（<code>Bash(*)</code>、<code>WebFetch(*)</code>）之下，它可以在不弹窗的情况下碰到你的文件或网络，而钩子甚至不需要被调用就会运行。每一个文件都先读，涉密数据项目里不要加入任何没读过的文件。</p>
@@ -8201,7 +8214,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="计划存到了错的目录" class="level3" data-number="8.5.8">
 <h3 data-number="8.5.8" class="anchored" data-anchor-id="计划存到了错的目录"><span class="header-section-number">8.5.8</span> 计划存到了错的目录</h3>
 <p><strong>症状：</strong> 计划存进了 <code>~/.workbuddy/plans/</code>，而不是你的项目目录。</p>
-<p><strong>修法：</strong> 本模板的 <code>.codebuddy/settings.json</code> 已经设了 <code>&quot;plansDirectory&quot;: &quot;quality_reports/plans&quot;</code>。这个设置需要 2.1.9 或更高版本的 CLI（<code>claude --version</code>）；WorkBuddy 会按项目根目录解析这个相对路径，当路径指向项目之外时就回退到 <code>~/.workbuddy/plans/</code>。如果你把这套工作流搬到了别的仓库，请在那个仓库的 <code>.codebuddy/settings.json</code> 里加上同一行。</p>
+<p><strong>修法：</strong> 本模板的 <code>.codebuddy/settings.json</code> 已经设了 <code>&quot;plansDirectory&quot;: &quot;quality_reports/plans&quot;</code>。WorkBuddy 按项目根目录解析这个相对路径，当路径指向项目之外时就回退到 <code>~/.workbuddy/plans/</code>。如果你把这套工作流搬到了别的仓库，请在那个仓库的 <code>.codebuddy/settings.json</code> 里加上同一行。（上游文档在这里还会要求一个最低 CLI 版本；桌面客户端没有 <code>--version</code>，版本号在「关于」页里看。）</p>
 <p>这样计划会落在项目里，但<strong>不会</strong>被提交：模板的 <code>.gitignore</code> 排除了 <code>quality_reports/plans/*</code>，因为计划是本地工作记录。要让某份计划进版本控制，用 <code>git add -f</code>，或从你 fork 的 <code>.gitignore</code> 里删掉那一行。</p>
 <hr>
 </section>
@@ -8234,6 +8247,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p><strong>源起：</strong></p>
 <ul>
 <li>这套工作流提炼自 Emory 大学的 <strong>Econ 730: Causal Panel Data</strong> 课程，由 Pedro Sant’Anna 开发。计量经济学的出身只是其中一个应用 — 这些模式与领域无关，此后已被他人在多个领域扩展。</li>
+<li>本页是它的<strong>中文移植版</strong>：同一套基础设施改用 WorkBuddy 平台，并按平台能力逐节校订（凡是本平台没有的机制，这里会明说，而不是留一条照抄就失败的命令）。作者署名保留给原作者；本页作为个人学习用途维护，引用请引用<a href="https://github.com/pedrohcgs/claude-code-my-workflow">原始仓库</a>。</li>
 </ul>
 </section>
 

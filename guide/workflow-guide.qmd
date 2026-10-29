@@ -46,7 +46,7 @@ format:
 
 ## WorkBuddy 的不同之处
 
-WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完整访问权。它以 **CLI 工具**、**VS Code 扩展**或**桌面应用**的形式工作 —— 同一套核心工作流，不同的界面（权限模式与少数配置键确实因界面而异；请查阅你所用户界面的权限模式文档）。以下是它带来的能力：
+WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完整访问权。本平台的本体是**桌面客户端**：新建任务、选中工作空间，剩下的都在对话里完成。同一引擎还有一条**独立安装**的命令行产品线（CodeBuddy Code CLI），用于无头与脚本化运行——它不是桌面端的一部分，见[「无头运行」](#sec-headless)。以下是它带来的能力：
 
 | 能力 | 对你意味着什么 |
 |-----------|----------------------|
@@ -57,7 +57,7 @@ WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完�
 | 编排器运行时 | 特定技能（`/seven-pass-review`、`/deep-audit`、`/review-paper --peer` 等）在内部跑真正的扇出 → 归并 → 裁判运行时；`/qa-quarto` 与 `/review-paper --adversarial` 跑它的批评者 → 修复 → 空轮收敛那一半 |
 | 多代理工作流 | 19 个专职代理，负责校对、版面、教学法、代码审查、事实核查、AI 腔调审计、模拟 + R 包审查 |
 | 质量审读 | `/commit` 内部给出建议性打分（越线即停并请示是否覆盖）；目标值：80 分提交、90 分 PR、95 分优秀 |
-| CLI/无头模式 | 从脚本里跑：`claude -p "compile all lectures"` |
+| 无头 / 脚本化 | 桌面端没有。需另装 CodeBuddy Code CLI，再 `codebuddy -p "compile all lectures" -y` |
 | 浏览器桥接 | 用 `/remote-control` 在手机上续接会话 |
 
 ::: {.callout-tip}
@@ -1054,10 +1054,14 @@ tools: ["Read", "Grep", "Glob"]
 任何 `/review-paper --peer` 流水线跑完都跑一次 `/cost`。如果第二、三轮的缓存命中率低于 60%，你几乎肯定是挨了 5 分钟 TTL 的刀。
 :::
 
-::: {.callout-warning}
-## Agent SDK 额度池拆分 --- 2026-06-15
+### 无头运行：桌面客户端没有命令行 {#sec-headless}
 
-自 2026-06-15 起，`claude -p` 无头子进程调用（`scripts/run-skill-eval.sh` 以及任何以 `-p` 模式调 WorkBuddy 的脚本或例行任务所用）从**独立的月度 Agent SDK 额度池**支取，与交互式额度脱钩。如果一次无头运行因额度耗尽而失败、而你的交互会话却正常，那就是 Agent SDK 池空了。迁移细节见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md)。
+::: {.callout-warning}
+WorkBuddy 桌面客户端**不提供命令行入口**——它只有工作空间与任务。要在脚本、cron 或例行任务里跑这套工作流，需要另装一条独立的产品线：CodeBuddy Code CLI（`npm i -g @tencent-ai/codebuddy-code`，命令 `codebuddy` 或 `cbc`，配置目录 `~/.codebuddy`，文档 <https://www.workbuddy.cn/docs/cli/headless>），非交互调用必须带 `-y`。两者共用引擎，所以 `-p`、`--output-format`、`--setting-sources`、`--disallowedTools` 这些标志都成立；但**配置目录是分开的**，装之前先读官方那句「与 WorkBuddy 共存时避免配置冲突」。
+
+本仓库里唯一依赖它的是 `scripts/run-skill-eval.sh`（技能 A/B 评测：同一个提示词跑两遍，带技能与不带技能，看技能到底有没有改变输出）。它按 `EVAL_CLI` → `codebuddy` → `cbc` → `claude` 的顺序探测，一个都找不到时以 `2` 退出并给出安装命令——**它不参与任何门禁**，没装 CLI 完全不影响这套模板的正常使用。
+
+无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端**不设置** `CLAUDE_CODE_ENTRYPOINT`（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 `CLAUDE_HANDOFF=off` 与 `CLAUDE_ISSUES_AT_START=off`——不要指望平台帮你判断。
 :::
 
 ## 设置 --- 权限与钩子 {#settings---permissions-and-hooks}
@@ -1103,26 +1107,24 @@ tools: ["Read", "Grep", "Glob"]
 | **Don't ask** | `dontAsk` | 除非已在允许清单里预批，否则自动拒绝工具 | 只有允许清单内工具可跑的受限环境 |
 | **Plan** | `plan` | 只读 --- 在你批准计划前阻止编辑（但在可绕过权限的交互式终端会话里，该阻止不被执行） | 探索代码、动手前先审读 |
 | **Auto** | `auto` | 由分类器把关；除非标记为有风险，一切照跑。**本平台的默认起始模式**，适用于交互式终端与 VS Code 会话，不需要任何启用标志 | 有安全网的长时自主任务 --- 对可信仓库而言，当 bypass 过于宽松时的推荐模式 |
-| **Bypass** | `bypassPermissions` | 跳过**全部**权限提示与安全检查（deny 规则仍然生效）--- 包括对受保护路径（`.git`、`.vscode`、`.idea`、`.husky`、`.claude`）的写入。Anthropic 文档建议只把它留给隔离环境 | CI/CD、无头脚本，以及 --- 睁着眼睛上的话 --- 可信仓库的日常使用：什么都不弹，所以配上计划先行与自带的 `git-guardrails` 钩子 --- 后者收窄常见事故，而不是替代你关掉的那个提示 |
+| **Bypass** | `bypassPermissions` | 跳过**全部**权限提示与安全检查（deny 规则仍然生效）--- 包括对受保护路径（`.git`、`.vscode`、`.idea`、`.husky`、`.codebuddy`）的写入（旧信任根 `.claude` 同样受保护，迁移期双保护）。Anthropic 文档建议只把它留给隔离环境 | CI/CD、无头脚本，以及 --- 睁着眼睛上的话 --- 可信仓库的日常使用：什么都不弹，所以配上计划先行与自带的 `git-guardrails` 钩子 --- 后者收窄常见事故，而不是替代你关掉的那个提示 |
 
-设置方式：CLI 标志（`claude --permission-mode plan`）、`/config` 命令，或 `settings.json` 里的 `permissions.defaultMode`。
+设置方式：输入框旁的模式选择，或 `Shift+Tab` 循环；要让新会话默认以 bypass 启动，写在 `~/.workbuddy/settings.json` 里（项目设置里写的默认值不被承认）。`--permission-mode` 是命令行那条产品线的东西，桌面客户端没有命令行。
 
-### 六层权限栈
+### 六层权限栈（上游的层栈，本平台不解析它）
 
-权限模式不是从单个文件解析出来的。WorkBuddy 认**六层**，后面的层覆盖前面的层：
+上游 Claude Code 把权限模式解析成**六层**，后面的层覆盖前面的层。**本平台没有这套层栈**：桌面客户端只从 `.codebuddy/settings.json` 与 `settings.local.json` 里读 `hooks` 段——`permissions.*` 与 `claudeCode.*` 写进任何一层都不会报错，只是静默地什么都不做。所以下面这张表照抄上游，用途是**对照**：它解释的是「照着上游文档改配置，为什么一点反应都没有」。要判断某个动作到底被谁拦下，跑 [`/permission-check`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md)。
 
 | # | 层 | 位置 | 键 |
 |---|---|---|---|
-| 1 | VSCode 用户 | `~/Library/Application Support/Code/User/settings.json`（macOS）、`~/.config/Code/User/settings.json`（Linux）、`%APPDATA%/Code/User/settings.json`（Windows） | `claudeCode.initialPermissionMode` |
-| 2 | VSCode 工作区 | `<repo>/.vscode/settings.json` | `claudeCode.initialPermissionMode` |
-| 3 | CLI 用户 | `~/.workbuddy/settings.json` | `permissions.defaultMode` |
-| 4 | CLI 项目 | `<repo>/.codebuddy/settings.json` | `permissions.defaultMode` |
-| 5 | CLI 项目本地（已 gitignore） | `<repo>/.codebuddy/settings.local.json` | `permissions.defaultMode` |
-| 6 | **会话内运行时** | （临时） | 用 `Shift+Tab`（CLI）或模式指示器（VS Code）切换 |
+| 1 | VSCode 用户 | `~/Library/Application Support/Code/User/settings.json`（macOS）、`~/.config/Code/User/settings.json`（Linux）、`%APPDATA%/Code/User/settings.json`（Windows） | `claudeCode.initialPermissionMode` --- 上游 VS Code 扩展层，本平台不读 |
+| 2 | VSCode 工作区 | `<repo>/.vscode/settings.json` | 同一个键 --- 上游层；本仓库不再提供这个文件 |
+| 3 | CLI 用户 | `~/.workbuddy/settings.json` | `permissions.defaultMode` --- 上游层，本平台不读 |
+| 4 | CLI 项目 | `<repo>/.codebuddy/settings.json` | `permissions.defaultMode` --- 本平台读这个文件，但只读 `hooks` |
+| 5 | CLI 项目本地（已 gitignore） | `<repo>/.codebuddy/settings.local.json` | 同一个键 --- 同样只有 `hooks` 有意义 |
+| 6 | **会话内运行时** | （临时） | 用 `Shift+Tab` 或输入框旁的模式切换 |
 
-**第 6 层是权威**，这一点最让人措手不及。`initialPermissionMode` 只在**会话开始时**生效 --- 如果你（或者 `Shift+Tab`）在会话中途改了模式，所有文件层在那次会话结束前都被无视。
-
-**两个让人意外的例外**（2026-09-26 对照 Anthropic 的权限模式文档复核）：第 4、5 层 --- 项目的 `.codebuddy/settings.json` 与 `.codebuddy/settings.local.json` --- **不**认可 `auto` 或 `bypassPermissions` 作为起始模式（项目级的 bypass 被忽略，会话以 Manual 启动），而 VS Code 扩展根本不读项目设置来决定它的起始模式。要在第 3 层设置 bypass，或用 `--permission-mode bypassPermissions`；在 VS Code 里，设 `claudeCode.initialPermissionMode` 并打开扩展的 *Allow dangerously skip permissions* 开关。没有任何覆盖时，本平台以 auto 模式启动。
+**真正决定起始模式的是第 6 层**，这一点最让人措手不及：模式在**会话开始时**定下，中途改只对当次会话有效。上游那两个「让人意外的例外」（项目级 `.codebuddy/` 里的 `defaultMode` 不被承认、VS Code 扩展不读项目设置）在本平台表现为更简单的一条规则——**项目文件里根本没有生效的默认模式**。要让新会话默认以 bypass 启动，只有一条路：写进 `~/.workbuddy/settings.json`。没有任何覆盖时，本平台以 auto 模式启动。
 
 ### 故障排查：设了 `bypassPermissions` 却仍然弹提示
 
@@ -1143,13 +1145,13 @@ tools: ["Read", "Grep", "Glob"]
 
 通过 `ExitPlanMode` 批准计划，会把会话交给批准提示处设定的模式 --- 当前版本在那里给出显式选项（批准进入 auto 模式、批准但保留人工审阅编辑、继续规划）；在 bypass 配置下，被批准的计划不再逐工具弹提示地往下走。一旦到了那里，此后任何工具调用（Edit、Write、Bash）都在你 `settings.json` 的完整允许清单下执行，而不是在由计划推导出的范围里。一次错误的实现仍可能改动无关文件，或跑出破坏性的 shell 命令，没有第二个检查点。
 
-把这条流程当作便捷模式，不是安全控制。如果你需要一道硬性强制边界，就设 `permissions.defaultMode: "default"`（Manual --- 模板的 `.codebuddy/settings.json` 没设默认模式，所以会话以 auto 启动），并删掉模板里的通配 `Bash(*)`、`Edit(**)` 与 `Write(**)` 允许项，或给高风险工具加 `ask`/`deny` 规则，让每一个都单独弹提示。在 VS Code 里，还要从 `.vscode/settings.json` 删掉那两个 bypass 键。或者，整个会话都跑在 `plan` 模式下，手工把动作复制出来执行。
+把这条流程当作便捷模式，不是安全控制。如果你需要一道硬性强制边界，就在模式选择里切到 Plan（模板的 `.codebuddy/settings.json` 没设默认模式，所以会话以 auto 启动），并删掉模板里的通配 `Bash(*)`、`Edit(**)` 与 `Write(**)` 允许项，或给高风险工具加 `ask`/`deny` 规则，让每一个都单独弹提示。或者，整个会话都跑在 `plan` 模式下，手工把动作复制出来执行。
 :::
 
 流程如下：
 
 ```
-Start session in plan mode  (Shift+Tab at startup, or claude --permission-mode plan)
+Start session in plan mode  (pick Plan in the mode selector, or Shift+Tab at startup)
      |
      | Read-only exploration + planning
      |   Claude can Read, Grep, run Bash readonly, spawn Explore/Plan agents
@@ -1175,7 +1177,7 @@ Orchestrator executes the plan end-to-end --- no prompts.
 - 不需要会话中途切换 --- 批准提示是唯一的交接点（把它的选项读一遍；它们设定计划后的模式）。
 - 与本仓库强制的计划先行规则严丝合缝。
 
-**前提：** 要无提示版本，bypass 必须可用 --- 在你用户设置（`~/.workbuddy/settings.json`）里设，或用 `--permission-mode bypassPermissions`，因为项目设置不认它。更安全的日常驱动，是把计划批准进 **auto 模式**：常规动作在执行时仍不逐工具弹提示，而有风险的那些之间还隔着一个分类器。
+**前提：** 要无提示版本，bypass 必须可用 --- 在输入框旁的模式选择里切，或把 bypass 写进 `~/.workbuddy/settings.json`，因为项目设置里写的默认值不被承认。更安全的日常驱动，是把计划批准进 **auto 模式**：常规动作在执行时仍不逐工具弹提示，而有风险的那些之间还隔着一个分类器。
 
 ### 会话管理 {#sec-session-management}
 
@@ -1188,7 +1190,7 @@ Orchestrator executes the plan end-to-end --- no prompts.
 | `/clear` | 完全重置对话上下文 | 切到无关任务；上下文已经很杂的长会话 |
 | `/compact <instruction>` | 对当前对话做有引导的摘要 | 「压缩，重点保留 API 改动」--- 在同一任务上继续之前的选择性保留 |
 | `Ctrl+G`（计划模式下） | 在 `$EDITOR` 里打开进行中的计划文件，批准前直接编辑 | 你想精确微调计划，而不必把指令打回给 WorkBuddy |
-| `claude --continue` / `claude --resume` | 续接最近一次对话（`--continue`）或从最近几次里挑（`--resume`）；用 `/rename` 改名 | 接续一个跨多天的项目 --- 把会话当分支用 |
+| 点任务卡片继续 | 回到一个已有任务接着聊——侧边栏的任务列表就是「最近几次对话」，不需要记 id | 接续一个跨多天的项目 --- 把任务当分支用 |
 | `/checkpoint <slug>` | 把结构化状态快照写到 `quality_reports/checkpoints/`（本模板的，不是 Anthropic 的） | 停止或交接之前 --- 与叙事式会话日志配套 |
 | `/goal <verifiable condition>` | 设定一个终态条件；WorkBuddy 跨轮持续工作，直到一个快模型确认它成立（2026 年 5 月第 20 周，v2.1.139） | 「所有 R 脚本无错通过」、「图 3 渲染成 PDF 不溢出」--- 与 `/commit` 质量门禁配成「核验过终态」的运行 |
 | `/fork` | 把对话复制进一个新的后台会话，你继续干活（2026 年 7 月） | 试一个分析的风险变体而不丢主线 |
@@ -1199,13 +1201,13 @@ Orchestrator executes the plan end-to-end --- no prompts.
 
 - **子代理在后台运行，且分叉模式在交互式会话里默认开启** --- 子代理跑的时候 WorkBuddy 继续干活，`/fork` 把对话复制进一个后台会话。分叉*继承那段对话*，所以必须独立的审读（断言核验、审稿人）要用独立上下文子代理，绝不用分叉。
 - **输出风格：**`/output-style` 切换 WorkBuddy 的写法。**Concise** 先给结果、跳过开场白；**Learning** 留一部分给你自己写 --- 配合 `/scaffold-exercises` 用于教学很合适。
-- **`/skill-doctor`** 显示每个技能的上下文成本与使用情况；**`claude plugin eval`** 让一个插件对测试用例打分，并与无插件基线比较。
+- **`/skill-doctor`** 显示每个技能的上下文成本与使用情况。**`plugin eval`**（给一个插件对测试用例打分，并与无插件基线比较）属于上游命令行那条产品线的能力，桌面客户端没有对应命令；本仓库可用的度量工具是 `scripts/run-skill-eval.sh`，见[上文「无头运行」](#sec-headless)。
 - **截止安全的更新：**在 `~/.workbuddy/settings.json` 里设 `"autoUpdatesChannel": "stable"`（以及 `minimumVersion`）--- 见 TROUBLESHOOTING。本平台没有给深度封顶的设置：深度由档位决定（`lite` / `default` / `reasoning`）。
 
 **三种配合得好的模式：**
 
 - **问旁支问题而不污染上下文：** `` /btw why does Quarto need ::: for callouts? `` --- 拿到答案，关掉浮层，继续干活。
-- **停工，或切到无关工作：**先 `/checkpoint current-work`，再对新任务 `/clear`。要回到第一个任务，就新开一个 `claude`：交接钩子把最新的检查点（或 7 天内的 `/compress-session` 注记）交给下一个全新会话，只交一次。如果此后已经开过一个新会话，或写了更新的检查点，就让 WorkBuddy 改去读 `quality_reports/checkpoints/<file>`。或者用 `claude --resume` 连同完整上下文重开旧对话（在这种情况下钩子不会递送检查点）。
+- **停工，或切到无关工作：**先 `/checkpoint current-work`，再对新任务 `/clear`。要回到第一个任务，就新建一个任务：交接钩子把最新的检查点（或 7 天内的 `/compress-session` 注记）交给下一个全新会话，只交一次。如果此后已经开过一个新会话，或写了更新的检查点，就让 WorkBuddy 改去读 `quality_reports/checkpoints/<file>`。或者直接点回那个任务卡片接着聊（那条路上钩子不会递送检查点）。
 - **编辑到一半要改计划：**计划模式期间按 `Ctrl+G` 直接编辑计划文件 --- 比把修订口述回给 WorkBuddy 快。
 
 ::: {.callout-warning}
@@ -1972,9 +1974,9 @@ WorkBuddy 能用 `Agent` 工具**同时生成多个代理**。这不限于审读
 
 对真正长的活 --- 一次 30 分钟的 R 拟合、一批跨多张表的 `/audit-reproducibility`、一份 200 页幻灯片的 Quarto 渲染 --- **Monitor 工具**（2026 年 4 月第 15 周）让 WorkBuddy 实时跟踪一个后台进程的 stdout，并在有值得注意的事情时作出反应。模式是：把长任务放到后台（Bash 加 `run_in_background: true`），然后让 WorkBuddy 监控到某个条件触发（报错、里程碑、结束）。没有轮询循环，没有 sleep 周期。在 `/data-analysis` 里的回归步、以及在 `/audit-reproducibility` 重跑整套脚本时都有用。
 
-#### 看并行代理：`claude agents`（2026 年 5 月）
+#### 看并行代理：侧边栏的任务列表（上游叫 `claude agents`）
 
-当几个审阅代理并行跑时（`/review-paper --peer` 的两位审稿人，或 `/slide-excellence` 的视觉 + 教学法 + 校对扇出），用 **`claude agents`**（第 20 周，v2.1.139）在一块屏幕上盯着它们。它取代了以前每个代理开一个终端的老做法。完整说明见下面的 Anthropic 工具一节。
+当几个审阅代理并行跑时（`/review-paper --peer` 的两位审稿人，或 `/slide-excellence` 的视觉 + 教学法 + 校对扇出），进度在侧边栏的任务列表里看：每次扇出是独立上下文里的子代理，它们的产出会随结果一起回到这次对话。上游 CLI 有一个专门的单屏仪表盘（`claude agents`，第 20 周，v2.1.139），本平台的桌面客户端没有这条命令，也不需要它——任务列表就是那个视图。
 
 #### 独立辩护人
 
@@ -2769,7 +2771,13 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 **仓库：** [SepineTam/stata-mcp](https://github.com/SepineTam/stata-mcp)
 **作者：** SepineTam（171+ star、91 个 release，2026 年 5 月时为 v1.17.3）
 
-一个成熟的 MCP 服务器，让 Claude Code 通过带命令守卫的接口执行 Stata `.do` 文件 --- 拒绝破坏性 shell 操作（`!/shell/erase` 等）、监控内存，并与 Stata Language Server 配合。**每个用户装一次即可：** `claude mcp add stata-mcp --scope user -- uvx stata-mcp`（需要 `uv` 和本地安装的 Stata）。
+一个成熟的 MCP 服务器，让本平台的代理通过带命令守卫的接口执行 Stata `.do` 文件 --- 拒绝破坏性 shell 操作（`!/shell/erase` 等）、监控内存，并与 Stata Language Server 配合。**每个用户装一次即可：**在左侧「插件 → MCP 服务器 → 配置 MCP」里添加，或写进 `~/.workbuddy/mcp.json`：
+
+```json
+{ "mcpServers": { "stata-mcp": { "command": "uvx", "args": ["stata-mcp"] } } }
+```
+
+需要 `uv` 和本地安装的 Stata。（上游用的是 `claude mcp add` 那条命令，本平台没有对应实现。）
 
 **为何本模板需要它：** v1.9.0 为 Stata 优先的项目加了 [`/stata-replication`](#sec-appendix)，该技能依赖这个 MCP 服务器。R 优先的项目（本模板最初的关注点）继续用 [`/data-analysis`](#sec-appendix)；两个技能是平行的 --- 流水线形状相同，只是源语言不同。原始复现包用 Stata 写的 AEA 投稿，就是它的典型用例。
 
@@ -2790,6 +2798,8 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 ## Anthropic 在 2026 年 4 月前后发布的实用命令
 
 这些是一方（first-party）Claude Code 命令，不用 fork 任何东西就能直接调。值得知道，是因为它们补上了本模板**有意**不去填的那些空档：
+
+**先注意载体：**这一节列的是上游 Claude Code 的**命令行**能力。本平台的桌面客户端没有命令行，所以这些命令在这里不能直接敲——列出来是因为它们的设计思路值得借鉴，其中一部分在本模板里已有技能形式的对应实现（会在条目里点明）。
 
 - **`/team-onboarding`**（第 15 周）--- 把你本地的 Claude Code 配置（CODEBUDDY.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 `/team-onboarding` 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。
 - **`/autofix-pr`**（第 15 周）--- 在 GitHub PR 上跑 Claude Code，套用 CI 式的常规修法（lint、类型、简单的测试失败）。如果你推了 PR，想在审阅前再来一轮自动清理，它和我们的 `/commit` 流程配合得很好。
@@ -3117,12 +3127,17 @@ description: Helps with citations
 6. **会话日志很重要。** 记录设计决策，而不只是「改了什么」。将来的你会感谢现在的你。
 7. **魔鬼代言人要早做。** 在地基不稳时先别盖 50 张幻灯片，先挑战结构。
 8. **渐进式披露。** 从 CODEBUDDY.md + 2--3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。
-9. **用 `CLAUDE.local.md` 放个人覆盖项。** 这个文件会自动被 gitignore，并与 `CODEBUDDY.md` 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 --- 它们不会污染共享仓库。
+9. **用 `.codebuddy/settings.local.json` 放个人覆盖项。** 这个文件已被 gitignore，并与 `.codebuddy/settings.json` 一起被读取。机器专属路径、个人偏好、本地工具版本都写这儿 --- 它们不会污染共享仓库。（上游的习惯是 `CLAUDE.local.md`；本仓库没有 `CLAUDE.md`，那条路径在这里不存在。）
 
 ::: {.callout-note collapse="true"}
 ## 扩展：接入 MCP 服务器
 
-对于文件编辑与 shell 命令之外的能力 --- 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）--- WorkBuddy 支持 [MCP 服务器](https://modelcontextprotocol.io)。用 `claude mcp add` 添加（`--scope project` 会在仓库根目录写一个共享的 `.mcp.json`；`--scope user` 则让服务器在你的所有项目里可用；默认的 `local` 作用域只对你、只对本项目生效）。先技能与代理，真需要外部集成时再上 MCP。
+对于文件编辑与 shell 命令之外的能力 --- 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）--- WorkBuddy 支持 [MCP 服务器](https://modelcontextprotocol.io)。入口是**左侧「插件 → MCP 服务器 → 配置 MCP」**，落盘在两个位置之一：
+
+- `~/.workbuddy/mcp.json` —— 用户级，所有项目都能用；
+- `<项目>/.workbuddy/mcp.json` —— 项目级，可以提交进仓库让协作者共享。
+
+两处都是标准的 `{"mcpServers": {...}}` 结构，存盘后在 MCP 列表里看状态：绿色是连上了，红色是配置有错。先技能与代理，真需要外部集成时再上 MCP。（上游用 `claude mcp add` 加 `--scope` 参数区分作用域，本平台没有这条命令，作用域由你写入哪个文件决定。）
 
 ## 扩展：插件 {#extending-with-plugins}
 
@@ -3371,7 +3386,7 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 
 **症状：** 计划存进了 `~/.workbuddy/plans/`，而不是你的项目目录。
 
-**修法：** 本模板的 `.codebuddy/settings.json` 已经设了 `"plansDirectory": "quality_reports/plans"`。这个设置需要 2.1.9 或更高版本的 CLI（`claude --version`）；WorkBuddy 会按项目根目录解析这个相对路径，当路径指向项目之外时就回退到 `~/.workbuddy/plans/`。如果你把这套工作流搬到了别的仓库，请在那个仓库的 `.codebuddy/settings.json` 里加上同一行。
+**修法：** 本模板的 `.codebuddy/settings.json` 已经设了 `"plansDirectory": "quality_reports/plans"`。WorkBuddy 按项目根目录解析这个相对路径，当路径指向项目之外时就回退到 `~/.workbuddy/plans/`。如果你把这套工作流搬到了别的仓库，请在那个仓库的 `.codebuddy/settings.json` 里加上同一行。（上游文档在这里还会要求一个最低 CLI 版本；桌面客户端没有 `--version`，版本号在「关于」页里看。）
 
 这样计划会落在项目里，但**不会**被提交：模板的 `.gitignore` 排除了 `quality_reports/plans/*`，因为计划是本地工作记录。要让某份计划进版本控制，用 `git add -f`，或从你 fork 的 `.gitignore` 里删掉那一行。
 
@@ -3405,3 +3420,4 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 **源起：**
 
 - 这套工作流提炼自 Emory 大学的 **Econ 730: Causal Panel Data** 课程，由 Pedro Sant'Anna 开发。计量经济学的出身只是其中一个应用 --- 这些模式与领域无关，此后已被他人在多个领域扩展。
+- 本页是它的**中文移植版**：同一套基础设施改用 WorkBuddy 平台，并按平台能力逐节校订（凡是本平台没有的机制，这里会明说，而不是留一条照抄就失败的命令）。作者署名保留给原作者；本页作为个人学习用途维护，引用请引用[原始仓库](https://github.com/pedrohcgs/claude-code-my-workflow)。

@@ -34,15 +34,15 @@ WorkBuddy 在 Windows 上**强制用 Git Bash** 执行钩子命令（不支持 c
 
 ### `/stata-replication` 停在「stata-mcp not registered」
 
-Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp) MCP 服务器。每个用户装一次：
+Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp) MCP 服务器。每个用户装一次：**左侧「插件 → MCP 服务器 → 配置 MCP」**，或直接写进 `~/.workbuddy/mcp.json`：
 
-```bash
-claude mcp add stata-mcp --scope user -- uvx stata-mcp
+```json
+{ "mcpServers": { "stata-mcp": { "command": "uvx", "args": ["stata-mcp"] } } }
 ```
 
-`uvx` 是 `uv` 的包运行器（没装就 `brew install uv`）。该 MCP 服务器需要本地装有 Stata——它是桥，不是替代品。装好后重启 WorkBuddy 会话，让 MCP 服务器注册上。
+`uvx` 是 `uv` 的包运行器（没装就 `brew install uv`）。该 MCP 服务器需要本地装有 Stata——它是桥，不是替代品。存盘后回到 MCP 列表看状态：绿色是连上了，红色是配置有错。
 
-用 `claude mcp list` 核验——`stata-mcp` 应以 `connected` 状态出现。若 Stata 本身不在 `PATH` 上，该技能同样会停；[`/stata-replication`](.codebuddy/skills/stata-replication/SKILL.md) Phase 0 里记录的安装说明覆盖了这两项起飞前检查。
+若 Stata 本身不在 `PATH` 上，该技能同样会停；[`/stata-replication`](.codebuddy/skills/stata-replication/SKILL.md) Phase 0 里记录的安装说明覆盖了这两项起飞前检查。（上游的核验命令是 `claude mcp list`，本平台没有这条命令——状态看列表里的圆点。）
 
 ### WorkBuddy 为每个工具反复询问权限
 
@@ -78,9 +78,13 @@ claude mcp add stata-mcp --scope user -- uvx stata-mcp
 
 `minimumVersion` 能阻止自动更新安装低于你已知可用版本的任何东西。优先用这两项，而不是把更新器关掉——更新带着安全修复与新模型支持（新模型可能要求最低版本）。
 
-### 订阅套餐上无头的 `claude -p` 运行从单独额度池计费
+### 无头运行：桌面客户端没有命令行
 
-自 **2026-06-15** 起，订阅套餐上的无头子进程调用（`claude -p`、Agent SDK）从一个**单独的 Agent SDK 额度池**扣除，与交互式额度解耦。在本模板里，这影响 `scripts/run-skill-eval.sh` 以及你添加的任何定时或脚本化的 `claude -p`（例如一个 `/triage-inbox` 例行任务）。若某次无头运行因额度耗尽报错、而你的交互式会话正常，请单独检查 Agent SDK 余额。各套餐层级的当前配额以你账号里的订阅页为准——本仓库不代管上游产品的额度说明。
+WorkBuddy 桌面客户端不提供命令行入口。要在脚本、cron 或例行任务里跑，需要另装一条独立产品线 **CodeBuddy Code CLI**（`npm i -g @tencent-ai/codebuddy-code`，命令 `codebuddy` / `cbc`，配置目录 `~/.codebuddy`，文档见 <https://www.workbuddy.cn/docs/cli/headless>），非交互调用必须带 `-y`。它和桌面端共用引擎，但**配置目录是分开的**——装之前先读官方那句「与 WorkBuddy 共存时避免配置冲突」。
+
+本仓库里唯一依赖它的是 `scripts/run-skill-eval.sh`（技能 A/B 评测）。它按 `EVAL_CLI` → `codebuddy` → `cbc` → `claude` 探测，一个都找不到就以 `2` 退出并打印安装命令——**它不在任何门禁里**，没装 CLI 不影响模板正常使用。
+
+另有一处要留神：`session-handoff.py` 与 `open-issues.py` 里「无头时不递交接 / 不自动开 issue」的判定读的是 `CLAUDE_CODE_ENTRYPOINT`，而桌面端的引擎**不设置**这个变量。要在 cron 里稳定避开这两个行为，显式导出 `CLAUDE_HANDOFF=off` 与 `CLAUDE_ISSUES_AT_START=off`。
 
 ## 编译 / 渲染
 
@@ -153,7 +157,7 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 ### 会话启动时冒出一份交接
 
-`session-handoff.py` 会把最近 7 天内写下的最新 `/checkpoint` 或 `/compress-session` 文件交给新会话，并标注为「待核验的笔记」。一旦你在该会话里敲了一条提示词，它就记为已用过，所以只会出现一次。想跳过它，设 `CLAUDE_HANDOFF=off`（shell 里，或 settings 的 `env` 下）；想改窗口，用 `CLAUDE_HANDOFF_MAX_AGE_DAYS`。无头的 `claude -p` 运行永远收不到它。如果另一个记忆工具也在启动时注入上下文，就关掉其中一个。
+`session-handoff.py` 会把最近 7 天内写下的最新 `/checkpoint` 或 `/compress-session` 文件交给新会话，并标注为「待核验的笔记」。一旦你在该会话里敲了一条提示词，它就记为已用过，所以只会出现一次。想跳过它，设 `CLAUDE_HANDOFF=off`（shell 里，或 settings 的 `env` 下）；想改窗口，用 `CLAUDE_HANDOFF_MAX_AGE_DAYS`。无头运行（另装 CLI 后的 `-p` 调用）不会收到它——但那道判定依赖的 `CLAUDE_CODE_ENTRYPOINT` 在本平台不会被设置，所以在 cron 里请显式 `CLAUDE_HANDOFF=off`。如果另一个记忆工具也在启动时注入上下文，就关掉其中一个。
 
 ### `/commit` 因 `quality_score.py` 低于阈值而失败
 
