@@ -324,7 +324,13 @@ def win_fire(command, cwd=None, project=None):
                 traceback.print_exc(file=sys.__stderr__)
                 print(f"[winsim] _PROJECT={getattr(mod, '_PROJECT', '<none>')!r} "
                       f"_CWD={getattr(mod, '_CWD', '<none>')!r}", file=sys.__stderr__)
-        return sys.stdout.getvalue()
+        out = sys.stdout.getvalue()
+        if os.environ.get("WB_WINSIM_DEBUG") or os.environ.get("CI"):
+            print(f"[winsim] cmd={command!r}\n"
+                  f"[winsim] out={out!r}\n"
+                  f"[winsim] _PROJECT={getattr(mod, '_PROJECT', None)!r} "
+                  f"_CWD={getattr(mod, '_CWD', None)!r}", file=sys.__stderr__)
+        return out
     finally:
         sys.stdin, sys.stdout = saved[0], saved[1]
         for k, v in saved[2].items():
