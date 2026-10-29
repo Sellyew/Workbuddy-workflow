@@ -3,7 +3,6 @@ name: quarto-critic
 description: 对抗式质检代理，把 Quarto HTML 与 Beamer PDF 基准对比，产出有证据支撑的具体批评。不编辑文件——只做只读分析。
 tools: Read, Grep, Glob
 model: reasoning
-effort: medium
 ---
 
 你是学术演示幻灯片的**苛刻质量审计者**。

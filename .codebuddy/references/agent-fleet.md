@@ -1,35 +1,42 @@
 # 代理船队清单
 
-18 个专项子代理，各自负责什么、运行在哪个模型层级（[`model-routing.md`](../rules/model-routing.md)），以及由哪个技能派发它。这让船队变得可读——当某个扇出型技能挑选一个透镜时，这就是它从中挑人的花名册。审读器是**只读**的（它们按 [`orchestration-schemas.md`](orchestration-schemas.md) 报告 `FINDING`）；只有修复者会编辑文件。
+18 个专项子代理，各自负责什么、跑在哪个模型档位（[`model-routing.md`](../rules/model-routing.md)），以及由哪个技能派发它。这让船队变得可读——当某个扇出型技能挑选一个透镜时，这就是它从中挑人的花名册。审读器是**只读**的（它们按 [`orchestration-schemas.md`](orchestration-schemas.md) 报告 `FINDING`）；只有修复者会编辑文件。
 
-> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改层级时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。）
+> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改档位时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。另有 `ping` 一个冒烟探针不在船队内。）
 
-> **[WorkBuddy 适配 · 2026-10-30] 这张表的「层级」与「投入」两轴是上游口径，不是本平台的运行事实。**
-> 本平台的子代理只按 frontmatter 的 `model:` 三档路由（`default` / `lite` / `reasoning`，
-> 见 [`model-routing.md`](../rules/model-routing.md)）；**没有 `effort` 轴**——引擎的代理元数据
-> schema 里没有这个键，写了会被直接剥掉（证据与命令见
-> [`platform-facts.md`](platform-facts.md)「技能 / 规则 / 代理」）。
-> 下面各节标题与「投入」一列暂时保留上游措辞作对照，**读的时候当成历史来源，别当成旋钮**：
-> 它解释的是「照上游文档调 `effort` 为什么没反应」。这一列待重写，已登记为
-> `platform-facts.md` 的「已知不一致」第 1 条。
+> **[WorkBuddy 适配 · 2026-10-30] 本表只按三档写，因为本平台只有三档。**
+> 上游那张表有**两根轴**：模型层级（Opus / Sonnet / Haiku）与 `effort`（`low`–`max`）。
+> 本平台只有前一根，而且它不叫 Opus/Sonnet/Haiku——子代理按 frontmatter 的 `model:`
+> 取 `reasoning` / `default` / `lite` 三档之一。**`effort` 轴不存在**：引擎的代理元数据
+> schema 里没有这个键，写了会被直接剥掉，不改变任何行为（证据与命令见
+> [`platform-facts.md`](platform-facts.md)「技能 / 规则 / 代理」）。所以代理文件里的
+> `effort:` 已全部删除（19 个文件里 18 个带它，`ping` 探针本来就没有）——一个看起来像
+> 成本旋钮、实际什么都不做的字段，比没有这个字段更糟。
+>
+> **一个后果说清楚**：上游把「审读／批评」放在 Sonnet + `effort: high`、「应用／翻译」放在
+> Sonnet + `effort: medium`，靠 effort 把同一层拆成两档强度。本平台 `default` 内部没有强度
+> 旋钮，这两组**现在是同一档**——下面仍分两张表，因为职责不同，但**路由上它们没有差别**。
+> 要更强就升到 `reasoning`，要更省就降到 `lite`，没有中间档。
 
-## 高判断层级 —— Opus 层
+## 高判断档 —— `reasoning`
 
-这批代理里错一个「看起来没问题」代价很高（一封 desk-reject、一条幻觉引用、一个带偏误的估计量被交付）。永远不要为省钱而降级（[`model-routing.md`](../rules/model-routing.md) 反模式）。四个门禁代理固定 `effort: high`，比 Opus 默认高一级；其余跑在 `medium`（Opus 默认——见 `model-routing.md` § effort）。
+这批代理里错一个「看起来没问题」代价很高（一封 desk-reject、一条幻觉引用、一个带偏误的估计量被交付）。不要为了省钱降档（[`model-routing.md`](../rules/model-routing.md) 反模式）。
 
-| 代理 | 投入 | 职责 | 读/写 | 感知审稿取向 | 派发方 |
-|---|---|---|---|---|---|
-| `editor` | high | 初审、审稿人遴选、编辑综合 | 只读 | 选择审稿取向 | `/review-paper --peer` / `--variance` |
-| `domain-referee` | high | 实质审稿人（贡献、定位、外部效度） | 只读 | 是（6 分法分类） | `/review-paper --peer` |
-| `methods-referee` | high | 方法论审稿人（按论文类型区分识别／推断） | 只读 | 是（6 分法分类） | `/review-paper --peer` |
-| `claim-verifier` | high | 独立上下文 CoVe 核验者（引用、数字、新颖性） | 只读 | 否 | `/verify-claims`，`/lit-review` · `/research-ideation` · `/respond-to-referees` · `/review-paper --peer` 的落地后检查；幻觉门禁 |
-| `domain-reviewer` | medium | 对幻灯片或稿件某节做领域实质审读（5 个透镜；**模板——需自行定制**） | 只读 | 否 | `/slide-excellence`、`/seven-pass-review`（方法透镜） |
-| `quarto-critic` | medium | 对抗式 Beamer↔Quarto 一致性批评者 | 只读 | 否 | `/qa-quarto`、`/slide-excellence`（一致性） |
-| `tikz-reviewer` | medium | 基于度量的 TikZ 碰撞／美观审查 | 只读 | 否 | `/slide-excellence`（若有 TikZ）、`/extract-tikz`、`/new-diagram` |
-| `sim-reviewer` | medium | 蒙特卡洛审查（DGP／估计目标、MCSE、覆盖率对真值） | 只读 | 否 | `/simulation-study` |
-| `verifier` | medium | 端到端编译／渲染／部署验证门禁 | 只读 | 否 | `/commit` |
+| 代理 | 职责 | 读/写 | 感知审稿取向 | 派发方 |
+|---|---|---|---|---|
+| `editor` | 初审、审稿人遴选、编辑综合 | 只读 | 选择审稿取向 | `/review-paper --peer` / `--variance` |
+| `domain-referee` | 实质审稿人（贡献、定位、外部效度） | 只读 | 是（6 分法分类） | `/review-paper --peer` |
+| `methods-referee` | 方法论审稿人（按论文类型区分识别／推断） | 只读 | 是（6 分法分类） | `/review-paper --peer` |
+| `claim-verifier` | 独立上下文 CoVe 核验者（引用、数字、新颖性） | 只读 | 否 | `/verify-claims`，`/lit-review` · `/research-ideation` · `/respond-to-referees` · `/review-paper --peer` 的落地后检查；幻觉门禁 |
+| `domain-reviewer` | 对幻灯片或稿件某节做领域实质审读（5 个透镜；**模板——需自行定制**） | 只读 | 否 | `/slide-excellence`、`/seven-pass-review`（方法透镜） |
+| `quarto-critic` | 对抗式 Beamer↔Quarto 一致性批评者 | 只读 | 否 | `/qa-quarto`、`/slide-excellence`（一致性） |
+| `tikz-reviewer` | 基于度量的 TikZ 碰撞／美观审查 | 只读 | 否 | `/slide-excellence`（若有 TikZ）、`/extract-tikz`、`/new-diagram` |
+| `sim-reviewer` | 蒙特卡洛审查（DGP／估计目标、MCSE、覆盖率对真值） | 只读 | 否 | `/simulation-study` |
+| `verifier` | 端到端编译／渲染／部署验证门禁 | 只读 | 否 | `/commit` |
 
-## 审读／批评层级 —— Sonnet 层，effort: high
+## 审读／批评档 —— `default`
+
+机械上不需要最高判断、但需要读懂内容的那些透镜。同档内没有强度区别（见本节顶部的说明）。
 
 | 代理 | 职责 | 读/写 | 派发方 |
 |---|---|---|---|
@@ -40,14 +47,16 @@
 | `pedagogy-reviewer` | 叙事弧线、前置要求、算例、记号、节奏 | 只读 | `/pedagogy-review`、`/slide-excellence` |
 | `humanize-auditor` | AI 腔调特征检测（10 类） | 只读 | `/humanize` |
 
-## 应用／翻译层级 —— Sonnet 层，effort: medium
+## 应用／翻译档 —— `default`
+
+与上一节同档。分开列是因为它们**写文件**（唯一的两个），不是因为路由更强或更弱。
 
 | 代理 | 职责 | 读/写 | 派发方 |
 |---|---|---|---|
 | `quarto-fixer` | 应用 `quarto-critic` 的差异、重新渲染、验证 | **写入** | `/qa-quarto` |
 | `beamer-translator` | Beamer→Quarto 逐页翻译 | **写入** | `/translate-to-quarto` |
 
-## 机械／投票层级 —— Haiku 层（当前 Haiku 不支持 effort 设置；`effort: low` 这个固定值适用于将来支持它的后继模型）
+## 机械／投票档 —— `lite`
 
 | 代理 | 职责 | 读/写 | 派发方 |
 |---|---|---|---|
@@ -59,6 +68,7 @@
 
 ## 交叉引用
 
-- [`.codebuddy/rules/model-routing.md`](../rules/model-routing.md) —— 分层理由 + 不得降级的反模式。
+- [`.codebuddy/rules/model-routing.md`](../rules/model-routing.md) —— 三档的理由 + 不得降档的反模式。
 - [`.codebuddy/rules/orchestrator-protocol.md`](../rules/orchestrator-protocol.md) —— 船队如何扇出、归并、裁决。
 - [`.codebuddy/references/orchestration-schemas.md`](orchestration-schemas.md) —— 每个审读器返回的 `FINDING`／`SCORECARD` 形状。
+- [`.codebuddy/references/platform-facts.md`](platform-facts.md) —— 「agent `effort:` 不被读」这一条的证据与核查日期。

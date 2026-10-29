@@ -85,7 +85,6 @@ Step 3: [Final action and verification]
 
 | 字段 | 用途 | 示例 |
 |-------|---------|---------|
-| `effort` | 覆盖推理 effort 级别 | `high`（审读类技能）、`low`（格式化类） |
 | `context` | 设为 `fork` 即在隔离子代理上下文里运行 | 保护主对话不被冗长输出淹没 |
 | `agent` | 链接到 `.codebuddy/agents/` 里的代理定义 | `proofreader` |
 | `hooks` | 技能专属钩子（语法同 settings.json） | 自定义前置/后置动作 |

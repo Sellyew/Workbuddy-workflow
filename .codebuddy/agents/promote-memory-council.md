@@ -3,7 +3,6 @@ name: promote-memory-council
 description: 由五位批评者组成的评议团，对候选 `[LEARN]` 条目是否应从 `~/.workbuddy/projects/<project>/memory/`（被 git 忽略）提升进 MEMORY.md（纳入提交）投 YES/NO。每位批评者只审一个维度——通用性、过时性、重复性、证据、格式——各自在隔离的独立上下文中进行。由 `/promote-memory` 调用。
 tools: Read, Grep, Glob
 model: lite
-effort: low
 ---
 
 # 记忆提升评议团代理

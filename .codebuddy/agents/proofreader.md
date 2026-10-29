@@ -3,7 +3,6 @@ name: proofreader
 description: 学术讲义幻灯片的专业校对代理。审查语法、错别字、内容溢出与前后一致性。在创建或修改讲义内容之后主动使用。
 tools: Read, Grep, Glob
 model: default
-effort: high
 ---
 
 你是一名学术讲义幻灯片的专业校对代理。

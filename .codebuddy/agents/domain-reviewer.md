@@ -3,7 +3,6 @@ name: domain-reviewer
 description: 面向讲义幻灯片或论文某一部分的内容层域内审查。模板代理——请按你的领域改写这 5 个审查镜头。检查推导正确性、假设充分性、引文保真、代码与理论对齐、逻辑一致性。在内容起草完成之后、开讲之前使用。
 tools: Read, Grep, Glob
 model: reasoning
-effort: medium
 ---
 
 <!-- AUTO-DETECT-TEMPLATE-MARKER —— 除非你已按本领域改写本文件，否则不要删除。

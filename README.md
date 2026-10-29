@@ -147,14 +147,18 @@ cd my-project
 
 指南覆盖本平台的最新能力：
 
+> 本节逐条写本平台的对应物，而不是上游有什么。每条平台事实的证据与核查日期见
+> [`.codebuddy/references/platform-facts.md`](.codebuddy/references/platform-facts.md)——
+> 那一张表是唯一出处；本节与它冲突时以它为准。
+
 - **模型档位**——本平台只有**三档**：`default`（审读与批评的默认档）、`lite`（机械劳动）、`reasoning`（高判断力：期刊编辑、审稿人、事实核查、对抗式批评、TikZ 空间推理）。没有第四档，也没有按型号点版本的阵容、价格表与别名表。各档的职责、上游层级怎么映射过来、怎么改档位，都在单一真源 [`model-versions.md`](.codebuddy/references/model-versions.md) 里——这里的表述停留在档位抽象上，所以不会过时；而单一真源自身的有效期一过，陈旧度门禁就会让构建失败。
 - **没有 effort 轴**——本平台没有 `low` / `medium` / `high` / `xhigh` / `max` 这条 effort 轴，也没有 `maxEffortLevel` 这个天花板开关：深度由档位决定，要更少思考就降档，要更多就升档。frontmatter 里写着 `effort:` 不会报错，但也不会起作用——留着等于给自己一个假开关（见[模型单一真源](.codebuddy/references/model-versions.md)）。
 - **`/goal <可核验条件>`**（v1.9.0；Anthropic 2026 年 5 月）——跨多轮持续工作，直到一个快模型确认条件成立。与 `/commit` 的质量门禁搭配，用于「核验过终态」的运行。
 - **并行任务视图**——并行审读工作（`/review-paper --peer`、`/slide-excellence`）在侧边栏的任务列表里看。上游 CLI 有一个 `claude agents` 单屏仪表盘，本平台桌面端没有这条命令，也不需要它。
 - **成本自觉的编排**——提示词缓存 TTL、70/20/10 模型路由（`lite` / `default` / `reasoning`）、`/cost` + `/usage` 监控。（上游订阅的额度池与缓存时长规则不适用于本平台，本仓库也不代为说明。）
-- **技能 frontmatter**——`effort`、`context: fork`、`agent`、`hooks`、`disable-model-invocation`（v1.8.0+）、`disallowed-tools`（*真正的*工具限制——`allowed-tools` 只是预先批准）、`paths`（glob 作用域的自动激活）以及动态内容（`$ARGUMENTS`、`!command` 语法）
-- **权限模式**——手动（配置值 `default`）、接受编辑、计划、**自动**（由分类器把关；新的交互式终端会话与 VS Code 会话都以它为内置起始模式）、Bypass
-- **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件；钩子能看见 `effort.level` 与 `$CLAUDE_EFFORT`（2026 年 4 月第 19 周）
+- **技能 frontmatter**——`context: fork`、`agent`、`hooks`、`disable-model-invocation`（v1.8.0+）、`disallowed-tools`（*真正的*工具限制——`allowed-tools` 只是预先批准）、`paths`（glob 作用域的自动激活）以及动态内容（`$ARGUMENTS`、`!command` 语法）。**`effort` 不在其中**——本平台没有这条轴，写了不会报错，也不会起作用。
+- **权限档位**——桌面端只有两档：**默认权限**（`sandbox.defaultPermission`，越界就问）与**完全访问权限**（`sandbox.fullAccessPermission`，不问）。上游那五档（手动 / 接受编辑 / 计划 / 自动 / Bypass）在本平台没有暴露成可选档位，`--permission-mode` 与 `Shift+Tab` 也不存在。
+- **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件（引擎实际认 28 个，本仓库注册 7 个）。**钩子看不到 `effort.level`**：本平台没有 effort 轴。
 - **高级代理配置**——model、maxTurns、隔离、工具限制；`model-routing.md` 规则把逐代理的层级写成成文规定（v1.9.0）
 - **Worktree 基线**（v1.9.0；Anthropic 2026 年 4 月）——`worktree.baseRef` 设定控制新 worktree 用 `fresh`（默认；远端默认分支）还是 `head`（本地 HEAD）
 - **内置技能**——`/fewer-permission-prompts`、`/team-onboarding`、`/autofix-pr`、`/powerup`、Ultraplan、`/loop`（自我调速）

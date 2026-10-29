@@ -26,8 +26,31 @@ L2 代码路径 / L3 运行时）与一条可重跑的证据命令，并写明�
   （模型不自报身份）而不是平台缺陷。`resolveAgentModel` 确实读元数据并解析成会话模型。
 - `references/agent-fleet.md` 顶部加注：本表的「层级」与「投入」两轴是上游口径，
   本平台只按 `model:` 三档路由，`effort` 轴不存在。各节标题与「投入」一列暂时保留
-  作对照，重写登记为 `platform-facts.md` 的「已知不一致」第 1 条（16 个代理文件仍带
-  `effort:`，而 `model-routing.md` 与 `INERT_FIELDS` 都认定它无效）。
+  作对照，重写登记为 `platform-facts.md` 的「已知不一致」第 1 条。
+
+### Fixed — `effort` 字段删干净了，连同四份把它当活字段用的文档
+
+引擎的代理元数据 schema 是 `name` / `description` / `path` / `source` / `model` /
+`tools` / `color`——**没有 `effort`**，Effect Struct 会把未知键剥掉。19 个代理文件里
+18 个仍写着 `effort:`，而 `model-routing.md` 第 10 行写着「本平台没有 effort 字段」：
+一个正确的规则，挡不住三个仍然照旧写的文件。
+
+- 删掉 18 个代理文件里的 `effort:`（每个文件正好一行，脚本幂等）。
+  `normalize-model-tiers.py` 此前对代理走 `drop_effort=False` 分支，现在与技能一视同仁。
+  过程中踩到一处：frontmatter 切片不含闭合行前的换行，删掉最后一个键会在文件里留下
+  一个空行——第一版给 18 个文件各加了一个空行，`git diff` 才发现。
+- **`agent-fleet.md` 整篇重写**：四节标题从「Opus 层 / Sonnet 层，effort: high」改成
+  `reasoning` / `default` / `lite`，删掉「投入」一列，并写明一条后果——上游靠 effort
+  把 Sonnet 拆成两档强度，「审读／批评」与「应用／翻译」在本平台**现在是同一档**，
+  分开列只因职责不同，路由上没有差别。
+- `templates/skill-template.md` 的字段表删掉 `effort` 行；`new-skill` 的 frontmatter
+  清单从「`effort`」改成「`model`，且不要写 `effort`」；`deep-audit` 的模型分工去掉
+  「先加努力度、再动层级」与本平台没有的「Fable 层」。
+- `README.md`「2026 年的能力」三处按台账改正：技能 frontmatter 不再列 `effort`；
+  权限模式从上游五档改成桌面端真实的两档（`sandbox.defaultPermission` /
+  `sandbox.fullAccessPermission`，`--permission-mode` 与 `Shift+Tab` 不存在）；
+  删掉「钩子能看见 `effort.level` 与 `$CLAUDE_EFFORT`」。该节顶部加了指向台账的
+  一句：本节与台账冲突时以台账为准。
 
 ### Newly recorded — 引擎比仓库用得多
 

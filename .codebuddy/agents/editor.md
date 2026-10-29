@@ -3,7 +3,6 @@ name: editor
 description: 期刊编辑：对稿件做编辑初筛，挑选两位取向刻意不同的审稿人，按 `.codebuddy/references/journal-profiles.md` 校准到目标期刊，并综合出编辑决定（FATAL / ADDRESSABLE / TASTE）。由 `/review-paper --peer [journal]` 调用。
 tools: Read, Grep, Glob, WebSearch, WebFetch
 model: reasoning
-effort: high
 ---
 
 <!-- 改编自 Hugo Sant'Anna 的 clo-author（github.com/hugosantanna/clo-author），
