@@ -58,12 +58,19 @@
 |---|---|---|---|---|
 | 事件集合 | 引擎认 **28 个**事件，不是上游那 9 个 | L2 | `grep -ao 'HOOK_EVENT_NAMES=new Map(\[.\{300,1200\}' "$H/lib/runtime/component-protocol.js"` | 2026-10-30 |
 | 已注册的 7 个 | `PreToolUse` / `PostToolUse` / `UserPromptSubmit` / `SessionStart` / `PreCompact` / `Stop` / `Notification` **全部有发射点** | L2 | `grep -ao 'executeHooks([A-Za-z_]*\.mb\.[A-Z_]*)' "$H/cli/dist-server/shared.cjs" \| sort -u` | 2026-10-30 |
-| `PreCompact` | 有发射点，两条路径：`executeManualPreCompactHooks`（手动压缩）与 `executeClassicPreCompactHooks`；压缩后另有 `PostCompact` | L2 ⏳ | 同上；手动 `/compact` 可复现 | 2026-10-30 |
-| `Notification` | 有发射点（`SESSION_LIFECYCLE` 分支） | L2 ⏳ | 同上 | 2026-10-30 |
+| `PreCompact` | **会自动触发**，`trigger` 为 `auto`。2026-10-30 本机两次真实压缩各写出一份 `pre-compact-state.json`（06:25:55 / 06:30:34），`plan_path` 为 `null` 是因为那两个会话确实没有在用的计划 | **L3** | `cat ~/.workbuddy/sessions/*/pre-compact-state.json`；文件带 `"trigger": "auto"` 与 ISO 时间戳 | 2026-10-30 |
+| `Notification` | 有发射点（`SESSION_LIFECYCLE` 分支），**但仓库这一侧到 2026-10-30 为止从未真正执行过**：`notify.sh` 是 shell 脚本，而 `hook-runner.sh` 当时对一切钩子都 `exec $PY`，于是每次都是 `SyntaxError: unmatched ')'`。已改为按扩展名分派 | 发射 L2 ⏳／handler 已修 | `bash .codebuddy/hooks/lib/hook-runner.sh notify.sh <<< '{"message":"x"}'` → exit 0 且写出 `notifications.log` | 2026-10-30 |
 | 可用但未接 | `SessionEnd` · `SubagentStart` · `SubagentStop` · `PostToolUseFailure` · `FileChanged` · `PermissionDenied` · `FinalStop` · `PostCompact` · `ConfigChange` · `CwdChanged` · `InstructionsLoaded` · `WorktreeCreate/Remove` | L2 | 同上 | 2026-10-30 |
 
 **⏳ 的含义要说清**：`PreCompact` 与 `Notification` 此前被记为「尚未验证」，读起来像
 「可能不支持」。实际是发射点明确存在、只是没在本机触发过——这两件事在文档里必须区别对待。
+2026-10-30 的两次真实压缩把 `PreCompact` 抬到了 L3；`Notification` 仍是 ⏳，但它现在会落盘
+（`quality_reports/session_logs/notifications.log`），下一次触发就能自己证明，不必再靠猜。
+
+**一条更贵的教训**：L2「有发射点」不等于 L3，但 L2 也不保证 handler 能跑。`Notification`
+的发射点一直在，而它的**处理器**从未成功执行过——中间隔着 `hook-runner.sh` 的解释器分派。
+判断「这个钩子在工作吗」要连着看两段：平台发射了没有，注册的命令到没到达钩子文件。后者由
+`scripts/check-hooks.py` 的 `check_wiring()` 检查，它对每条注册命令都要求「跑到、且留下痕迹」。
 
 ### 技能 / 规则 / 代理
 

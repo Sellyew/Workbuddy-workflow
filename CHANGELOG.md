@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 钩子接线断了，而且是静默的
+## Unreleased — 静默失效：平台事实、调度、钩子接线、引文检查
 
 ### Fixed — `hook-runner.sh` 的仓库根少算一级
 
@@ -30,10 +30,6 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 命令字符串。它证明钩子逻辑正确，不证明钩子被接上。新增的 `check_wiring()`
 逐条执行注册命令，stderr 出现「hook 文件不存在」或「未找到可用的 Python」
 即 FAIL——这正是本次缺陷的形状。
-
----
-
-## Unreleased — 平台事实有了唯一出处
 
 ### Added — `references/platform-facts.md`
 
@@ -117,6 +113,63 @@ synthesises an instant deny`，立即拒绝而非等待），需要审批的工�
 `README.md`、`MEMORY.md` 的 `[LEARN:scheduling]`、`triage-inbox` 三处、指南「无人值守
 运行」一条、`audit-pet-peeves.md` 第 17 条、`nightly-repro-check.sh` 头注释。
 `.gitignore` 增加三条：durable 任务文件是本机状态（绝对路径 + 一个人的作息），不该提交。
+
+### Fixed — `hook-runner.sh` 只会跑 Python，而全树唯一的 shell 钩子就是通知
+
+修完仓库根之后紧接着发现的第二个缺陷：runner 对**每一条**钩子都 `exec $PY`。`notify.sh`
+是 bash 脚本，也是 `Notification` 的唯一处理器，于是每次触发都把 bash 交给 Python，得到
+`SyntaxError: unmatched ')'`——退出码非 0，但没人读那个流，桌面上只是「没有通知」。
+
+现在按扩展名分派（`.sh` → bash，`.py` → Python，其余显式报告而不是猜）。修完之后
+`notify.sh` 第一次真正执行，`Notification` 才有资格谈「触发没触发」。
+
+顺带三件事：
+
+- `notify.sh` 现在把每次通知追加到 `quality_reports/session_logs/notifications.log`。此前
+  它只写 stderr 或发一个 OSC 9 终端序列——无人值守时两者都留不下任何东西，于是「Notification
+  从不触发」和「触发了但没人在看」是同一个观察结果，和 hook-runner 那个缺陷同一种瞎。
+- 没有 `jq` 时（Git for Windows 不自带）用 `sed` 兜底取 `message` / `title`。原先的
+  fallback 让每条通知都是同一句「Claude needs attention」，日志因此没有区分度。
+- `NOTIFY_DRY_RUN=1` 跳过桌面通知、保留日志行，让接线检查可以安全地执行这条命令。
+
+`PreCompact` 也因此从 L2 ⏳ 升到 **L3**：本机 2026-10-30 两次真实压缩各写出一份
+`pre-compact-state.json`（`trigger: "auto"`，06:25:55 与 06:30:34）。
+
+### Fixed — `check_wiring()` 报过一次假绿
+
+接线检查第一版为了隔离，把 `CODEBUDDY_PROJECT_DIR` 指向临时目录——而注册命令本身就是用
+这个变量拼出 runner 路径的。于是 runner 找不到、bash 报 `No such file`、不匹配任何已知
+标记，检查**报通过**，而钩子根本没被执行。现在只重定向日志目录（`NOTIFY_LOG_DIR`），并且
+对 `notify.sh` 追加一条正向要求：**跑完必须留下日志行**。零错误 + 零痕迹 = 没跑到。
+
+### Changed — `pre-compact` 不再把「未编译产物」当成决策
+
+本机两次真实压缩写出的 `pre-compact-state.json` 里，`decisions` 是
+`["no fresh .pdf", "no fresh .html", "no fresh .pdf"]`——全是从 Stop 钩子写的
+`*_auto.md` 事件流里，被 `→` / `•` 两个宽松模式抓来的。事件流不是决策记录：现在优先读
+手写日志，只有没有手写日志时才回退到自动日志、且只认 `Decision:` / `Decided:` / `Chose:`
+三个显式标记；重复的句子只算一条。
+
+### Fixed — 引文检查器在「一条都没查」时报了 OK
+
+`validate-findings.py --check-quotes` 只比对 `evidence` 里**带双引号**、12 字符以上的片段。
+把证据写成散文，抽取结果为空，于是它打印 `quotes OK (0 quote(s) checked)` 并 **exit 0**：
+十份发现的报告，一条引文都没核对，门禁说它通过了。
+
+这不是校对失误，是**绕过成本**的问题——编造引文会被最近原文行抓住，不写引文则一路绿灯，
+于是「不用引文」成了比「编造引文」更省力的作弊路径。修法是把两种零分开：
+
+- **一条引文都没写** → exit 1，逐条列出没有引文的发现，并说明引文是源文件自己的话。
+- **写了引文但文件读不出来**（PDF 缺 `pdftotext`、二进制、路径不存在之外的不可读情形）
+  → 仍然只是报告，不判失败。否则没装 poppler 的机器会把每一次评审都判红。
+- **一条发现都没报**（`[]`）→ 不判失败：干净稿件没有可核对的东西，与拒绝引用是两回事。
+
+已通过的报告仍可能个别发现没写引文（跨产物计数这类确实无法引用原文），检查器会把
+「几条里几条带引文」一并打印出来，但不判失败——这条限制写进了
+`orchestration-schemas.md` §1，不留给读者猜。
+
+`tests/portability/test_gates.py` 新增 `FindingsQuoteCoverage` 四条用例：无引文判失败
+（在旧代码上会红，已实测）、部分引用通过但报覆盖率、不可读源文件仍是报告、空报告不误判。
 
 ---
 
