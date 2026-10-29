@@ -102,7 +102,15 @@ def extract_recent_decisions(project_dir: str, limit: int = 3) -> list[str]:
     if not logs_dir.exists():
         return []
 
-    log_files = sorted(logs_dir.glob("*.md"), key=lambda f: f.stat().st_mtime, reverse=True)
+    # `*_auto.md` is the Stop hook's event stream — files touched, artifacts left
+    # uncompiled — not a human's decision record. Its bullets match the loose
+    # `→` and `•` patterns below, so reading it fed "no fresh .pdf" into
+    # `decisions` twice and an identical "no fresh .html" a third time, filling
+    # `limit` with noise. Prefer a hand-written log; fall back to the automatic
+    # ones only for the explicit markers, which an event stream does not contain.
+    hand = [f for f in logs_dir.glob("*.md") if not f.name.endswith("_auto.md")]
+    auto = [f for f in logs_dir.glob("*.md") if f.name.endswith("_auto.md")]
+    log_files = sorted(hand or auto, key=lambda f: f.stat().st_mtime, reverse=True)
     if not log_files:
         return []
 
@@ -110,18 +118,23 @@ def extract_recent_decisions(project_dir: str, limit: int = 3) -> list[str]:
     decisions = []
 
     # Look for decision markers
-    patterns = [
-        r"Decision:\s*(.+)",
-        r"Decided:\s*(.+)",
-        r"Chose:\s*(.+)",
-        r"→\s*(.+)",
-        r"•\s*(.+)"
-    ]
+    if hand:
+        patterns = [
+            r"Decision:\s*(.+)",
+            r"Decided:\s*(.+)",
+            r"Chose:\s*(.+)",
+            r"→\s*(.+)",
+            r"•\s*(.+)"
+        ]
+    else:
+        patterns = [r"Decision:\s*(.+)", r"Decided:\s*(.+)", r"Chose:\s*(.+)"]
 
     for line in content.split("\n")[-50:]:  # Last 50 lines
         for pattern in patterns:
             match = re.search(pattern, line.strip())
-            if match and len(match.group(1)) > 10:
+            # A repeat is not a second decision: the same sentence captured twice
+            # spends one of the three slots and says nothing new.
+            if match and len(match.group(1)) > 10 and match.group(1)[:100] not in decisions:
                 decisions.append(match.group(1)[:100])
                 if len(decisions) >= limit:
                     return decisions

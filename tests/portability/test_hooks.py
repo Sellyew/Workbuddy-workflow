@@ -598,6 +598,78 @@ class CompactionUtf8(_Tmp):
         self.assertIn("Re-run table 3", out)
 
 
+    def test_auto_log_bullets_are_not_decisions(self):
+        """The Stop hook's `*_auto.md` is an event stream, not a decision record.
+
+        Its bullets match the `→` / `•` patterns, so a compaction captured
+        "no fresh .pdf" twice and "no fresh .html" once — `limit` filled with
+        noise while the real decisions stayed out. Observed on 2026-10-30 in
+        pre-compact-state.json, which is what a transcript looks like when the
+        only log in the tree is the automatic one."""
+        proj = self.path("proj")
+        self.write("proj/quality_reports/session_logs/2026-09-27_auto.md",
+                   "## 18:04 — 3 file(s) touched\n\n**Uncompiled artifacts:**\n"
+                   "- Slides\\HelloWorld.tex → no fresh .pdf\n"
+                   "- Quarto\\HelloWorld.qmd → no fresh .html\n")
+        env = clean_env(self.home, CLAUDE_PROJECT_DIR=proj)
+        fire("pre-compact.py", {"trigger": "auto"}, env)
+        h = hashlib.md5(proj.encode()).hexdigest()[:8]
+        state = os.path.join(self.home, ".workbuddy", "sessions", h, "pre-compact-state.json")
+        with open(state, encoding="utf-8") as f:
+            saved = json.load(f)
+        self.assertEqual(saved["decisions"], [],
+                         "an event stream's bullets were captured as decisions")
+
+    def test_the_same_sentence_is_one_decision(self):
+        """A repeat spends one of three slots and says nothing new."""
+        proj = self.path("proj")
+        self.write("proj/quality_reports/session_logs/2026-09-27_log.md",
+                   "# Log\n- Decision: drop the second-stage sample\n"
+                   "- Decision: drop the second-stage sample\n"
+                   "- Decision: keep the 37-cluster wild bootstrap\n")
+        env = clean_env(self.home, CLAUDE_PROJECT_DIR=proj)
+        fire("pre-compact.py", {"trigger": "auto"}, env)
+        h = hashlib.md5(proj.encode()).hexdigest()[:8]
+        state = os.path.join(self.home, ".workbuddy", "sessions", h, "pre-compact-state.json")
+        with open(state, encoding="utf-8") as f:
+            saved = json.load(f)
+        self.assertEqual(len(saved["decisions"]), len(set(saved["decisions"])), saved["decisions"])
+        self.assertIn("keep the 37-cluster wild bootstrap", saved["decisions"])
+
+
+class HookRunnerDispatch(_Tmp):
+    """hook-runner-python-only: the runner could execute a Python hook and nothing else.
+
+    It used to `exec $PY` for every registered hook. `notify.sh` is a bash script
+    and the only handler for Notification, so every fire handed it to Python and
+    got `SyntaxError: unmatched ')'` back. A runner that speaks one language
+    silently vetoes every hook written in another — and fail-open hid it: the
+    notification simply never appeared, and nothing recorded that it hadn't.
+    """
+
+    RUNNER = os.path.join(HOOKS, "lib", "hook-runner.sh")
+
+    def test_shell_hook_runs_under_bash(self):
+        proj = self.path("proj")
+        os.makedirs(os.path.join(proj, "quality_reports", "session_logs"))
+        # The runner only honours these when they are already set; unset, it pins
+        # CODEBUDDY_PROJECT_DIR to the repository the hook file lives in, and the
+        # fixture's log line would land in the developer's own tree.
+        env = clean_env(self.home, CODEBUDDY_PROJECT_DIR=proj)
+        r = subprocess.run([BASH, self.RUNNER, "notify.sh"],
+                           input=json.dumps({"message": "needs attention",
+                                             "title": "WorkBuddy"}).encode("utf-8"),
+                           env=env, capture_output=True, timeout=60)
+        err = r.stderr.decode("utf-8", "replace")
+        self.assertEqual(r.returncode, 0, err)
+        self.assertNotIn("SyntaxError", err)
+        self.assertNotIn("Traceback (most recent call last)", err)
+        log = os.path.join(proj, "quality_reports", "session_logs", "notifications.log")
+        self.assertTrue(os.path.exists(log), "notify.sh left no trace on disk")
+        with open(log, encoding="utf-8") as f:
+            self.assertIn("needs attention", f.read())
+
+
 # ── other session hooks ─────────────────────────────────────────────────────
 class ContextMonitorStdin(_Tmp):
     """nonguard-hooks-stdin-silent (context-monitor): a transcript under an accented
