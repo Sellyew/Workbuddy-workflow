@@ -53,7 +53,7 @@ WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完�
 | 读取并编辑你的文件 | 就地以外科手术式精度改 `.tex`、`.qmd`、`.R` 文件 |
 | 跑 shell 命令 | 直接编译 LaTeX、跑 R 脚本、渲染 Quarto |
 | 访问 git 历史 | 提交、PR、分支 --- 全在对话里完成 |
-| 持久记忆 | CLAUDE.md + MEMORY.md 跨会话存活 |
+| 持久记忆 | CODEBUDDY.md + MEMORY.md 跨会话存活 |
 | 编排器运行时 | 特定技能（`/seven-pass-review`、`/deep-audit`、`/review-paper --peer` 等）在内部跑真正的扇出 → 归并 → 裁判运行时；`/qa-quarto` 与 `/review-paper --adversarial` 跑它的批评者 → 修复 → 空轮收敛那一半 |
 | 多代理工作流 | 19 个专职代理，负责校对、版面、教学法、代码审查、事实核查、AI 腔调审计、模拟 + R 包审查 |
 | 质量审读 | `/commit` 内部给出建议性打分（越线即停并请示是否覆盖）；目标值：80 分提交、90 分 PR、95 分优秀 |
@@ -160,7 +160,7 @@ Claude 调用 /data-analysis，它在内部：
 ::: {.callout-note}
 ## 你不需要第一天就把这些都上齐
 
-本指南描述的是完整系统 --- 19 个代理、63 个技能、37 条规则。那是上限，不是起点。**先只用 CLAUDE.md 加 2--3 个技能**（`/compile-latex`、`/proofread`、`/commit`）。发现需要什么，再补规则与代理。这套模板是按渐进采用设计的：fork 下来，把占位符填上，就开始干活。其余的东西，等你需要时都在那儿。
+本指南描述的是完整系统 --- 19 个代理、63 个技能、37 条规则。那是上限，不是起点。**先只用 CODEBUDDY.md 加 2--3 个技能**（`/compile-latex`、`/proofread`、`/commit`）。发现需要什么，再补规则与代理。这套模板是按渐进采用设计的：fork 下来，把占位符填上，就开始干活。其余的东西，等你需要时都在那儿。
 :::
 
 ---
@@ -187,9 +187,9 @@ Claude 调用 /data-analysis，它在内部：
 
 | 要求 | 它是什么 | 怎么搞到 |
 |-------------|-----------|---------------|
-| **WorkBuddy** | 支撑这套工作流的 AI 工具 | `curl -fsSL https://claude.ai/install.sh | bash`（[文档](https://code.claude.com/docs/en/overview)） |
-| **Node.js 18+** | 只在走 npm 安装路线时需要 —— 推荐的原生安装器自带运行时 | [nodejs.org](https://nodejs.org) |
-| **Claude 账号**（仅走 CLI 时需要） | Claude 的认证 | [Claude Pro 或 Max 订阅](https://claude.ai) 或 [Anthropic API key](https://console.anthropic.com)（按 token 付费） |
+| **WorkBuddy** | 支撑这套工作流的桌面客户端 | 装好客户端（[官网](https://www.workbuddy.cn/)）；本仓库不代管产品安装链接 |
+| **Python 3** | 门禁脚本、钩子与质量打分器都靠它 | macOS/Linux 一般自带；[python.org](https://python.org) |
+| **WorkBuddy 账号** | 登录客户端 | 首次启动客户端时按提示登录 |
 | **git** | 版本控制（用于 fork/clone） | Mac 自带；`brew install git` 或 [git-scm.com](https://git-scm.com) |
 
 **可选**（只装你项目用得上的）：
@@ -205,6 +205,8 @@ Claude 调用 /data-analysis，它在内部：
 ::: {.callout-note}
 ## 这要花多少钱？
 
+> **先分清两份合同。** 这一段讲的是**上游 Claude 那一侧**的账（订阅、API 计费、使用条款）。本平台是 WorkBuddy，费用与条款以客户端内和官网的说明为准，两者不是同一份合同。
+
 **Claude Pro 或 Max 订阅**：包含 Claude Code 用量，额度宽松。当前价格与档位细节见 [claude.ai](https://claude.ai)。对多数学者是最优选择。
 
 **API 访问**（按 token 付费）：适合重度用户或 CI/CD。用[深度档位](#sec-effort)与[多模型策略](#multi-model-strategy-cost-vs-quality)控制成本。
@@ -217,12 +219,12 @@ Claude Code 本身安装免费（源码在 GitHub 公开，但不是开源软件
 ::: {.callout-tip}
 ## 第 1 天清单
 
-- [ ] 安装 WorkBuddy：`curl -fsSL https://claude.ai/install.sh | bash`
+- [ ] 装好 WorkBuddy 桌面客户端（[官网](https://www.workbuddy.cn/)）
 - [ ] fork 仓库并 clone 到本地
 - [ ] 跑一次 `./scripts/install-hooks.sh`（接上真正的 pre-commit 门禁 --- 不跑它就一直空转）
-- [ ] 在项目目录里运行 `claude`（首次运行会提示认证）
+- [ ] 新建任务，点输入框左下角的**选择工作空间**，选中这个项目目录
 - [ ] 粘入起始提示词（填上你的项目细节）
-- [ ] 等 WorkBuddy 按你的项目改好 `CLAUDE.md`
+- [ ] 等 WorkBuddy 按你的项目改好 `CODEBUDDY.md`
 - [ ] 批准配置计划
 - [ ] 让 WorkBuddy 干点事：*「审一遍我的幻灯片」* 或 *「做一讲讲 [topic]」*
 - [ ] 批准任务计划，看它干活，审读产出
@@ -233,9 +235,9 @@ Claude Code 本身安装免费（源码在 GitHub 公开，但不是开源软件
 ::: {.callout-tip collapse="true"}
 ## 第 1 天就卡住了？
 
-**「command not found: claude」：**先装 WorkBuddy：`curl -fsSL https://claude.ai/install.sh | bash`（原生安装器 --- 不需要 Node.js；只有 npm 路线才要 Node 18+）。
+**找不到「选择工作空间」：**它在新建任务的输入框左下角。客户端没有命令行安装器，也没有 `claude` 这类命令 --- 那是上游 Claude Code 的入口，不是本平台的。
 
-**WorkBuddy 似乎无视了配置文件：**确认你是在项目目录里（而不是父目录里）运行的 `claude`。WorkBuddy 从当前工作目录读取 `.codebuddy/` 与 `CLAUDE.md`。
+**WorkBuddy 似乎无视了配置文件：**确认任务的工作空间选的是项目目录**本身**，而不是它的父目录。WorkBuddy 从工作空间的根目录读取 `.codebuddy/` 与 `CODEBUDDY.md`，在父目录里开会话等于一份都没读到。
 
 **钩子不触发（没有通知、没有提醒）：**检查 Python 3 是否装上（`python3 --version`），以及钩子文件是否可执行（`chmod +x .codebuddy/hooks/*`）。
 
@@ -272,7 +274,7 @@ cd my-project
 
 ## 第 2 步：启动 WorkBuddy 并粘入这段提示词 {#sec-first-session}
 
-在项目目录里打开终端，运行 `claude`，把下面这段粘进去。把**加粗的占位符**换成本项目的细节：
+新建任务并把工作空间选成项目目录，然后把下面这段粘进输入框。把**加粗的占位符**换成本项目的细节：
 
 ::: {.callout-note collapse="true"}
 ## 不用终端，用 VS Code 或桌面应用？
@@ -289,14 +291,14 @@ cd my-project
 
 我希望我们的协作是有结构、精确、严谨的 --- 哪怕多花点时间。做视觉材料时，一切都要打磨到位、可直接发表。我不想反复重复自己，所以我们的工作流应当善于记住决定、并从纠正中学习。
 
-我已经装好了这套 WorkBuddy 学术工作流（fork 自 `pedrohcgs/claude-code-my-workflow`）。配置文件都在这个仓库里（`.codebuddy/`、`CLAUDE.md`、templates、scripts）。请读一遍，理解这套工作流，然后**把所有配置文件改成适合我这个项目的样子** --- 填上 `CLAUDE.md` 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。
+我已经装好了这套 WorkBuddy 学术工作流（fork 自 `pedrohcgs/claude-code-my-workflow`）。配置文件都在这个仓库里（`.codebuddy/`、`CODEBUDDY.md`、templates、scripts）。请读一遍，理解这套工作流，然后**把所有配置文件改成适合我这个项目的样子** --- 填上 `CODEBUDDY.md` 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。
 
 之后，对所有非琐碎任务都走计划先行的工作流。一旦我批准计划，就切到包工头模式 --- 自主协调一切，只在有歧义或需要决策时才回来找我。最初几次会话，多跟我确认一下，好让我学会这套工作流怎么跑。
 
 进入计划模式，从为本项目适配工作流配置开始。
 :::
 
-**这段提示词做了什么：** WorkBuddy 会读 `CLAUDE.md` 与全部规则，填上你的项目名、机构、Beamer 环境、CSS 类与项目状态表，然后针对你的具体用例提出规则调整。你批准计划，WorkBuddy 处理其余一切。从那以后，你只管描述想做什么。
+**这段提示词做了什么：** WorkBuddy 会读 `CODEBUDDY.md` 与全部规则，填上你的项目名、机构、Beamer 环境、CSS 类与项目状态表，然后针对你的具体用例提出规则调整。你批准计划，WorkBuddy 处理其余一切。从那以后，你只管描述想做什么。
 
 ## 可选：手工配置
 
@@ -305,7 +307,7 @@ cd my-project
 ::: {.callout-note collapse="true"}
 ## 手工配置步骤（点击展开）
 
-**定制 CLAUDE.md** --- 打开 `CLAUDE.md`，替换所有 `[BRACKETED PLACEHOLDERS]`：
+**定制 CODEBUDDY.md** --- 打开 `CODEBUDDY.md`，替换所有 `[BRACKETED PLACEHOLDERS]`：
 
 1. **项目名与机构**
 2. **文件夹结构**（按你的布局调整）
@@ -337,11 +339,11 @@ python scripts/quality_score.py Slides/MyFirstLecture.tex
 
 你不一定要从 fork 开始。要把这套工作流搬进手头已有的仓库：
 
-1. **拷进来** `.codebuddy/`、`scripts/`、`templates/`、`.githooks/`、`Preambles/`、`CLAUDE.md`、`MEMORY.md`、`TROUBLESHOOTING.md` 与 `CHANGELOG.md`（模板里的文件会链接到后两个），再加上 `quality_reports/` --- 只要它的文件夹骨架与 `qualification/LEDGER.md`，不要模板自己的计划与日志。把模板的 `.gitignore` 合并进你的。
-2. **为你的项目重写 `CLAUDE.md`** --- 名字、文件夹树、当前状态。它是 WorkBuddy 读的第一个文件。它指向模板 README 技能表的那个链接（`README.md#skills-claudeskills`）在你的仓库里解析不了；改成指向你自己的索引，或者删掉。
+1. **拷进来** `.codebuddy/`、`scripts/`、`templates/`、`.githooks/`、`Preambles/`、`CODEBUDDY.md`、`MEMORY.md`、`TROUBLESHOOTING.md` 与 `CHANGELOG.md`（模板里的文件会链接到后两个），再加上 `quality_reports/` --- 只要它的文件夹骨架与 `qualification/LEDGER.md`，不要模板自己的计划与日志。把模板的 `.gitignore` 合并进你的。
+2. **为你的项目重写 `CODEBUDDY.md`** --- 名字、文件夹树、当前状态。它是 WorkBuddy 读的第一个文件。它指向模板 README 技能表的那个链接（`README.md#skills-claudeskills`）在你的仓库里解析不了；改成指向你自己的索引，或者删掉。
 3. **把卫生门禁该知道的文件夹与根文件告诉它。** 把你自己的每个顶层文件夹（`paper/`、`code/`……）加进 `scripts/check-repo-hygiene.py` 里的 `ROOT_ALLOW_DIRS`，把根目录里尚未被允许的每个文件（一个 `Makefile`、一个 `.Rproj`……）加进 `ROOT_ALLOW`，各带一行理由。布局类文件夹（`output/`、`data/`、`R/`、`tests/`）与常见的 R、Python 环境文件（`DESCRIPTION`、`renv.lock`、`requirements.txt`……）已经默认允许。
 4. **删掉那两项读模板自家文档的检查。** 从 `scripts/backtest.sh` 里删掉 `run "surface-sync"` 与 `run "derived-counts"` 两行：它们数的是模板 README、指南与变更日志里的技能、门禁与用例数，你的项目没有这些。其余每项检查都照原样适用于你的工作。
-5. **按名字暂存拷进来的文件** --- `git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore`。台账检查要求钩子文件被跟踪，而模板自带的防线拒绝一刀切的 `git add -A`。
+5. **按名字暂存拷进来的文件** --- `git add .codebuddy .githooks scripts templates Preambles CODEBUDDY.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore`。台账检查要求钩子文件被跟踪，而模板自带的防线拒绝一刀切的 `git add -A`。
 6. **运行** `./scripts/validate-setup.sh`，然后 `./scripts/install-hooks.sh`，然后 `./scripts/backtest.sh`。
 
 我们在一个自带 README、`paper/` 与 `code/` 文件夹以及根目录 `Makefile` 的项目上测过这些步骤。照抄下来时，套件里有五项检查失败。做完第 1–5 步，全套通过，钩子用例集也在内。
@@ -411,7 +413,7 @@ Claude：「我先澄清几点：
 | 层级 | 你用到 | 你得到 | 若……就停在这里 |
 |---|---|---|---|
 | **0 — 一件安全的任务** | 朴素提示词；接受前先读 diff | 对 WorkBuddy 会怎么动*你的*文件有个感觉 | 你主要只想要个偶尔帮手的助手 |
-| **1 — 可重复** | 定制过的 `CLAUDE.md` + 你真会反复用的 2–3 个技能 | 每次都同样的质量，不必重新解释 | 你的活主要是写作与幻灯片 |
+| **1 — 可重复** | 定制过的 `CODEBUDDY.md` + 你真会反复用的 2–3 个技能 | 每次都同样的质量，不必重新解释 | 你的活主要是写作与幻灯片 |
 | **2 — 机械门禁** | `install-hooks.sh`、门禁总检套件、编译/渲染检查 | 提交不会悄悄偏离现实 | 你单干，且信得过自己的审读 |
 | **3 — 对抗式审读** | 独立上下文审阅者、`/vaccinate`、审读回路 | 来自从未见过你推理过程的读者的发现 | 你的利害是内部的（教学、草稿） |
 | **4 — 投稿可信度** | 数值断言护照、`/seven-pass-review`、外部裁判 | 一条审稿人或复现者能走完的审计轨迹 | --- 这是顶层 |
@@ -721,11 +723,11 @@ AI 辅助实证工作最常出错的方式，不是一个数字算错。而是�
 
 理解这些配置层，有助于你定制这套工作流、在出问题时排查。WorkBuddy 的力量来自五层协同工作的配置 --- 把它们想成你学术项目的操作系统。
 
-## CLAUDE.md --- 你项目的宪法
+## CODEBUDDY.md --- 你项目的宪法
 
-`CLAUDE.md` 是最重要的单个文件。WorkBuddy 在每次会话开始时读它。但关键洞见在这里：**WorkBuddy 能可靠遵循大约 100--150 条自定义指令。** 你的系统提示已经用掉约 50 条，剩下约 100--150 条给你的项目。CLAUDE.md 与常驻规则共享这份预算。
+`CODEBUDDY.md` 是最重要的单个文件。WorkBuddy 在每次会话开始时读它。但关键洞见在这里：**WorkBuddy 能可靠遵循大约 100--150 条自定义指令。** 你的系统提示已经用掉约 50 条，剩下约 100--150 条给你的项目。CODEBUDDY.md 与常驻规则共享这份预算。
 
-这意味着 CLAUDE.md 应当是一部**精瘦的宪法** --- 短短的指令与指针，而不是详尽的文档。目标约 120 行：
+这意味着 CODEBUDDY.md 应当是一部**精瘦的宪法** --- 短短的指令与指针，而不是详尽的文档。目标约 120 行：
 
 - **核心原则** --- 4--5 条（计划先行、事后核验、质量门禁、LEARN 标签）
 - **文件夹结构** --- 什么住在哪里
@@ -760,7 +762,7 @@ AI 辅助实证工作最常出错的方式，不是一个数字算错。而是�
 ::: {.callout-important}
 ## 保持精瘦
 
-CLAUDE.md 每次会话都加载。保持精瘦 --- 官方指引建议控制在约 200 行以内，行数越长遵循度越低（过载的文件会静悄悄丢掉规则）。把详细标准放进按路径作用域的规则（`.codebuddy/rules/`）--- 它们只在 WorkBuddy 处理匹配文件时加载，因此不争夺注意力。
+CODEBUDDY.md 每次会话都加载。保持精瘦 --- 官方指引建议控制在约 200 行以内，行数越长遵循度越低（过载的文件会静悄悄丢掉规则）。把详细标准放进按路径作用域的规则（`.codebuddy/rules/`）--- 它们只在 WorkBuddy 处理匹配文件时加载，因此不争夺注意力。
 :::
 
 ## 规则 --- 自动加载的领域知识 {#rules---domain-knowledge-that-auto-loads}
@@ -1024,7 +1026,7 @@ tools: ["Read", "Grep", "Glob"]
 
 成本在你看月账单之前是看不见的。三个杠杆，按影响排序：
 
-**1. 提示缓存。** Anthropic 的提示缓存让重复的前缀 token（系统提示、CLAUDE.md、大块上下文）走缓存路径，只按输入价格的一小部分计费。fork 的人该知道两件事：
+**1. 提示缓存。** Anthropic 的提示缓存让重复的前缀 token（系统提示、CODEBUDDY.md、大块上下文）走缓存路径，只按输入价格的一小部分计费。fork 的人该知道两件事：
 
 - **默认 TTL 在 2026 年初从 60 分钟降到 5 分钟。** 一条轮次之间要花 12 分钟的 `/review-paper --peer` 长流水线，如今第二轮开始时缓存已经冷了。对 API / Bedrock / Vertex / Foundry 套餐上的长流水线，选择启用的 `ENABLE_PROMPT_CACHING_1H` 环境变量可恢复 1 小时 TTL。在 Claude Pro / Max 订阅上，WorkBuddy 自动申请 1 小时 TTL，不额外收费。
 - **`cache_miss_reason`**（Anthropic 公开测试，2026-05-13）现已在 Messages 请求上暴露。用它诊断一条长跑的流水线为什么拿不到缓存命中（最常见：某个钩子注入了时间戳，破坏了前缀；或轮次之间系统提示发生了漂移）。
@@ -1286,7 +1288,7 @@ fork 的用户 `git clone` 之后拿到的是通用的 `MEMORY.md`。他们自�
 
 1. **通用性** --- 一个非经济学的 fork 者会受益吗？
 2. **时效性** --- 它与当前代码矛盾吗（`grep` 被引用的文件）？
-3. **冗余** --- 它已经在 MEMORY.md、CLAUDE.md 或某条规则里了吗？
+3. **冗余** --- 它已经在 MEMORY.md、CODEBUDDY.md 或某条规则里了吗？
 4. **证据** --- 它引用了原始事故 / 文件 / 原因吗？
 5. **格式** --- 它遵循 `[LEARN:category] wrong → right` 吗？
 
@@ -1335,11 +1337,11 @@ git 提交记录改了什么，但不记录*为什么*。会话日志填这个�
 
 ### 一切如何咬合
 
-有了 CLAUDE.md、MEMORY.md、计划、会话日志与 GitHub issue，系统有五层持久记忆。下面说明每一层做什么、何时要紧：
+有了 CODEBUDDY.md、MEMORY.md、计划、会话日志与 GitHub issue，系统有五层持久记忆。下面说明每一层做什么、何时要紧：
 
 | 层 | 文件 | 扛得住压缩？ | 何时更新 | 用途 |
 |-------|------|----------------------|--------------|---------|
-| 项目上下文 | `CLAUDE.md` | 是（在磁盘上） | 很少 | 项目规则、文件夹结构、命令 |
+| 项目上下文 | `CODEBUDDY.md` | 是（在磁盘上） | 很少 | 项目规则、文件夹结构、命令 |
 | 纠正 | `MEMORY.md` | 是（在磁盘上） | 遇 `[LEARN]` 标签时 | 防止重犯过去的错 |
 | 任务策略 | `quality_reports/plans/` | 是（在磁盘上） | 每个任务一次 | 计划扛过从规划到实现的交接 |
 | 决策推理 | `quality_reports/session_logs/` | 是（在磁盘上） | 增量 | 记录*为什么*做了那些决定 |
@@ -2789,7 +2791,7 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 
 这些是一方（first-party）Claude Code 命令，不用 fork 任何东西就能直接调。值得知道，是因为它们补上了本模板**有意**不去填的那些空档：
 
-- **`/team-onboarding`**（第 15 周）--- 把你本地的 Claude Code 配置（CLAUDE.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 `/team-onboarding` 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。
+- **`/team-onboarding`**（第 15 周）--- 把你本地的 Claude Code 配置（CODEBUDDY.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 `/team-onboarding` 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。
 - **`/autofix-pr`**（第 15 周）--- 在 GitHub PR 上跑 Claude Code，套用 CI 式的常规修法（lint、类型、简单的测试失败）。如果你推了 PR，想在审阅前再来一轮自动清理，它和我们的 `/commit` 流程配合得很好。
 - **`/powerup`**（2026 年 3、4 月第 14 周）--- 互动式课程，用动画演示讲 Claude Code 的各项特性（钩子、技能、MCP、插件）。推荐给刚 fork 完、想弄懂模板定制**底层原语**的人。
 - **Ultraplan**（第 15 周）--- 在 CLI 里起草计划并放到云端，在网页编辑器里审阅、批注，然后远程执行或拉回本地。适合需要干系人过目的计划（比如让合作者在真正开跑前认可某个分析方案）。
@@ -2808,7 +2810,7 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 - **能源** --- 尼泊尔与全球能源经济学、光伏组件可靠性
 - **教学** --- ECN 152 课程开发、Econ 730 因果面板数据
 
-每一次改造都走同一条路子：fork 模板、填 `CLAUDE.md` 占位符、自定义领域审阅者、加领域专属技能。基础设施（编排器、钩子、质量门禁）可以不加修改地平移。
+每一次改造都走同一条路子：fork 模板、填 `CODEBUDDY.md` 占位符、自定义领域审阅者、加领域专属技能。基础设施（编排器、钩子、质量门禁）可以不加修改地平移。
 
 ---
 
@@ -3107,15 +3109,15 @@ description: Helps with citations
 
 ## 迭代 6+ 个会话之后的经验
 
-1. **CLAUDE.md 控制在 150 行以内。** WorkBuddy 能可靠遵循约 150 条指令。400 行的 CLAUDE.md 意味着有些规则会被悄悄忽略。详细标准放进按路径生效的规则里。
+1. **CODEBUDDY.md 控制在 150 行以内。** WorkBuddy 能可靠遵循约 150 条指令。400 行的 CODEBUDDY.md 意味着有些规则会被悄悄忽略。详细标准放进按路径生效的规则里。
 2. **规则增量添加。** 别想着一次把所有规则写完。发现模式时再加。用 `paths:` frontmatter 让它们只在相关时才加载。
 3. **用 [LEARN] 格式。** 每次纠正都打标签并落进 MEMORY.md。这样跨会话不会重复同样的错。
 4. **相信对抗式模式。** 批评者-修复者回路能抓到你看不到的东西。让它跑。
 5. **什么都核一遍。** 核验规则的存在有它的道理。绝不跳过编译或渲染检查。
 6. **会话日志很重要。** 记录设计决策，而不只是「改了什么」。将来的你会感谢现在的你。
 7. **魔鬼代言人要早做。** 在地基不稳时先别盖 50 张幻灯片，先挑战结构。
-8. **渐进式披露。** 从 CLAUDE.md + 2--3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。
-9. **用 `CLAUDE.local.md` 放个人覆盖项。** 这个文件会自动被 gitignore，并与 `CLAUDE.md` 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 --- 它们不会污染共享仓库。
+8. **渐进式披露。** 从 CODEBUDDY.md + 2--3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。
+9. **用 `CLAUDE.local.md` 放个人覆盖项。** 这个文件会自动被 gitignore，并与 `CODEBUDDY.md` 一起加载。机器专属路径、个人偏好、本地工具版本都写这儿 --- 它们不会污染共享仓库。
 
 ::: {.callout-note collapse="true"}
 ## 扩展：接入 MCP 服务器

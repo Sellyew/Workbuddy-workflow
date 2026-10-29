@@ -167,6 +167,30 @@ WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文�
 - 双语化的直接收益：`check-surface-sync` 立刻抓到指南里**残留的陈旧计数**
   （`18 个代理、61 个技能`），而这处在中文化之前一直是绿的。
 
+### Fixed — 载体口径：用户是在 WorkBuddy 里打开，不是敲 `claude`
+
+前几轮把散文里的 Claude Code 改成了 WorkBuddy，却把**机器部分**留在上游：装的是
+Claude Code 的安装器，启动命令是 `claude`，项目指令文件名还是 `CLAUDE.md`。照着
+这些说明做，用户会先装错东西，再对着不存在的文件改配置。
+
+- **`validate-setup.sh`**：横幅与话术改成 WorkBuddy；删掉 `check_required "Claude
+  Code" "claude"`——载体是桌面客户端，shell 里没有可探测的命令，这一条会让只装了
+  WorkBuddy 的用户被判「缺必需项」。失败分支里的「先装 Claude Code」一并去掉，
+  「接下来能做什么」改成「新建任务 → 选择工作空间」。
+- **README 第 2 步**：`claude` 那一行代码块换成客户端操作（新建任务 → 输入框左下角
+  选择工作空间 → 选中克隆下来的目录），并说明在父目录开会话等于没读到配置。
+- **指南前置条件**：WorkBuddy 的安装方式原本是 `curl -fsSL https://claude.ai/install.sh`
+  ——那是 Claude Code 的安装器；改为装客户端并指向官网，与本仓库「不代管产品安装
+  链接」的口径一致。Node.js 行换成 Python 3（客户端的运行时由它自带，门禁才需要
+  Python），Claude Pro/Max 那一行换成 WorkBuddy 账号。
+- **第 1 天清单与「第 1 天就卡住了」**：安装、启动两条改成客户端操作；「command not
+  found: claude」改为「找不到『选择工作空间』」。
+- **`CLAUDE.md` → `CODEBUDDY.md`（指南 28 处、README 1 处）**，包括**起始提示词
+  本身**——它要求 Agent 去填 `CLAUDE.md` 里的占位符，而那个文件已随 `.claude/` 移除。
+  `git add .claude …` 同步改成 `git add .codebuddy …`。
+- **成本那一节加了边界说明**：它讲的是上游 Claude 侧的订阅、API 与条款，与 WorkBuddy
+  的合同不是同一份。正文未删——价格与条款以官方为准，模板不复制价格表。
+
 ### Fixed — 首跑路径的身份字段
 
 迁移只换了载体，没换**身份**：文档里写仓库地址、站点地址的地方仍然是上游的。照着
