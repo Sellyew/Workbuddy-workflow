@@ -12,12 +12,12 @@ allowed-tools: ["Read", "Write", "Glob", "Bash"]
 
 把嘈杂的学术收件箱变成一份简短、可直接拿来做决定的摘要。通过会话的 MCP 服务器（Gmail / Google Calendar）抓取近期邮件与日历上下文，把每条线索归入学术人真正会动手处理的那几个类别，并为每条线索提出**一个**动作——始终由人把关。配套产物是一份持续维护的**审稿义务台账**，这样你就不会悄悄接下超出负荷的评审。
 
-**核心原则：** 本技能*读取、分类、提议*。它起草；但没有你的确认，它绝不发送、接受、拒绝或预订任何东西。正是这道边界让它能作为本机 Desktop 定时任务安全地无人值守运行——而不是作为云端的 `/schedule` 例程，那种例程的新鲜克隆会丢掉被 gitignore 的摘要与台账。
+**核心原则：** 本技能*读取、分类、提议*。它起草；但没有你的确认，它绝不发送、接受、拒绝或预订任何东西。正是这道边界让它能无人值守地跑。要注意的是关卡为什么必须是这一种：automation 会话里**问不到人**——引擎对这类会话的确认请求直接判为立即拒绝，不是等你回答。所以「提议而非执行」不是保守的写法偏好，它是无人值守时唯一成立的关卡形式。
 
 ## 何时使用
 
 - **每周 / 每日清点** —— 「有什么落进来、需要我做决定？」，不必自己逐条读完。
-- **作为定时任务** —— 每天早上作为 Desktop 定时任务（本机）运行，摘要与审稿台账就留在你的机器上；它们被 gitignore，所以云端例程的新鲜克隆既看不到台账，也留不住摘要。由于本技能由用户调用，请把例程提示写成「读取 `.codebuddy/skills/triage-inbox/SKILL.md` 并照做」——定时任务无法按名字触发 `/triage-inbox`。
+- **作为定时任务** —— 每天早上用 automation 跑它。摘要与审稿台账留在你的机器上，而且**它读得到**：本平台的定时任务跑在真实工作树里（实测见 [`scheduled-routines.md`](../../references/scheduled-routines.md)），被 gitignore 的东西一样看得见。由于本技能由用户调用，请把提示写成「读取 `.codebuddy/skills/triage-inbox/SKILL.md` 并照做」——定时任务跑的是模型，按名字调不起 `/triage-inbox`。
 - **审稿负荷管理** —— 在再答应一篇之前，对着常设上限如实清点在办评审。
 - **R&R / 编辑截止日期捕获** —— 把埋在邮件里的「六周内交小修」变成一个日历占位提议。
 
@@ -109,7 +109,7 @@ allowed-tools: ["Read", "Write", "Glob", "Bash"]
 
 - [`.codebuddy/skills/coauthor-brief/SKILL.md`](../coauthor-brief/SKILL.md) —— 为合作者线索提供的交接简报。
 - [`.codebuddy/skills/respond-to-referees/SKILL.md`](../respond-to-referees/SKILL.md) —— 一旦这里浮现出修订截止日期，由它起草 R&R 回复文档。
-- Desktop 定时任务 —— 每天早上在你的机器上跑本技能（云端的 `/schedule` 例程会丢掉被 gitignore 的摘要与台账）；正是由人把关的设计让无人值守运行变得安全。
+- [定时例程](../../references/scheduled-routines.md) —— 每天早上用 automation 跑本技能；正是「只提议、不执行」的设计让无人值守运行变得安全（automation 会话里问不到人，所以关卡只能是不动作）。
 - [`.codebuddy/rules/orchestrator-protocol.md`](../../rules/orchestrator-protocol.md) —— 本技能在对外动作上遵守的「无守护进程、由用户/技能发起、人在环内」契约。
 - [`.codebuddy/rules/confidential-data.md`](../../rules/confidential-data.md) —— 绝不把附件内容、受限数据或凭据写进摘要（摘要虽被 gitignore，但仍落盘）。
 

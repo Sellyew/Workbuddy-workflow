@@ -78,10 +78,23 @@
 
 ### 调度
 
+`$H` = `$WB/app.asar.unpacked/node_modules/@genie/agent-harness`，`$S` = `$H/cli/dist-server/shared.cjs`。
+
 | 项 | 事实 | 级别 | 证据 | 核查 |
 |---|---|---|---|---|
-| 原生定时 | automations：一次性（`scheduledAt`）与循环（RRULE），跑在**指定的工作目录**，不是云端全新克隆 | L3 | 平台原生能力，本会话工具面可见 | 2026-10-30 |
-| `/schedule` / Routines / `CronCreate` | 上游机制，本平台**没有对应入口** | ⏳ 待测 | 尚未在引擎内定位，先按「未观测」处理 | — |
+| `CronCreate` / `CronList` / `CronDelete` | **存在**。`CronCreate` 取 5 段 cron（**本地时间**，`M H DoM Mon DoW`）、`prompt`、`recurring`（默认 true）、`durable`（默认 false）。循环任务「触发到删除、或 3 天后自动过期」；`recurring: false` 触发一次即自删 | L2 | `grep -ao "describe('Standard 5-field cron expression.\{0,1400\}" "$S"` | 2026-10-30 |
+| `durable: true` | **落盘并挺过重启**：`Persisted to {project}/.codebuddy/scheduled_tasks.json and executed in a dedicated task session`；默认 `false` 为 `Session-only (not written to disk, dies when session exits)` | L2 | `grep -ao 'Persisted to.\{0,150\}' "$S"` | 2026-10-30 |
+| automation 是**一次正常会话** | 运行时置 `CODEBUDDY_SESSION_TYPE=automation`；会话类型枚举里有独立的 `Automation` 项 | L2 | `grep -ao 'function isAutomationSession.\{0,80\}' "$S"` | 2026-10-30 |
+| automation 参数白名单 | `prompt` · `scheduleType` · `rrule` · `scheduledAt` · `validFrom` · `validUntil` · `cwds` · `permissionMode` · `connectorIds` · `skills` · `expertId` · `modelId` | L2 | `grep -ao 'let eX=\["prompt","scheduleType".\{0,160\}' "$S"` | 2026-10-30 |
+| `cwds` | 必须是**绝对路径**（引擎校验 `each cwd must be an absolute path`），且有数量上限 | L2 | `grep -ao 'each cwd must be an absolute path.\{0,30\}' "$S"` | 2026-10-30 |
+| 无人值守**问不到人** | automation 会话的双通道交互返回 `automation session synthesises an instant deny`——**立即拒绝，不是等待** | L2 | `grep -ao 'automation session synthesises an instant deny' "$S"` | 2026-10-30 |
+| 后台自动化**没有批准界面** | 需审批的能力在后台 automation 里以 `background-automation-no-approval-ui` 为由被禁用；提权只能创建时用 `permissionMode` | L2 | `grep -ao 'background-automation-no-approval-ui' "$S"` | 2026-10-30 |
+| automation **跑在真实工作树** | `pwd` = 仓库根、读到未跟踪文件、`git status` 里出现 `?? probe/` 与当次未提交的 ` M`、HEAD 与本地一致、非浅克隆。**不是全新克隆，不是隔离沙箱** | **L3** | 探针输出全文见 [`scheduled-routines.md`](scheduled-routines.md)「实测」节 | 2026-10-30 |
+| 失败上报 | 有 `automation.run.failure_detail` 遥测事件；推送通道是**企业微信 webhook**，设置键 `automation.wecomWebhookUrl` / `automation.wecomPushConfig.webhookUrl`。不配 = 没有推送 | L1 | `grep -ao 'automation\.wecom[A-Za-z.]*' "$S"` | 2026-10-30 |
+| `/schedule` 斜杠命令 | **不存在**。29 次命中全是 API 路由（`/v2/as/scheduler/tasks`、`/schedule/todo-source`）与打包文件名（`schedule-host-*.js`）；带引号的 `"/schedule"` 零命中 | L0 | `grep -aoF "/schedule" "$WB/app.asar" \| wc -l` → 29；`grep -aoF '"/schedule"' "$WB/app.asar" \| wc -l` → 0 | 2026-10-30 |
+| 云端 Routines | **不存在**：`Routines` 在 `app.asar` 与 `$S` 均零命中；`claude.ai` 连接器语义在 `$S` 零命中 | L0 | `grep -acF "Routines" "$WB/app.asar"` → 0 | 2026-10-30 |
+| `.codebuddy/routines/` | 只在一份「agent 启动时加载的配置路径」清单里出现 2 次；`$H/lib/` 与 `app.asar` 均零命中，未见发现逻辑 | ⏳ | `grep -rao routines "$H/lib/" \| wc -l` → 0 | 2026-10-30 |
+| `.codebuddy/loop.md` | `app.asar` 有 4 次命中，语义未核（可能是 `/loop` 的状态文件） | ⏳ | `grep -aoF "loop.md" "$WB/app.asar" \| wc -l` → 4 | 2026-10-30 |
 
 ## 已知不一致
 
@@ -97,28 +110,36 @@
    （「本平台没有 effort 字段」），错的是它周围没人去删字段——一条正确的规则，挡不住
    三个仍然照旧写的文件。
 
+
+2. ~~[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制~~ —— **2026-10-30 已重写**。
+   重写前先把「上游那三件套到底哪几件在这里存在」逐条落回引擎，结果推翻了原来的判断：
+   `CronCreate` / `CronList` / `CronDelete` **是存在的**（5 段 cron、本地时间；`durable: true`
+   落 `.codebuddy/scheduled_tasks.json` 并挺过重启，由专用任务会话执行）；`/schedule` 斜杠命令
+   **不存在**（29 次命中全是 API 路由与打包文件名）；云端 `Routines` **不存在**（两个包均零命中）。
+   上一版写「本平台没有对应入口」，把三件事判成了一件事，而且当时**根本没搜过**——
+   `CronCreate` 有 12 次命中。实测补上最后一块：automation 跑在真实工作树，看得见未跟踪与
+   **当次未提交**的文件（L3，探针输出见 `scheduled-routines.md` 的「实测」节）。
+   连带改了 `TROUBLESHOOTING.md` 的同一条错断言（原文「即便 `durable: true` 也救不了你」）、
+   `README.md`、`MEMORY.md` 的 `[LEARN:scheduling]`、`triage-inbox` 的三处、指南的「无人值守
+   运行」一条、`audit-pet-peeves.md` 第 17 条、`nightly-repro-check.sh` 的头注释。
+   **教训**：「没搜过」和「搜过没有」必须分开写。原来的措辞是「尚未在引擎内定位」——它诚实地
+   描述了「我没查」，却被下一层读成了「查了，没有」，与 T13 那次是同一种误读。
+
 ### 未处理
 
-2. **[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制**（`/schedule`、
-   Routines、`CronCreate`、claude.ai 连接器）。替代物是 automations，但语义不同：上游例程跑在
-   云端全新克隆上、看不到本地未提交数据；automation 跑在指定 cwd 里。原文的核心论断
-   （「云端例程够不到你的数据目录」）在替代物上可能正好相反。**待办**：先实测 automation 的
-   可见范围，再重写。
-3. **`README.md`「2026 年的能力」还剩三条未核的上游断言**：`worktree.baseRef` 的
+2. **`README.md`「2026 年的能力」还剩三条未核的上游断言**：`worktree.baseRef` 的
    `fresh` / `head`、内置技能清单（`/fewer-permission-prompts`、`/team-onboarding`、
    `/autofix-pr`、`/powerup`、Ultraplan、`/loop`）、以及「高级代理配置」里的 `maxTurns`。
    其中 `effort`、`effort.level` 与五档权限三处已在 2026-10-30 按本台账改正。
    **待办**：逐条落到 L0–L3，核不了就删。
-4. **技能级 `model:` 两处说法相反。** [`model-routing.md`](../rules/model-routing.md)
+3. **技能级 `model:` 两处说法相反。** [`model-routing.md`](../rules/model-routing.md)
    说「技能用同样的字段在 `SKILL.md` 的 frontmatter 里设定」，而
    `check-spec-conformance.py` 把 `model` 列在 `INERT_FIELDS` 里、会对写了它的技能发
    「无对应语义」告警。目前没人被坑到——63 个技能里 0 个写 `model:`——但两处必须统一。
    **待办**：用一次带 `model:` 的技能实测它是否影响运行时，再改错的那一边。
-2. **[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制**（`/schedule`、
-   Routines、`CronCreate`、claude.ai 连接器）。替代物是 automations，但语义不同：上游例程跑在
-   云端全新克隆上、看不到本地未提交数据；automation 跑在指定 cwd 里。原文的核心论断
-   （「云端例程够不到你的数据目录」）在替代物上可能正好相反。**待办**：先实测 automation 的
-   可见范围，再重写。
+4. **`.codebuddy/routines/` 与 `.codebuddy/loop.md` 是两条悬着的字符串**（见「调度」节的 ⏳ 行）。
+   前者只出现在一份配置路径清单里、无发现逻辑；后者在 `app.asar` 有 4 次命中、语义未核。
+   **待办**：要么找到消费点升到 L2，要么在文档里明说它们没有实现。
 
 ## 方法教训（下次还会犯，所以写下来）
 

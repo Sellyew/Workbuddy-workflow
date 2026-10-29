@@ -103,7 +103,7 @@
 
 ## 调度自主工作
 
-[LEARN:scheduling] `CronCreate` 实际上是会话级的——它随 REPL 一起死（2026-04-16 因一次限额终止撞上过）。必须挺过会话死亡的工作用 **Routines**（云端侧）。CronCreate 适合活着的会话内的短轮询，不适合「一小时之后跑这个」。
+[LEARN:scheduling] `CronCreate` 默认是会话级的——它随 REPL 一起死（2026-04-16 因一次限额终止撞上过）。必须挺过会话死亡的工作用 `durable: true`。CronCreate 适合活着的会话内的短轮询，不适合「一小时之后跑这个」。*[2026-10-30：本条原文写的是「用 **Routines**（云端侧）」——本平台没有云端 Routines（`Routines` 在 `app.asar` 与 harness 均零命中），去处写错了；而 `durable: true` 会落 `.codebuddy/scheduled_tasks.json` 并挺过重启（引擎原文 `Persisted to … and executed in a dedicated task session`）。教训本身成立，改的是它指向的机制。]*
 
 [LEARN:hooks] PreCompact 钩子可以**阻断**（现代协议），`pre-compact.py` 正是靠它在计划还是 DRAFT 时压住压缩。任何这类阻断都必须可选、最多触发一次、且失败时放行——一个能把会话卡死的防线，比它省下的上下文更糟。
 
