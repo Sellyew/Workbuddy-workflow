@@ -199,6 +199,35 @@ Claude Code 的安装器，启动命令是 `claude`，项目指令文件名还�
   路径」一节本来就是按客户端模式（手动 / 接受编辑 / 自动 / dontAsk / Bypass）写的，
   这两行却给的是 CLI 标志——自相矛盾，且照抄会 command not found。
 
+### Fixed — 干净克隆验收：报错里那条修复命令本身跑不通
+
+在全新克隆上按 README 走了一遍（克隆 → `install-hooks.sh` → `validate-setup.sh` →
+11 门 → 第一次 `git commit`）。门禁与工作树一致（PASS 10 / FAIL 0 / PARTIAL 2），
+但「改了 `.qmd` 就提交」这一步暴露了两个叠在一起的缺陷：
+
+- **`check-staleness.py` 给的修复命令会把人带错目录。** 原文是
+  `re-render: cd guide && quarto render workflow-guide.qmd, sync docs, then
+  ./scripts/stamp-render.sh` —— 前半句把工作目录切到了 `guide/`，后半句的
+  `./scripts/` 在那里不存在。照抄的人一定扑空。改成一条能从仓库根直接粘贴的：
+  `(cd guide && quarto render workflow-guide.qmd) && cp guide/workflow-guide.html
+  docs/workflow-guide.html && ./scripts/stamp-render.sh`。
+- **`scripts/stamp-render.sh` 在 Windows 上从来没跑通过。** 它自己算指纹：
+  `perl -pe 's/\r\n\z/\n/' | shasum -a 256`。注释当时的依据是「有 shasum 的地方就有
+  perl，因为 shasum 本身就是 perl 脚本」——这个等式在 Git for Windows 上不成立：
+  WorkBuddy 自带的 PortableGit 里 `perl` 与 `shasum` 都不存在，只有 `python`。
+  而 README、指南、`new-skill` 技能的流程、staleness 的报错全都在教人敲这条命令，
+  盖戳失败又会让 staleness 门永远红着，于是首跑的人第一次改指南就卡死。
+  改成转发壳（与 `backtest.sh` 同一套解释器探测），唯一实现在 `stamp-render.py`；
+  那个 `fp()` 本来就是 `check-staleness.py` 用来比对的那个，两份实现再没有漂的余地。
+  Python 3 本是必需项，所以没有新增依赖。
+
+配套的测试也一并修正：`RenderStampLineEndings` 的夹具只复制了 `.sh`、没复制 `.py`，
+转发壳会找不到目标；它的跳过条件是 `shasum and perl` 都在——**那正好是所有
+Git-for-Windows 安装都不满足的条件**，于是这条契约的 Windows 那一半一直没人测。
+现在条件改成 `bash` + 解释器，夹具补齐 `.py`，4 例从「永远跳过」变成在 Windows 上
+真跑。另加 1 例在 POSIX 上把 PATH 收窄到只剩 `dirname` 与解释器，实现若被改回自带
+指纹就会红。
+
 ### Fixed — 首跑路径的身份字段
 
 迁移只换了载体，没换**身份**：文档里写仓库地址、站点地址的地方仍然是上游的。照着

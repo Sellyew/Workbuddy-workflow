@@ -1152,7 +1152,7 @@ def git_deny_reason(cmd: str) -> str | None:
         for name, predicate, reason, alt in GIT_DENY:
             if sub == name and predicate(args):
                 return (f"{reason} {alt} "
-                        f"(override: run it in a terminal yourself, outside Claude Code.)")
+                        f"(override: run it in a terminal yourself, outside this session.)")
     return None
 
 
