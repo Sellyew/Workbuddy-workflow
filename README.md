@@ -413,7 +413,9 @@ cd my-project
 
 ## 由来
 
-这套基础设施提取自 Emory University 的 **Econ 730: Causal Panel Data** 课程，由 Pedro Sant'Anna 用 Claude Code 在 6 个以上会话里开发而成。那门课产出了 6 套完整的博士讲义、带 plotly 图表的交互式 Quarto 版本，以及完整的 R 复现包——全部通过这套多代理工作流管理。这些模式与领域无关：同样的代理、规则与编排器，对任何学术项目都适用。
+本仓库是 [`pedrohcgs/claude-code-my-workflow`](https://github.com/pedrohcgs/claude-code-my-workflow) 的中文移植版——把同一套基础设施改用 WorkBuddy 平台，并翻成中文，作为个人学习用途维护。方法、设计与原创内容归原作者 Pedro H. C. Sant'Anna；要引用这套工作流本身，请引用那个原始仓库（`CITATION.cff` 指向它）。
+
+原始基础设施提取自 Emory University 的 **Econ 730: Causal Panel Data** 课程，由 Pedro Sant'Anna 用 Claude Code 在 6 个以上会话里开发而成。那门课产出了 6 套完整的博士讲义、带 plotly 图表的交互式 Quarto 版本，以及完整的 R 复现包——全部通过这套多代理工作流管理。这些模式与领域无关：同样的代理、规则与编排器，对任何学术项目都适用。
 
 ---
 
