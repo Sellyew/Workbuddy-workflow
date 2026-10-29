@@ -22,7 +22,7 @@ labels: bug
 ## Environment
 
 - **OS:** macOS / Linux / Windows
-- **Claude Code version:** `claude --version`
+- **WorkBuddy version:** 客户端「关于」页显示的版本号（桌面端没有 `--version` 命令）
 - **Quarto version:** `quarto --version` (if relevant)
 - **XeLaTeX version:** `xelatex --version | head -1` (if relevant)
 - **Template version/commit:** `git log --oneline -1` or `git describe --tags`

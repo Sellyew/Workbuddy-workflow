@@ -29,11 +29,17 @@ metadata:
 
 ## 前置条件：已安装 `stata-mcp`
 
-本技能需要 `stata-mcp` MCP 服务器。每个用户装一次：
+本技能需要 `stata-mcp` MCP 服务器。每个用户装一次：在左侧 **插件 → MCP 服务器 → 配置 MCP** 里添加，或把它写进用户级 `~/.workbuddy/mcp.json`（想让整个项目共享，就写进 `<项目>/.workbuddy/mcp.json`）：
 
-```bash
-claude mcp add stata-mcp --scope user -- uvx stata-mcp
+```json
+{
+  "mcpServers": {
+    "stata-mcp": { "command": "uvx", "args": ["stata-mcp"] }
+  }
+}
 ```
+
+保存后回到 MCP 列表，`stata-mcp` 应显示绿色「连接成功」。（上游那条 `claude mcp add` 命令在本平台没有对应实现。）
 
 该 MCP 服务器提供带命令守卫的 Stata 执行（拒绝 `!/shell/erase` 这类破坏性操作）、内存监控，以及与 Stata Language Server 的配对。由 SepineTam 维护。
 

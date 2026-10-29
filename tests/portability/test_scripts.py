@@ -330,6 +330,9 @@ class ValidateSetupIdentity(unittest.TestCase):
         _git(self.repo, "config", "user.name", "tester")
         _git(self.repo, "config", "user.email", "t@example.invalid")
         stubs = os.path.join(self.tmp, "bin")
+        # `claude` is not consumed by validate-setup any more (the desktop app has
+        # no command line). It stays as the last rung of run-skill-eval's probe
+        # chain — pinned separately by SkillEvalCliProbe.
         for name in ("claude", "xelatex", "quarto", "R", "gh"):
             _write(stubs, name, self.STUB, mode=0o755)
         self.home = os.path.join(self.tmp, "home")        # no ~/.gitconfig
@@ -430,6 +433,112 @@ class RenderStampLineEndings(unittest.TestCase):
                 _write(d, rel, self.CONTENT_LF.replace(b"<html>", b"<html data-src>"))
             rc, out = _run([sys.executable, script, "--check"])
         self.assertEqual(rc, 0, out)
+
+
+# ── run-skill-eval.sh: which headless binary it calls ────────────────────────
+
+@unittest.skipUnless(BASH, "needs bash")
+class SkillEvalCliProbe(unittest.TestCase):
+    """The harness hardcoded `claude`. On this platform the desktop app has no
+    command line at all — headless runs come from a separately installed CLI whose
+    binary is `codebuddy` (or `cbc`) — so the binary is now resolved, and the four
+    flags the measurement depends on must survive that: `-p`, `--disallowedTools`,
+    `--output-format text`, and `--setting-sources user` on the without-arm alone.
+    """
+
+    STUB = ("#!/bin/sh\n"
+            'printf "%s|%s\\n" "${0##*/}" "$*" >> "$ARGV_LOG"\n'
+            'case "$*" in\n'
+            '  *"--setting-sources user"*) echo "no skill here" ;;\n'
+            '  *"Reply with exactly: OK"*) echo OK ;;\n'
+            '  *) echo "MARKER-PHRASE" ;;\n'
+            "esac\n")
+
+    # POSIX tools the harness shells out to. Resolving their directories lets PATH
+    # exclude whatever CLI the host happens to have, so "no CLI installed" is real.
+    TOOLS = ("timeout", "sed", "grep", "awk", "date", "basename", "seq",
+             "dirname", "cat", "head", "mkdir", "python3", "python")
+
+    def setUp(self):
+        self._td = tempfile.TemporaryDirectory()
+        self.addCleanup(self._td.cleanup)
+        self.tmp = os.path.realpath(self._td.name)
+        self.repo = os.path.join(self.tmp, "repo")
+        with open(os.path.join(ROOT, "scripts", "run-skill-eval.sh"), encoding="utf-8") as f:
+            _write(self.repo, "scripts/run-skill-eval.sh", f.read())
+        # marker.txt sits beside the cases dir; one case, one assertion.
+        _write(self.repo, "skills/demo/evals/marker.txt", "q\nMARKER-PHRASE\n")
+        _write(self.repo, "skills/demo/evals/cases/c1.md",
+               "## Prompt\nhi\n\n## Assert\n- MARKER-PHRASE\n")
+        self.cases = os.path.join(self.repo, "skills", "demo", "evals", "cases")
+        self.log = os.path.join(self.tmp, "argv.log")
+        self.bin = os.path.join(self.tmp, "bin")
+        os.makedirs(self.bin)
+        self.path = os.pathsep.join([self.bin, self._tool_dirs()])
+
+    def _tool_dirs(self):
+        dirs = []
+        for tool in self.TOOLS:
+            found = shutil.which(tool)
+            if found and os.path.dirname(found) not in dirs:
+                dirs.append(os.path.dirname(found))
+        return os.pathsep.join(dirs)
+
+    def _stub(self, name):
+        return _write(self.bin, name, self.STUB, mode=0o755)
+
+    def _run_eval(self, **extra):
+        return _run([BASH, os.path.join(self.repo, "scripts", "run-skill-eval.sh"),
+                     "demo", self.cases], PATH=self.path, ARGV_LOG=self.log, **extra)
+
+    def _calls(self):
+        if not os.path.exists(self.log):
+            return []
+        with open(self.log, encoding="utf-8") as f:
+            # $0 is whatever the caller passed: a bare name from PATH, or an
+            # absolute EVAL_CLI path (Windows keeps its backslashes).
+            return [(os.path.basename(name), argv)
+                    for name, argv in (line.rstrip("\n").split("|", 1) for line in f if line.strip())]
+
+    def test_probes_cbc_and_keeps_the_flag_contract(self):
+        self._stub("cbc")
+        rc, out = self._run_eval()
+        self.assertEqual(rc, 0, out)
+        calls = self._calls()
+        self.assertTrue(calls, "the harness never invoked the binary it probed")
+        self.assertEqual({name for name, _ in calls}, {"cbc"}, out)
+        for _, argv in calls:
+            self.assertIn("-p ", argv + " ", out)
+            self.assertIn("--disallowedTools Write,Edit,MultiEdit,NotebookEdit,Bash", argv)
+            self.assertIn("--output-format text", argv)
+        # The manipulation check is a difference between the arms: dropping the
+        # flag from the with-arm makes every number below it meaningless. The case
+        # loop's without-arm is also the only one that drops the `/skill ` prefix.
+        self.assertTrue([a for _, a in calls
+                         if a.startswith("-p /demo hi ") and "--setting-sources" not in a], out)
+        self.assertTrue([a for _, a in calls
+                         if a.startswith("-p hi --setting-sources user ")], out)
+
+    def test_prefers_codebuddy_over_cbc(self):
+        self._stub("codebuddy")
+        self._stub("cbc")
+        rc, out = self._run_eval()
+        self.assertEqual(rc, 0, out)
+        self.assertEqual({name for name, _ in self._calls()}, {"codebuddy"}, out)
+
+    def test_eval_cli_override_wins(self):
+        self._stub("codebuddy")
+        other = self._stub("some-other-cli")
+        rc, out = self._run_eval(EVAL_CLI=other)
+        self.assertEqual(rc, 0, out)
+        self.assertEqual({name for name, _ in self._calls()}, {"some-other-cli"}, out)
+
+    def test_no_cli_exits_2_and_names_the_real_install(self):
+        rc, out = self._run_eval()
+        self.assertEqual(rc, 2, out)
+        self.assertIn("no headless CLI", out)
+        self.assertIn("@tencent-ai/codebuddy-code", out)
+        self.assertEqual(self._calls(), [], out)
 
 
 if __name__ == "__main__":

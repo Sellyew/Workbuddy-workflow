@@ -60,8 +60,7 @@ quality_reports/plans/YYYY-MM-DD_short-description.md
 - 在一个任务之内，让压缩带着你走 —— 用 `/compact <what to keep>` 引导它
 - 在不相关的任务之间，`/clear`
 - 在重要上下文丢失之前把它存到磁盘
-- 要停下或交接：`/checkpoint`、退出，然后新起一个 `claude` —— 会话交接钩子会把最新的检查点交给下一次全新启动，只给一次（不会给 `--continue` /
-  `--resume`）；之后就请 Claude 读那个检查点文件
+- 要停下或交接：`/checkpoint`，然后新建一个任务 —— 会话交接钩子会把最新的检查点交给下一个全新会话，只给一次（接续旧任务时不会递送）；之后请 WorkBuddy 读那个检查点文件
 
 ### 上下文存活策略
 

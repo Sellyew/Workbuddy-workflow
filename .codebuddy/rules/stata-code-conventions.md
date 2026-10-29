@@ -177,4 +177,4 @@ graph export "output/fig_eventstudy.png", replace as(png) width(2000)
 - [`r-code-conventions.md`](r-code-conventions.md) — 面向 R 优先流水线的同类纪律。
 - [`replication-protocol.md`](replication-protocol.md) — 跨 R / Stata / Python 适用的容差契约。
 - [`../references/release-engineering.md`](../references/release-engineering.md) — 把 `.ado` 包或复现包作为带版本产物发布：message 与 silent-resolution 普查、preflight 归档、生成的 status 契约、下游钉版本。
-- [stata-mcp on GitHub](https://github.com/SepineTam/stata-mcp) — 让 WorkBuddy 执行 Stata `.do` 文件的 MCP 服务器。安装：`claude mcp add stata-mcp --scope user -- uvx stata-mcp`（**上游命令**，本平台无对应机制）。
+- [stata-mcp on GitHub](https://github.com/SepineTam/stata-mcp) — 让 WorkBuddy 执行 Stata `.do` 文件的 MCP 服务器。装法见 [`stata-replication`](../skills/stata-replication/SKILL.md) 的前置条件：插件页 → MCP 服务器 → 配置 MCP，或把它写进用户级 `~/.workbuddy/mcp.json`。（上游的 `claude mcp add --scope user` 在本平台没有对应命令。）

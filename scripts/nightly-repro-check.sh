@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Nightly reproducibility-drift check (cron-able; no Claude/auth needed).
+# Nightly reproducibility-drift check (cron-able; no client/auth needed).
 #
 # A thin LOCAL equivalent of the "Reproducibility drift" Routine in
 # .codebuddy/references/scheduled-routines.md, for users who prefer a machine
@@ -11,7 +11,7 @@
 # out of step, since it was last checked). Exits 1 if any claim is stale, so
 # cron can email you.
 #
-# For the full re-audit, run /audit-reproducibility inside Claude Code (or
+# For the full re-audit, run /audit-reproducibility inside WorkBuddy (or
 # prefer the managed Routine, which survives a closed laptop).
 #
 # Usage:  ./scripts/nightly-repro-check.sh   (run from the repo root or via cron)

@@ -6,7 +6,7 @@
 # (the VERTICAL link: claim -> code) and every artifact that DISPLAYS
 # it (the HORIZONTAL link: display <-> display).
 #
-# See .claude/rules/replication-protocol.md "Claims Provenance" section
+# See .codebuddy/rules/replication-protocol.md "Claims Provenance" section
 # for the full contract, status semantics, and integration points
 # (/audit-reproducibility, /commit, /review-paper).
 

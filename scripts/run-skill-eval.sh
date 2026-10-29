@@ -27,8 +27,14 @@
 # the skill under test exists to prevent. Symmetric in both arms, so the
 # comparison stays fair; we grade the text response only.
 #
-# MUST be run from a normal shell, not from inside a Claude Code session —
-# nested `claude -p` fails with error_during_execution.
+# MUST be run from a normal shell, not from inside an agent session —
+# a nested headless call fails or hangs instead of erroring.
+#
+# WHICH CLI: the WorkBuddy desktop app has no command line at all. Headless runs
+# come from the separately installed CodeBuddy Code CLI (`codebuddy`, config dir
+# ~/.codebuddy), which takes the same flags. So the binary is resolved, not
+# hardcoded: $EVAL_CLI wins, otherwise the first of codebuddy / cbc / claude on
+# PATH. Nothing else in this script changes between the two.
 set -uo pipefail
 
 SKILL="${1:-}"; CASES="${2:-}"; REPS=3   # N=1 measures sampling noise, not the skill
@@ -45,9 +51,30 @@ fi
 if [ -z "$SKILL" ] || [ -z "$CASES" ]; then
     sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 2
 fi
-command -v claude  >/dev/null || { echo "eval: claude CLI not found" >&2; exit 2; }
+if [ -n "${EVAL_CLI:-}" ]; then
+    CLI="$EVAL_CLI"
+    command -v "$CLI" >/dev/null || { echo "eval: EVAL_CLI='$CLI' is not executable" >&2; exit 2; }
+else
+    CLI=""
+    for cand in codebuddy cbc claude; do
+        command -v "$cand" >/dev/null 2>&1 && { CLI="$cand"; break; }
+    done
+fi
+if [ -z "$CLI" ]; then
+    echo "eval: no headless CLI on PATH (looked for codebuddy, cbc, claude)." >&2
+    echo "      The WorkBuddy desktop app has no command line. Install the CLI:" >&2
+    echo "        npm i -g @tencent-ai/codebuddy-code      # docs.workbuddy.cn/docs/cli/headless" >&2
+    echo "      or point EVAL_CLI at an existing binary. This harness is optional —" >&2
+    echo "      no gate depends on it." >&2
+    exit 2
+fi
 command -v timeout >/dev/null || { echo "eval: 'timeout' not found (macOS: brew install coreutils)" >&2; exit 2; }
 [ -d "$CASES" ] || { echo "eval: cases dir '$CASES' not found" >&2; exit 2; }
+
+# The variance summary at the end is Python. Same probe as the CLI: `python3` is
+# the POSIX name, but a Windows Git-Bash install only ships `python`.
+PY="$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)"
+[ -n "$PY" ] || { echo "eval: no python3/python on PATH (needed for the variance summary)" >&2; exit 2; }
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"      # resolved BEFORE any cd
 OUT="$ROOT/quality_reports/qualification/evals/$SKILL"
@@ -56,16 +83,16 @@ STAMP="$(date +%Y-%m-%d_%H%M%S)"
 RESULTS="$OUT/$STAMP.jsonl"
 
 # Smoke-test the harness before spending eval effort — and FAIL FAST.
-# A nested `claude -p` (i.e. run from inside a Claude Code session) does not
-# error immediately, it hangs. Without a timeout this script appears to work
+# A nested headless call (i.e. one launched from inside an agent session) does
+# not error immediately, it hangs. Without a timeout this script appears to work
 # and then sits there, which is the worst of both.
-echo "── smoke test: can we run headless at all? ──"
-SMOKE="$(timeout 45 claude -p "Reply with exactly: OK" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null || true)"
+echo "── smoke test: can we run headless at all? ($CLI) ──"
+SMOKE="$(timeout 45 "$CLI" -p "Reply with exactly: OK" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null || true)"
 if ! grep -q "OK" <<<"$SMOKE"; then
     echo "" >&2
-    echo "eval: headless \`claude -p\` is not working here." >&2
-    echo "      Most likely you are running this INSIDE a Claude Code session — nested" >&2
-    echo "      sessions fail with error_during_execution. Run it from a normal shell." >&2
+    echo "eval: headless \`$CLI -p\` is not working here." >&2
+    echo "      Most likely you are running this INSIDE an agent session — nested" >&2
+    echo "      sessions fail or hang. Run it from a normal shell." >&2
     exit 2
 fi
 echo "  ok"
@@ -108,8 +135,8 @@ if [ -z "$MARKER_EXPECT" ]; then
     exit 3
 fi
 echo "── manipulation check (behavioral: retrieve a fact only the skill contains) ──"
-ON_RESP="$(timeout 180 claude -p "/$SKILL $MARKER_Q" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)"
-OFF_RESP="$(timeout 180 claude -p "/$SKILL $MARKER_Q" --setting-sources user --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)"
+ON_RESP="$(timeout 180 "$CLI" -p "/$SKILL $MARKER_Q" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)"
+OFF_RESP="$(timeout 180 "$CLI" -p "/$SKILL $MARKER_Q" --setting-sources user --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)"
 ON=0; OFF=0
 grep -qiF "$MARKER_EXPECT" <<<"$ON_RESP"  && ON=1
 grep -qiF "$MARKER_EXPECT" <<<"$OFF_RESP" && OFF=1
@@ -152,11 +179,11 @@ for case_file in "$CASES"/*.md; do
             rc=0
             for attempt in 1 2; do
                 if [ "$mode" = "with" ]; then
-                    resp="$(timeout 180 claude -p "/$SKILL $prompt" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)" && rc=0 || rc=$?
+                    resp="$(timeout 180 "$CLI" -p "/$SKILL $prompt" --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)" && rc=0 || rc=$?
                 else
                     # --setting-sources user is the mechanism verified to actually drop
                     # project skills; skillOverrides / deny rules / --disallowedTools do not.
-                    resp="$(timeout 180 claude -p "$prompt" --setting-sources user --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)" && rc=0 || rc=$?
+                    resp="$(timeout 180 "$CLI" -p "$prompt" --setting-sources user --disallowedTools "Write,Edit,MultiEdit,NotebookEdit,Bash" --output-format text 2>/dev/null)" && rc=0 || rc=$?
                 fi
                 [ "$rc" -eq 0 ] && break
                 echo "  invocation failed ($name rep=$r mode=$mode rc=$rc; 124=timeout) — attempt $attempt" >&2
@@ -207,7 +234,7 @@ if [ ! -s "$RESULTS" ]; then
     echo "eval: no results were produced (no valid cases ran) — nothing to report" >&2
     exit 2
 fi
-python3 - "$RESULTS" <<'PYEOF'
+"$PY" - "$RESULTS" <<'PYEOF'
 import json, sys, collections, statistics
 rows = [json.loads(l) for l in open(sys.argv[1]) if l.strip()]
 by = collections.defaultdict(list)
