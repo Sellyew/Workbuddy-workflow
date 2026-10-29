@@ -86,19 +86,19 @@ WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完�
 ```
 你：「审一遍我的讲义幻灯片，明天上课前把所有问题修掉」
      ↓
-Claude 调用 /slide-excellence，它在内部：
+WorkBuddy 调用 /slide-excellence，它在内部：
   → 拉起 proofreader、slide-auditor 与 pedagogy-reviewer 代理
     （幻灯片需要时再加 TikZ、一致性对照与 R 审阅者，以及一次
     实质审查，Beamer 讲义必须有）
   → 把它们的审查发现归并为一份按优先级排序的报告
      ↓
-Claude 动手修（CRITICAL → MAJOR → MINOR），重新编译，
+WorkBuddy 动手修（CRITICAL → MAJOR → MINOR），重新编译，
 并给这份幻灯片打分（quality_score.py）
      ↓
 你看到：「完成了。修了 12 个问题；讲义能编译。得分：88/100。要提交吗？」
 你：「要」
      ↓
-Claude 跑 /commit（只因为你明确批准了）
+WorkBuddy 跑 /commit（只因为你明确批准了）
 ```
 
 *一个技能（`/slide-excellence`）负责那轮审读扇出；修是在之后、在你的会话里发生的。没有一个仓库级编排器在按菜单点选子技能；编排活在被调用的技能内部。*
@@ -110,7 +110,7 @@ Claude 跑 /commit（只因为你明确批准了）
 ```
 你：「审一遍我的论文草稿，把它准备到可投稿」
      ↓
-Claude 调用 /review-paper，它在内部：
+WorkBuddy 调用 /review-paper，它在内部：
   → 跑实质审查（六个维度，外加 3–5 条审稿人反对意见）
   → 对论文引用的脚本自动调用 /review-r 与 /audit-reproducibility
     （除非给了 --no-cross-artifact）
@@ -125,7 +125,7 @@ Claude 调用 /review-paper，它在内部：
 ```
 你：「分析这份数据集，产出可直接发表的成果」
      ↓
-Claude 调用 /data-analysis，它在内部：
+WorkBuddy 调用 /data-analysis，它在内部：
   → 探索、建模、造表造图
   → 产出编号的 R 脚本、表格与图，并把每个设定记到
     quality_reports/spec-ledger.md

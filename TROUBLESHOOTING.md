@@ -44,13 +44,13 @@ claude mcp add stata-mcp --scope user -- uvx stata-mcp
 
 用 `claude mcp list` 核验——`stata-mcp` 应以 `connected` 状态出现。若 Stata 本身不在 `PATH` 上，该技能同样会停；[`/stata-replication`](.codebuddy/skills/stata-replication/SKILL.md) Phase 0 里记录的安装说明覆盖了这两项起飞前检查。
 
-### Claude 为每个工具反复询问权限
+### WorkBuddy 为每个工具反复询问权限
 
-在手动模式下，多数未被允许清单覆盖的编辑与 shell 命令，Claude 都会先问。从监管最多到最少，选项中（见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
+在手动模式下，多数未被允许清单覆盖的编辑与 shell 命令，WorkBuddy 都会先问。从监管最多到最少，选项中（见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
 
 - **自动模式**——新的会话默认就以它启动：分类器批准常规操作，拦住或询问有风险的操作。
-- **接受编辑**——`Shift+Tab`，或 `claude --permission-mode acceptEdits`：自动批准文件编辑与工作目录内的常见文件系统命令。
-- **Bypass**——`claude --permission-mode bypassPermissions` 跳过权限询问与安全检查（拒绝规则仍然生效）。Anthropic 把它限定在隔离容器与虚拟机内，它从 CLI 参数、`--settings` 或用户/托管设置生效——写在项目 `.codebuddy/settings.json` 里的 `bypassPermissions` 不被承认，会话以手动模式启动。（在 VS Code 里，bypass 是用户设置层面的选择：在你的 VS Code *用户*设置里把 `claudeCode.initialPermissionMode` 设为 `bypassPermissions`，并打开 `claudeCode.allowDangerouslySkipPermissions`。两者都是机器作用域的，所以扩展忽略工作区里的值，本模板的 `.vscode/settings.json` 不会改变起始模式。）
+- **接受编辑**——`Shift+Tab` 循环到该模式：自动批准文件编辑与工作目录内的常见文件系统命令。
+- **Bypass**——在模式选择里切到 Bypass：跳过权限询问与安全检查（拒绝规则仍然生效）。Anthropic 把它限定在隔离容器与虚拟机内，它从 CLI 参数、`--settings` 或用户/托管设置生效——写在项目 `.codebuddy/settings.json` 里的 `bypassPermissions` 不被承认，会话以手动模式启动。（在 VS Code 里，bypass 是用户设置层面的选择：在你的 VS Code *用户*设置里把 `claudeCode.initialPermissionMode` 设为 `bypassPermissions`，并打开 `claudeCode.allowDangerouslySkipPermissions`。两者都是机器作用域的，所以扩展忽略工作区里的值，本模板的 `.vscode/settings.json` 不会改变起始模式。）
 
 本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），且不设默认模式，所以在手动模式下多数常规工作都不询问就能跑。自动模式会撤掉一刀切的 `Bash(*)` 规则，改为把 shell 命令送进它的分类器。要在任何模式下都把受限数据挡在模型之外，就加上拒绝规则——见下方[「让受限数据不进入模型」](#keep-restricted-data-off-the-model)。
 
@@ -192,7 +192,7 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 ### Keep restricted data off the model
 
-Claude 读的每个文件都会被送到模型供应商那里。[`confidential-data.md`](.codebuddy/rules/confidential-data.md) 规定受限微观数据永不离开本机，而**拒绝规则在每一种权限模式下都生效，包括 bypass**。若你的项目有受限目录，就加拒绝规则——加在 `.codebuddy/settings.json` 里保护每一位合作者，或加在 `.codebuddy/settings.local.json` 里只保护你这台机器——并写清你的数据使用协议覆盖的路径：
+WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidential-data.md`](.codebuddy/rules/confidential-data.md) 规定受限微观数据永不离开本机，而**拒绝规则在每一种权限模式下都生效，包括 bypass**。若你的项目有受限目录，就加拒绝规则——加在 `.codebuddy/settings.json` 里保护每一位合作者，或加在 `.codebuddy/settings.local.json` 里只保护你这台机器——并写清你的数据使用协议覆盖的路径：
 
 ```json
 {
@@ -207,7 +207,7 @@ Claude 读的每个文件都会被送到模型供应商那里。[`confidential-d
 }
 ```
 
-`**/` 能匹配任意深度，但只在项目之内：相对模式够不到存放在别处的数据。对检出目录之外的数据，用 `//`（绝对）或 `~/`（家目录）给模式定锚——`Read(//Volumes/secure-dua/**)`、`Read(~/Dropbox/ProjectX-DUA/**)`——并把这类机器相关的行放进 `.codebuddy/settings.local.json` 或 `~/.workbuddy/settings.json`，绝不要放进已提交的 `settings.json`。单个前导 `/` 不是绝对路径：在 `.codebuddy/settings.json` 或 `.codebuddy/settings.local.json` 里它锚定在会话的工作目录（你从项目根启动时就是项目根），在 `~/.workbuddy/settings.json` 里它锚定在 `~/.workbuddy/`——所以要用 `//` 才是真正绝对的路径。从 `confidential-data.md` 加载的那些模式出发（`data/**`、`**/raw/**`、`**/*.dta`、`**/*.sav`、`**/restricted/**`、`**/confidential/**`），保留你的数据使用协议覆盖的那些——把 `data/**` 整个拒掉，也会挡住你可能想让 Claude 读的公开数据。Read/Edit 拒绝规则覆盖 Claude 的文件工具、WorkBuddy 在 Bash 里认得的那几个文件命令（`cat`、`head`、`tail`、`sed`、`tee`）以及重定向目标，但不覆盖一个不点名就读文件的命令（`grep -r pattern .`），也不覆盖自己打开文件的脚本——所以它们是一道防线，不是一份证明：要把它们与本规则的纪律搭配（Claude 写的是*作用于*数据的代码，它不读数据），并在任何基于这些数据的产物离开本机之前配上 `/disclosure-check`。
+`**/` 能匹配任意深度，但只在项目之内：相对模式够不到存放在别处的数据。对检出目录之外的数据，用 `//`（绝对）或 `~/`（家目录）给模式定锚——`Read(//Volumes/secure-dua/**)`、`Read(~/Dropbox/ProjectX-DUA/**)`——并把这类机器相关的行放进 `.codebuddy/settings.local.json` 或 `~/.workbuddy/settings.json`，绝不要放进已提交的 `settings.json`。单个前导 `/` 不是绝对路径：在 `.codebuddy/settings.json` 或 `.codebuddy/settings.local.json` 里它锚定在会话的工作目录（你从项目根启动时就是项目根），在 `~/.workbuddy/settings.json` 里它锚定在 `~/.workbuddy/`——所以要用 `//` 才是真正绝对的路径。从 `confidential-data.md` 加载的那些模式出发（`data/**`、`**/raw/**`、`**/*.dta`、`**/*.sav`、`**/restricted/**`、`**/confidential/**`），保留你的数据使用协议覆盖的那些——把 `data/**` 整个拒掉，也会挡住你可能想让 WorkBuddy 读的公开数据。Read/Edit 拒绝规则覆盖 WorkBuddy 的文件工具、WorkBuddy 在 Bash 里认得的那几个文件命令（`cat`、`head`、`tail`、`sed`、`tee`）以及重定向目标，但不覆盖一个不点名就读文件的命令（`grep -r pattern .`），也不覆盖自己打开文件的脚本——所以它们是一道防线，不是一份证明：要把它们与本规则的纪律搭配（WorkBuddy 写的是*作用于*数据的代码，它不读数据），并在任何基于这些数据的产物离开本机之前配上 `/disclosure-check`。
 
 ### `/permission-check` 读 `~/.workbuddy/` 之前会先问
 

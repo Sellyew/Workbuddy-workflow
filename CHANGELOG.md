@@ -191,6 +191,14 @@ Claude Code 的安装器，启动命令是 `claude`，项目指令文件名还�
 - **成本那一节加了边界说明**：它讲的是上游 Claude 侧的订阅、API 与条款，与 WorkBuddy
   的合同不是同一份。正文未删——价格与条款以官方为准，模板不复制价格表。
 
+- **散文里的「执行者」也叫回 WorkBuddy（22 处）。** 「Claude 读全部配置文件」「Claude
+  先写一份需求规格」「↓ Claude 调用 /slide-excellence」这类句子说的是**在这个仓库里
+  干活的助手**，不是上游那个 CLI。保留的只有上游专名：`Claude Code`、`Claude Pro/Max`
+  订阅、`Claude 模型`、`ClaudeCodeTools` 项目名，以及英文代码块里的原样示例。
+- **`claude --permission-mode …` 两处改成模式切换。** 同一份 TROUBLESHOOTING 的「受保护
+  路径」一节本来就是按客户端模式（手动 / 接受编辑 / 自动 / dontAsk / Bypass）写的，
+  这两行却给的是 CLI 标志——自相矛盾，且照抄会 command not found。
+
 ### Fixed — 首跑路径的身份字段
 
 迁移只换了载体，没换**身份**：文档里写仓库地址、站点地址的地方仍然是上游的。照着
