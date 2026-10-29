@@ -95,7 +95,7 @@ else
 fi
 echo ""
 
-echo -e "${BOLD}Claude Code hooks:${RESET}"
+echo -e "${BOLD}Hooks (.codebuddy/hooks):${RESET}"
 # Executable bit only, and only where it matters. settings.json runs every .py hook
 # as `python3 <file>`, so their mode is irrelevant (six ship 100644); the .sh hook it
 # runs directly (notify.sh) needs +x. Checking the .py hooks warned on every fresh

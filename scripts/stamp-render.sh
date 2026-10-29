@@ -1,48 +1,42 @@
 #!/usr/bin/env bash
-# Record which source produced the current rendered artifacts — and what those
-# artifacts were, byte-for-byte, at stamp time.
+# stamp-render.sh — forward to scripts/stamp-render.py.
 #
-# git does not preserve mtimes, so currency cannot be answered by timestamps.
-# And a source-only stamp is not enough either (Codex, PR #140 round 2): if you
-# render guide/ but forget to sync docs/, or hand-edit an HTML file, a stamp
-# that records only the source hash still matches. So each line binds an output
-# path to BOTH the source fingerprint and that output's own fingerprint.
+# 这个文件**不再自己算指纹**。唯一的实现在 `scripts/stamp-render.py`，
+# 那也正是 `scripts/check-staleness.py` 用来比对的那个 `fp()`：
+# 两份实现只要漂一点，门禁就会在「盖戳的」和「校验的」之间来回翻。
 #
-# Run after: quarto render + cp guide/workflow-guide.html docs/workflow-guide.html
+# 为什么改掉原来的实现：它靠 `perl -pe 's/\r\n\z/\n/' | shasum -a 256` 算指纹。
+# 注释里当时的理由是「有 shasum 的地方就有 perl，因为 shasum 本身就是 perl 脚本」——
+# 这个等式在 Git for Windows 上不成立。本机实测（WorkBuddy 自带的 PortableGit）：
+#   perl     → 缺失
+#   shasum   → 缺失
+#   python   → 有
+# 于是文档、门禁报错、以及 `validate-setup.sh` 的下一步提示里让人敲的这条命令，
+# 在 Windows 上只会得到 `perl: command not found` 和一句「指纹失败」。而盖戳失败
+# 会让 staleness 门永远红着——首跑的人第一次改指南就卡死在这里。
+#
+# Python 3 本来就是本模板的必需项（`validate-setup.sh` 的 required tools），
+# 拿它当唯一实现，两个入口就不会再漂。
+#
+# 解释器：与 backtest.sh 同一套探测 —— 不查名字，查能不能真的跑，因为 Windows 上
+# `python3` 常是 Microsoft Store 的 App Execution Alias（找得到，执行退 49）。
 set -uo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"      # resolved BEFORE any cd
-SRC="$ROOT/guide/workflow-guide.qmd"
-G="$ROOT/guide/workflow-guide.html"
-D="$ROOT/docs/workflow-guide.html"
-for f in "$SRC" "$G" "$D"; do
-    [ -f "$f" ] || { echo "stamp-render: missing $f" >&2; exit 2; }
-done
-# The invariant behind stamping both: docs/ IS a copy of guide/. Refuse to
-# stamp a divergent pair — that is the exact failure the stamp exists to catch.
-if ! cmp -s "$G" "$D"; then
-    echo "stamp-render: REFUSING — guide/ and docs/ HTML differ." >&2
-    echo "  sync first:  cp guide/workflow-guide.html docs/workflow-guide.html" >&2
-    exit 1
+
+DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+if [ -z "${DIR:-}" ] || [ ! -d "$DIR" ]; then
+    echo "stamp-render: cannot resolve script directory" >&2; exit 2
 fi
-# Line endings are not content: hash with CRLF -> LF, so an autocrlf checkout
-# (the Git for Windows default) stamps what an LF clone stamps, and a stamp made
-# on Windows does not turn CI red (#171). This must stay byte for byte what
-# scripts/check-staleness.py hashes: CRLF pairs only, never a lone CR — `tr -d
-# '\r'` would drop those too, and the two would disagree. binmode keeps a native
-# Windows perl from translating line endings itself; perl is present wherever
-# shasum is, because shasum is a perl script. scripts/stamp-render.py's fp() is
-# the same function for hosts without shasum: the two must agree, or the gate
-# flips between them.
-fp() { local h; h="$(perl -pe 'BEGIN { binmode STDIN; binmode STDOUT } s/\r\n\z/\n/' < "$1" \
-                     | shasum -a 256 2>/dev/null | cut -c1-16)" \
-           || { echo "stamp-render: fingerprint failed for $1 (perl or shasum missing?)" >&2; exit 2; };
-       [ -n "$h" ] || { echo "stamp-render: fingerprint failed for $1 (shasum missing?)" >&2; exit 2; };
-       printf '%s' "$h"; }
-SH="$(fp "$SRC")" || exit 2
-GH="$(fp "$G")"   || exit 2
-DH="$(fp "$D")"   || exit 2
-{
-  echo "guide/workflow-guide.html:$SH:$GH"
-  echo "docs/workflow-guide.html:$SH:$DH"
-} > "$ROOT/.render-stamp"
-echo "stamp-render: source=$SH output=$GH (guide/docs identical, both stamped)"
+
+PY=""
+for cand in python3 python; do
+    if command -v "$cand" >/dev/null 2>&1 && "$cand" -c 'import sys' >/dev/null 2>&1; then
+        PY="$cand"; break
+    fi
+done
+if [ -z "$PY" ]; then
+    echo "stamp-render: no working python interpreter on PATH (tried python3, python)" >&2
+    echo "  Python 3 is a required tool — see scripts/validate-setup.sh." >&2
+    exit 2
+fi
+
+exec "$PY" "$DIR/stamp-render.py" "$@"

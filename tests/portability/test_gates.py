@@ -117,7 +117,8 @@ class StalenessSkipList(unittest.TestCase):
         self.assertEqual([n for n in names if n.endswith("defect-library.md")], [])
 
 
-@unittest.skipUnless(shutil.which("shasum") and shutil.which("perl"), "stamp-render.sh needs shasum and perl")
+@unittest.skipUnless(shutil.which("bash") and (shutil.which("python3") or shutil.which("python")),
+                     "stamp-render.sh is a bash shim that forwards to stamp-render.py")
 class RenderStampLineEndings(Tmp):
     FILES = ("guide/workflow-guide.qmd", "guide/workflow-guide.html", "docs/workflow-guide.html")
 
@@ -125,6 +126,11 @@ class RenderStampLineEndings(Tmp):
         super().setUp()
         _copy_script(self.tmp, "check-staleness.py")
         _copy_script(self.tmp, "stamp-render.sh")
+        # The shim forwards to this file; without it the fixture cannot stamp at all.
+        # (Until it became a shim, the .sh carried its own perl+shasum implementation
+        # and the case skipped wherever those two were missing — which is every
+        # Git-for-Windows install, so the Windows half of this contract went untested.)
+        _copy_script(self.tmp, "stamp-render.py")
         _write(self.tmp, "guide/workflow-guide.qmd", "---\ntitle: Guide\n---\n\nOne line.\nAnother.\n")
         for p in self.FILES[1:]:
             _write(self.tmp, p, "<html>\n<p>One line.</p>\n</html>\n")
@@ -145,6 +151,33 @@ class RenderStampLineEndings(Tmp):
                 b = f.read()
             with open(fp, "wb") as f:
                 f.write(b.replace(b"\n", b"\r\n"))
+
+    @unittest.skipIf(os.name == "nt", "builds PATH by symlinking; Windows needs dev mode for that "
+                                     "(the Windows half is covered by the cases above running there "
+                                     "for real — this host has neither perl nor shasum)")
+    def test_shim_stamps_without_perl_or_shasum(self):
+        # stamp-render.sh 曾经自带一份指纹实现：`perl -pe` 归一行尾再接 `shasum -a 256`。
+        # 当时的理由写在注释里 ——「有 shasum 的地方就有 perl，因为 shasum 本身就是 perl
+        # 脚本」。这个等式在 Git for Windows 上不成立：WorkBuddy 自带的 PortableGit 里
+        # perl 与 shasum 都不存在，只有 python。于是 README、staleness 的报错、new-skill
+        # 的流程都在教人敲一条必然失败的命令，而盖戳失败会让 staleness 门永远红着。
+        #
+        # 现在它是转发壳。把 PATH 收窄到只剩它真正需要的两样（dirname 与解释器），
+        # perl/shasum 就不可见 —— 实现若被改回自带指纹，这例会红。
+        py = shutil.which("python3") or shutil.which("python")
+        bash = shutil.which("bash")
+        dirname = shutil.which("dirname")
+        self.assertTrue(py and bash and dirname, "fixture needs bash, dirname and python")
+        bin_ = os.path.join(self.tmp, "noperl")
+        os.makedirs(bin_, exist_ok=True)
+        for name, src in (("python3", py), ("dirname", dirname)):
+            link = os.path.join(bin_, name)
+            if not os.path.exists(link):
+                os.symlink(src, link)
+        rc, out = _run([bash, os.path.join(self.tmp, "scripts", "stamp-render.sh")],
+                       cwd=self.tmp, PATH=bin_)
+        self.assertEqual(rc, 0, f"shim failed without perl/shasum on PATH:\n{out}")
+        self.assertTrue(os.path.isfile(os.path.join(self.tmp, ".render-stamp")), out)
 
     def test_crlf_checkout_is_not_a_stale_render(self):
         # staleness-crlf-hash, staleness-false-fail-on-autocrlf: an autocrlf clone of

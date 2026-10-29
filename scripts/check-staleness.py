@@ -103,9 +103,15 @@ def main():
         if rec is None:
             render.append(f"{out}: no render stamp — run scripts/stamp-render.sh after rendering")
         elif rec[0] != src_hash:
-            render.append(f"{out}: stamped for a DIFFERENT source ({rec[0]} vs {src_hash}) — "
-                          f"re-render: cd guide && quarto render workflow-guide.qmd, sync docs, "
-                          f"then ./scripts/stamp-render.sh")
+            # 修复步骤写成一条能从仓库根直接粘贴的命令。原来写的是
+            # "cd guide && quarto render …, sync docs, then ./scripts/stamp-render.sh"：
+            # 前半句把工作目录切到了 guide/，后半句的 ./scripts/ 就在那里不存在了，
+            # 照抄的人一定扑空。
+            render.append(f"{out}: stamped for a DIFFERENT source ({rec[0]} vs {src_hash}); "
+                          f"re-render from the repo root: "
+                          f"(cd guide && quarto render workflow-guide.qmd) && "
+                          f"cp guide/workflow-guide.html docs/workflow-guide.html && "
+                          f"./scripts/stamp-render.sh")
         elif rec[1] != out_hash:
             render.append(f"{out}: output modified since it was stamped ({rec[1]} vs {out_hash}) — "
                           f"either an unsynced copy or a hand-edit; re-render and re-stamp")
