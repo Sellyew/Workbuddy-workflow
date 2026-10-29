@@ -59,6 +59,38 @@ L2 代码路径 / L3 运行时）与一条可重跑的证据命令，并写明�
 `PermissionDenied` · `FinalStop` · `PostCompact` 等可用未接。列为能力项，不在本次
 改动范围。
 
+### Fixed — 定时调度整章重写，因为它的前提是错的
+
+`references/scheduled-routines.md` 整篇（89 行）建立在 `/schedule` + 云端 Routines +
+`CronCreate` 三件套上。逐条落到引擎之后，三件的下落各不相同：
+
+| 上游机制 | 本平台 | 级别 |
+|---|---|---|
+| `CronCreate` / `CronList` / `CronDelete` | **存在**：5 段 cron、本地时间；`durable: true` 落 `.codebuddy/scheduled_tasks.json` 并挺过重启 | L2 |
+| `/schedule` 斜杠命令 | **不存在**（29 次命中全是 API 路由与打包文件名） | L0 |
+| 云端 Routines | **不存在**（两个包均零命中） | L0 |
+
+上一版把三件判成了一件（「本平台没有对应入口」），而且当时根本没搜过——`CronCreate`
+有 12 次命中。原文那句「本地 cron 会随 REPL 一起死」在本平台只对默认参数成立：
+`durable: true` 正是落盘开关，引擎原文是 `Persisted to {project}/.codebuddy/scheduled_tasks.json
+and executed in a dedicated task session`。
+
+**实测补上最后一块。** 上一版的核心论断悬在一个未测的事实上：定时任务看得见本地文件吗。
+测法是在工作区放一个未跟踪、也未 gitignore 的探针文件，建一条一次性 automation 去读它。
+结果：`pwd` = 仓库根、读到了探针、`git status` 里出现 `?? probe/` **和当次还没提交的
+` M`**、HEAD 与本地一致、非浅克隆。**它就是你这个工作树，不是全新克隆。** 于是原文
+「云端例程够不到你的数据目录」在本平台不再成立——代价换成了「机器得开着」。
+
+顺带查实两条无人值守的硬约束：automation 会话里**问不到人**（`automation session
+synthesises an instant deny`，立即拒绝而非等待），需要审批的工具在后端跑不了
+（`background-automation-no-approval-ui`）。所以无人值守的关卡只能是「只提议、不执行」，
+不能是「弹窗问一句」——`/triage-inbox` 早就这么设计了，现在它的理由写清楚了。
+
+连带改正七处同一误读：`TROUBLESHOOTING.md`（原文「即便 `durable: true` 也救不了你」）、
+`README.md`、`MEMORY.md` 的 `[LEARN:scheduling]`、`triage-inbox` 三处、指南「无人值守
+运行」一条、`audit-pet-peeves.md` 第 17 条、`nightly-repro-check.sh` 头注释。
+`.gitignore` 增加三条：durable 任务文件是本机状态（绝对路径 + 一个人的作息），不该提交。
+
 ---
 
 ## v3.0.1 — 2026-10-30（项目配置与文档对齐）

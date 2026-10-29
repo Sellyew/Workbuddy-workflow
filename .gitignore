@@ -119,3 +119,10 @@ scripts/*/_outputs/
 # renders them during gating). Published HTML lives in docs/, never here.
 Quarto/*.html
 Quarto/*_files/
+
+# Durable CronCreate jobs (`.codebuddy/scheduled_tasks.json`) are machine-local
+# state: they name absolute paths on THIS machine and one person's schedule.
+# Committing them would ship "my laptop scans at 6am" to every fork.
+.codebuddy/scheduled_tasks.json
+.codebuddy/scheduled_tasks.scheduler.lock
+.codebuddy/scheduled_task_executions.json
