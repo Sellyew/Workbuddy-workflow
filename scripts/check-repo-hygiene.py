@@ -3,17 +3,24 @@
 
 Catches the drift that accumulates when Claude or Codex tries five approaches and four of
 them get left behind: draft-named files, numbered duplicates, root clutter, stale artifacts
-that were never archived, and archives with no explanation of why they exist.
+that were never archived, and archives with no explanation of why they exist. Also paths
+that differ only by case, which Linux keeps apart and a Mac or Windows checkout cannot.
 
 Exit: 0 clean, 1 hygiene violations, 2 internal error.
 """
-import os, re, sys, subprocess
+import os, posixpath, re, sys, subprocess, unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Files permitted at the repository root. Anything else is clutter until allowlisted.
 ROOT_ALLOW = {
-    "README.md", "CLAUDE.md", "MEMORY.md", "CHANGELOG.md", "TROUBLESHOOTING.md",
+    # [WorkBuddy 适配] 项目指令入口。WorkBuddy 的查找顺序是 CODEBUDDY.md →
+    # .codebuddy/CODEBUDDY.md → AGENTS.md，且它**不读** CLAUDE.md，所以这个文件
+    # 必须留在根目录才能成为入口；放进子目录等于让工作流没有全局指令。
+    "README.md", "CODEBUDDY.md", "AGENTS.md", "MEMORY.md", "CHANGELOG.md", "TROUBLESHOOTING.md",
+    # [WorkBuddy 适配] 上游同步说明。放在根目录是有意的：它是**每次合并前**
+    # 第一个该被读到的文件，藏进 docs/ 等于没人会读。
+    "UPSTREAM.md",
     "LICENSE", "CITATION.cff", ".gitignore", ".gitattributes",
     "Bibliography_base.bib", ".DS_Store",
     # Records which source produced the current rendered artifacts. Must live at
@@ -29,10 +36,13 @@ ROOT_ALLOW = {
     "requirements.txt", "environment.yml", "uv.lock", "pyproject.toml", "Dockerfile",
 }
 ROOT_ALLOW_DIRS = {
-    ".claude", ".git", ".github", ".githooks", ".vscode", "Figures", "Preambles",
+    ".codebuddy", ".git", ".github", ".githooks", ".vscode", "Figures", "Preambles",
+    # [WorkBuddy 适配] .workbuddy/ 是本机工作记忆（含 memory/ 会话日志与状态），
+    # 刻意不入库，但它确实存在于每个工作副本的根目录，不该算成杂物。
+    ".workbuddy",
     "Quarto", "Slides", "docs", "explorations", "guide", "master_supporting_docs",
     "quality_reports", "scripts", "templates",
-    # The project layout in .claude/rules/repo-hygiene.md ("Where each kind of file
+    # The project layout in .codebuddy/rules/repo-hygiene.md ("Where each kind of file
     # goes"): generated results in output/, raw inputs in data/raw/, package-style
     # functions and tests in R/ and tests/. A fork that follows it must not fail here.
     "output", "data", "R", "tests",
@@ -99,8 +109,8 @@ def append_only_violations():
         if not refs:                           # never committed: nothing to protect yet
             continue
         versions = []
-        stages = subprocess.run(["git", "-C", ROOT, "ls-files", "-s", "--", rel],
-                                capture_output=True, text=True).stdout.split("\n")
+        stages = subprocess.run(["git", "-C", ROOT, "ls-files", "-s", "--", rel], capture_output=True,
+                                encoding="utf-8", errors="surrogateescape").stdout.split("\n")
         stages = [ln.split()[2] for ln in stages if ln.strip()]
         if not stages:
             versions.append(("staged (removed from the index)", b""))
@@ -120,10 +130,23 @@ def append_only_violations():
     return out
 
 def tracked():
-    r = subprocess.run(["git", "-C", ROOT, "ls-files"], capture_output=True, text=True)
-    return [f for f in r.stdout.split("\n") if f]
+    # -z: without it git C-quotes any path holding a non-ASCII byte, a quote or a tab
+    # ("scripts/an\303\241lise.R"), so one accented file name read as a phantom
+    # top-level directory `"scripts/` and failed every commit, while the closing quote
+    # hid `análise_old.R` from the `$`-anchored draft patterns. Decoded as UTF-8 (git's
+    # path encoding), not the locale: on Windows text=True means cp1252, where an Á
+    # (byte 0x81) crashed the gate and an é came back as mojibake.
+    r = subprocess.run(["git", "-C", ROOT, "ls-files", "-z"], capture_output=True)
+    return [f for f in r.stdout.decode("utf-8", "surrogateescape").split("\0") if f]
 
 def main():
+    # Violations print real file names now, and a cp1252 or cp932 pipe (Git Bash,
+    # a captured hook) cannot encode every one: print UTF-8, whatever the console.
+    for s in (sys.stdout, sys.stderr):
+        try:
+            s.reconfigure(encoding="utf-8", errors="backslashreplace")
+        except (AttributeError, ValueError):
+            pass
     files = tracked()
     if not files:
         print("check-repo-hygiene: no tracked files (not a git repo?)", file=sys.stderr); return 2
@@ -144,7 +167,7 @@ def main():
     NUMBERED_STAGE = re.compile(r'^\d+[-_]')   # 01_explore.R, 02_clean.R — pipeline stages, not drafts
     tracked_set = set(files)
     for f in files:
-        base = os.path.basename(f)
+        base = posixpath.basename(f)             # git paths are '/'-separated on every OS
         if NUMBERED_STAGE.match(base):
             continue
         # explorations/ is the sandbox BY DESIGN — its own protocol permits
@@ -154,7 +177,9 @@ def main():
         # sibling-required numbered-duplicate check
         m2 = re.match(r'^(.*) \d+(\.[a-z0-9]+)$', base, re.I)
         if m2:
-            sib = os.path.join(os.path.dirname(f), m2.group(1) + m2.group(2))
+            # posixpath, not os.path: on Windows os.path.join built 'templates\notes.md',
+            # which is never among git's '/' paths, so no duplicate below the root was caught.
+            sib = posixpath.join(posixpath.dirname(f), m2.group(1) + m2.group(2))
             if sib in tracked_set:
                 errs.append(f"{f}: numbered duplicate of {sib} — an accidental copy")
                 continue
@@ -164,13 +189,33 @@ def main():
                 errs.append(f"{f}: {why}")
                 break
 
+    # 2b. paths that differ only by case (or Unicode normalisation) are two files to
+    #     Linux CI and one to a macOS or Windows disk: git reports "paths have collided",
+    #     one copy wins, the tree stays dirty for good (a stash just moves the change to
+    #     the other name), and git-guardrails then denies every pull and merge there.
+    #     A directory spelt two ways is flagged once, not once per file under it.
+    seen, reported = {}, set()
+    for f in files:
+        parts = f.split("/")
+        for i in range(1, len(parts) + 1):
+            p = "/".join(parts[:i])
+            first = seen.setdefault(unicodedata.normalize("NFC", p).casefold(), p)
+            if first != p and (first, p) not in reported:
+                reported.add((first, p))
+                errs.append(f"{p}: differs from {first} only by case (or Unicode normalisation) — "
+                            f"the two collide on a macOS or Windows checkout; rename one")
+
     # 3. archive directories must carry a README explaining what is in them and why
     for d in ARCHIVE_DIRS:
         full = os.path.join(ROOT, d)
         if not os.path.isdir(full): continue
-        has_content = any(x for x in os.listdir(full) if not x.startswith("."))
-        has_readme = any(os.path.exists(os.path.join(full, n))
-                         for n in ("README.md", "readme.md", "README.txt"))
+        entries = os.listdir(full)
+        has_content = any(x for x in entries if not x.startswith("."))
+        # Compared case-blind, by name: os.path.exists('README.md') found a Readme.md on
+        # a case-insensitive Mac or Windows disk and not on Linux CI, so one tree passed
+        # the local hook and failed CI.
+        has_readme = any(x.casefold() in ("readme.md", "readme.txt")
+                         and os.path.isfile(os.path.join(full, x)) for x in entries)
         if has_content and not has_readme:
             errs.append(f"{d}/: holds work but has no README — an archive nobody can interpret "
                         f"is indistinguishable from abandoned clutter")
@@ -202,7 +247,7 @@ def main():
         print(f"\n{len(warns)} advisory:")
         for w in warns: print(f"  {w}")
     if not errs:
-        print("\nStructure is clean: no root clutter, no draft-named files, no stray artifacts, archives documented.")
+        print("\nStructure is clean: no root clutter, no draft-named files, no case-colliding paths, no stray artifacts, archives documented.")
     return 1 if errs else 0
 
 if __name__ == "__main__":

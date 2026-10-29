@@ -3,7 +3,7 @@
 Check cross-document count consistency for the template's public surfaces.
 
 Prevents the drift pattern that hit PRs #70, #76, #78 — where adding a skill
-(agent, rule, hook) updates `.claude/` but leaves stale counts in README,
+(agent, rule, hook) updates `.codebuddy/` but leaves stale counts in README,
 CLAUDE.md, the guide source, the rendered guide, or the landing page.
 
 Two kinds of check:
@@ -13,7 +13,7 @@ Two kinds of check:
      `<!-- surface-sync-table: <kind> -->` marker must have exactly one
      data row per item of <kind> on disk. This catches the drift the
      count check misses: e.g. the v1.5.0 peer-review trio that was added
-     to `.claude/` but left OUT of the README/CLAUDE.md skills tables for
+     to `.codebuddy/` but left OUT of the README/CLAUDE.md skills tables for
      three releases (the counts were right; the table rows were stale).
 
 Run via `./scripts/check-surface-sync.sh` pre-commit, or `/commit` will
@@ -34,12 +34,12 @@ REPO = Path(__file__).resolve().parent.parent
 
 # Ground truth: count entries on disk.
 GROUND_TRUTH = {
-    "skills":       len(list((REPO / ".claude/skills").glob("*/SKILL.md"))),
-    "agents":       len(list((REPO / ".claude/agents").glob("*.md"))),
-    "rules":        len(list((REPO / ".claude/rules").glob("*.md"))),
+    "skills":       len(list((REPO / ".codebuddy/skills").glob("*/SKILL.md"))),
+    "agents":       len(list((REPO / ".codebuddy/agents").glob("*.md"))),
+    "rules":        len(list((REPO / ".codebuddy/rules").glob("*.md"))),
     "hooks":        (
-        len(list((REPO / ".claude/hooks").glob("*.py"))) +
-        len(list((REPO / ".claude/hooks").glob("*.sh")))
+        len(list((REPO / ".codebuddy/hooks").glob("*.py"))) +
+        len(list((REPO / ".codebuddy/hooks").glob("*.sh")))
     ),
 }
 
@@ -48,7 +48,8 @@ GROUND_TRUTH = {
 # The regex MUST have exactly one capture group that yields an integer.
 SURFACES = [
     REPO / "README.md",
-    REPO / "CLAUDE.md",
+    # [WorkBuddy 适配] 项目指令入口是 CODEBUDDY.md（上游是 CLAUDE.md）。
+    REPO / "CODEBUDDY.md",
     REPO / "guide/workflow-guide.qmd",
     REPO / "docs/workflow-guide.html",
     # The render that lands beside the .qmd. It is byte-identical to the docs/
@@ -68,7 +69,7 @@ SURFACES = [
     # though the SAME line's "all ten gates" was already gated by
     # check-derived-counts.py. A stale inventory inside the skill that runs the
     # gate is the r1 failure re-armed, so the file is a scanned surface now.
-    REPO / ".claude/skills/commit/SKILL.md",
+    REPO / ".codebuddy/skills/commit/SKILL.md",
 ]
 
 # Phrasings that assert THIS TEMPLATE's counts. We deliberately require
@@ -103,6 +104,34 @@ COMPOUND_PHRASINGS: list[tuple[str, list[tuple[int, str]]]] = [
     # Landing page bullet: "27 slash commands + 21 context-aware rules"
     (
         r"(\d+)\s+slash\s+commands?\s*\+\s*(\d+)\s+context-aware\s+rules?",
+        [(1, "skills"), (2, "rules")],
+    ),
+    # --- [WorkBuddy 适配] 中文复合断言 -------------------------------------------
+    #
+    # 中文化把上面这些英文句子译成了中文，而本门禁按**措辞**匹配：只认英文时，
+    # 中文站点匹配不到，`seen` 归零，表面却可能因为别的站点仍命中而看起来是绿的
+    # ——覆盖被悄悄丢掉，正是 surface-sync 存在的理由。所以这四条中文支与英文支
+    # 并列存在，措辞与 docs/translation-conventions.md §4 逐字对应。
+    #
+    # 四元句：「本模板 19 个代理、62 个技能、37 条规则、11 个钩子」
+    (
+        r"本模板\s*(\d+)\s*个代理[、,]\s*(\d+)\s*个技能[、,]\s*(\d+)\s*条规则[、,]\s*(\d+)\s*个钩子",
+        [(1, "agents"), (2, "skills"), (3, "rules"), (4, "hooks")],
+    ),
+    # 三元句（无钩子）：「19 个代理、62 个技能、37 条规则」。
+    # 负向先行断言排除掉四元句的前半截，否则同一句话被数两次。
+    (
+        r"(\d+)\s*个代理[、,]\s*(\d+)\s*个技能[、,]\s*(\d+)\s*条规则(?!\s*[、,]\s*\d+\s*个钩子)",
+        [(1, "agents"), (2, "skills"), (3, "rules")],
+    ),
+    # 落地页 og:description 的三段式：「62 个技能、19 个专用代理、37 条规则」
+    (
+        r"(\d+)\s*个技能[、,]\s*(\d+)\s*个专用代理[、,]\s*(\d+)\s*条规则",
+        [(1, "skills"), (2, "agents"), (3, "rules")],
+    ),
+    # 落地页项目符号：「62 个斜杠命令 + 37 条上下文感知规则」
+    (
+        r"(\d+)\s*个斜杠命令\s*\+\s*(\d+)\s*条上下文感知规则",
         [(1, "skills"), (2, "rules")],
     ),
 ]

@@ -91,10 +91,10 @@ fi
 echo ""
 
 echo -e "${BOLD}Claude Code hooks:${RESET}"
-# Executable bit only. Whether each hook registered in .claude/settings.json — and the
+# Executable bit only. Whether each hook registered in .codebuddy/settings.json — and the
 # pre-commit entry point below — is wired to a file that exists, is invocable, and is
 # tracked by git is checked by scripts/check-ledger-coverage.py (a gate in backtest.sh).
-hook_dir="$(dirname "$0")/../.claude/hooks"
+hook_dir="$(dirname "$0")/../.codebuddy/hooks"
 if [ -d "$hook_dir" ]; then
     non_exec=$(find "$hook_dir" -maxdepth 1 \( -name "*.py" -o -name "*.sh" \) ! -perm -u+x 2>/dev/null | wc -l | tr -d ' ')
     if [ "$non_exec" -eq 0 ]; then
@@ -102,11 +102,11 @@ if [ -d "$hook_dir" ]; then
         pass=$((pass + 1))
     else
         echo -e "  ${YELLOW}⚠${RESET} $non_exec hook script(s) not executable"
-        echo -e "    Fix: chmod +x .claude/hooks/*.py .claude/hooks/*.sh"
+        echo -e "    Fix: chmod +x .codebuddy/hooks/*.py .codebuddy/hooks/*.sh"
         warn=$((warn + 1))
     fi
 else
-    echo -e "  ${YELLOW}⚠${RESET} .claude/hooks/ directory not found (are you in the project root?)"
+    echo -e "  ${YELLOW}⚠${RESET} .codebuddy/hooks/ directory not found (are you in the project root?)"
     warn=$((warn + 1))
 fi
 

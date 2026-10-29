@@ -1,18 +1,18 @@
-<!-- EXPLORATION ABANDONMENT LOG — copy into explorations/<name>/README.md when
-     shelving a research sandbox (see .claude/rules/exploration-folder-protocol.md).
-     This is NOT a replication-package README — for that deposit, use /replication-package. -->
+<!-- 探索放弃日志 —— 把一个研究沙箱封存起来时，复制进 explorations/<name>/README.md
+     （见 .codebuddy/rules/exploration-folder-protocol.md）。
+     这**不是**复现包的 README —— 那种存缴请用 /replication-package。 -->
 
-# Abandoned: [Project Name] ([DATE RANGE])
+# 已放弃：[项目名]（[日期区间]）
 
-## Why Abandoned
-[1-2 sentence explanation]
+## 为什么放弃
+[1-2 句说明]
 
-## What Was Tried
-- [Approach 1]
-- [Approach 2]
+## 试过什么
+- [做法 1]
+- [做法 2]
 
-## Learnings
-- [LEARN:category] What you learned for future reference
+## 学到的东西
+- [LEARN:category] 你为将来记下的经验
 
-## Would Revisiting Require
-- [What would need to be true to try this again?]
+## 若重启需要
+- [要再试一次，得先成立什么？]

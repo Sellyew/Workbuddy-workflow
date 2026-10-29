@@ -16,7 +16,7 @@ def read(p):
     except FileNotFoundError: return ""
 
 def n_econ_journals():
-    t = read(".claude/references/journal-profiles.md")
+    t = read(".codebuddy/references/journal-profiles.md")
     seg = re.search(r'^## Econ Top.*?(?=^## (?!#)|\Z)', t, re.S | re.M)
     return len(re.findall(r'^### ', seg.group(0), re.M)) if seg else 0
 
@@ -29,7 +29,7 @@ def n_tikz():
 
 def n_translate_phases():
     # \d+(?:\.\d+)? so an inserted phase (6.5) counts as its own phase, not as a second "6"
-    ph = set(re.findall(r'^#{2,4} Phase (\d+(?:\.\d+)?)', read(".claude/skills/translate-to-quarto/SKILL.md"), re.M))
+    ph = set(re.findall(r'^#{2,4} Phase (\d+(?:\.\d+)?)', read(".codebuddy/skills/translate-to-quarto/SKILL.md"), re.M))
     return len(ph - {"0"})            # Phase 0 is pre-flight, not a translation phase
 
 def n_gates():
@@ -44,12 +44,12 @@ def n_gates():
 # two gates can never disagree about what a "skill" or a "hook" is. If you change
 # a definition there, change it here in the same commit.
 def _glob_count(pat):
-    return len(glob.glob(os.path.join(ROOT, pat)))
+    return len(glob.glob(os.path.join(glob.escape(ROOT), pat)))
 
-def n_skills(): return _glob_count(".claude/skills/*/SKILL.md")
-def n_agents(): return _glob_count(".claude/agents/*.md")
-def n_rules():  return _glob_count(".claude/rules/*.md")
-def n_hooks():  return _glob_count(".claude/hooks/*.py") + _glob_count(".claude/hooks/*.sh")
+def n_skills(): return _glob_count(".codebuddy/skills/*/SKILL.md")
+def n_agents(): return _glob_count(".codebuddy/agents/*.md")
+def n_rules():  return _glob_count(".codebuddy/rules/*.md")
+def n_hooks():  return _glob_count(".codebuddy/hooks/*.py") + _glob_count(".codebuddy/hooks/*.sh")
 
 
 def changelog_current_release():
@@ -58,7 +58,7 @@ def changelog_current_release():
     WHY THIS IS SCOPED, and not simply "scan CHANGELOG.md" the way every other
     row scans a whole file: the changelog keeps the `**Inventory at release: …**`
     line of EVERY past release. Those numbers were TRUE at their release and are
-    a historical record — `.claude/references/audit-pet-peeves.md` #12
+    a historical record — `.codebuddy/references/audit-pet-peeves.md` #12
     ("historical CHANGELOG entries — do not update") is why CHANGELOG.md is not a
     check-surface-sync surface at all. Comparing them against today's disk would
     turn a CORRECT record red, and the only way to quiet that red would be to
@@ -152,7 +152,7 @@ def n_laws():
     # Each law in research-agent-laws.md opens a paragraph as **N. Title.**
     # Counting the numbered openers keeps CLAUDE.md's "N laws" honest: the
     # count was hand-edited 17 -> 21 once, with nothing to catch a wrong value.
-    t = read(".claude/references/research-agent-laws.md")
+    t = read(".codebuddy/references/research-agent-laws.md")
     return len(re.findall(r'^\*\*(\d+)\.', t, re.M))
 
 def n_rungs():
@@ -162,7 +162,7 @@ def n_rungs():
     # gated. A planted-lie probe confirmed it: "the ninety-nine rungs" left every
     # gate at exit 0. Not hypothetical drift either: verification-ladder.md grew a
     # whole section this release. Counted from the rung headings themselves.
-    return len(re.findall(r'^## Rung ', read(".claude/references/verification-ladder.md"), re.M))
+    return len(re.findall(r'^## Rung ', read(".codebuddy/references/verification-ladder.md"), re.M))
 
 # English number words 0-99, so a spelled-out count ("Twelve cases",
 # "Twenty-two cases") is compared as a number like a digit claim.
@@ -214,22 +214,22 @@ def rubric_parity():
     single source, the rule embeds its generated tables between markers, and any
     difference fails. Returns (ok, message).
     """
-    rule = read(".claude/rules/quality-gates.md")
+    rule = read(".codebuddy/rules/quality-gates.md")
     m = re.search(r'<!-- BEGIN rubric[^\n]*-->\n(.*?)<!-- END rubric -->', rule, re.S)
     if not m:
-        return False, ".claude/rules/quality-gates.md: rubric markers missing — the tables are no longer gated"
+        return False, ".codebuddy/rules/quality-gates.md: rubric markers missing — the tables are no longer gated"
     try:
         gen = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "quality_score.py"), "--print-rubric"],
                              capture_output=True, text=True, check=True, timeout=60).stdout
     except Exception as e:
         return False, f"quality_score.py --print-rubric failed: {e}"
     if m.group(1) != gen:
-        return False, (".claude/rules/quality-gates.md: rubric tables differ from quality_score.py — "
+        return False, (".codebuddy/rules/quality-gates.md: rubric tables differ from quality_score.py — "
                        "regenerate them with `python3 scripts/quality_score.py --print-rubric`")
     return True, "quality-gates.md rubric == quality_score.py --print-rubric"
 
 def n_seven_pass():
-    t = read(".claude/skills/seven-pass-review/SKILL.md")
+    t = read(".codebuddy/skills/seven-pass-review/SKILL.md")
     return len(set(re.findall(r'^\| (\d) \|', t, re.M)))
 
 # --- Per-surface expectation --------------------------------------------------
@@ -334,16 +334,25 @@ def _surface_max(s):
 _CL_CURRENT = changelog_current_release()
 
 # (label, claimed-value regex, surfaces to scan, actual count)
+#
+# [WorkBuddy 适配 · 双语断言] 本模板的中文版把上述散文译成了中文，但门禁抓的是
+# 措辞本身——只认英文就会「匹配不到 → 判定该站点脱离覆盖 → 变红」，这正是 2026-10-29
+# 中文化迁移时真实发生的 10 处失配。所以每条模式都写成 EN | ZH 两支，永远保留英文支：
+#   * 英文支保证与上游（pedrohcgs/claude-code-my-workflow）同步后仍然成立；
+#   * 中文支保证本模板的中文措辞被覆盖，而不是靠「留一句英文」来喂门禁。
+# 中文支的措辞是**约定俗成**的，与 docs/translation-conventions.md §4 逐字对应。
+# 改中文措辞必须同步改这里，否则该站点静默脱管（`check-derived-counts` 会报
+# NO CLAIM MATCHED / ONLY n/N SITES，而不是假装通过）。
 CHECKS = [
     # Phrasings verified against the actual surfaces 2026-08-21. If you reword a
     # claim, update the pattern here too — an unmatched pattern reports nothing,
     # which is indistinguishable from a claim that is correct.
-    ("econ journal profiles", r'top-(\d+) journal profiles',      ["README.md", "guide/workflow-guide.qmd"], n_econ_journals()),
-    ("TikZ snippets",         r'(\d+) production-ready',       ["guide/workflow-guide.qmd"], n_tikz()),
+    ("econ journal profiles", r'(?i)top-(\d+)\s*(?:journal profiles|期刊画像)',      ["README.md", "guide/workflow-guide.qmd"], n_econ_journals()),
+    ("TikZ snippets",         r'(?<![\w-])(\d+)\s*(?:production-ready|个开箱即用的 ?TikZ ?片段)', ["guide/workflow-guide.qmd"], n_tikz()),
     # guide/workflow-guide.qmd shows the translate-to-quarto phases as an ASCII
     # tree ("Phase 1-3 ... Phase 10-11") and never states an "N translation
     # phases" total, so it is scanned but not required to match.
-    ("translation phases",    r'(\d+) translation phases',       ["README.md", OPT("guide/workflow-guide.qmd", "shows the phases as a tree, states no total")], n_translate_phases()),
+    ("translation phases",    r'(?<![\w-])(\d+)\s*(?:translation phases|个翻译阶段)',       ["README.md", OPT("guide/workflow-guide.qmd", "shows the phases as a tree, states no total")], n_translate_phases()),
     # The 7-vs-8 drift cluster: seven separate surfaces claimed the wrong gate
     # count after gate 8 landed. Counted from backtest.sh itself.
     # CLAUDE.md names the gate suite ("the full backtest gate suite") but states
@@ -377,10 +386,13 @@ CHECKS = [
     # r13: the three multi-instance surfaces declare HOW MANY sites they carry
     # (README.md "ten gates" + "10 checkers"; docs/index.html twice; the guide
     # three times), so rewording one of them is as loud as rewording the last.
-    ("backtest gates",        r'(?i)\b' + _NUM + r' (?:gates|checkers)\b', [REQ("README.md", 2), REQ("docs/index.html", 2), OPT("CLAUDE.md", "names the gate suite, states no count"), REQ("guide/workflow-guide.qmd", 3), OPT(".claude/skills/vaccinate/evals/README.md", "refers to the suite by path, states no count"), ".claude/skills/commit/SKILL.md", ".github/CONTRIBUTING.md", "scripts/backtest.sh"], n_gates()),
+    ("backtest gates",        r'(?i)(?<![\w-])' + _NUM + r'\s*(?:个(?:门禁|检查器)|gates\b|checkers\b)', [REQ("README.md", 2), REQ("docs/index.html", 2), OPT("CODEBUDDY.md", "names the gate suite, states no count"), REQ("guide/workflow-guide.qmd", 3), OPT(".codebuddy/skills/vaccinate/evals/README.md", "refers to the suite by path, states no count"), ".codebuddy/skills/commit/SKILL.md", ".github/CONTRIBUTING.md", "scripts/backtest.sh"], n_gates()),
     # CLAUDE.md's law count was hand-edited 17 -> 21 and nothing recomputed it,
     # so "99 laws" would have left every gate green. Counted from the laws file.
-    ("research-agent laws",   r'(\d+) laws\b',                   ["CLAUDE.md"], n_laws()),
+    # [WorkBuddy 适配] 表面由 CLAUDE.md 改为 CODEBUDDY.md：本平台的项目指令入口是
+    # CODEBUDDY.md（查找顺序 CODEBUDDY.md → .codebuddy/CODEBUDDY.md → AGENTS.md），
+    # 且它**不读** CLAUDE.md，所以 CLAUDE.md 已随 .claude/ 一起移除。
+    ("research-agent laws",   r'(?<![\w-])' + _NUM + r'\s*(?:条法则|laws\b)',                   ["CODEBUDDY.md"], n_laws()),
     # The count two bullets ABOVE the law count in the same CLAUDE.md paragraph,
     # gated for the same reason and counted the same way — see n_rungs(). The
     # guide states it once more; CHANGELOG.md states it inside the FROZEN
@@ -388,8 +400,8 @@ CHECKS = [
     # a line number, because that pointer had already drifted once) and is
     # deliberately not a surface (see
     # changelog_current_release() for why history is never dragged to today).
-    ("verification rungs",    r'(?i)\bthe ' + _NUM + r' rungs\b', ["CLAUDE.md", "guide/workflow-guide.qmd", "docs/workflow-guide.html"], n_rungs()),
-    ("seven-pass lenses",     r'(\d+) (?:forked|fresh-context) subagents',         [".claude/skills/seven-pass-review/SKILL.md"], n_seven_pass()),
+    ("verification rungs",    r'(?i)(?:\bthe\s+)?(?<![\w-])' + _NUM + r'\s*(?:级阶梯|rungs?\b)', ["CODEBUDDY.md", "guide/workflow-guide.qmd", "docs/workflow-guide.html"], n_rungs()),
+    ("seven-pass lenses",     r'(?<![\w-])' + _NUM + r'\s*(?:(?:forked|fresh-context)\s+subagents?|个独立上下文子代理)',         [".codebuddy/skills/seven-pass-review/SKILL.md"], n_seven_pass()),
     # The hook-battery case count drifted twice (12→16→…) because prose was
     # edited in parallel with case additions. Anchored on the vignette's own
     # ", about a second" tail so it matches ONLY the battery claim (not generic
@@ -416,7 +428,7 @@ CHECKS = [
     # battery case made the gate demand an edit to a published release — the
     # exact drag changelog_current_release() exists to prevent. Each release now
     # states its own battery size, and only the open one is compared to disk.
-    ("hook battery cases",    _NUM + r' cases, (?:about a second|seconds to run|and it finishes in seconds)', [SEC("CHANGELOG.md (current release)", _CL_CURRENT), "guide/workflow-guide.qmd"], n_hook_battery_cases()),
+    ("hook battery cases",    _NUM + r'\s*(?:cases,\s*(?:about a second|seconds to run|and it finishes in seconds)|个用例[，,]\s*秒级运行)', [SEC("CHANGELOG.md (current release)", _CL_CURRENT), "guide/workflow-guide.qmd"], n_hook_battery_cases()),
     # The QUALIFICATION LEDGER states the same number in its own phrasing —
     # "(46 cases, exit 0)" in the Reproduction paragraph and "(46/46 cases, exit
     # 0)" in the grading-the-grader row — and until 2026-08-23 NEITHER was a
@@ -451,7 +463,7 @@ CHECKS = [
     # could go stale the moment Pattern 20 landed — sequentiality still passes
     # on 1..20. Anchored on the vignette's own "is a reference shelf" tail, and
     # the count is spelled out, which words_to_int already handles.
-    ("workflow patterns",     r'(?i)' + _NUM + r' patterns is a reference shelf', ["guide/workflow-guide.qmd", "docs/workflow-guide.html"], n_patterns()),
+    ("workflow patterns",     r'(?i)' + _NUM + r'\s*(?:patterns is a reference shelf|个模式构成参考书架)', ["guide/workflow-guide.qmd", "docs/workflow-guide.html"], n_patterns()),
     # --- the current release's inventory line (r10) ---------------------------
     # CHANGELOG.md's `**Inventory at release: N skills, N agents, N rules,
     # N hooks, N gates**` publishes five counts of this repository's own

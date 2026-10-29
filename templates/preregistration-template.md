@@ -1,22 +1,22 @@
-# Preregistration Template
+# 预注册模板
 
-This template is consumed by `.claude/skills/preregister/SKILL.md`. It contains three style sections (OSF, AsPredicted, AEA RCT Registry). The skill picks one based on `--style` or the field default.
+本模板由 `.codebuddy/skills/preregister/SKILL.md` 消费。它含三套风格的段落（OSF、AsPredicted、AEA RCT 登记处）。技能依据 `--style` 或该领域的默认值选一套。
 
-**Output convention.** The skill writes the chosen style's filled-in form to `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md` (gitignored). The user uploads it to the registry; this template is *not* a registry submission tool.
+**输出约定。** 技能把所选风格填好的表单写到 `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`（已 gitignore）。由用户自己上传到登记处；本模板*不是*一个登记处提交工具。
 
-**Annotation legend.** Each field is tagged with one of:
+**标注图例。** 每个字段都带一个标记：
 
-- **MUST** — registry-required; the document cannot be submitted without it.
-- **SHOULD** — strongly recommended; reviewers expect it.
-- **MAY** — optional; include if relevant.
+- **MUST** —— 登记处强制要求；没有它文档无法提交。
+- **SHOULD** —— 强烈建议；审阅者期待它有。
+- **MAY** —— 可选；相关才写。
 
-For any **MUST** field that the input description doesn't supply, write `[CLARIFY: <specific question>]`. Do not fabricate.
+对任何**输入描述没有提供**的 **MUST** 字段，写 `[CLARIFY: <具体问题>]`。不要编造。
 
 ---
 
-## Style 1 — OSF (Open Science Framework)
+## 风格 1 —— OSF（Open Science Framework）
 
-The OSF "Preregistration" template. Default for political-science, psychology, and broad social-science studies. Upload at `osf.io/registries`.
+OSF 的「Preregistration」模板。政治学、心理学与广义社会科学研究的默认选择。在 `osf.io/registries` 上传。
 
 ```markdown
 ---
@@ -96,9 +96,9 @@ source-spec: <path to quality_reports/specs/... if applicable>
 
 ---
 
-## Style 2 — AsPredicted
+## 风格 2 —— AsPredicted
 
-The 9-question AsPredicted form (aspredicted.org). Designed for lab psych and short experimental studies. Upload at `aspredicted.org/create.php`.
+AsPredicted 的 9 问表单（aspredicted.org）。为实验室心理学与短周期实验研究而设。在 `aspredicted.org/create.php` 上传。
 
 ```markdown
 ---
@@ -140,9 +140,9 @@ source-spec: <path>
 
 ---
 
-## Style 3 — AEA RCT Registry
+## 风格 3 —— AEA RCT 登记处
 
-The American Economic Association RCT Registry (socialscienceregistry.org). **Required** for AEA-journal submission of any randomised intervention since 2018. Upload at `socialscienceregistry.org/trials/create`.
+美国经济学会的 RCT 登记处（socialscienceregistry.org）。自 2018 年起，向 AEA 系列期刊投任何随机干预研究都**必须**登记。在 `socialscienceregistry.org/trials/create` 上传。
 
 ```markdown
 ---
@@ -210,27 +210,27 @@ source-spec: <path>
 
 ---
 
-## Style mapping (cross-registry)
+## 风格映射（跨登记处）
 
-For users who need to publish under one registry but report results under another's conventions, the rough mapping is:
+对需要在某个登记处发布、却要按另一家的惯例报告结果的用户，大致映射是：
 
-| OSF section | AsPredicted question | AEA RCT field |
+| OSF 小节 | AsPredicted 问题 | AEA RCT 字段 |
 |---|---|---|
-| 1.4 Hypotheses | Q2 | Primary Hypotheses |
-| 2 Design | Q4 (conditions) | Intervention |
-| 3 Sampling Plan | Q7 | Sample + Power Calc |
-| 4 Variables | Q3 (DV) | Primary Outcomes |
-| 5 Analysis Plan | Q5 | Pre-Analysis Plan |
-| 7 Data Exclusions | Q6 | (in PAP attachment) |
-| 6 Inference Criteria | (implicit in Q5) | (in PAP attachment) |
+| 1.4 假设 | Q2 | Primary Hypotheses |
+| 2 设计 | Q4（条件） | Intervention |
+| 3 抽样计划 | Q7 | Sample + Power Calc |
+| 4 变量 | Q3（因变量） | Primary Outcomes |
+| 5 分析计划 | Q5 | Pre-Analysis Plan |
+| 7 数据排除 | Q6 | （在 PAP 附件里） |
+| 6 推断判据 | （隐含在 Q5 中） | （在 PAP 附件里） |
 
-The mapping is approximate — registries differ in granularity. When in doubt, use the registry's native template directly.
+这张映射是近似的——各登记处的粒度不同。拿不准时，直接用该登记处自己的原生模板。
 
 ---
 
-## Where this template lives
+## 这个模板住在哪
 
-- **File:** `templates/preregistration-template.md`
-- **Consumed by:** `.claude/skills/preregister/SKILL.md`
-- **Output:** `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md` (gitignored)
-- **Registry URLs:** OSF (osf.io/registries), AsPredicted (aspredicted.org), AEA RCT (socialscienceregistry.org)
+- **文件：** `templates/preregistration-template.md`
+- **消费者：** `.codebuddy/skills/preregister/SKILL.md`
+- **输出：** `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`（已 gitignore）
+- **登记处网址：** OSF（osf.io/registries）、AsPredicted（aspredicted.org）、AEA RCT（socialscienceregistry.org）

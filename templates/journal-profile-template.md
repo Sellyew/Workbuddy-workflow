@@ -1,6 +1,6 @@
-# Journal Profile Template
+# 期刊画像模板
 
-Copy this block into `.claude/references/journal-profiles.md` (under the appropriate regional/field section) and fill in every field. Weights for the 6 dispositions must sum to 1.0.
+把下面这一块复制进 `.codebuddy/references/journal-profiles.md`（放在相应的地区/领域小节下），并填满每个字段。6 种审稿取向的权重必须加起来等于 1.0。
 
 ```markdown
 ### Journal Full Name (SHORT)
@@ -40,40 +40,40 @@ Copy this block into `.claude/references/journal-profiles.md` (under the appropr
 ---
 ```
 
-## Disposition reference
+## 审稿取向参考
 
-The 6 dispositions used across the `--peer` pipeline:
+`--peer` 流水线里用到的 6 种审稿取向：
 
-| Disposition | Prior |
+| 审稿取向 | 口头禅 |
 |---|---|
-| STRUCTURAL | "Where's the mechanism? Where's the model?" |
-| CREDIBILITY | "Show me the research design. What's the experiment?" |
-| MEASUREMENT | "How is this measured? What about attrition / construct validity?" |
-| POLICY | "Does this apply outside your sample? So what?" |
-| THEORY | "What does the theory predict?" |
-| SKEPTIC | "What would make this go away?" |
+| STRUCTURAL | 「机制在哪？模型在哪？」 |
+| CREDIBILITY | 「给我看研究设计。实验是什么？」 |
+| MEASUREMENT | 「这是怎么度量的？样本流失 / 构念效度呢？」 |
+| POLICY | 「这在你样本之外成立吗？那又如何？」 |
+| THEORY | 「理论预测了什么？」 |
+| SKEPTIC | 「什么能让这个结论消失？」 |
 
-These dispositions are deliberately field-general. For a non-econ field, they should still apply — adjust the weights, not the labels.
+这些取向刻意做到跨领域通用。对非经济学领域，它们仍然适用——调整权重，别改标签。
 
-## Field-specific paper types
+## 领域特有的论文类型
 
-The `methods-referee` agent branches on paper type. The default types (econ-centric) are:
+`methods-referee` 代理按论文类型分支。默认类型（以经济学为中心）是：
 
-- `reduced-form` — DiD, IV, RD, event study, etc.
-- `structural` — structural estimation, DSGE, GE calibration, etc.
-- `theory+empirics` — theoretical model with empirical test of its predictions.
-- `descriptive` — measurement, data construction, pattern documentation.
-- `formal-theory` — game-theoretic / axiomatic model, no empirics (v1.8.0).
-- `survey-experiment` — survey or framed experiment with randomized manipulation (v1.8.0).
+- `reduced-form`——DiD、IV、RD、事件研究等。
+- `structural`——结构估计、DSGE、一般均衡校准等。
+- `theory+empirics`——理论模型，配对其预测的实证检验。
+- `descriptive`——度量、数据构建、模式记录。
+- `formal-theory`——博弈论 / 公理化模型，无实证（v1.8.0）。
+- `survey-experiment`——带随机化操纵的调查或框定实验（v1.8.0）。
 
-For non-econ fields, add your own types to `.claude/agents/methods-referee.md` by duplicating the rubric block and editing the dimension weights. Examples:
+对非经济学领域，把你自己领域的类型加进 `.codebuddy/agents/methods-referee.md`：复制那份评分细则块，改各维度权重。例子：
 
-- **Biology:** `observational / experimental / computational / review`.
-- **Political science:** `case-study / comparative` (note: `formal-theory` and `survey-experiment` already ship, v1.8.0).
-- **Psychology:** `experimental / correlational / meta-analysis / pre-registered-replication`.
+- **生物学：** `observational / experimental / computational / review`。
+- **政治学：** `case-study / comparative`（注意：`formal-theory` 与 `survey-experiment` 已自带，v1.8.0）。
+- **心理学：** `experimental / correlational / meta-analysis / pre-registered-replication`。
 
-## Cross-references
+## 交叉引用
 
-- `.claude/references/journal-profiles.md` — the live calibration file.
-- `.claude/agents/editor.md` — reads profiles, draws referee dispositions.
-- `.claude/skills/review-paper/SKILL.md` — entry point for `--peer [SHORT]`.
+- `.codebuddy/references/journal-profiles.md`——在用的校准文件。
+- `.codebuddy/agents/editor.md`——读画像，抽取审稿取向。
+- `.codebuddy/skills/review-paper/SKILL.md`——`--peer [SHORT]` 的入口。

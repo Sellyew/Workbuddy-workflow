@@ -1,88 +1,88 @@
-# Response to Referees: [Manuscript Title]
+# 回复审稿人：[稿件标题]
 
-**Journal:** [Journal Name]
-**Manuscript ID:** [JOURNAL-YYYY-NNNN]
-**Revision round:** R[1/2/3]
-**Date:** [YYYY-MM-DD]
-**Authors:** [Author 1, Author 2, ...]
-
----
-
-## Cover Letter to the Editor
-
-Dear [Editor Name],
-
-We thank you and the referees for the thoughtful reviews of our manuscript "[Title]." We have revised the paper substantially in response. The most important changes are:
-
-1. [High-level change 1 — one sentence]
-2. [High-level change 2 — one sentence]
-3. [High-level change 3 — one sentence]
-
-A detailed point-by-point response follows. Changes in the manuscript are highlighted in [color/track-changes].
-
-Sincerely,
-[Author names]
+**期刊：** [期刊名]
+**稿件编号：** [JOURNAL-YYYY-NNNN]
+**修订轮次：** R[1/2/3]
+**日期：** [YYYY-MM-DD]
+**作者：** [作者 1、作者 2、……]
 
 ---
 
-## Response to Referee 1
+## 致编辑的说明信
 
-### R1.1 — [One-line summary of concern]
+尊敬的 [编辑姓名]：
 
-**Referee comment (verbatim, abbreviated):**
-> [Quoted text, ~25 words max]
+感谢您与各位审稿人对我们稿件《[标题]》的仔细审读。我们据此对论文做了实质性修订。最重要的改动是：
 
-**Classification:** Addressed / Partially addressed / Deferred / Disagreement
+1. [高层改动 1——一句话]
+2. [高层改动 2——一句话]
+3. [高层改动 3——一句话]
 
-**Response:**
+逐条详细回复见后。稿件中的改动已用 [颜色/修订标记] 标出。
 
-[3–6 sentences. Acknowledge the concern, state the change, point to the location (page/section/line), justify if needed.]
-
-**Location of revision:** [Page X, Section Y, lines A–B] / [Table N] / [Figure M]
-
----
-
-### R1.2 — [Summary]
-
-**Referee comment:**
-> [Quote]
-
-**Classification:** ...
-
-**Response:** ...
-
-**Location of revision:** ...
+此致
+[作者姓名]
 
 ---
 
-[Repeat for every R1.* concern]
+## 回复审稿人 1
+
+### R1.1 —— [一句话概括该关切]
+
+**审稿意见（原文摘录，节选）：**
+> [引文，最多约 25 词]
+
+**归类：** Addressed / Partially addressed / Deferred / Disagreement
+
+**回复：**
+
+[3–6 句话。承认该关切，说明改动，指出位置（页/节/行），必要时给出理由。]
+
+**修订位置：** [第 X 页，第 Y 节，第 A–B 行] / [表 N] / [图 M]
 
 ---
 
-## Response to Referee 2
+### R1.2 —— [概括]
 
-[Same structure as Referee 1]
+**审稿意见：**
+> [引文]
+
+**归类：** ……
+
+**回复：** ……
+
+**修订位置：** ……
 
 ---
 
-## Concern Matrix
+[对每一条 R1.* 关切重复]
 
-| ID | Severity | Summary | Classification | Location |
+---
+
+## 回复审稿人 2
+
+[与审稿人 1 结构相同]
+
+---
+
+## 关切矩阵
+
+| 编号 | 严重度 | 概括 | 归类 | 位置 |
 | --- | --- | --- | --- | --- |
-| R1.1 | Major | [Summary] | Addressed | p.4, §2.1, ll.95–110 |
-| R1.2 | Major | [Summary] | Partially addressed | p.7, §3.2 |
-| R1.3 | Minor | [Summary] | Addressed | Footnote 12 |
-| R2.1 | Major | [Summary] | Disagreement | (see response) |
-| R2.2 | Minor | [Summary] | Addressed | Table 3 |
+| R1.1 | Major | [概括] | Addressed | p.4, §2.1, ll.95–110 |
+| R1.2 | Major | [概括] | Partially addressed | p.7, §3.2 |
+| R1.3 | Minor | [概括] | Addressed | Footnote 12 |
+| R2.1 | Major | [概括] | Disagreement | (see response) |
+| R2.2 | Minor | [概括] | Addressed | Table 3 |
 
 ---
 
-## Summary of Major Changes
+## 主要改动汇总
 
-- [Change 1, with reference to which concerns it addresses]
-- [Change 2]
-- [Change 3]
+- [改动 1，并指明它回应了哪些关切]
+- [改动 2]
+- [改动 3]
 
-## Notes for the Editor
+## 给编辑的备注
 
-[Optional: anything the editor should know that does not fit a per-referee response — e.g., conflicting requests between referees and how you resolved them.]
+[可选：任何编辑该知道、但放不进逐审稿人回复的内容——例如审稿人之间的相互冲突的请求，以及你如何化解。]

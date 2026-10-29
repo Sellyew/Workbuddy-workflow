@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Flags SUPERSEDED Claude model versions that are presented as CURRENT in the
 # template's user-facing surfaces. The single source of truth is the
-# `<!-- CURRENT: ... -->` marker in .claude/references/model-versions.md.
+# `<!-- CURRENT: ... -->` marker in .codebuddy/references/model-versions.md.
 #
 # Historical references (CHANGELOG.md is excluded entirely) and explicit
 # "prior generation" / comparison / "or later" lines are allowed via markers.
@@ -16,7 +16,7 @@ if [ -z "$REPO" ] || [ ! -d "$REPO" ]; then
     exit 2
 fi
 
-SSOT="$REPO/.claude/references/model-versions.md"
+SSOT="$REPO/.codebuddy/references/model-versions.md"
 if [ ! -f "$SSOT" ]; then
     echo "check-model-versions: SSoT missing: $SSOT" >&2
     exit 2
@@ -31,14 +31,15 @@ fi
 # Current-state surfaces to scan (sources; rendered HTML is derived from the qmd).
 SURFACES=(
     "README.md"
-    "CLAUDE.md"
+    # [WorkBuddy 适配] 项目指令入口是 CODEBUDDY.md（上游是 CLAUDE.md）。
+    "CODEBUDDY.md"
     "TROUBLESHOOTING.md"
     "MEMORY.md"
     "guide/workflow-guide.qmd"
     "docs/index.html"
-    ".claude/rules/model-routing.md"
-    ".claude/references/agent-fleet.md"
-    ".claude/scripts/statusline.sh"
+    ".codebuddy/rules/model-routing.md"
+    ".codebuddy/references/agent-fleet.md"
+    ".codebuddy/scripts/statusline.sh"
 )
 
 # A line is allowed to name an older version if it carries one of these markers.
@@ -149,7 +150,7 @@ if [ "$drift" -ne 0 ]; then
     echo "(e.g. 'prior generation', 'or later', a comparison) if the mention is intentional." >&2
     echo "A line that claims a DEFAULT ('defaults to', 'is the default') accepts only a historical" >&2
     echo "marker ('prior generation', 'historical', 'retire', 'deprecat') or an inline <!-- model-allow -->." >&2
-    echo "Source of truth: .claude/references/model-versions.md" >&2
+    echo "Source of truth: .codebuddy/references/model-versions.md" >&2
     exit 1
 fi
 

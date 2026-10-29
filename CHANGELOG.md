@@ -6,6 +6,142 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v3.0.0 — 2026-10-29（WorkBuddy 迁移基线）
+
+**平台迁移版本。** 本版本把整套科研 Harness 从 Claude Code 的 `.claude/` 搬到腾讯
+WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文。这是 fork 级变更：
+所有路径、环境变量、模型档位与运行时配置都需要重新对齐，因此按 major 处理。
+
+上游 v2.6.0 及其之前的条目一律保持原样，作为历史记录。它们记录的计数在各自的
+发布时点是正确的，不随本次迁移回溯修改。
+
+### Changed — 目录与运行时
+
+- **项目配置根目录**：`.claude/` → `.codebuddy/`。WorkBuddy 只从 `.codebuddy/`
+  加载 agents / skills / rules / hooks / commands / references，沿用旧目录不会被发现。
+- **项目指令文件**：`CLAUDE.md` → `CODEBUDDY.md`。WorkBuddy 的查找顺序是
+  `CODEBUDDY.md` → `.codebuddy/CODEBUDDY.md` → `AGENTS.md`，**不读** `CLAUDE.md`。
+- **环境变量**：`CLAUDE_PROJECT_DIR` → `CODEBUDDY_PROJECT_DIR`。hook 与脚本仍接受
+  旧变量名作为回退，两者同时存在时以新名为准。
+- **hook 统一入口**：新增 `.codebuddy/hooks/lib/hook-runner.sh`，负责解释器探测、
+  双环境变量注入与 UTF-8 强制。11 个 hook 全部改经它调用。
+- **hooks 注册**：`.codebuddy/settings.json` 内注册 7 类事件、12 条命令。上游
+  `settings.json` 的 `permissions` / `plansDirectory` / `statusLine` 三项在 WorkBuddy
+  无对应机制，已移除并记录在迁移兼容性清单中。
+- **本机文件的忽略规则跟着搬家。** `.gitignore` 原先只忽略 `.claude/settings.local.json`
+  与 `.claude/state/`，而迁移之后本机覆盖文件与状态目录是 `.codebuddy/` 下那两个路径 ——
+  也就是说 `commit`、`permission-check`、`repo-hygiene` 三个技能口头约定「本机、不入库」
+  的两个路径，此前**没有任何东西在拦**。两套现在都忽略（`.claude/` 旧行保留，拦住
+  从上游 fork 升级过来的仓库里的遗留文件），并补上 `.workbuddy/`：本机工作记忆早就
+  在 `check-repo-hygiene.py` 里写明了「存在但不入库」，却一直没有对应规则。
+
+### Added
+
+- `scripts/check-hooks.py`：跨平台 hook 冒烟回归集（25 条用例）。上游
+  `hook-battery.sh` 保留不动（312 cases, seconds to run），供 POSIX CI 使用；
+  两份电池覆盖不同范围，前者可在这台 Windows 上跑，后者不能。
+- `scripts/backtest.py`：原 `scripts/backtest.sh` 的等价重写。原版是 Bash 编排器，
+  在 Windows 上不可执行，而跑不起来的门禁等于没有门禁。原十道门的语义不变，
+  另加第 11 道（见下）。
+- `scripts/lib/py.sh`：统一 Python 3 解释器探测。Windows 上 `python3` 通常是
+  Microsoft Store 存根，`command -v` 能找到但执行返回 9009，必须真实执行探测。
+- `scripts/port-from-claude.py`：可重复执行的迁移工具，供后续上游同步复用。
+- `.codebuddy/skills/hello`、`.codebuddy/agents/ping`：Harness 自检组件，用于确认
+  技能与子代理真的会被平台发现和调度。
+
+### Fixed — 跨平台缺陷
+
+- `check-staleness.py` 调用外部 `date` 命令，Windows 无此可执行文件导致整门
+  以 rc=2 崩溃（表现为「检查发现问题」，实为「检查没跑」）。改用标准库取日期。
+- `check-staleness.py` 的跳过清单用 `/` 写正则，而 Windows `relpath` 返回 `\`，
+  跳过整体失效。改为归一化分隔符后匹配。
+- `check-ledger-coverage.py` 的文件跟踪比对同样受分隔符影响，把 13 个已跟踪文件
+  全部误报为「未跟踪、fresh clone 后会消失」。已归一化。
+- `root-of-trust-guard.py` 只把 `.claude` 认作信任根。若不改，迁移后守卫会继续
+  保护一个已不存在的目录、而放行对新信任根的所有写入。现同时保护 `.codebuddy`。
+- `check-spec-conformance.py` 的字段白名单不识别 WorkBuddy 读取的
+  `description_zh` / `description_en` / `category` / `tags` / `version` / `agent_created`，
+  会把合法技能误判为违规。白名单已扩展，并区分「本平台会读」与「无对应语义」。
+- **渲染戳在每一次全新 clone 上都报红。** `.render-stamp` 的指纹按原始字节算，
+  而 Windows 上的 Quarto 写出 CRLF、`.gitattributes` 存的是 LF：戳记的是产出它的那份
+  工作副本，不是内容。于是任何一次 clone 都会在门 6 读到「产物被改过」，而树是干净的。
+  两处指纹（`stamp-render.py` 的 `fp()`、`check-staleness.py` 的 `render_fp()`）改为行尾
+  归一后再算；POSIX 上哈希不变，已有戳不失效。回归钉见
+  `tests/portability/test_scripts.py::RenderStampLineEndings`。
+
+### Added — 可移植性回归集与门禁第 11 门（P3）
+
+- **`tests/portability/`**：7 个测试模块，把「在 macOS 上从不发作、在 Windows 上
+  让门禁静默失效」的那类缺陷固定成用例 —— `os.path` 换成 `ntpath` 的模拟、
+  CRLF 检出、代码页解码、BOM、git 对非 ASCII 与含引号文件名的输出、大小写不敏感
+  磁盘上的路径。每条用例非 PIN（修之前必红）即 CONTROL（修之前也绿，用来挡住
+  「拒绝一切」的假修复），另一组 HARNESS 用例专门检查这套测试自己会不会说谎。
+- **`scripts/portability-tests.py`**：这套用例的入口，接为**门禁第 11 门**。上游
+  只有十门，没有一门会在「换个宿主」时变红；本仓库已经因为宿主差异交过几次学费，
+  所以把这类缺陷单列一门。
+- **上限而不是沉默。** 本机没有对应机制（如 `os.symlink` 需要开发者模式、
+  POSIX shell 需要 Git for Windows）的用例会被逐条点名，并打印一行机器可读的
+  `portability-ceiling: N of M cases not exercised on this host`。编排器据此把该门
+  记为 **PARTIAL**：跑完了，但只钉住了跑到的那些，汇总里与 PASS 分开列出。
+  一条都没跑到时该门以 2 退出 —— 「空扫描报绿」是本仓库最贵的 bug 类型。
+- `.gitattributes`：`* text=auto eol=lf` 加例外，让行尾成为契约而不是检出时的心愿。
+
+### Changed — 守卫与检查器同步上游硬化版（P4/P5）
+
+- `.codebuddy/hooks/` 下 10 个 Python 守卫，以及 `check-links`、`check-staleness`、
+  `check-repo-hygiene`、`check-spec-conformance`、`check-ledger-coverage`、
+  `check-skill-integrity`、`quality_score`、`validate-findings`、`slide-qa`
+  一批检查器脚本，整体换成上游硬化版，再逐条回贴本仓库的适配（仓库路径、
+  `~/.workbuddy` 状态目录、`CODEBUDDY_PROJECT_DIR` 与旧名的双读）。
+  `root-of-trust-guard.py` 因此比上游版多出两百余行：新增的拒绝路径与
+  「拆开 `bash -c` / `env -S` 载荷再判」都在这一批里。
+- 移植方式不是整体覆盖：先逐条 diff，再按「上游新增 / 本地改造 / 两者都有」分类合并，
+  以免本仓库的路径适配被静默冲掉 —— 与 `scripts/sync-check.py` 对上游同步用的是
+  同一套分类。
+
+### Added — 全量中文化（P2）
+
+- **面向人的文字全部中文化**：37 条规则、19 个代理、63 个技能、15 份参考、
+  2 套输出风格、`CODEBUDDY.md`、`README.md`、`TROUBLESHOOTING.md`、`MEMORY.md`、
+  `templates/`、`guide/workflow-guide.qmd` 及其渲染产物、落地页 `docs/index.html`。
+  代码块、路径、命令、字段名、判定词原样保留。
+- **`docs/translation-conventions.md`**：中文化契约。三张表——不翻译项、**机器锚点**
+  （门禁会按结构抓取的标题与标记，译了就脱管）、以及**标准中文措辞**（每条可计数断言
+  的唯一合法写法）。任何后续译稿都以此为准。
+- **`scripts/verify-count-gates.py`**：向 12 处中文计数断言植入错误值，要求对应门禁
+  **必须变红**。这是「双语正则不是装饰」的唯一证据：一个永不匹配的正则和一个判定正确的
+  正则，在「全绿」的输出里长得一模一样。当前 12/12 变红。
+- **`scripts/normalize-model-tiers.py`**：把 `opus` / `sonnet` / `haiku` 归一化到本平台
+  三档（`default` / `lite` / `reasoning`），并删除本平台不存在的 `effort:` 字段
+  （19 个代理 + 16 个技能）。幂等，可重复执行。
+- **`UPSTREAM.md` + `scripts/sync-check.py` + `upstream` remote**：上游同步机制。
+  `sync-check.py` 把上游改动的文件按「可直接覆盖 / 必须人工合并 / 上游新增 / 本地生成 /
+  预期缺失」分类，因为本仓库的 14 个文件有实质改造，`git checkout upstream -- <file>`
+  会让中文分支与安全改动**静默消失**，而门禁仍然是绿的。
+- **`/init-research-project`**：把 fork 下来的模板初始化成真实项目的独立入口——收信息、
+  换占位符、按学科裁剪、跑通自检、交出起步计划；不给证书，只给下一步的三个动作。
+- **`docs/starter-prompt.md`**：中文 Starter Prompt。
+
+### Changed — 门禁双语化（计数断言不再只认英文）
+
+- `check-derived-counts.py` 的 10 条计数正则全部改为 `英文 | 中文` 双分支，
+  表面 `CLAUDE.md` → `CODEBUDDY.md`；`check-surface-sync.py` 新增 4 条中文复合断言；
+  `check-staleness.py` 的超话检查接受中文禁止标记（否则「禁用词：best-in-class」
+  会被读成「你在做排他性断言」，正好读反）。
+- **英文分支永不删除。** 它保证与上游同步后断言仍然成立；中文分支保证本仓库的中文措辞
+  被覆盖，而不是靠「留一句英文」来喂门禁。
+- 双语化的直接收益：`check-surface-sync` 立刻抓到指南里**残留的陈旧计数**
+  （`18 个代理、61 个技能`），而这处在中文化之前一直是绿的。
+
+### Removed
+
+- `.claude/`（163 个文件）与根目录 `CLAUDE.md`：内容已全部移植到 `.codebuddy/` 与
+  `CODEBUDDY.md`，git 历史保留。两份并存会产生互相矛盾的项目指令。
+
+**Inventory at release: 63 skills, 19 agents, 37 rules, 11 hooks, 11 gates**
+
+---
+
 ## v2.6.0 — 2026-09-26
 
 A **currency and consistency release.** Claude Opus 5.5 and Fable 5.1 shipped after v2.5.1: the
@@ -1020,7 +1156,7 @@ Eight mechanical corrections that bring the guide in line with Anthropic shipmen
 ### Fixed
 
 - **`guide/workflow-guide.qmd` + `TROUBLESHOOTING.md` + `CHANGELOG.md`** — `/less-permission-prompts` → `/fewer-permission-prompts`. Verified against Anthropic's [Week 16 changelog](https://code.claude.com/docs/en/whats-new/2026-w16) and Boris Cherny's launch announcement: the skill shipped under `/fewer-permission-prompts` from day one. The previous template name was a typo, not a rename — historical-changelog wording rewritten for accuracy.
-- **`guide/workflow-guide.qmd:46–157`** — three lingering framings of orchestration as automatic ("Claude automatically: → Runs X, → Runs Y...") rewritten to name the invoked skill explicitly ("Claude invokes `/slide-excellence`, which internally..."). Reinforces the [orchestrator-protocol rule](.claude/rules/orchestrator-protocol.md) — there is no repo-wide daemon; orchestration lives inside the invoked skill.
+- **`guide/workflow-guide.qmd:46–157`** — three lingering framings of orchestration as automatic ("Claude automatically: → Runs X, → Runs Y...") rewritten to name the invoked skill explicitly ("Claude invokes `/slide-excellence`, which internally..."). Reinforces the [orchestrator-protocol rule](.codebuddy/rules/orchestrator-protocol.md) — there is no repo-wide daemon; orchestration lives inside the invoked skill.
 
 ### Added — Anthropic shipments since 2026-04-27
 
@@ -1157,11 +1293,11 @@ Strategic additions to the paper-pipeline lens: (a) machine-readable claims prov
 - **`.claude/skills/prompt/`** — `/prompt [text] [depth:light|standard|deep]` reformats an informal or dictated request into a structured six-section prompt (Role / Task / Context / Constraints / Output format / Bookend) then **executes** it immediately. Depth heuristic: Light (< 40 words, no jargon) emits Role + Task + Output + Bookend; Standard (40–200 words, 1+ domain term) adds Context + Constraints + Assumptions block; Deep (> 200 words, specific paper/dataset/submission target) adds Investigation pre-step. Always shows the formatted prompt to the user before executing.
 - **`.claude/skills/prompt-only/`** — `/prompt-only [text] [depth] [--save path]` is the same skill **without execution**. Emits the formatted prompt as a reusable artifact. Optional `--save` writes to disk. Use for prompts you'll run later (different conversation, different model, recurring task).
 
-Both ported with attribution from [`chrisblattman/claudeblattman`](https://github.com/chrisblattman/claudeblattman) v2.1. **Deliberately stripped:** Blattman's tool-routing table (ChatGPT / Perplexity / Gemini dispatch) and his `council` token (his `/council` skill is not in this template). Documented in [`.claude/references/prompt-formatting-core.md`](.claude/references/prompt-formatting-core.md) "What we don't ship" section.
+Both ported with attribution from [`chrisblattman/claudeblattman`](https://github.com/chrisblattman/claudeblattman) v2.1. **Deliberately stripped:** Blattman's tool-routing table (ChatGPT / Perplexity / Gemini dispatch) and his `council` token (his `/council` skill is not in this template). Documented in [`.codebuddy/references/prompt-formatting-core.md`](.codebuddy/references/prompt-formatting-core.md) "What we don't ship" section.
 
 #### Added — new reference
 
-- **`.claude/references/prompt-formatting-core.md`** — shared reference used by `/prompt` and `/prompt-only`. Defines the six-section skeleton (Role / Task / Context / Constraints / Output format / Bookend), the depth-calibration heuristic, a worked example, and the explicit boundary with `/interview-me` (single-shot input shaping vs. multi-turn project specification).
+- **`.codebuddy/references/prompt-formatting-core.md`** — shared reference used by `/prompt` and `/prompt-only`. Defines the six-section skeleton (Role / Task / Context / Constraints / Output format / Bookend), the depth-calibration heuristic, a worked example, and the explicit boundary with `/interview-me` (single-shot input shaping vs. multi-turn project specification).
 
 #### Changed — claims provenance integration
 
@@ -1443,7 +1579,7 @@ A **framing honesty + hook friction** patch release. No breaking changes. No new
 
 ### Changed — honest framing
 
-- **`.claude/rules/orchestrator-protocol.md`** rewritten: opens with "This rule describes the contract that skills implement. The 6-step loop is a *pattern*, not a runtime." Adds a skill-by-skill implementation table (which skill covers which steps; notes where auto-fixing happens and where it doesn't). "Just Do It" mode clarified to explicitly NOT authorize commits on its own — `/commit` invocation is still required.
+- **`.codebuddy/rules/orchestrator-protocol.md`** rewritten: opens with "This rule describes the contract that skills implement. The 6-step loop is a *pattern*, not a runtime." Adds a skill-by-skill implementation table (which skill covers which steps; notes where auto-fixing happens and where it doesn't). "Just Do It" mode clarified to explicitly NOT authorize commits on its own — `/commit` invocation is still required.
 - **`.claude/rules/quality-gates.md`** renamed to **"Quality Review & Scoring Rubrics"** in practice (header kept for URL stability). Opens with an advisory-framing callout: enforcement is by the `/commit` skill only (halt + ask to override); a direct `git commit` bypasses the review.
 - **`.claude/rules/cross-artifact-review.md`** clarifies that detection is **pattern-based** (`\input{scripts/...}` / `%% source:` / filename matches). If the manuscript has none of those signals, nothing auto-invokes — and `--no-cross-artifact` is a no-op. Removed a reference to an unimplemented `--with-scripts` forcing flag.
 - **`.claude/rules/beamer-quarto-sync.md`** adds a **precedence-with-SSOT** section for the case where the Quarto file has manual post-translation edits: Beamer remains authoritative; presentation-only divergence (HTML-specific callouts) is allowed; structural drift is a bug.

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Code Academic Workflow — LaTeX, Quarto, Research Automation</title>
-  <meta name="description" content="A production-grade Claude Code template for AI-assisted academic research: lecture slides, papers, data analyses, and replication packages with multi-agent review and quality gates.">
-  <meta name="keywords" content="Claude Code, academic workflow, LaTeX, Quarto, research automation, lecture slides, data analysis, reproducibility, econometrics, R&amp;R, peer review">
+  <title>WorkBuddy 学术工作流 —— LaTeX、Quarto、研究自动化</title>
+  <meta name="description" content="一套生产级的 WorkBuddy 模板，用于 AI 辅助的学术研究：讲义幻灯片、论文、数据分析与复现包，配备多代理评审与质量门禁。">
+  <meta name="keywords" content="WorkBuddy, 学术工作流, LaTeX, Quarto, 研究自动化, 讲义幻灯片, 数据分析, 可复现性, 计量经济学, R&amp;R, 同行评审">
   <meta name="author" content="Pedro H. C. Sant'Anna">
   <link rel="canonical" href="https://psantanna.com/claude-code-my-workflow/">
 
   <!-- Open Graph / social sharing -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Claude Code Academic Workflow Template">
-  <meta property="og:description" content="A ready-to-fork Claude Code template for academic research — slides, papers, data analysis, and Monte Carlo simulation studies: 61 skills, 18 specialized agents, 37 rules, adversarial QA, and quality gates.">
+  <meta property="og:title" content="WorkBuddy 学术工作流模板">
+  <meta property="og:description" content="一套开箱即可 fork 的 WorkBuddy 模板，用于学术研究——幻灯片、论文、数据分析与蒙特卡洛模拟研究：63 个技能、19 个专用代理、37 条规则、对抗式 QA 与质量门禁。">
   <meta property="og:url" content="https://psantanna.com/claude-code-my-workflow/">
 
   <!-- Structured data for Google rich snippets -->
@@ -20,8 +20,8 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Claude Code Academic Workflow",
-    "description": "Production-grade Claude Code template for AI-assisted academic research with multi-agent review, quality gates, and adversarial QA.",
+    "name": "WorkBuddy 学术工作流",
+    "description": "生产级的 WorkBuddy 模板，用于 AI 辅助的学术研究，配备多代理评审、质量门禁与对抗式 QA。",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
     "url": "https://github.com/pedrohcgs/claude-code-my-workflow",
@@ -187,138 +187,95 @@
 </head>
 <body>
 
-  <h1>My Claude Code Setup</h1>
+  <h1>我的 WorkBuddy 配置</h1>
   <div class="byline">Pedro H. C. Sant'Anna &middot; Emory University</div>
 
   <div class="wip">
-    <strong>Actively developed and maintained.</strong> This summarizes how I use Claude Code for academic work &mdash; slides, papers, data analysis, and more. Adopted by research groups across economics, energy, political science, and engineering — 15+ research groups at the March 2026 survey; the repository has since passed 2,900 forks and 1,500 stars (GitHub, 2026-08-24). A fork is not a research group &mdash; those two figures measure different things. I keep learning and updating these files.
+    <strong>持续开发与维护中。</strong>本文概述我如何用 WorkBuddy 做学术工作——幻灯片、论文、数据分析等等。经济学、能源、政治学与工程学的研究团队都在采用它：2026 年 3 月的调查中有 15+ 个研究团队；此后仓库的 fork 数已超过 2,900、star 数超过 1,500（GitHub，2026-08-24）。fork 不等于研究团队——这两个数字衡量的是不同的东西。我一直在学习，也一直在更新这些文件。
   </div>
 
-  <p>A foundation for AI-assisted academic work using <a href="https://code.claude.com/docs/en/overview">Claude Code</a>. You describe what you want &mdash; lecture slides, a research paper, a data analysis, a replication package &mdash; and Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results &mdash; goal-first and gate-enforced. Like a contractor who handles the entire job, with you as the auditor of the disagreements the review loop surfaces. It is deliberately not an autonomous daemon: every loop is started by you or a skill, never on its own.</p>
+  <p>这是用 WorkBuddy 做 AI 辅助学术工作的一个基础框架。你描述自己想要什么——讲义幻灯片、一篇研究论文、一次数据分析、一个复现包——然后由 WorkBuddy 规划思路、运行专用代理、修复问题、核验质量并呈现结果：目标先行、门禁强制。就像一位包办整个工程的承包商，而你是审查者，负责裁定评审循环暴露出来的那些分歧。它刻意不是一个自主守护进程：每一次循环都由你或某个技能启动，绝不会自行启动。</p>
 
   <p>
-    <a class="guide-btn" href="workflow-guide.html">Read the full guide</a>
+    <a class="guide-btn" href="workflow-guide.html">阅读完整指南</a>
   </p>
 
-  <h2>The problem this solves</h2>
+  <h2>它解决的问题</h2>
 
-<p>Producing academic work is no longer the slow part. <strong>Checking it is.</strong>
-An AI can draft a lecture, run a regression, and write the paragraph describing the result
-faster than you can read it — and every one of those outputs can be confidently, fluently
-wrong in a way that looks exactly like being right.</p>
+<p>产出学术成果，已经不再是慢的那一环。<strong>检查才是。</strong>
+AI 起草一讲稿、跑一个回归、写下描述结果的那一段，速度比你读完它们还快——而这些输出中的每一个，都可能自信而流畅地出错，错得看起来和正确一模一样。</p>
 
 <blockquote>
-<p>Twenty bugs were deliberately planted in a working codebase, and the review agents were
-asked to check it again. <strong>They reported everything was fine.</strong></p>
-<p>Nothing in the output distinguished that from a genuinely clean run.</p>
+<p>有人在一个可运行的代码库里刻意埋了 20 个 bug，然后让评审代理再检查一遍。<strong>它们报告说一切正常。</strong></p>
+<p>输出里没有任何东西，能把这种情况和一次真正干净的运行区分开。</p>
 </blockquote>
 
-<p>So this template is built around one idea: <strong>a check earns trust by catching
-something, not by existing.</strong> Every one of its gates has been shown a planted defect and confirmed to go red — recall and
-false-alarm rate recorded in a qualification ledger that is itself one of the gates: a check
-with no row in it fails the build. What has <em>not</em> yet been measured is listed there by
-name as visible debt, because an
-unqualified check is not weak evidence — it is none.</p>
+<p>所以这个模板围绕一个想法构建：<strong>一项检查靠抓到东西赢得信任，而不是靠存在。</strong>它的每一个门禁都被喂过一个刻意埋入的缺陷，并确认会变红——召回率与误报率记在一份资质台账里，而这份台账本身就是门禁之一：一项检查若在其中没有行，构建就失败。那些<em>尚未</em>测量的部分在那里被逐一点名，作为可见的欠账，因为一项未经资质认定的检查不是弱证据——它根本不是证据。</p>
 
-<h2>Start where you are</h2>
+<h2>从你所在的位置开始</h2>
 
 <table>
-<tr><th>If you are…</th><th>Start here</th></tr>
-<tr><td><strong>Writing a paper</strong></td>
-    <td><code>/review-paper --peer aer</code> simulates an editor and two dispositioned referees.
-        <code>/verify-claims</code> checks every citation and number against source.
-        <code>/challenge</code> asks whether your result survives the specifications you didn't run.</td></tr>
-<tr><td><strong>Running an analysis</strong></td>
-    <td><code>/data-analysis</code> for the end-to-end R pipeline,
-        <code>/diagnose</code> when a number is wrong
-        and you don't know why.</td></tr>
-<tr><td><strong>Teaching a course</strong></td>
-    <td><code>/syllabus</code> → <code>/create-lecture</code> → <code>/scaffold-exercises</code>, with
-        Beamer and Quarto kept in sync and reviewed by pedagogy, layout, and proofreading agents.</td></tr>
-<tr><td><strong>Replicating or refereeing</strong></td>
-    <td><code>/audit-reproducibility</code> checks claims against outputs;
-        <code>/differential-audit</code> compares two implementations;
-        <code>/replication-package</code> builds the AEA DCAS deposit.</td></tr>
+<tr><th>如果你是…</th><th>从这里开始</th></tr>
+<tr><td><strong>在写论文</strong></td>
+    <td><code>/review-paper --peer aer</code> 模拟一位编辑和两位带审稿取向的审稿人。<code>/verify-claims</code> 把每条引文、每个数字对回源头。<code>/challenge</code> 追问你的结果能否经受住那些你没跑过的设定。</td></tr>
+<tr><td><strong>在跑分析</strong></td>
+    <td><code>/data-analysis</code> 负责端到端的 R 流水线，某个数字错了而你不知为何时，用 <code>/diagnose</code>。</td></tr>
+<tr><td><strong>在教一门课</strong></td>
+    <td><code>/syllabus</code> → <code>/create-lecture</code> → <code>/scaffold-exercises</code>，Beamer 与 Quarto 保持同步，并由教学法、版式与校对代理审读。</td></tr>
+<tr><td><strong>在复现或在审稿</strong></td>
+    <td><code>/audit-reproducibility</code> 把论断对回输出；<code>/differential-audit</code> 比对两份实现；<code>/replication-package</code> 构建 AEA DCAS 存档。</td></tr>
 </table>
 
-<h2>How verification works here</h2>
+<h2>这里的核验如何运作</h2>
 
-<p>Seven rungs, each because a cheaper one let something through. The first is the one most
-workflows skip:</p>
+<p>7 级阶梯，每一级之所以存在，都是因为更便宜的一级放过了某个问题。第一级是大多数工作流会跳过的那一级：</p>
 
 <ol>
-<li><strong>Qualify the checker.</strong> Seed the failure, confirm it goes red, measure recall
-    <em>and</em> false alarms against a clean control. <code>/vaccinate</code>.</li>
-<li><strong>Deterministic gates.</strong> Anything decidable belongs in a script, not an agent
-    prompt — agents miss what a script never misses. One command: <code>./scripts/backtest.sh</code>.</li>
-<li><strong>Artifact verification.</strong> Existence → <em>substantiveness</em> → wiring →
-    coherence. Only the last catches "every check passed and the paper is still wrong".</li>
-<li><strong>Independence.</strong> A reviewer that has seen the draft cannot un-see it, so the
-    verifier runs in a fresh context and never receives it.</li>
-<li><strong>Analytic verification.</strong> Does the <em>claim</em> survive the choices you
-    didn't make? Specification curve plus named sensitivity statistics.</li>
-<li><strong>The ledger.</strong> Every specification tried, including the nulls, with the
-    interpretation written down <em>before</em> the test runs.</li>
-<li><strong>An external referee.</strong> A different vendor's frontier model, last — so it
-    confirms rather than discovers.</li>
+<li><strong>给检查器做资质认定。</strong>植入失败，确认它变红，对着一个干净对照测量召回率<em>与</em>误报率。<code>/vaccinate</code>。</li>
+<li><strong>确定性门禁。</strong>凡是可判定的东西都该放进脚本，而不是代理的提示词——代理会漏掉脚本永不会漏的东西。一条命令：<code>./scripts/backtest.sh</code>。</li>
+<li><strong>产物核验。</strong>存在 → <em>实质</em> → 接线 → 自洽。只有最后一层能抓住「所有检查都通过，论文仍然是错的」。</li>
+<li><strong>独立性。</strong>看过稿子的审读者无法当作没看过，所以核验者在独立上下文里运行，从不接收它。</li>
+<li><strong>分析层面的核验。</strong>这个<em>论断</em>能否经受住那些你没做的选择？设定曲线，加上点名的敏感性统计量。</li>
+<li><strong>台账。</strong>试过的每一个设定（包括零结果）都记录在案，解释写在检验跑起来<em>之前</em>。</li>
+<li><strong>一位外部审稿人。</strong>最后是另一家厂商的前沿模型——这样它是确认，而不是发现。</li>
 </ol>
 
-<p>Two things this template states plainly because they are measured, not assumed:
-<strong>AI peer review does not reduce analytical-choice variance</strong> (it catches errors;
-robustness is a separate rung), and <strong>agreement between models is not confirmation</strong>
-— they correlate on the same wrong answer.</p>
+<p>有两件事本模板说得直白，因为它们是被测量出来的，而不是假定出来的：<strong>AI 同行评审不会降低分析选择上的方差</strong>（它能抓错误；稳健性是另一级），以及<strong>模型之间一致并不等于确证</strong>——它们会在同一个错误答案上彼此相关。</p>
 
-<h2>The five credibility questions</h2>
+<h2>可信度的五个问题</h2>
 
-<p>The most common way AI-assisted empirical work goes wrong is not a wrong number. It is
-evidence for one question being read as evidence for another.</p>
+<p>AI 辅助的实证工作出错，最常见的方式不是某个数字算错，而是把一个问题的证据，读成了另一个问题的证据。</p>
 
-<p><strong>Reproducibility</strong> (does the code run and produce the reported numbers?) →
-<strong>implementation fidelity</strong> (does it implement the estimator it claims?) →
-<strong>statistical performance</strong> (does it behave in finite samples?) →
-<strong>measurement validity</strong> (does the variable capture the construct?) →
-<strong>identification</strong> (is the causal claim warranted?).</p>
+<p><strong>可复现性</strong>（代码跑得起来，并产出报告里的数字吗？）→
+<strong>实现保真度</strong>（它实现的是它声称的那个估计量吗？）→
+<strong>统计表现</strong>（它在有限样本里表现如何？）→
+<strong>测量效度</strong>（这个变量捕捉到了那个构念吗？）→
+<strong>识别策略</strong>（这个因果论断站得住吗？）。</p>
 
-<p><em>Evidence for one never clears another.</em> When an agent reports "all checks pass", it
-is almost always speaking about the first and being heard about the last.</p>
+<p><em>一个问题的证据，从不清偿另一个问题。</em>当一个代理报告「所有检查通过」时，它几乎总是在说第一个问题，而人们听成的是最后一个。</p>
 
-<h2>What you get</h2>
+<h2>你会得到什么</h2>
 
-<p><strong>18 agents, 61 skills, 37 rules, 11 hooks</strong> — and ten gates, run before every commit once the pre-commit hook is installed, and in full in CI.</p>
+<p><strong>本模板 19 个代理、63 个技能、37 条规则、11 个钩子</strong>——以及 11 个门禁，装好 pre-commit 钩子之后在每次提交前运行，并在 CI 里全量运行。</p>
 
 <ul>
-<li><strong>61 skills</strong> covering the full research lifecycle — papers, analysis,
-    simulation, replication packages, proposals, slides, and teaching.</li>
-<li><strong>18 specialized agents</strong> — referees, proofreaders, layout auditors, code
-    reviewers, a fresh-context claim verifier — each pinned to a model and effort tier.</li>
-<li><strong>37 rules</strong> — most path-scoped so they load only when relevant, a few
-    always-on — plus 11 hooks that act rather than nag, including one that refuses to let a shell
-    command quietly rewrite the settings and hook files the gates are defined in.</li>
-<li><strong>Ten gates in one command.</strong> Surface consistency, skill integrity, model
-    currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage,
-    and a seeded hook battery that re-fires every guard hook against the failure it targets — run
-    before every commit once <code>./scripts/install-hooks.sh</code> has been run (the hook battery
-    only when a hook, its settings or the battery itself is staged), and all of them in CI.</li>
-<li><strong>An audit trail by default</strong> — issues as defect memory, progress reports as
-    work memory, and a qualification ledger recording which checks have actually been proven
-    to detect anything.</li>
+<li><strong>63 个技能</strong>覆盖整个研究生命周期——论文、分析、模拟、复现包、申请书、幻灯片与教学。</li>
+<li><strong>19 个专用代理</strong>——审稿人、校对者、版式审查者、代码审读者、一位独立上下文的论断核验者——每一个都钉在某个模型档位与算力档位上。</li>
+<li><strong>37 条规则</strong>——多数按路径作用域，只在相关时加载，少数常开——外加 11 个会动手而不是唠叨的钩子，其中一个拒绝让某条 shell 命令悄悄改写门禁所定义在的那些设置与钩子文件。</li>
+<li><strong>11 个门禁，一条命令。</strong>表面一致性、技能完整性、模型时效性、链接、规格符合性、陈旧度、仓库卫生、派生计数、台账覆盖率、一组带种子的钩子电池（把每个防线钩子对着它针对的失败再点一次火），以及一套可移植性回归集（路径、编码、行尾与 git 输出换一台机器后仍给出同一个答案；本机跑不到的用例会被点名并记成有上限的通过，而不是藏进 PASS）——跑过 <code>./scripts/install-hooks.sh</code> 之后在每次提交前运行（钩子电池只在某个钩子、它的设置或电池本身被暂存时才跑），而全部门禁都在 CI 里跑。</li>
+<li><strong>默认带审计轨迹</strong>——issue 作为缺陷记忆，进度报告作为工作记忆，外加一份资质台账，记录哪些检查真的被证明能检出东西。</li>
 </ul>
 
-<h2>Honest scope</h2>
+<h2>诚实的适用范围</h2>
 
 <ul>
-<li><strong>You remain responsible for the result.</strong> This template makes checking
-    cheaper; it does not transfer judgment. Identification strategy, estimand choice, and what
-    a result means stay yours.</li>
-<li><strong>It is not autonomous.</strong> Every review loop is started by you or by a skill you
-    invoked. There is no daemon, and that is a deliberate non-goal.</li>
-<li><strong>Built for economics</strong>, and used beyond it — the verification layer is
-    field-agnostic; the sensitivity and journal-calibration pieces are not.</li>
-<li><strong>It costs money.</strong> Model routing keeps the mechanical work on cheap tiers, but
-    a full peer-review simulation is not free.</li>
+<li><strong>结果仍然由你负责。</strong>本模板让检查更便宜，但不转移判断。识别策略、估计目标的选择、以及一个结果意味着什么，依然归你。</li>
+<li><strong>它不是自主的。</strong>每一次评审循环都由你、或由你调用的某个技能启动。没有守护进程，而这是刻意的非目标。</li>
+<li><strong>为经济学而建</strong>，也被用在经济学之外——核验层与领域无关；敏感性与期刊校准那两部分不是。</li>
+<li><strong>它要花钱。</strong>模型路由把机械性工作留在便宜档位上，但一次完整的同行评审模拟并不免费。</li>
 </ul>
 
-<h2>Getting started</h2>
+<h2>开始使用</h2>
 
 <pre><code># Fork this repo on GitHub, then:
 git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
@@ -326,22 +283,19 @@ cd my-project
 ./scripts/install-hooks.sh    # activates the gate suite on every commit
 </code></pre>
 
-<p>Start Claude Code, describe your project in two or three sentences, and it will read the
-configuration and adapt the workflow to your use case. You do not need all of this on day one
-— begin with <code>CLAUDE.md</code> and two or three skills, and add the rest as you hit the
-problems they solve.</p>
+<p>启动 WorkBuddy，用两三句话描述你的项目，它会读配置，并把工作流调整到你的用途上。你不需要在第一天就用上全部东西——从 <code>CODEBUDDY.md</code> 和两三个技能开始，等你撞上它们所解决的问题时再逐个加上。</p>
 
-<p><a href="workflow-guide.html">Read the full guide →</a></p>
+<p><a href="workflow-guide.html">阅读完整指南 →</a></p>
 
-<h2>Source</h2>
+<h2>来源</h2>
 
-<p>Everything is on GitHub:
-<a href="https://github.com/pedrohcgs/claude-code-my-workflow">pedrohcgs/claude-code-my-workflow</a>.
-MIT licensed — use freely for teaching, research, or any academic purpose.</p>
+<p>所有内容都在 GitHub 上：
+<a href="https://github.com/pedrohcgs/claude-code-my-workflow">pedrohcgs/claude-code-my-workflow</a>。
+MIT 许可——可自由用于教学、研究，或任何学术用途。</p>
 <div class="footer">
-  <a href="https://github.com/pedrohcgs/claude-code-my-workflow/releases/latest">Latest release</a> &middot;
-  <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/CHANGELOG.md">Changelog</a> &middot;
-  MIT license &middot;
+  <a href="https://github.com/pedrohcgs/claude-code-my-workflow/releases/latest">最新版本</a> &middot;
+  <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/CHANGELOG.md">变更日志</a> &middot;
+  MIT 许可 &middot;
   <a href="https://github.com/pedrohcgs/claude-code-my-workflow">GitHub</a>
 </div>
 </body>
