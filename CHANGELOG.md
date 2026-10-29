@@ -41,13 +41,47 @@ WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文�
   `hook-battery.sh` 保留不动（312 cases, seconds to run），供 POSIX CI 使用；
   两份电池覆盖不同范围，前者可在这台 Windows 上跑，后者不能。
 - `scripts/backtest.py`：原 `scripts/backtest.sh` 的等价重写。原版是 Bash 编排器，
-  在 Windows 上不可执行，而跑不起来的门禁等于没有门禁。原十道门的语义不变，
-  另加第 11 道（见下）。
+  在 Windows 上不可执行，而跑不起来的门禁等于没有门禁。上游十道门的语义不变，
+  另加第 11 道（见下）。门禁清单不在它里面，见 `scripts/gate-manifest.py`。
+- `scripts/gate-manifest.py`：门禁清单的**唯一真源**。此前三段文字各自从
+  `backtest.sh` 的正则里推导同一份清单（编排器跑它们、派生计数数它们、台账覆盖
+  核对它们），加一门要同时满足三处隐含假设，漏一处就是静默少算。
 - `scripts/lib/py.sh`：统一 Python 3 解释器探测。Windows 上 `python3` 通常是
   Microsoft Store 存根，`command -v` 能找到但执行返回 9009，必须真实执行探测。
 - `scripts/port-from-claude.py`：可重复执行的迁移工具，供后续上游同步复用。
 - `.codebuddy/skills/hello`、`.codebuddy/agents/ping`：Harness 自检组件，用于确认
   技能与子代理真的会被平台发现和调度。
+
+### Changed — 门禁编排收敛到一个实现
+
+- **门清单只有一个来源。** `scripts/gate-manifest.py` 是一份纯数据；`backtest.py`
+  执行它，`check-derived-counts.py` 数它（`len(GATES)`，不再数 `^run "` 行），
+  `check-ledger-coverage.py` 读它的 `scripts` 列核对台账（不再解析同一条正则）。
+  清单里 `scripts` 一列**与宿主无关**：没有 bash 的机器上第 3 门不执行，但它调用的
+  脚本仍然是注册在案的检查、仍然欠台账一行。
+- **`scripts/backtest.sh` 变成一个转发壳。** 它不再列举任何门，只探测可用的
+  Python 解释器（Windows 上 `python3` 常是商店存根）后 `exec` 到 `backtest.py`。
+  于是「两套编排器」变成「一个实现，两个入口」：CI 的 `./scripts/backtest.sh`
+  与本地 `python scripts/backtest.py` 跑的是同一份清单。
+- **`scripts/hook-battery.sh` 换成上游 `fix/portability-hardening` 版**，再回贴本仓库
+  适配（`.codebuddy` 路径、`CODEBUDDY_PROJECT_DIR` 双读、`python3` 存根遮蔽）。
+  上游这一版新增 `_ev`（把事件 JSON 里的 POSIX 路径按 `cygpath -m` 逐条改写成原生
+  拼写）与 `UNREACHABLE`（本平台建不出的夹具如实计数、由 CI 跑）。旧版在本机
+  **根本跑不起来**（`.claude/hooks` 不存在，exit 2），而第 10 门当时因为有
+  `check-hooks.py` 兜底，显示的是 PASS。
+- **第 10 门在 Windows 上是 PARTIAL，不是 PASS 也不是 FAIL。** 电池依赖三件 POSIX
+  宿主机制（建 symlink 的夹具、`timeout(1)` 驱动的「git 卡住」场景、事件里的 POSIX
+  路径能被解释器解析）。2026-10-29 实测：312 例里 15 例在本机判错、8 例被电池自己
+  记为 UNREACHABLE，其余通过。本机跑 `check-hooks.py`（迁移关键子集），上限原因
+  逐条打印；全量用例由 POSIX CI 执行。
+- **`.githooks/pre-commit` 的两处迁移残留。** 跳过钩子电池的正则仍写 `.claude/hooks/`，
+  而钩子早已在 `.codebuddy/hooks/` 下 —— 于是那个「只在钩子变动时才跑电池」的判据
+  在迁移后**永不成立**；同时 `python3 scripts/quality_score.py` 在 Windows 上会撞上
+  商店存根（exit 49），每一次提交都在质量评分那一步失败。两处都已修，正则两种拼写
+  都认（从上游 fork 升级过来的树里两者可能并存）。
+- **`BACKTEST_SKIP_HOOK_BATTERY=1` 现在表现为 SKIPPED，不再是 PASS。** 以前它由
+  `hook-battery.sh` 自己读、打印一行说明后 `exit 0`，于是编排器如实记成「第 10 门
+  通过」——一次什么都没跑的通过。现在由 `backtest.py` 判，记成未执行并在汇总里单列。
 
 ### Fixed — 跨平台缺陷
 

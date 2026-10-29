@@ -22,22 +22,55 @@ means as BLOCK, so a typo on a guard denies every matching call with an interpre
 error nobody reads as a config error; a bare path exits 127 (126 if present but not
 executable), a non-blocking error that scrolls past while the guard stops guarding.
 
-Registered checks are derived LIVE from three sources of truth — the `run` lines in
-`scripts/backtest.sh`, the hook commands in `.codebuddy/settings.json`, and the
+Registered checks are derived LIVE from three sources of truth — the gate list in
+`scripts/gate-manifest.py`, the hook commands in `.codebuddy/settings.json`, and the
 `.githooks/pre-commit` entry point. Never a hardcoded list: a list here would drift
 exactly the way the ledger does, and this checker would be the last to notice.
 
+[WorkBuddy 适配] The gate list used to be re-derived here from the `run "..."`
+lines of `scripts/backtest.sh`. That made this file a SECOND parser of the same
+text: adding a gate meant satisfying `backtest.py` AND this regex, and a gate whose
+line shape the regex missed would silently have no ledger requirement at all.
+It now reads the manifest's `scripts` column, which is declared **host-independent**
+on purpose — on a machine without bash gate 3 does not RUN, but
+`check-model-versions.sh` is still a registered check that owes a ledger row.
+
 Exit: 0 agreement (warnings allowed), 1 disagreement, 2 could not run.
 """
-import json, os, re, shlex, subprocess, sys
+import importlib.util, json, os, re, shlex, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(ROOT, "scripts")
 
 LEDGER = "quality_reports/qualification/LEDGER.md"
 SETTINGS = ".codebuddy/settings.json"
-BACKTEST = "scripts/backtest.sh"
+MANIFEST = "scripts/gate-manifest.py"
 PRECOMMIT = ".githooks/pre-commit"
+
+
+def load_gates():
+    """The gate list — one source of truth for what the suite runs.
+
+    A missing or unreadable manifest is CANNOT RUN, not "zero gates": reporting
+    agreement against an empty set is the empty-scan-passes-green failure this
+    repo treats as its most expensive bug class.
+    """
+    path = os.path.join(ROOT, MANIFEST)
+    spec = importlib.util.spec_from_file_location("_gate_manifest", path)
+    if spec is None or spec.loader is None:
+        raise CannotRun(f"{MANIFEST}: cannot load the gate manifest")
+    try:
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except OSError as e:
+        raise CannotRun(f"{MANIFEST}: cannot read ({e.strerror or e})")
+    except Exception as e:                      # a broken manifest must not read as "no gates"
+        raise CannotRun(f"{MANIFEST}: cannot import ({type(e).__name__}: {e})")
+    gates = getattr(mod, "GATES", None)
+    if not gates:
+        raise CannotRun(f"{MANIFEST}: no GATES — the manifest format changed and this checker "
+                        "is now blind to every gate")
+    return gates
 
 # The ledger section that records checks known to be unqualified. A name there is
 # debt someone can see and schedule; a name nowhere at all is the failure.
@@ -131,13 +164,12 @@ def registered():
     """Every check that actually runs, derived live. Returns (source, path, interpreter, where)."""
     out = []
 
-    gates = re.findall(r'^run\s+"([^"]+)"\s+(.+?)\s*$', read(BACKTEST), re.M)
-    if not gates:
-        raise CannotRun(f'{BACKTEST}: no `run "label" ...` gate lines found — the gate-line '
-                        "format changed and this checker is now blind to every gate")
-    for label, cmd in gates:
-        path, interp = script_of(cmd, f"{BACKTEST} gate '{label}'")
-        out.append(("backtest gate", path, interp, label))
+    gates = load_gates()
+    for spec in gates:
+        # One row per SCRIPT, not per gate: gate 10 runs two batteries, and both
+        # are checks that run and therefore owe the ledger a row.
+        for name in spec["scripts"]:
+            out.append(("backtest gate", os.path.join(SCRIPTS, name), None, spec["name"]))
 
     try:
         cfg = json.loads(read(SETTINGS))
@@ -310,7 +342,7 @@ def main():
     print("\n  WIRING — a mistyped path here leaves a check wired to nothing")
     for source, path, interp, where in checks:
         if source == "backtest gate":
-            continue                      # a dead gate path is loud: backtest.sh fails on it
+            continue                      # a dead gate path is loud: backtest.py skips it by name
         r = rel(path)
         if not os.path.isfile(path):
             print(f"    {where:<14} {r:<42} MISSING — never runs")

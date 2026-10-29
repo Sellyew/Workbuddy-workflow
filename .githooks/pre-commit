@@ -27,6 +27,12 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 }
 cd "$REPO_ROOT" || exit 2
 
+# python3 优先，退回 python。Windows 上 `python3` 往往是 Microsoft Store 的
+# App Execution Alias：`command -v` 找得到，执行时只打印一句提示并以 49 退出——
+# 于是每一次提交都在质量评分那一步以「rc=49」失败，而没人会把它读成解释器问题。
+PY=python3
+python3 -c 'import sys' >/dev/null 2>&1 || PY=python
+
 # Validate the STAGED index, not the working tree, by stashing unstaged
 # *tracked* changes — but ONLY when it is safe. If any single file has BOTH
 # staged and unstaged changes (the `git add -p` workflow), a `stash --keep-index`
@@ -57,7 +63,11 @@ FAIL=0
 # staged. CI runs the full suite on every push; nothing merges unbatteried.
 # (A here-string, not `printf | grep -q`: under pipefail, grep -q exiting early
 # makes printf die of SIGPIPE on a long staged list, and the test would misfire.)
-if grep -E '^(\.claude/hooks/|\.claude/settings[^/]*\.json$|\.githooks/|scripts/hook-battery\.sh$)' \
+# [WorkBuddy 适配] `.claude/` 与 `.codebuddy/` 两种拼写都认：迁移后配置根是
+# `.codebuddy/`，但本仓库正是从上游 `.claude/` 树 fork 来的，从旧树升级过来的
+# 仓库里两者可能同时存在。少认一种，那种树上的钩子改动就再也不会触发这一跑，
+# 而跳过是完全静默的 —— 它只改一个环境变量。
+if grep -E '^(\.claude/hooks/|\.codebuddy/hooks/|\.claude/settings[^/]*\.json$|\.codebuddy/settings[^/]*\.json$|\.githooks/|scripts/hook-battery\.sh$)' \
         >/dev/null <<< "$_staged"; then
     unset BACKTEST_SKIP_HOOK_BATTERY      # a hook is staged: run it, whatever the shell inherited
 else
@@ -84,7 +94,7 @@ else
         while IFS= read -r f; do
             [ -z "$f" ] && continue
             [ -f "$f" ] || continue
-            python3 scripts/quality_score.py "$f"
+            "$PY" scripts/quality_score.py "$f"
             rc=$?
             # quality_score.py: rc 2 = auto-fail (compile/syntax FAILURE), rc 1 =
             # score < 80 (or scorer error / file-not-found). BOTH must block — a

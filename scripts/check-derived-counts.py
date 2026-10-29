@@ -33,9 +33,30 @@ def n_translate_phases():
     return len(ph - {"0"})            # Phase 0 is pre-flight, not a translation phase
 
 def n_gates():
-    t = read("scripts/backtest.sh")
-    n = len(re.findall(r'^run "', t, re.M))
-    return n
+    """门禁数量：问清单，不数文本。
+
+    [WorkBuddy 适配] 以前数 `scripts/backtest.sh` 里的 `^run "` 行。清单搬进
+    `scripts/gate-manifest.py`（唯一真源，三个消费者共用）之后，`backtest.sh`
+    只剩一个转发的壳，那条正则只会数到 0。换一条正则去数 Python 里的字典字面量
+    是把同一个脆弱性搬到下一层；正确做法是让真源自己回答：`len(GATES)`。
+    """
+    import importlib.util
+    p = os.path.join(ROOT, "scripts", "gate-manifest.py")
+    spec = importlib.util.spec_from_file_location("_gate_manifest", p)
+    if spec is None or spec.loader is None:
+        sys.exit(f"check-derived-counts: 无法加载门禁清单 {p}")
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    except OSError as e:
+        sys.exit(f"check-derived-counts: 读不到门禁清单 {p}（{e.strerror or e}）——"
+                 "数不到就报错，绝不能当作 0")
+    except Exception as e:                      # 清单本身坏了，同样不能读成「零道门」
+        sys.exit(f"check-derived-counts: 门禁清单 {p} 无法导入（{type(e).__name__}: {e}）")
+    gates = getattr(mod, "GATES", None)
+    if not gates:
+        sys.exit(f"check-derived-counts: {p} 里没有 GATES —— 数不到就报错，不当作 0")
+    return len(gates)
 
 # --- release-inventory counts -------------------------------------------------
 #
@@ -386,7 +407,13 @@ CHECKS = [
     # r13: the three multi-instance surfaces declare HOW MANY sites they carry
     # (README.md "ten gates" + "10 checkers"; docs/index.html twice; the guide
     # three times), so rewording one of them is as loud as rewording the last.
-    ("backtest gates",        r'(?i)(?<![\w-])' + _NUM + r'\s*(?:个(?:门禁|检查器)|gates\b|checkers\b)', [REQ("README.md", 2), REQ("docs/index.html", 2), OPT("CODEBUDDY.md", "names the gate suite, states no count"), REQ("guide/workflow-guide.qmd", 3), OPT(".codebuddy/skills/vaccinate/evals/README.md", "refers to the suite by path, states no count"), ".codebuddy/skills/commit/SKILL.md", ".github/CONTRIBUTING.md", "scripts/backtest.sh"], n_gates()),
+    # r14 (本次迁移): 那处 header 已经不在了。门禁清单搬进
+    # `scripts/gate-manifest.py` 作为三个消费者共用的唯一真源，`backtest.sh`
+    # 只剩一个转发到 `backtest.py` 的壳、不再列举任何门；而清单本身是**数据**，
+    # 在里面再写一个「十一门」的总数只会和 `len(GATES)` 重复，所以它是 OPT。
+    # 「11」这个数字仍由上面八个散文面（README ×2、落地页 ×2、指南 ×3、
+    # commit/SKILL.md、CONTRIBUTING.md）守住。
+    ("backtest gates",        r'(?i)(?<![\w-])' + _NUM + r'\s*(?:个(?:门禁|检查器)|gates\b|checkers\b)', [REQ("README.md", 2), REQ("docs/index.html", 2), OPT("CODEBUDDY.md", "names the gate suite, states no count"), REQ("guide/workflow-guide.qmd", 3), OPT(".codebuddy/skills/vaccinate/evals/README.md", "refers to the suite by path, states no count"), ".codebuddy/skills/commit/SKILL.md", ".github/CONTRIBUTING.md", OPT("scripts/gate-manifest.py", "the manifest IS the count; a stated total in it would be derived from itself")], n_gates()),
     # CLAUDE.md's law count was hand-edited 17 -> 21 and nothing recomputed it,
     # so "99 laws" would have left every gate green. Counted from the laws file.
     # [WorkBuddy 适配] 表面由 CLAUDE.md 改为 CODEBUDDY.md：本平台的项目指令入口是

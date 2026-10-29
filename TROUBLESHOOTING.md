@@ -119,6 +119,30 @@ claude mcp add stata-mcp --scope user -- uvx stata-mcp
 
 `chmod +x .codebuddy/hooks/*.py .codebuddy/hooks/*.sh`。`./scripts/validate-setup.sh` 也会报告不可执行的钩子。
 
+### 第 10 门为什么显示 PARTIAL，第 3 门为什么 SKIPPED
+
+门禁清单在 `scripts/gate-manifest.py`（唯一真源），每道门自己声明运行前提：
+
+- **第 3 门 SKIPPED**：`check-model-versions.sh` 是 Bash 脚本，而本机 PATH 上没有
+  bash。没执行就是没执行，汇总里单独列出，不记作通过。
+- **第 10 门 PARTIAL**：钩子电池依赖 POSIX 宿主机制（symlink 夹具、`timeout(1)`、
+  事件 JSON 里的 POSIX 路径可被解释器解析）。Windows 上跑不了全量，本机改跑
+  `check-hooks.py`（迁移关键子集），上限原因直接打印在门上。
+
+两者都不影响退出码，但都会在汇总里单列——**一次有上限的通过，不能显示成通过**。
+
+### 把 Git Bash 放上 PATH 之前先知道一件事
+
+装上 Git for Windows 之后 `bash` 通常在 `D:\Git\bin`（或 `C:\Program Files\Git\bin`），
+把它加入 PATH 会让第 3 门从 SKIPPED 变成真跑。但它同时会让第 11 门多出一批红：
+
+> 那批用例的跳过谓词是「有 POSIX shell」，而它们实际需要的是「**宿主是 POSIX**」。
+> 在 Windows + Git Bash 这个组合下它们会执行，然后因为 Windows 的路径/符号链接/
+> git 行为而失败——2026-10-29 实测 26 条。CI（Linux）上它们本来就会跑，不受影响。
+
+所以：**要么保持默认（PATH 里没有 bash），要么接受第 11 门在这台机器上是红的并把
+它当作已知边界。** 不要为了让它变绿去改断言——那正是本仓库最贵的 bug 类型。
+
 ### 压缩前的钩子没把计划存下来
 
 PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.workbuddy/sessions/<hash>/`。若压缩之后状态不在那儿：
