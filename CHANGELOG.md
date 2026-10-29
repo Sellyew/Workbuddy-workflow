@@ -73,7 +73,7 @@ WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文�
   宿主机制（建 symlink 的夹具、`timeout(1)` 驱动的「git 卡住」场景、事件里的 POSIX
   路径能被解释器解析）。2026-10-29 实测：312 例里 15 例在本机判错、8 例被电池自己
   记为 UNREACHABLE，其余通过。本机跑 `check-hooks.py`（迁移关键子集），上限原因
-  逐条打印；全量用例由 POSIX CI 执行。
+  逐条打印；全量用例在本机未执行，需在 POSIX 宿主上验证。
 - **`.githooks/pre-commit` 的两处迁移残留。** 跳过钩子电池的正则仍写 `.claude/hooks/`，
   而钩子早已在 `.codebuddy/hooks/` 下 —— 于是那个「只在钩子变动时才跑电池」的判据
   在迁移后**永不成立**；同时 `python3 scripts/quality_score.py` 在 Windows 上会撞上

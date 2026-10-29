@@ -34,4 +34,7 @@ jobs:
           # A replication-log or spec-ledger entry committed on the base branch must still
           # be here, unedited — this catches a rewrite committed without the local hook.
           APPEND_ONLY_BASE: ${{ github.base_ref && format('origin/{0}', github.base_ref) || 'origin/main' }}
+          # DIAGNOSTIC (temporary): the guard fails open, so under _winsim a crash and
+          # a real hole both surface as "not denied". Print the crash to stderr.
+          WB_WINSIM_DEBUG: "1"
         run: ./scripts/backtest.sh
