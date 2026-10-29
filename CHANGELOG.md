@@ -167,6 +167,31 @@ WorkBuddy 原生支持的 `.codebuddy/`，并把默认交互语言改为中文�
 - 双语化的直接收益：`check-surface-sync` 立刻抓到指南里**残留的陈旧计数**
   （`18 个代理、61 个技能`），而这处在中文化之前一直是绿的。
 
+### Fixed — 首跑路径的身份字段
+
+迁移只换了载体，没换**身份**：文档里写仓库地址、站点地址的地方仍然是上游的。照着
+README 做第一步就会 clone 到别人的仓库，指南里每条「去看某个文件」都落到 404。
+
+- **克隆地址**改成 `YOUR_USERNAME/Workbuddy-workflow`（README、落地页、指南三处）。
+- **指南里的 20 条仓库内链接**从 `pedrohcgs/claude-code-my-workflow` 改指本仓库。
+  这些路径是 `.codebuddy/...` 与 `templates/...`，上游仓库没有（上游用 `.claude/`），
+  实测同一条链接在上游 404、在本仓库 200。
+- **中文指南上线。** 指南早已译好并渲染进 `docs/`，但 GitHub Pages 从未开启
+  （`sellyew.github.io/Workbuddy-workflow/` 404），于是 README 只能指上游英文站。
+  现已开启（源：main / `docs`），12 处站点链接改指本站。
+- **README 快速开始补上 `./scripts/install-hooks.sh`。** 指南第 6 步与自检清单都要
+  它，缺了它 `core.hooksPath` 不设，pre-commit 门禁在用户机器上一直空转；而 README
+  只跑 `validate-setup.sh`，后者对这件事仅打印一行警告。
+- **`SECURITY.md` / `CONTRIBUTING.md` / `explorations/README.md` /
+  `master_supporting_docs/README.md` 的 `.claude/` 路径**改成 `.codebuddy/`。最后
+  一条是相对链接，指向不存在的目录——「受限数据放哪里」那份说明里的链接是断的。
+- **`check-links.py` 把这两个目录纳入扫描**（178 个文件）。它们此前不在扫描清单里，
+  正是那条断链一直绿着的原因。
+- **「成本意识的并行」补上锚点。** 它是 callout，`{#id}` 加在标题上不会生成锚点；
+  包一层带 id 的 div 之后，`data-analysis` 技能的 `#cost-conscious-parallelism`
+  深链接才有着落。
+- README 里「本仓库已越过 2,900 次 fork」的数字属于上游，措辞改成「上游仓库」。
+
 ### Fixed — 可移植性硬化回补（P9）
 
 迁移时只搬了文件、没搬硬化：`pre-commit`、`validate-setup.sh`、`file-issue.py`、
