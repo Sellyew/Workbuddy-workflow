@@ -2,7 +2,16 @@
 
 18 个专项子代理，各自负责什么、运行在哪个模型层级（[`model-routing.md`](../rules/model-routing.md)），以及由哪个技能派发它。这让船队变得可读——当某个扇出型技能挑选一个透镜时，这就是它从中挑人的花名册。审读器是**只读**的（它们按 [`orchestration-schemas.md`](orchestration-schemas.md) 报告 `FINDING`）；只有修复者会编辑文件。
 
-> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:` / `effort:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改层级时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。）
+> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改层级时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。）
+
+> **[WorkBuddy 适配 · 2026-10-30] 这张表的「层级」与「投入」两轴是上游口径，不是本平台的运行事实。**
+> 本平台的子代理只按 frontmatter 的 `model:` 三档路由（`default` / `lite` / `reasoning`，
+> 见 [`model-routing.md`](../rules/model-routing.md)）；**没有 `effort` 轴**——引擎的代理元数据
+> schema 里没有这个键，写了会被直接剥掉（证据与命令见
+> [`platform-facts.md`](platform-facts.md)「技能 / 规则 / 代理」）。
+> 下面各节标题与「投入」一列暂时保留上游措辞作对照，**读的时候当成历史来源，别当成旋钮**：
+> 它解释的是「照上游文档调 `effort` 为什么没反应」。这一列待重写，已登记为
+> `platform-facts.md` 的「已知不一致」第 1 条。
 
 ## 高判断层级 —— Opus 层
 

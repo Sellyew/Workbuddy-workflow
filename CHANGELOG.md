@@ -6,6 +6,38 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## Unreleased — 平台事实有了唯一出处
+
+### Added — `references/platform-facts.md`
+
+平台事实此前只活在审计报告的表格里，正文引用时已经失去出处：v3.0.1 修的正是这条链
+（`P1` 的 T13 一行 → v3.0.0 删掉 `permissions` → 四份文档替它辩护）。这个文件把
+「本平台支持 / 不支持 X」挪到一张表里，每条带**观测级别**（L0 零命中 / L1 键存在 /
+L2 代码路径 / L3 运行时）与一条可重跑的证据命令，并写明升级后哪些行必须重测。
+
+配套记了四条方法教训，其中一条是这次实测出来的：`grep -o "\"permissions\""` 在
+`app.asar` 上返回 0，裸词返回 695——只测一种引号形态，就会把「支持」写成「不支持」。
+
+### Changed — 三条判定的措辞收紧
+
+- `P1_migration_verification.md` 追加补记（不改原表）：T11 `PreCompact`、T12
+  `Notification` 从「尚未验证」改为 **L2 ⏳**——发射点明确存在，只是没在本机触发过；
+  T7 agent `model:` 从「部分支持」改为 **L2**，并指出「部分支持」描述的是探针缺陷
+  （模型不自报身份）而不是平台缺陷。`resolveAgentModel` 确实读元数据并解析成会话模型。
+- `references/agent-fleet.md` 顶部加注：本表的「层级」与「投入」两轴是上游口径，
+  本平台只按 `model:` 三档路由，`effort` 轴不存在。各节标题与「投入」一列暂时保留
+  作对照，重写登记为 `platform-facts.md` 的「已知不一致」第 1 条（16 个代理文件仍带
+  `effort:`，而 `model-routing.md` 与 `INERT_FIELDS` 都认定它无效）。
+
+### Newly recorded — 引擎比仓库用得多
+
+`HOOK_EVENT_NAMES` 里有 **28 个钩子事件**，仓库注册了 7 个。已接的 7 个全部有发射点，
+另有 `SessionEnd` · `SubagentStart/Stop` · `PostToolUseFailure` · `FileChanged` ·
+`PermissionDenied` · `FinalStop` · `PostCompact` 等可用未接。列为能力项，不在本次
+改动范围。
+
+---
+
 ## v3.0.1 — 2026-10-30（项目配置与文档对齐）
 
 ### Fixed — 命令不再指向本平台不存在的入口
