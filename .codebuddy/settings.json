@@ -1,0 +1,129 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" git-guardrails.py",
+            "timeout": 25
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" root-of-trust-guard.py",
+            "timeout": 25
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" issue-guard.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" context-monitor.py",
+            "timeout": 8
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" claim-reconcile.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" session-handoff.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" post-compact-restore.py",
+            "timeout": 8
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" session-handoff.py",
+            "timeout": 8
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" open-issues.py",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" pre-compact.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" log-reminder.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.codebuddy/hooks/lib/hook-runner.sh\" notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

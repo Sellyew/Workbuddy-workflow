@@ -1,137 +1,112 @@
-# Executor Contract: [Task Title]
+# 执行者契约：[任务标题]
 
-**Date:** [YYYY-MM-DD]
-**Dispatched to:** [agent / model tier] — see [`model-routing.md`](../.claude/rules/model-routing.md)
-**Status:** DRAFT | DISPATCHED | RETURNED | ACCEPTED
+**日期：** [YYYY-MM-DD]
+**派发给：** [代理 / 模型层] —— 见 [`model-routing.md`](../.codebuddy/rules/model-routing.md)
+**状态：** DRAFT | DISPATCHED | RETURNED | ACCEPTED
 
-> Give an executor the **goal and the acceptance bar — never the implementation**
-> ([`research-agent-laws.md`](../.claude/references/research-agent-laws.md) law 7). A prescribed
-> mechanism is a hypothesis wearing the clothes of an instruction.
+> 给执行者的是**目标与验收门槛——永远不是实现方式**（[`research-agent-laws.md`](../.codebuddy/references/research-agent-laws.md) 法则 7）。规定好的机制，是一个披着指令外衣的假设。
 
 ---
 
-## Goal
+## 目标
 
-[One or two sentences describing the state of the world when this is done. An outcome, not a
-procedure: *"every exported function has a regression test that fails when its output changes"*,
-not *"add test files under `tests/`"*.]
+[一两句话，描述这件事做完之后世界是什么状态。写结果，不写流程：*「每个导出的函数都有一个回归测试，输出一变它就失败」*，而不是 *「在 `tests/` 下加测试文件」*。]
 
 ---
 
-## Acceptance bar
+## 验收门槛
 
-[What evidence settles it: the command that is run, the artifact it writes, and the value that
-counts as a pass. If a human has to look and judge, say who and against what.]
+[什么证据能定案：跑的是哪条命令、它写出什么产物、什么数值算通过。若要人来看和判断，说清是谁、对着什么判。]
 
-- [ ] [Evidence 1 — command → artifact → passing condition]
-- [ ] [Evidence 2 — command → artifact → passing condition]
+- [ ] [证据 1——命令 → 产物 → 通过条件]
+- [ ] [证据 2——命令 → 产物 → 通过条件]
 
-**Not evidence:** the executor's summary of its own work; a count read off a terminal rather than
-computed (law 18); a gate that would pass rather than one that was run.
+**不算证据：**执行者对自己工作的总结；从终端上读来而不是算出来的计数（法则 18）；一个「本来就会通过」而不是「实际跑过」的门禁。
 
 ---
 
-## Owned paths
+## 自有路径
 
-Exact paths this executor may create or modify. Anything not listed belongs to someone else — in
-a parallel wave, to another executor running right now.
+这个执行者可以创建或修改的确切路径。没列出来的一切都归别人——在一波并行里，归此刻正在跑的另一个执行者。
 
-| Path | Create / Edit | Note |
+| 路径 | 创建 / 编辑 | 备注 |
 |------|---------------|------|
-| `[path/to/file]` | edit | [why this file is in scope] |
-| `[path/to/new-file]` | create | [what it is for] |
+| `[path/to/file]` | edit | [这个文件为什么在范围内] |
+| `[path/to/new-file]` | create | [它是干什么的] |
 
 ---
 
-## Gates this work must pass
+## 这项工作必须通过的门禁
 
 ```bash
 [./scripts/backtest.sh]          # or the standing gate for the surface being touched
 ```
 
-**Done** means the gate was **run** and is green, and the work is committed and pushed **where
-the executor was authorized to commit** — reported in that order and not before (law 19). A gate
-left for a pre-commit hook to discover is a gate that was not run. Committing is itself gated: if
-this repo requires explicit sign-off to commit ([`/commit`](../.claude/skills/commit/SKILL.md)),
-a delegated executor's *Done* is **gate-green and handed back with evidence**, and the commit is
-a separate authorized step — never something the executor does on its own to satisfy this line.
+**完成**意味着门禁**跑过**且是绿的，并且工作已在**执行者被授权提交的地方**提交并推送——按这个顺序报告，不得提前（法则 19）。留给 pre-commit 钩子去发现的门禁，就是一个没跑过的门禁。提交本身也受门禁：若本仓库要求明确签核才能提交（[`/commit`](../.codebuddy/skills/commit/SKILL.md)），那么被委派的执行者的*完成*是**门禁变绿、并带着证据交回**，提交是另一次经授权的步骤——绝不是执行者为了满足这一行而自作主张做的事。
 
 ---
 
-## Output contract
+## 输出契约
 
-Return exactly:
+精确返回：
 
-1. **Structured result** — [`files_changed`, `evidence`, `open_issues`, … name the fields].
-   Every number in it cites the command that produced it.
-2. **Banked artifact** — the raw output (log, table, findings JSON) written to
-   `[quality_reports/…]`, so the record outlives the context that made it.
+1. **结构化结果**——[`files_changed`、`evidence`、`open_issues`、…… 点名各字段]。其中每个数字都要注明产出它的命令。
+2. **存盘产物**——把原始输出（日志、表格、findings JSON）写到 `[quality_reports/…]`，让记录比产出它的上下文活得更久。
 
 ---
 
-## Mechanisms offered (refusable hypotheses)
+## 提供的机制（可否决的假设）
 
-These are guesses about *how*, not instructions. An executor that measures a better route takes
-it and says so in the return.
+这些是关于*怎么做*的猜测，不是指令。执行者若量出更好的路线，就走那条，并在返回里说明。
 
-- **Hypothesis A:** [mechanism] — [why it might be right, and what would falsify it]
-- **Hypothesis B:** [alternative]
+- **假设 A：**[机制]——[为什么它可能是对的，以及什么能证伪它]
+- **假设 B：**[替代方案]
 
-**Refusal is a valid return.** *"The bar was already met — here is the measurement"* ends the
-task successfully and is worth more than a change that was not needed.
+**拒绝是一项合法的返回。***「门槛本来就已经满足——这是测量结果」*能成功结束任务，价值高于一个并不需要的改动。
 
 ---
 
-## What NOT to touch
+## 不要碰什么
 
-- [Paths owned by other executors in this wave]
-- [Surfaces whose change would need its own review — anything that moves a reported number]
-- [Blessed baselines and pins: never re-bless in the commit that moves them (law 3)]
-
----
-
-## Return checklist (executor fills in)
-
-- [ ] Acceptance-bar evidence produced, with the deriving command stated
-- [ ] Gate run and green; committed and pushed **only where authorized** — otherwise handed back gate-green with evidence (see *Done*, above)
-- [ ] Only owned paths touched
-- [ ] Refused or replaced mechanisms named, with the measurement that justified it
+- [本波里其他执行者拥有的路径]
+- [改动会需要自己一次审读的表面——任何会挪动一个被报告数字的东西]
+- [受祝福的基线与钉死项：绝不在挪动它们的那次提交里重新祝福（法则 3）]
 
 ---
 
-## Filled example (synthetic)
+## 返回清单（执行者填写）
 
-**Goal.** The daily ingest produces one row per (site, day) for every site in the registry, and a
-consumer can distinguish a day with no observations from a day that was never ingested.
-
-**Acceptance bar.**
-
-- [ ] `python3 pipeline/audit_coverage.py --since 2020-01-01` exits 0 and writes
-      `outputs/coverage_audit.csv`; the audit's final line reports `missing_days: 0`.
-- [ ] The same command on the pre-change commit reports a non-zero `missing_days` — the
-      detector is shown to fire before it is trusted to pass.
-
-**Owned paths.** `pipeline/ingest.py` (edit), `pipeline/audit_coverage.py` (create),
-`tests/test_coverage.py` (create).
-
-**Gates.** `pytest tests/ -q` and the repo's standing checker suite, both green before reporting.
-
-**Output contract.** Structured return with `files_changed`, `evidence` (the two command lines and
-their final summary lines, verbatim), `open_issues`; `outputs/coverage_audit.csv` banked in the
-run directory.
-
-**Mechanisms (refusable).** *Hypothesis A:* a left join against a generated calendar table is the
-cheapest way to make absence explicit. *Hypothesis B:* an ingest-time sentinel row. If the loader
-already emits an explicit no-observation marker, neither is needed — say so and stop.
-
-**What NOT to touch.** The published schema for downstream consumers, the retention policy, and
-any file under `outputs/` other than the new audit CSV.
+- [ ] 已产出验收门槛的证据，并写明推导命令
+- [ ] 门禁已跑且为绿；**只在获授权处**提交并推送——否则带着证据、门禁变绿地交回（见上文*完成*）
+- [ ] 只碰了自有路径
+- [ ] 被拒绝或被替换的机制已点名，并给出支持该决定的测量
 
 ---
 
-## Cross-references
+## 填好的示例（虚构）
 
-- [`research-agent-laws.md`](../.claude/references/research-agent-laws.md) — laws 7, 8, 18, 19
-- [`orchestrator-protocol.md`](../.claude/rules/orchestrator-protocol.md) — the fan-out runtime this contract is dispatched into
-- [`screening-rubric.md`](screening-rubric.md) — the screening counterpart, when the executor's job is to triage rather than to build
-- [`requirements-spec.md`](requirements-spec.md) — for the upstream question of *what is required* before anything is dispatched
+**目标。** 每日摄取为登记表里的每个站点产出每个（站点, 日）一行，且消费方能区分「当天没有观测」与「从未摄取的日子」。
+
+**验收门槛。**
+
+- [ ] `python3 pipeline/audit_coverage.py --since 2020-01-01` 以 0 退出，并写出 `outputs/coverage_audit.csv`；审计输出的最后一行报 `missing_days: 0`。
+- [ ] 同一条命令跑在改动前的 commit 上，会报出非零的 `missing_days`——在信任它通过之前，先证明这个检测器会触发。
+
+**自有路径。** `pipeline/ingest.py`（编辑）、`pipeline/audit_coverage.py`（创建）、`tests/test_coverage.py`（创建）。
+
+**门禁。** `pytest tests/ -q` 与仓库的常设检查器套件，报告之前两者都必须是绿的。
+
+**输出契约。** 结构化返回，含 `files_changed`、`evidence`（那两行命令及其最后的摘要行，逐字）、`open_issues`；`outputs/coverage_audit.csv` 存进运行目录。
+
+**机制（可否决）。** *假设 A：*对一张生成的日历表做左连接，是把「缺失」显式化的最省办法。*假设 B：*在摄取时写一行哨兵。若加载器已经写出显式的无观测标记，两者都不需要——说出来，然后停下。
+
+**不要碰什么。** 给下游消费方的已发布 schema、留存政策，以及 `outputs/` 下除新审计 CSV 之外的任何文件。
+
+---
+
+## 交叉引用
+
+- [`research-agent-laws.md`](../.codebuddy/references/research-agent-laws.md) —— 法则 7、8、18、19
+- [`orchestrator-protocol.md`](../.codebuddy/rules/orchestrator-protocol.md) —— 这份契约被派发进去的扇出运行时
+- [`screening-rubric.md`](screening-rubric.md) —— 筛选侧的对应物，当执行者的活是分诊而不是建造时
+- [`requirements-spec.md`](requirements-spec.md) —— 派发任何东西之前，先回答上游那个*要求什么*的问题

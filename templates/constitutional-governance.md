@@ -1,194 +1,194 @@
-# Constitutional Governance Template
+# 宪制治理模板
 
-**Define your immutable principles vs. user preferences.**
-
----
-
-## Why Constitutional Governance?
-
-As projects grow, some decisions become non-negotiable (to maintain quality, reproducibility, or collaboration standards). Others remain flexible based on context.
-
-Making this distinction explicit prevents:
-- Repeated debates on settled issues
-- Inconsistent application of standards
-- Uncertainty about when to ask vs. decide
+**把不可变原则与用户偏好区分开来。**
 
 ---
 
-## How to Use This Template
+## 为什么需要宪制治理？
 
-1. Copy this file to `.claude/rules/constitutional-governance.md`
-2. Replace bracketed examples with YOUR non-negotiables
-3. Delete articles that don't apply to your workflow
-4. Add new articles as patterns emerge
-5. Keep it to 3-7 articles (more signals insufficient abstraction)
+随着项目成长，有些决策会变得不可谈判（为了维持质量、可复现性或协作标准）。另一些则依情境保持弹性。
 
----
-
-## Example Articles (Customize for Your Domain)
-
-### Article I: [Your Primary Artifact Principle]
-
-**Example (LaTeX workflows):** Beamer `.tex` is authoritative; Quarto `.qmd` derives from it.
-
-**Example (R workflows):** Analysis scripts are authoritative; reports derive from them.
-
-**Example (Jupyter workflows):** Notebooks are authoritative; exported HTML derives from them.
-
-**Example (multi-format):** Source documents (`.qmd`, `.Rmd`) are authoritative; all outputs (HTML, PDF, Word) derive from them.
-
-**Why this matters:** Prevents circular dependencies and merge conflicts.
-
-**Your version:**
-[Replace with your primary artifact principle]
+把这条界线写明白，可以避免：
+- 对已经定案的问题反复争论
+- 标准执行得忽松忽紧
+- 不确定什么时候该问、什么时候该自己定
 
 ---
 
-### Article II: Plan-First Threshold
+## 怎么用这个模板
 
-Enter plan mode for tasks requiring [YOUR THRESHOLD: e.g., >3 files, >30 minutes, multi-step workflows].
-
-**Why this matters:** Prevents mid-implementation pivots and wasted effort.
-
-**Your exceptions:** [e.g., exploration folder allows fast-track, quick fixes skip planning, documented emergencies]
-
-**Your version:**
-[Replace with your threshold and exceptions]
+1. 把本文件复制到 `.codebuddy/rules/constitutional-governance.md`
+2. 把括号里的示例换成**你的**不可谈判项
+3. 删掉不适用于你工作流的条款
+4. 随模式浮现增补新条款
+5. 保持在 3-7 条（更多就说明抽象不够）
 
 ---
 
-### Article III: Quality Gate
+## 示例条款（按你的领域定制）
 
-Nothing commits below [YOUR THRESHOLD: e.g., 80/100, all tests passing, peer review approval].
+### 第一条：[你的主产物原则]
 
-**Why this matters:** Technical debt accumulates exponentially below quality thresholds.
+**示例（LaTeX 工作流）：** Beamer `.tex` 是权威；Quarto `.qmd` 由它派生。
 
-**Your exceptions:** [e.g., WIP branches explicitly marked, exploratory work in sandbox folder, draft commits tagged as such]
+**示例（R 工作流）：** 分析脚本是权威；报告由它们派生。
 
-**Your version:**
-[Replace with your quality threshold and exceptions]
+**示例（Jupyter 工作流）：** Notebook 是权威；导出的 HTML 由它们派生。
 
----
+**示例（多格式）：** 源文档（`.qmd`、`.Rmd`）是权威；所有输出（HTML、PDF、Word）由它们派生。
 
-### Article IV: Verification Standard
+**为什么重要：** 防止循环依赖与合并冲突。
 
-All artifacts must [YOUR STANDARD: e.g., compile successfully, pass tests, render without errors, meet accessibility standards] before commit.
-
-**Why this matters:** Broken builds block downstream work and collaboration.
-
-**Your exceptions:** [e.g., known issues documented in README, external dependencies unavailable, explicit --skip-verify flag with justification]
-
-**Your version:**
-[Replace with your verification standard and exceptions]
+**你的版本：**
+[换成你的主产物原则]
 
 ---
 
-### Article V: [Your File Organization Principle]
+### 第二条：计划先行阈值
 
-**Example (structured projects):** Never scatter analysis docs; use `quality_reports/session_logs/` for all session documentation.
+对需要 [你的阈值：例如 >3 个文件、>30 分钟、多步工作流] 的任务进入计划模式。
 
-**Example (notebook users):** One notebook per analysis; no code duplication across notebooks; shared functions go in modules.
+**为什么重要：** 防止实施中途掉头和无效投入。
 
-**Example (multi-language):** Language-specific subdirectories (`R/`, `python/`, `julia/`); no mixed-language files.
+**你的例外：** [例如：探索目录允许走快速通道、小修跳过计划、有记录的紧急情况]
 
-**Example (literate programming):** All code lives in `.qmd` or `.Rmd` files; extracted `.R` scripts are derived artifacts.
-
-**Why this matters:** Consistent structure enables navigation, collaboration, and automated tooling.
-
-**Your exceptions:** [e.g., quick prototypes in `scratch/`, legacy files in `_archive/`, temporary explorations]
-
-**Your version:**
-[Replace with your file organization principle]
+**你的版本：**
+[换成你的阈值与例外]
 
 ---
 
-## User Preferences (Override Anytime)
+### 第三条：质量门禁
 
-List patterns that ARE flexible and can vary by context:
+低于 [你的阈值：例如 80/100、所有测试通过、同行评审批准] 的东西不提交。
 
-- [e.g., File naming conventions (snake_case vs camelCase vs kebab-case)]
-- [e.g., Tolerance thresholds for numerical comparisons (1e-6 vs 1e-8)]
-- [e.g., Review agent priority order (pedagogy-first vs code-quality-first)]
-- [e.g., Comment verbosity (minimal vs detailed)]
-- [e.g., Plot color schemes (institutional vs publication-ready vs colorblind-safe)]
-- [e.g., Citation style (APA vs Chicago vs domain-specific)]
+**为什么重要：** 低于质量阈值时，技术欠账会指数式累积。
 
----
+**你的例外：** [例如：明确标注的 WIP 分支、沙箱目录里的探索性工作、标记为草稿的提交]
 
-## Requesting Amendment
-
-When a user asks to deviate from an article, ask:
-
-> "Are you **amending Article X** (permanent change) or **overriding for this task** (one-time exception)?"
-
-This preserves institutional memory while allowing flexibility.
-
-**Amendment process:**
-1. User proposes amendment with rationale
-2. Discuss implications (what breaks? what improves?)
-3. Update this file if amendment approved
-4. Document the change in session log with [CONSTITUTIONAL AMENDMENT] tag
+**你的版本：**
+[换成你的质量阈值与例外]
 
 ---
 
-## When NOT to Use Articles
+### 第四条：核验标准
 
-Don't create articles for:
+所有产物在提交之前必须 [你的标准：例如编译成功、测试通过、渲染无错、达到无障碍标准]。
 
-- **Personal preferences** that don't affect collaboration or reproducibility
-- **One-off decisions** unlikely to recur
-- **Patterns still evolving** (wait until they stabilize across 3+ uses)
-- **External constraints** (imposed by journals, funders, collaborators)
+**为什么重要：** 构建坏了会阻塞下游工作与协作。
 
----
+**你的例外：** [例如：已在 README 记录已知问题、外部依赖不可得、带理由的显式 --skip-verify]
 
-## Examples from Different Domains
-
-### Economics/Econometrics
-
-1. **Replication-First:** All empirical claims must have accompanying R/Stata scripts
-2. **Data Provenance:** All datasets documented with source, date, and processing steps
-3. **Robust Standard Errors:** Default to clustered SEs; justify if not used
-
-### Biology/Wet Lab
-
-1. **Lab Notebook Primacy:** Physical lab notebook is authoritative; digital is backup
-2. **Sample Tracking:** All biological samples get unique IDs before processing
-3. **Protocol Versioning:** Protocol changes documented; old versions archived
-
-### Computer Science/ML
-
-1. **Reproducible Seeds:** All stochastic code uses documented random seeds
-2. **Environment Specification:** `requirements.txt` / `environment.yml` always up to date
-3. **Benchmark Baselines:** New methods compared against published baselines
-
-### Mathematics/Proofs
-
-1. **Proof-Before-Claim:** No theorems stated without accompanying proof or citation
-2. **Notation Dictionary:** All non-standard notation defined in preamble
-3. **Lemma Independence:** Each lemma self-contained with dependencies explicit
+**你的版本：**
+[换成你的核验标准与例外]
 
 ---
 
-## Maintenance
+### 第五条：[你的文件组织原则]
 
-**Review cadence:** Quarterly (or after every 10 sessions)
+**示例（结构化项目）：** 绝不散放分析文档；所有会话文档用 `quality_reports/session_logs/`。
 
-**Review questions:**
-- Are all articles still relevant?
-- Are any being violated repeatedly? (If yes, amend or delete)
-- Are any new patterns emerging? (If yes, consider promoting to article)
-- Are articles enabling or obstructing work?
+**示例（notebook 用户）：** 一次分析一个 notebook；不在 notebook 之间重复代码；共用函数进模块。
+
+**示例（多语言）：** 按语言分子目录（`R/`、`python/`、`julia/`）；不写混语言的单文件。
+
+**示例（文学化编程）：** 所有代码住在 `.qmd` 或 `.Rmd` 里；抽出的 `.R` 脚本是派生产物。
+
+**为什么重要：** 一致的结构让导航、协作与自动化工具成为可能。
+
+**你的例外：** [例如：`scratch/` 里的快速原型、`_archive/` 里的旧文件、临时探索]
+
+**你的版本：**
+[换成你的文件组织原则]
 
 ---
 
-## Template Checklist
+## 用户偏好（随时可覆盖）
 
-Before finalizing your constitutional governance:
+列出**确实是弹性的**、可依情境变化的模式：
 
-- [ ] 3-7 articles (not more)
-- [ ] Each article has: principle, why it matters, your version, exceptions
-- [ ] User preferences section populated with flexible patterns
-- [ ] Amendment process understood
-- [ ] Review cadence scheduled
-- [ ] File saved to `.claude/rules/constitutional-governance.md`
+- [例如：文件命名惯例（snake_case vs camelCase vs kebab-case）]
+- [例如：数值比较的容差阈值（1e-6 vs 1e-8）]
+- [例如：审阅代理的优先级顺序（教学法优先 vs 代码质量优先）]
+- [例如：注释的详略（极简 vs 详细）]
+- [例如：图表配色（机构色 vs 可直接发表 vs 色盲友好）]
+- [例如：引用格式（APA vs Chicago vs 领域专用）]
+
+---
+
+## 请求修订
+
+当用户要求偏离某条条款时，问：
+
+> 「你是在**修订第 X 条**（永久变更），还是**为这次任务覆盖**（一次性例外）？」
+
+这样既保住机构记忆，又留出弹性。
+
+**修订流程：**
+1. 用户提出修订并给出理由
+2. 讨论影响（什么会坏？什么会变好？）
+3. 修订获批则更新本文件
+4. 在会话日志里用 [CONSTITUTIONAL AMENDMENT] 标签记录这次改动
+
+---
+
+## 什么时候不该立条款
+
+不要为以下情形立条款：
+
+- **个人偏好**，不影响协作或可复现性
+- **一次性决策**，不太可能重演
+- **仍在演化的模式**（等它在 3 次以上使用中稳定下来）
+- **外部约束**（由期刊、资助方、合作者强加）
+
+---
+
+## 不同领域的例子
+
+### 经济学/计量经济学
+
+1. **复现优先：** 所有实证断言都必须配 R/Stata 脚本
+2. **数据溯源：** 每个数据集都记录来源、日期与处理步骤
+3. **稳健标准误：** 默认用聚类标准误；不用要给理由
+
+### 生物学/湿实验室
+
+1. **实验记录本至上：** 纸质实验记录本是权威；电子版是备份
+2. **样本追踪：** 所有生物样本在处理之前都拿到唯一编号
+3. **协议版本化：** 协议改动要记录；旧版本归档
+
+### 计算机科学/机器学习
+
+1. **可复现的种子：** 所有随机代码都用有文档记录的随机种子
+2. **环境说明：** `requirements.txt` / `environment.yml` 始终保持最新
+3. **基准对照：** 新方法与已发表的基线对比
+
+### 数学/证明
+
+1. **先有证明再有断言：** 不附带证明或引用的定理不陈述
+2. **记号词典：** 所有非标准记号在导言区定义
+3. **引理独立：** 每个引理自足，依赖关系写明白
+
+---
+
+## 维护
+
+**复查节奏：** 每季度（或每 10 个会话之后）
+
+**复查问题：**
+- 所有条款仍然相关吗？
+- 有条款被反复违反吗？（是则修订或删除）
+- 有新模式浮现吗？（是则考虑提升为条款）
+- 条款是在促成工作还是在阻碍工作？
+
+---
+
+## 模板清单
+
+在把你的宪制治理定稿之前：
+
+- [ ] 3-7 条（不要更多）
+- [ ] 每条都有：原则、为什么重要、你的版本、例外
+- [ ] 用户偏好一节填好了弹性模式
+- [ ] 修订流程已理解
+- [ ] 复查节奏已排定
+- [ ] 文件已存到 `.codebuddy/rules/constitutional-governance.md`

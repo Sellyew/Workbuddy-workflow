@@ -1,21 +1,21 @@
-# Quality Report: Merge to Main -- [Date]
+# 质量报告：合并到 main —— [日期]
 
-## Summary
-[1-2 sentences: what was merged and why]
+## 摘要
+[1-2 句话：合并了什么，以及为什么]
 
-## Files Modified
-| File | Type | Quality Score |
+## 改动的文件
+| 文件 | 类型 | 质量分 |
 |------|------|---|
 | `path/to/file` | [Code/Slides/Config] | [N]/100 |
 
-## Verification
-- [ ] Compilation/execution succeeds
-- [ ] Tolerance checks PASS (if applicable)
-- [ ] Tests pass (if applicable)
-- [ ] Quality gates >= 80
+## 核验
+- [ ] 编译/执行成功
+- [ ] 容差检查 PASS（若适用）
+- [ ] 测试通过（若适用）
+- [ ] 质量门禁 >= 80
 
-## Status
+## 状态
 MERGED
 
-## Notes
-[Any learnings or follow-ups]
+## 备注
+[任何经验或后续事项]

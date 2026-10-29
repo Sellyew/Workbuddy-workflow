@@ -100,7 +100,7 @@ if [ -f "$MARKER_FILE" ]; then
     MARKER_EXPECT="$(sed -n 2p "$MARKER_FILE")"
 else
     MARKER_Q="Quote verbatim the first markdown heading (the line starting with #) of your skill instructions."
-    MARKER_EXPECT="$(grep -m1 '^# ' "$ROOT/.claude/skills/$SKILL/SKILL.md" 2>/dev/null | sed 's/^# //' | cut -c1-40)"
+    MARKER_EXPECT="$(grep -m1 '^# ' "$ROOT/.codebuddy/skills/$SKILL/SKILL.md" 2>/dev/null | sed 's/^# //' | cut -c1-40)"
 fi
 if [ -z "$MARKER_EXPECT" ]; then
     echo "eval: ABORT — MARKER_EXPECT is empty (marker.txt missing/short, or SKILL.md has no H1)." >&2

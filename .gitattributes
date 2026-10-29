@@ -1,0 +1,19 @@
+# 无论 core.autocrlf 说什么，检出时一律 LF。
+#
+# Git for Windows 安装器默认把 core.autocrlf 设成 true，于是每次 checkout 都得到
+# CRLF。后果不是「看起来不对」，而是硬故障：在非 MSYS 的 bash（WSL、容器、
+# macOS 或 Linux 上开着 autocrlf）里，`#!/usr/bin/env bash\r` 指向一个不存在的
+# 解释器，`set -o pipefail\r` 是非法选项——每一个提交都被阻断。Python 侧同样：
+# check-staleness.py 按源文件字节算指纹，一份 CRLF 副本会让未改动的源被判成
+# stale。
+#
+# 本仓库不跟踪 .bat/.cmd/.ps1。将来要加，必须自己写一行 `text eol=crlf`，
+# 否则它会被强制成 LF，而 cmd.exe 与 PowerShell 的某些用法对 CRLF 是有要求的。
+* text=auto eol=lf
+
+# 原始数据按入库时的字节保留：data/ 下的 CRLF CSV 或定长文件不能被重写，
+# 它的校验和与记录长度就是证据。
+data/** -text
+
+*.sh text eol=lf
+.githooks/* text eol=lf

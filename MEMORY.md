@@ -1,168 +1,168 @@
-# Project Memory
+# 项目记忆
 
-Corrections and learned facts that persist across sessions.
-When a mistake is corrected, append a `[LEARN:category]` entry below; most recent at bottom.
+跨会话持久保留的更正与学到的事实。
+当某个错误被更正时，在下面追加一条 `[LEARN:category]` 条目；最新的放在最下面。
 
 ---
 
-## Workflow Patterns
+## 工作流模式
 
-[LEARN:workflow] Requirements specification catches ambiguity before planning → reduces rework 30-50%. Spec-then-plan for complex/ambiguous tasks (>1 hour or >3 files): AskUserQuestion (3-5 questions) → `quality_reports/specs/YYYY-MM-DD_description.md` (not scattered in root — keeps structure) with MUST/SHOULD/MAY requirements → clarity status (CLEAR/ASSUMED/BLOCKED) → approval → then draft plan.
+[LEARN:workflow] 需求规格在规划之前抓住含糊之处 → 让返工减少 30-50%。对复杂/含糊的任务（>1 小时或 >3 个文件）走「先规格后计划」：AskUserQuestion（3-5 个问题）→ `quality_reports/specs/YYYY-MM-DD_description.md`（不要散落在根目录——这样才保住结构），内含 MUST/SHOULD/MAY 需求 → 清晰度状态（CLEAR/ASSUMED/BLOCKED）→ 批准 → 然后才起草计划。
 
-[LEARN:workflow] Plans, specs, and session logs must live on disk (not just in conversation) to survive compression and session boundaries; quality reports only at merge time. Context survival before compression: (1) Update MEMORY.md with [LEARN] entries, (2) Ensure session log current (last 10 min), (3) Active plan saved to disk, (4) Open questions documented. The pre-compact hook displays checklist. *[2026-09-26: now silent; restores only what's on disk.]*
+[LEARN:workflow] 计划、规格与会话日志必须落在磁盘上（不只是留在对话里），才能挺过压缩与会话边界；质量报告只在合并时产出。压缩前的上下文保全：(1) 把 `[LEARN]` 条目写进 MEMORY.md，(2) 确认会话日志是最新的（最近 10 分钟），(3) 在用的计划已存盘，(4) 未决问题已记录。pre-compact 钩子会显示这份清单。*[2026-09-26：现在它已静默；只恢复磁盘上已有的东西。]*
 
-## Documentation Standards
+## 文档标准
 
-[LEARN:documentation] When adding new features, update BOTH README and guide immediately to prevent documentation drift — stale docs break user trust. Document new templates in README's "What's Included" with their purpose; the inventory must be complete and accurate.
+[LEARN:documentation] 加新功能时，立刻**同时**更新 README 与指南，防止文档漂移——过时的文档会毁掉用户的信任。在 README 的「包含什么」里记录新模板及其用途；清单必须完整且准确。
 
-[LEARN:documentation] Date fields in frontmatter and README must reflect latest significant changes. Users check dates to assess currency.
+[LEARN:documentation] frontmatter 与 README 里的日期字段必须反映最近一次实质性改动。用户会看日期来判断东西是否新鲜。
 
-## Design Philosophy
+## 设计哲学
 
-[LEARN:design] Framework-oriented > Prescriptive rules: constitutional governance and requirements specs work as TEMPLATES with examples users customize to their domain. Quality standard for guide additions: useful + pedagogically strong + drives usage + leaves great impression + improves upon starting fresh + no redundancy + not slow — all 7 must hold.
+[LEARN:design] 面向框架 > 规定式规则：宪制治理与需求规格作为**模板**发挥作用，示例由用户按自己的领域定制。指南新增内容的质量标准：有用 + 教学上扎实 + 能推动使用 + 留下好印象 + 优于从零开始 + 不冗余 + 不慢——7 条全中才算。
 
-[LEARN:design] Generic means working for any academic workflow: pure LaTeX (no Quarto), pure R (no LaTeX), Python/Jupyter, any domain (not just econometrics) — guide stays framework-oriented: templates users customize, no "thou shalt" rules. Test recommendations across use cases.
+[LEARN:design] 通用意味着对任何学术工作流都成立：纯 LaTeX（不用 Quarto）、纯 R（不用 LaTeX）、Python/Jupyter、任何领域（不只是计量经济学）——指南保持面向框架：模板由用户定制，没有「你必须」式规则。把建议放到多个用例上测。
 
-## File Organization
+## 文件组织
 
-[LEARN:files] Templates belong in `templates/` with descriptive names. Don't enumerate the inventory here — a hand-kept list goes stale (this entry's own list was missing three files when audited); `ls templates/` is the inventory.
+[LEARN:files] 模板放在 `templates/` 下，用描述性的名字。不要在这里枚举清单——手工维护的清单会过期（审计时这条条目自己的清单就漏了三个文件）；`ls templates/` 才是清单。
 
-## Constitutional Governance
+## 宪制治理
 
-[LEARN:governance] Constitutional articles distinguish immutable principles (non-negotiable for quality/reproducibility) from flexible user preferences; keep to 3-7 articles. Examples: Primary Artifact (which file is authoritative), Plan-First Threshold (when to plan), Quality Gate (minimum score), Verification Standard (what must pass), File Organization (where files live). Amendments: ask the user whether deviating from article is "amending Article X (permanent)" or "overriding for this task (one-time exception)". Preserves institutional memory.
+[LEARN:governance] 宪制条款区分不可变原则（对质量/可复现性不可谈判）与可变的用户偏好；条款保持在 3-7 条。例子：主产物（哪个文件是权威）、计划先行阈值（何时该做计划）、质量门禁（最低分）、核验标准（什么必须通过）、文件组织（文件放在哪里）。修订时：问用户，偏离某条款是「修订第 X 条（永久）」还是「本次任务覆盖（一次性例外）」。这样能保住机构记忆。
 
-## Skill Creation
+## 技能创建
 
-[LEARN:skills] Effective skill descriptions use trigger phrases users actually say ("check citations", "format results", "validate protocol") → Claude knows when to load skill. Skills need 3 sections minimum: Instructions (step-by-step), Examples (concrete scenarios), Troubleshooting (common errors) → users can debug independently. Domain-specific examples beat generic ones (citation checker — psychology; protocol validator — biology; regression formatter — economics) — they show adaptability. *[2026-09-26: name situations, not synonyms; state outcome, constraints, checks.]*
+[LEARN:skills] 有效的技能描述用用户真会说的触发短语（「check citations」、「format results」、「validate protocol」）→ Claude 才知道何时该加载技能。技能至少需要 3 节：Instructions（一步步的步骤）、Examples（具体场景）、Troubleshooting（常见错误）→ 用户可以自己调试。领域相关的示例胜过泛泛的示例（引用检查器——心理学；protocol 校验器——生物学；回归结果排版——经济学）——它们展示了适应性。*[2026-09-26：点名情境，不要点名同义词；写清结果、约束、检查。]*
 
-## Memory System
+## 记忆系统
 
-[LEARN:memory] Two-tier memory solves template vs working project tension: MEMORY.md (generic patterns, committed) + native auto memory (`~/.claude/projects/<project>/memory/`, machine-local) → cross-machine sync + local privacy. *(Second tier was `personal-memory.md` until v2.5; retired for the native mechanism.)*
+[LEARN:memory] 两层记忆解决模板与在用项目之间的张力：MEMORY.md（通用模式，已提交）+ 原生自动记忆（`~/.workbuddy/projects/<project>/memory/`，本机存放）→ 跨机器同步 + 本地隐私。*（第二层在 v2.5 之前是 `personal-memory.md`；已为原生机制退役。）*
 
-[LEARN:memory] Hooks prompt reflection, don't auto-append (e.g. the Stop-hook session-log reminder) → user maintains control while building habit.
+[LEARN:memory] 钩子提示你反思，而不是自动追加（例如 Stop 钩子的会话日志提醒）→ 用户在建立习惯的同时保有控制权。
 
-## Meta-Governance
+## 元治理
 
-[LEARN:meta] Repository dual nature requires explicit governance: what's generic (commit) vs specific (gitignore) → prevents template pollution. Dogfooding principles must be enforced: plan-first, spec-then-plan, quality gates, session logs → we follow our own guide. Template work (infrastructure, docs) skipped session logs — those were for user work (slides, analysis), keeping forks clean. *[Superseded 2026-09-26: logs are gitignored; a Stop hook writes them.]*
+[LEARN:meta] 仓库的双重身份需要明确的治理：什么通用（提交）与什么特定（gitignore）→ 防止模板被污染。自食其用的原则必须被强制：计划先行、先规格后计划、质量门禁、会话日志 → 我们照自己的指南办事。模板工作（基础设施、文档）曾跳过会话日志——那些日志是给用户工作（幻灯片、分析）用的，这样能让 fork 保持干净。*[2026-09-26 起被取代：日志已 gitignore；由 Stop 钩子来写。]*
 
-## Drift Prevention
+## 防漂移
 
-[LEARN:drift] `replace_all` on one phrasing (e.g., `"26 skills"`) misses sibling phrasings — `"26 skills, and 21 rules"` (extra "and"), `"26 slash commands"`, `"template's 26"`, `"N skills on day one"` (prose). Count drift hit us 3 times in v1.5.x (PRs #70, #76, #78). Solution: `scripts/check-surface-sync.py` with compound regex patterns as a pre-commit gate. Adding a new phrasing to documentation requires adding a matching regex to the script, otherwise it won't be caught. Conversely, guard against false positives when scanning for template counts: `"3 parallel agents"`, `"17 specialized agents"` (clo-author attribution), `"start with 2-3 skills"` are all legitimate non-template uses of `N + category` phrases. Use compound patterns requiring multiple template-specific tokens on the same line.
+[LEARN:drift] 对某一种说法做 `replace_all`（例如 `"26 skills"`）会漏掉同族的其他说法——`"26 skills, and 21 rules"`（多一个 "and"）、`"26 slash commands"`、`"template's 26"`、`"N skills on day one"`（散文里）。计数漂移在 v1.5.x 里击中过我们 3 次（PR #70、#76、#78）。解决办法：用 `scripts/check-surface-sync.py` 的复合正则模式作为 pre-commit 门禁。往文档里加一种新说法，就必须往脚本里加一条匹配的正则，否则抓不到。反过来，扫模板计数时要防误报：`"3 parallel agents"`、`"17 specialized agents"`（clo-author 的署名）、`"start with 2-3 skills"` 都是 `N + 类别` 短语的合法非模板用法。用要求同一行上出现多个模板特有 token 的复合模式。
 
-## Claude Code Hooks
+## Claude Code 钩子
 
-[LEARN:hooks] Stop-hook block protocol has TWO valid forms: (a) legacy — `exit 2` + reason on stderr; (b) modern — `exit 0` + JSON `{"decision":"block","reason":"..."}` on stdout. `log-reminder.py` uses the modern form. Audit agents unfamiliar with the modern protocol will flag this as "should exit 2" — false alarm. Documented in `/deep-audit` skill's false-alarm list.
+[LEARN:hooks] Stop 钩子的阻断协议有**两种**合法形式：(a) 旧式——`exit 2` + 把理由写到 stderr；(b) 现代式——`exit 0` + 往 stdout 写 JSON `{"decision":"block","reason":"..."}`。`log-reminder.py` 用的是现代式。不熟悉现代协议的审计代理会把它标成「应该 exit 2」——误报。已记录在 `/deep-audit` 技能的误报清单里。
 
-[LEARN:hooks] `initialPermissionMode` in VSCode settings only fires at **session start**. Mid-session mode toggles (via `Shift+Tab` or `/permission-mode`) override the file settings until session end. The 6-tier permission stack: VSCode user / workspace / CLI user / project / project-local / in-session runtime — the last is authoritative. "Prompts fire despite bypass config" is almost always a stale session, not a settings bug. *[2026-09-26: no `/permission-mode` command; a project-settings bypass (not honoured) is as common a cause.]*
+[LEARN:hooks] VSCode 设置里的 `initialPermissionMode` 只在**会话启动**时生效。会话中途的模式切换（`Shift+Tab` 或 `/permission-mode`）会覆盖文件设置，直到会话结束。六层权限栈：VSCode 用户 / 工作区 / CLI 用户 / 项目 / 项目本地 / 会话内运行时——最后一层是权威。「明明配了 bypass 还是弹询问」几乎总是过期会话，而不是设置 bug。*[2026-09-26：没有 `/permission-mode` 命令；项目设置里的 bypass（不被承认）同样是常见原因。]*
 
-## Plan→Bypass Framing
+## 计划→Bypass 的表述
 
-[LEARN:safety] Do NOT frame Plan→Bypass as a "safety boundary" or "safety guarantee." Plan approval gives you a chance to review the APPROACH before execution, but exiting plan mode returns the session to `defaultMode` (bypassPermissions *[2026-09-26: the mode the approval prompt picks; no bypass default]*), at which point any tool call runs under the full allowlist. Frame as "review-before-execute convenience." If a user needs a real enforcement boundary, they should keep `defaultMode: "default"` and approve each high-risk tool individually.
+[LEARN:safety] **不要**把「计划→Bypass」表述成「安全边界」或「安全保障」。批准计划给你一个在执行之前审阅做法（APPROACH）的机会，但退出计划模式会把会话交回 `defaultMode`（bypassPermissions *[2026-09-26：批准提示选中的那个模式；没有 bypass 默认值]*），此时任何工具调用都在完整允许清单下运行。要表述成「执行前审阅的便利」。若用户需要真正的强制边界，就该保持 `defaultMode: "default"`，逐个批准高风险工具。
 
-## Privacy in Diagnostic Skills
+## 诊断类技能里的隐私
 
-[LEARN:privacy] Diagnostic skills that read host-global config (e.g., `~/.claude/`, VSCode user settings) must require **explicit user confirmation** before crossing the repo boundary — especially in template repos that get forked. Phase the skill: repo-local auto, host-global opt-in with key redaction. Codex correctly flagged this pattern as a template-adopter privacy risk in PR #75.
+[LEARN:privacy] 读宿主全局配置的诊断技能（例如 `~/.workbuddy/`、VSCode 用户设置）在跨越仓库边界之前，必须要求**用户明确确认**——在被 fork 的模板仓库里尤其如此。把技能分期：仓库本地自动，宿主全局需选用并做密钥脱敏。Codex 在 PR #75 里正确地把这个模式标为对模板采用者的隐私风险。
 
-## Claim-vs-Reality Framing
+## 断言与实情
 
-[LEARN:framing] **The orchestrator became a real runtime in v2.0.0 (2026-06-09)** (fan-out → reduce → judge + hallucination gate → loop-until-dry), superseding its earlier "pattern, not a runtime" framing, retired 2026-08-21. What holds regardless: there is **no daemon and no post-plan-approval trigger** — the loop is always user- or skill-initiated, a documented non-goal. Any doc claiming it "activates automatically after plan approval" is wrong.
+[LEARN:framing] **编排器在 v2.0.0（2026-06-09）变成了真正的运行时**（扇出 → 归并 → 裁定 + 幻觉门禁 → 空轮收敛），取代了它早先「是模式，不是运行时」的表述，后者已于 2026-08-21 退役。无论如何都成立的是：**没有守护进程，也没有批准计划之后的触发器**——循环永远由用户或技能发起，这是一个有文档记录的非目标。任何声称它「在计划批准后自动激活」的文档都是错的。
 
-[LEARN:framing] **A gate is only as enforced as its installation.** v2.0.0 replaced the "quality gates" claim (then enforced only inside `/commit`) with a real pre-commit hook — but it is live only **after the user runs `./scripts/install-hooks.sh`**, and `SKIP_QUALITY_GATE=1` / `--no-verify` bypass it. Docs must say "enforced once installed", never "always enforced". *(v2.0.0; retired the older framing 2026-08-21.)*
+[LEARN:framing] **门禁的强制力只等于它被安装的程度。** v2.0.0 用真的 pre-commit 钩子取代了「质量门禁」这个说法（当时只在 `/commit` 内部生效）——但它只在**用户跑过 `./scripts/install-hooks.sh` 之后**才生效，而且 `SKIP_QUALITY_GATE=1` / `--no-verify` 能绕过它。文档必须写「安装后即强制」，绝不写「始终强制」。*（v2.0.0；2026-08-21 退役了更早的表述。）*
 
-[LEARN:framing] Cross-artifact review is **pattern-based detection**, not universal auto-invocation. If the manuscript has no `\input{scripts/...}` signals, no cross-artifact work happens even without `--no-cross-artifact`. Document detection signals explicitly.
+[LEARN:framing] 跨产物审读是**基于模式的检测**，不是普遍的自动调用。若稿件里没有 `\input{scripts/...}` 之类的信号，即使不加 `--no-cross-artifact` 也不会发生任何跨产物工作。要把检测信号明确写出来。
 
-## Dogfooding Gaps Found in Round-1 Audit (2026-04-16)
+## 第 1 轮审计里发现的自食其用缺口（2026-04-16）
 
-[LEARN:dogfooding] Empty `quality_reports/plans/`, `specs/`, `session_logs/` directories in a WORKING FORK are a red flag — claimed dogfooding nobody follows. (In the shipped template these dirs are gitignored by design, so the heuristic applies to your own fork, not the clean tree.) The Stop-hook log reminder validates itself by catching missing logs; plan-first has no equivalent automation.
+[LEARN:dogfooding] 一个**在用的 fork** 里 `quality_reports/plans/`、`specs/`、`session_logs/` 目录是空的，这是个红旗——声称自食其用却没人照做。（在发布的模板里，这些目录按设计被 gitignore，所以这条启发适用于你自己的 fork，而不是干净的树。）Stop 钩子的日志提醒靠抓缺失的日志来自证；计划先行没有同等的自动化。
 
-[LEARN:audit] "Claim-vs-reality" is the highest-ROI audit lens for a governance-heavy template repo. More valuable than skill-consistency or doc-drift checks because it surfaces where the template oversells itself — the exact thing forkers will discover and call out.
+[LEARN:audit] 「断言 vs 实情」是治理密集型模板仓库里 ROI 最高的审计透镜。比技能一致性或文档漂移检查更有价值，因为它浮出的是模板自我吹嘘的地方——而那正是 forker 会发现并指出的东西。
 
-[LEARN:audit] Whack-a-mole anti-pattern: surgically fixing a bot-flagged phrase in a summary paragraph usually introduces new drift in the same paragraph (3× on v1.6.1). Two flags on one paragraph = rewrite it structurally, don't patch word-by-word. See `summary-parity.md`.
+[LEARN:audit] 打地鼠式反模式：对摘要段落里被机器人点名的短语做外科式修补，通常会在同一段里引入新的漂移（v1.6.1 上发生了 3 次）。同一段被点两次 = 从结构上重写，不要逐词打补丁。见 `summary-parity.md`。
 
-## Verification Architecture (three complementary patterns)
+## 核验架构（三种互补模式）
 
-[LEARN:pattern] Verification here operates at three architectural levels, each addressing a different failure mode. Do NOT collapse them — they are complementary, not redundant:
+[LEARN:pattern] 这里的核验运行在三个架构层次上，各自应对不同的失败模式。**不要**把它们合并——它们互补，不冗余：
 
-1. **Critic-fixer loop** (`/qa-quarto`, `/review-paper --adversarial`) — **two agents, serial** — one flags issues, the other applies fixes; loop until APPROVED. Best for **presentation + structural** bugs (Beamer↔Quarto parity, manuscript completeness). Both see the full artifact; the tension comes from role assignment.
+1. **critic-fixer 循环**（`/qa-quarto`、`/review-paper --adversarial`）——**两个代理，串行**——一个标问题，另一个落地修复；循环到 APPROVED。最适合**呈现 + 结构**类缺陷（Beamer↔Quarto 一致、稿件完整性）。两者都看到完整产物；张力来自角色分工。
 
-2. **Cross-artifact review** (`/review-paper` + `/review-r` + `/audit-reproducibility`) — **horizontal dependency traversal** — a manuscript's claims depend on scripts' outputs, so the paper reviewer spawns script reviewers and reproducibility checkers alongside it. Best for **paper ↔ code consistency** (ATTs, coefficients, N match the outputs that produced them).
+2. **跨产物审读**（`/review-paper` + `/review-r` + `/audit-reproducibility`）——**横向依赖遍历**——稿件的断言依赖脚本的输出，所以论文审阅者会在自己身边派生脚本审阅者与可复现性检查器。最适合**论文 ↔ 代码一致**（ATT、系数、N 与产出它们的输出对得上）。
 
-3. **Post-Flight Verification / CoVe** (`/verify-claims` + `claim-verifier` agent, v1.7.0) — **single agent, fresh-context fork** — the verifier has never seen the draft; it answers verification questions from the source material alone, using `context: fork` to architecturally enforce independence. Best for **factual hallucination** (fabricated citations, wrong dataset fields, misattributed findings). Adapted from Dhuliawala et al. 2023 ([arXiv:2309.11495](https://arxiv.org/abs/2309.11495)). *[2026-09-26: use a fresh Agent call; a fork inherits the draft.]*
+3. **降落后核验 / CoVe**（`/verify-claims` + `claim-verifier` 代理，v1.7.0）——**单代理，独立上下文 fork**——核验者从没见过草稿；它只凭源材料回答核验问题，用 `context: fork` 在架构上强制独立性。最适合**事实性幻觉**（伪造引用、数据集字段写错、发现归属错）。改编自 Dhuliawala 等 2023（[arXiv:2309.11495](https://arxiv.org/abs/2309.11495)）。*[2026-09-26：改用一次全新的 Agent 调用；fork 会继承草稿。]*
 
-The key insight: each enforces independence differently — role tension, dependency-graph traversal, context isolation. A skill needing all three (e.g. `/review-paper --peer`) invokes them at different phases.
+关键洞见：每一种都以不同方式强制独立性——角色张力、依赖图遍历、上下文隔离。一个技能若三者都要（例如 `/review-paper --peer`），就在不同阶段分别调用它们。
 
-[LEARN:pattern] Post-Flight Reports (v1.7.0) are the output-side twin of Pre-Flight Reports (v1.6.0). Pre-Flight proves inputs were read, Post-Flight proves claims hold, and both use structured output blocks, fail-closed fallbacks, and explicit opt-outs. With summary-parity (v1.6.1) they form the **discipline-pattern trilogy** — input, framing, output discipline. Ask of a new text-generating skill: does it need all three?
+[LEARN:pattern] 降落后报告（v1.7.0）是起飞前报告（v1.6.0）在输出侧的孪生。起飞前证明输入被读过，降落后证明断言站得住，两者都用结构化输出块、失败关闭的退路与明确的退出开关。再加上摘要一致（v1.6.1），它们构成**纪律模式三部曲**——输入纪律、表述纪律、输出纪律。对一个新的文本生成技能要问：它三者都需要吗？
 
-[LEARN:audit] **Skill frontmatter `allowed-tools` must cover every tool the body invokes** — easy to miss, because the body reads as English ("spawn the verifier via Agent") while the frontmatter reads as a bureaucratic array. Four skills promised a tool in prose their `allowed-tools` omitted (PR #92, flagged by two external reviewers); the runtime failure is a permission error or a silent bypass. Sibling check: if rule X's `paths:` names skill Y, confirm Y actually implements X — rule-vs-implementation drift is the same bug one layer up.
+[LEARN:audit] **技能 frontmatter 的 `allowed-tools` 必须覆盖正文调用的每一个工具**——很容易漏，因为正文读起来是英文（「spawn the verifier via Agent」），而 frontmatter 读起来像个官僚化的数组。有四个技能在散文里承诺了某个工具，而它们的 `allowed-tools` 没列（PR #92，被两位外部审阅者标出）；运行时失败表现是权限错误或静默绕过。姊妹检查：若规则 X 的 `paths:` 点名了技能 Y，就确认 Y 真的实现了 X——规则与实现之间的漂移是同一个 bug 高一层的样子。
 
-[LEARN:audit] Deterministic bug classes (field exists, anchor resolves, count matches disk) belong in mechanical scripts — agent attention drifts, scripts don't. Reserve audit agents for judgment calls. `check-skill-integrity.py` ships the mechanical batch; `audit-pet-peeves.md` catalogues the judgment classes.
+[LEARN:audit] 确定性缺陷类别（字段存在、锚点可解析、计数与磁盘一致）属于机械脚本——代理的注意力会漂，脚本不会。把审计代理留给需要判断的地方。`check-skill-integrity.py` 承载机械那一批；`audit-pet-peeves.md` 编目需要判断的那些类别。
 
-[LEARN:audit] When writing a parity-check regex, always strip inline code spans (` `` `) and fenced code blocks (` ``` `) before pattern-matching. Docs use example syntax like `[text](path#anchor)` inside backticks to illustrate; a naive regex treats those as real links. Replace matched code with spaces (preserving line numbers) before running the rest of the check.
+[LEARN:audit] 写一致性检查的正则时，永远先剥掉行内代码跨度（`` `` ``）与围栏代码块（` ``` `）再做模式匹配。文档会用反引号里的 `[text](path#anchor)` 这类示例语法来示意；朴素的正则会把它们当成真链接。跑其余检查之前，把匹配到的代码替换成空格（保留行号）。
 
-[LEARN:audit] Audit-scope ATROPHY: audit agents only check what their prompt scopes, so any new code directory bypasses audit by default (6 bot-caught bugs in unscoped `scripts/`). **When adding a code location, expand audit scope first** — audit-debt accumulates silently.
+[LEARN:audit] 审计范围萎缩：审计代理只查它提示词划定的范围，于是任何新代码目录默认绕过审计（`scripts/` 里 6 个被机器人抓到的 bug）。**每加一个代码位置，先把审计范围扩上去**——审计欠账会静默累积。
 
-## Scheduling Autonomous Work
+## 调度自主工作
 
-[LEARN:scheduling] `CronCreate` is session-only in practice — it dies with the REPL (hit 2026-04-16 via a rate-limit termination). Work that must survive session death uses **Routines** (cloud-side). CronCreate is fine for short polling inside a live session, not "run this in an hour".
+[LEARN:scheduling] `CronCreate` 实际上是会话级的——它随 REPL 一起死（2026-04-16 因一次限额终止撞上过）。必须挺过会话死亡的工作用 **Routines**（云端侧）。CronCreate 适合活着的会话内的短轮询，不适合「一小时之后跑这个」。
 
-[LEARN:hooks] PreCompact hooks can BLOCK (modern protocol), which is how `pre-compact.py` can hold compaction while a plan is still DRAFT. Any such block must be opt-in, must fire at most once, and must fail open — a guard that can wedge a session is worse than the context it saves.
+[LEARN:hooks] PreCompact 钩子可以**阻断**（现代协议），`pre-compact.py` 正是靠它在计划还是 DRAFT 时压住压缩。任何这类阻断都必须可选、最多触发一次、且失败时放行——一个能把会话卡死的防线，比它省下的上下文更糟。
 
-## v1.8.0 Cycle Lessons (2026-04-27)
+## v1.8.0 周期的教训（2026-04-27）
 
-[LEARN:permissions] **Protected-path behavior is mode-dependent — re-verify, never assume** (re-verified 2026-08-22 vs the permission-modes doc: `bypassPermissions` disables prompts and safety checks INCLUDING protected paths — the earlier "`.claude/` always prompts" version of this entry was stale). Auto mode classifier-gates risky actions and since 2026-08-14 is the built-in starting mode on Pro/Max/Team. Forkers in default mode still see prompts on `.claude/` edits. Batch 5+ edits to protected `.claude/` paths with one Bash `python3` heredoc (Edit fires the protected-paths gate; Bash does not). *[2026-09-26: not for settings/hooks — `root-of-trust-guard` blocks it.]*
+[LEARN:permissions] **受保护路径的行为依模式而定——要重新核验，绝不假设**（2026-08-22 对照权限模式文档重新核验过：`bypassPermissions` 会关掉权限询问与安全检查，**包括**受保护路径——这条早先「`.codebuddy/` 永远弹询问」的版本已过期）。自动模式用分类器给有风险的动作把关，且自 2026-08-14 起是 Pro/Max/Team 上的内置起始模式。默认模式下的 forker 改 `.codebuddy/` 仍会看到询问。对受保护的 `.codebuddy/` 路径做 5 次以上编辑时，用一次 Bash 的 `python3` heredoc 批量做（Edit 会触发受保护路径门禁；Bash 不会）。*[2026-09-26：不适用于 settings/钩子——`root-of-trust-guard` 会挡住。]*
 
-[LEARN:vscode] **`claudeCode.allowDangerouslySkipPermissions` is a typo trap** — the canonical key has NO `claudeCode.` prefix (unlike `claudeCode.initialPermissionMode`). The wrong key is silently ignored. Documented in `TROUBLESHOOTING.md`.
+[LEARN:vscode] **`claudeCode.allowDangerouslySkipPermissions` 是个拼写陷阱**——规范键**没有** `claudeCode.` 前缀（不像 `claudeCode.initialPermissionMode`）。写错的键会被静默忽略。已记录在 `TROUBLESHOOTING.md`。
 
-[LEARN:audit] **Surface-sync checks counts and MARKED tables** (`<!-- surface-sync-table: ... -->`, since v2.0) — tables without the marker are invisible to it (the guide appendix shipped 58 of 60 rows in v2.5 until a semantic sweep caught it). New skill/agent: add the row AND confirm the table is marker-covered or hand-checked.
+[LEARN:audit] **表面同步会检查计数与带标记的表格**（`<!-- surface-sync-table: ... -->`，自 v2.0 起）——没有标记的表格对它不可见（指南附录在 v2.5 里曾漏了 60 行中的 2 行，直到一次语义扫描抓到）。加新技能/代理：补上那一行，**并**确认该表格被标记覆盖或被人工核对过。
 
-[LEARN:pattern] **`disable-model-invocation: true` is load-bearing-write discipline.** Set it on skills writing persistent files the user must intend (lecture .tex, SKILL.md, preregistration); not on transient-report skills. It only blocks model auto-trigger; `/skill-name` still works. (Codified in `templates/skill-template.md`.)
+[LEARN:pattern] **`disable-model-invocation: true` 是「承重写入」的纪律。** 对会写用户必须主动意图的持久文件的技能要设它（讲义 .tex、SKILL.md、预注册文档）；对产出临时报告的技能不设。它只挡模型的自动触发；`/skill-name` 仍然能用。（已成文于 `templates/skill-template.md`。）
 
-## v1.9.0 Cycle Lessons (2026-05-20)
+## v1.9.0 周期的教训（2026-05-20）
 
-[LEARN:workflow] **Plan-first scales to multi-pass releases.** v1.9.0 shipped 6 skills + 2 agents + 2 rules across 9 PRs from one comprehensive plan file; each pass became a small reviewable PR, and mid-flight additions got a Pass slot in the plan. For multi-PR releases, the plan file is the navigation, not the conversation.
+[LEARN:workflow] **计划先行能扩展到多轮发布的规模。** v1.9.0 从一个综合计划文件出发，经 9 个 PR 交付了 6 个技能 + 2 个代理 + 2 条规则；每一轮都变成一个小而可审的 PR，中途追加的东西在计划里拿到一个 Pass 位。多 PR 发布时，计划文件是导航，不是对话。
 
-[LEARN:pattern] **Detect-only beats auto-rewrite for prose quality.** `/humanize` ships without `--rewrite`: cross-vendor findings show auto-rewriting AI-voice tells degrades quality and adds new tells. For any "fix my prose" skill, detect-and-flag with line numbers; the author edits. Same rationale keeps `/proofread` advisory.
+[LEARN:pattern] **对散文质量，只检测胜过自动重写。** `/humanize` 不带 `--rewrite` 就发布：跨供应商的发现表明，自动重写 AI 腔会降低质量并引入新的痕迹。任何「修我的文字」类技能，都该带行号地检测并标出；作者自己改。同一条理由让 `/proofread` 保持建议性。
 
-[LEARN:pattern] **Distil-don't-truncate for long sessions.** Auto-compaction drops early turns; `/compress-session` writes a structured note instead (decisions, files, open questions, next actions, **discarded-as-noise**). Listing failed hypotheses explicitly stops them ghost-haunting future context. Companion to `/checkpoint`, not a replacement.
+[LEARN:pattern] **长会话要蒸馏，不要截断。** 自动压缩会丢掉早期的轮次；`/compress-session` 改为写一份结构化笔记（决策、文件、未决问题、下一步动作、**按噪声丢弃的东西**）。把失败的假设明确列出来，能阻止它们在未来的上下文里阴魂不散。它是 `/checkpoint` 的搭档，不是替代。
 
-[LEARN:pattern] **Five-critic isolated voting beats single-critic composite judgment.** `/promote-memory` graduates `[LEARN]` entries via 5 forked critics (generality / staleness / redundancy / evidence / format), one dimension each, votes hidden from each other — isolation prevents groupthink. The user is the final gate even at 5-of-5. (Adapted with attribution from claudeblattman v2.1.)
+[LEARN:pattern] **五评审隔离投票胜过单评审综合判断。** `/promote-memory` 通过 5 个 fork 出来的评审（通用性 / 过时性 / 冗余 / 证据 / 格式）来给 `[LEARN]` 条目毕业，各管一个维度，投票彼此不可见——隔离防止群体思维。即便 5 比 5 全票，用户仍是最后一道门。（经署名改编自 claudeblattman v2.1。）
 
-[LEARN:pattern] **Provenance as a YAML artifact, not a folder.** `templates/passport-template.yaml`: per-paper numeric claims with source line, output field, tolerance, status; `/audit-reproducibility` rewrites it in place. Queryable beats folder reports. (Scope-reduced from Imbad0202/ARS "Material Passport" to numeric claims only.)
+[LEARN:pattern] **溯源是一个 YAML 产物，不是一个文件夹。** `templates/passport-template.yaml`：逐论文的数值断言，带源行号、输出字段、容差、状态；`/audit-reproducibility` 原地重写它。可查询胜过文件夹式报告。（范围从 Imbad0202/ARS 的「Material Passport」缩到只剩数值断言。）
 
-[LEARN:pattern] **Variance reporting > point estimate for peer review.** ~37% of verdicts vary purely from referee-disposition sampling (AgentReview, arXiv:2406.12708), so `--variance N` returns a verdict distribution + K-of-N concern table instead of one verdict. Bimodal spreads and tight majorities are both information. Referees route to Sonnet; hard cap N=5. *[Fixed 2026-09-26: referees stay on Opus (do-not-demote).]*
+[LEARN:pattern] **同行评审要报方差，而不是点估计。** 约 37% 的判定纯粹因审稿取向抽样而变动（AgentReview，arXiv:2406.12708），所以 `--variance N` 返回一个判定分布 + K-of-N 关切表，而不是一个判定。双峰分布与微弱多数都是信息。审稿人路由到 Sonnet；硬上限 N=5。*[2026-09-26 更正：审稿人留在 Opus（不得降级）。]*
 
-[LEARN:pattern] **HIGH-WARN must-fix for fabricated citations.** `/verify-claims` tiers: HIGH-WARN (fabricated reference / numerical or directional contradiction) is must-fix before commit; MED-WARN transient; LOW-WARN inaccessible source. Be conservative assigning HIGH-WARN — false positives erode the gate. The CoVe forked verifier (never sees the draft) is the architecture; the must-fix policy makes it consequential. *[2026-09-26: no /commit gate reads it; verifier = fresh Agent call, not a fork.]*
+[LEARN:pattern] **伪造引用必须 HIGH-WARN 必修。** `/verify-claims` 分级：HIGH-WARN（伪造文献 / 数值或方向性矛盾）是提交前必修；MED-WARN 是临时的；LOW-WARN 是来源取不到。打 HIGH-WARN 要保守——误报会侵蚀这道门禁。CoVe 的 fork 核验者（永远看不到草稿）是架构；必修政策让它有后果。*[2026-09-26：没有任何 /commit 门禁读它；核验者 = 全新的 Agent 调用，不是 fork。]*
 
-[LEARN:pattern] **70/20/10 model routing for cost discipline** (`model-routing.md`): Haiku tier mechanical, Sonnet tier review/critique, Opus tier high-judgment. 50–80% savings with no quality loss on the mechanical tier. Anti-pattern: down-tiering claim-verifier / methods-referee / editor — one false-positive PASS costs more than the routing saves. (Primary source: Anthropic "Decoupling brain from hands", Apr 2026.)
+[LEARN:pattern] **70/20/10 模型路由用于成本纪律**（`model-routing.md`）：Haiku 层做机械活，Sonnet 层做审读/批评，Opus 层做高判断。机械层上省 50–80% 而无质量损失。反模式：把 claim-verifier / methods-referee / editor 降层——一个误报的 PASS 代价高于路由省下的钱。（原始出处：Anthropic「Decoupling brain from hands」，2026 年 4 月。）
 
-[LEARN:research] **Research-grounded plans beat eyeballed roadmaps.** When scope is "what should we add?", run parallel research agents first (ecosystem / community / cross-vendor / internal audit) and verify uncertainties before planning — the plan becomes traceable to URLs and verified facts instead of opinions. ~30 min of dispatch buys non-redundant, currently-true items.
+[LEARN:research] **有研究支撑的计划胜过拍脑袋的路线图。** 当议题是「我们该加什么」时，先跑并行的研究代理（生态 / 社区 / 跨供应商 / 内部审计），在规划之前把不确定的东西核验清楚——计划于是可追溯到 URL 与已核验的事实，而不是观点。约 30 分钟的派发能换来不冗余、当下为真的条目。
 
-[LEARN:workflow] **Surface-sync must check enumerative tables, not just counts.** Count assertions catch "N skills" drift but not missing table rows (the v1.5.0 agent trio was absent from README for 3 releases; the guide appendix shipped 58 of 60 rows in v2.5 until a semantic sweep caught it). Every skill/agent addition: update count assertions AND the guide appendix AND the README table.
+[LEARN:workflow] **表面同步必须检查枚举性表格，不只是计数。** 计数断言能抓住「N skills」的漂移，却抓不住缺表格行（v1.5.0 的三件套代理连续 3 个发布都没出现在 README 里；指南附录在 v2.5 里曾漏了 60 行中的 2 行，直到一次语义扫描抓到）。每加一个技能/代理：更新计数断言、**和**指南附录、**和** README 的表格。
 
-## v2.5 Cycle Lessons (2026-08-21)
+## v2.5 周期的教训（2026-08-21）
 
-[LEARN:process] **Plan mode is not optional on a vague, multi-hour ask.** A vague "update our workflow" session with no plan mode, no spec, no `AskUserQuestion` paid the documented 30-50% rework: north star, guide plan, version scheme, and phase framing all rewritten mid-flight — each fixable by a 5-question spec in one turn. **Trigger: vague ask, multiple readings, >1 hour or >3 files → spec first, via `AskUserQuestion`.**
+[LEARN:process] **面对含糊的多小时请求，计划模式不是可选项。** 一个没有计划模式、没有规格、没有 `AskUserQuestion` 的含糊「更新我们的工作流」会话，付出了有记录的 30-50% 返工：北极星、指南计划、版本方案与阶段划分全都在中途重写——每一处都能用一轮 5 个问题的规格避免。**触发条件：请求含糊、有多种读法、>1 小时或 >3 个文件 → 先做规格，用 `AskUserQuestion`。**
 
-[LEARN:process] **Survey the machine before the world.** An ecosystem review searched the web first and found the owner's own `~/.claude/skills/` and private repos only after being asked — three times; the strongest material was local every time. **Order: own repos and `~/.claude/` → ecosystem → literature.**
+[LEARN:process] **先勘察本机，再勘察世界。** 一次生态评审先上网搜，直到被问了三遍才找到 owner 自己的 `~/.workbuddy/skills/` 与私有仓库——最强的材料每次都在本地。**顺序：自己的仓库与 `~/.workbuddy/` → 生态 → 文献。**
 
-[LEARN:framing] **Never write an exclusivity claim into a plan — it propagates to the webpage.** "The only public workflow that..." is unfalsifiable marketing. Use a dated survey finding plus repo-checkable claims. Banned in shipped copy: *the only, the first, nobody else, unmatched, best-in-class*.
+[LEARN:framing] **绝不把排他性断言写进计划——它会传播到网页上。** 「唯一一个公开的……工作流」是无法证伪的营销话术。用带日期的调查结论加上仓库可核验的断言。发布文案里禁用的词：*the only、the first、nobody else、unmatched、best-in-class*。
 
-[LEARN:process] **Do not propose restructuring an artifact you have not read.** A guide restructure drafted from its heading tree would have destroyed field-tested patterns that already solved the problem and handed every fork a merge conflict. **Headings are not the artifact.**
+[LEARN:process] **不要提议重构一个你没读过的产物。** 一份仅凭标题树起草的指南重构，会毁掉那些已经解决问题、久经现场检验的模式，并给每个 fork 送去一个合并冲突。**标题不是产物。**
 
-[LEARN:audit] **A green gate proves internal consistency, not external truth.** The model gate exited 0 while the SSoT named superseded tiers — surfaces merely agreed with each other. Currency gates need an external oracle plus a staleness expiry, or stale-but-consistent is indistinguishable from current.
+[LEARN:audit] **门禁变绿只证明内部自洽，不证明外部为真。** 模型门禁以 0 退出，而单一真源里点名的却已是作废的层级——各个表面只是在互相认同。时效性门禁需要一个外部裁判加一个过期期限，否则「过时但自洽」与「当下正确」无从区分。
 
-[LEARN:audit] **Tool-name drift silently disarms hooks and gates.** When `Task` became `Agent`, 33 skills still declared `Task`, a `Bash|Task` hook matcher stopped firing, and the integrity checker certified the dead contract green. **Migrate tool names by registering both matchers, and source checker tool lists from the current reference, never hard-coded.**
+[LEARN:audit] **工具名漂移会静默解除钩子与门禁的武装。** 当 `Task` 变成 `Agent` 时，33 个技能仍然声明 `Task`，一个 `Bash|Task` 的钩子匹配器不再触发，而完整性检查器把这份死掉的契约认证为绿色。**迁移工具名要同时登记两个匹配器，并且检查器的工具清单要取自当前参考，绝不硬编码。**
 
-[LEARN:safety] **Promoting a global skill into a public repo is a higher-blast-radius edit than it looks.** A candidate carried an unpublished paper's title and authors in its `description:` — and that field is a shared contract governing model auto-invocation machine-wide, so a global `~/.claude/skills/` edit has *wider* reach than a project one. **Scrub attributions with a fail-closed deny-list scan over publishable surfaces (pre-commit + CI, term list gitignored) before the port begins, and edit `description:` under `blast-radius`.**
+[LEARN:safety] **把一个全局技能提升进公开仓库，是一次爆炸半径比看起来更大的编辑。** 一个候选技能在它的 `description:` 里带着一篇未发表论文的标题与作者——而那个字段是一份管着全机器模型自动调用的共享契约，所以改一次全局 `~/.workbuddy/skills/` 的触及面比项目级改动*更宽*。**在移植开始之前，用一份失败关闭的拒绝清单扫过所有可发布表面（pre-commit + CI，词表 gitignore），并在 `blast-radius` 之下编辑 `description:`。**
 
-[LEARN:audit] **A gate you did not re-qualify is a gate you may no longer have.** It goes quiet two ways: editing a *checked surface* can drop it out of coverage (a rewrite changed the count phrasing, gates stayed green because nothing matched — a gate that matches nothing reports nothing), and tuning a *checker* one way blinds the other. **After editing either, re-seed both directions: a planted defect must still be caught AND legitimate prose must still pass. A falling assertion count is the investigate signal.**
+[LEARN:audit] **一个你没重新合格化的门禁，可能已经不再是你以为的那个门禁。** 它有两种变哑的方式：编辑一个*被检查的表面*可能把它挤出覆盖范围（一次改写改了计数说法，门禁仍是绿的，因为什么都没匹配上——一个匹配不到任何东西的门禁等于什么都不报），以及把*检查器*往一个方向调会致盲另一个方向。**编辑任一侧之后，往两个方向重新播种：植入的缺陷必须仍被抓到，合法的散文也必须仍能通过。断言计数下降就是要你调查的信号。**
 
-[LEARN:process] **Verify the branch actually changed before committing.** A `git checkout -b` bundled with a hook-blocked command never ran; ten commits landed on `main`. **A blocked hook fails the WHOLE call — anything bundled with it silently did not happen. After any branch op, echo `git rev-parse --abbrev-ref HEAD` and read it.**
+[LEARN:process] **提交之前确认分支真的换了。** 一条 `git checkout -b` 与一条被钩子拦下的命令捆在一起，于是从没执行；十个提交落在了 `main` 上。**被拦下的钩子会让整次调用失败——与它捆在一起的一切都静默地没发生。任何分支操作之后，echo `git rev-parse --abbrev-ref HEAD` 并读它。**
 
-[LEARN:governance] **Methodological content in the owner's own field ships only with the owner's CURRENT sign-off.** A skill was vetoed despite earlier commits recording sign-off: **a sign-off attaches to the content it reviewed, not to the surface's name** — after substantial edits or promotion into a public template it is void until renewed, however well the surface evals. Scope widened twice (2026-08-22/23): all prescriptive empirical-practice content, then causal methods generally. Taxonomy and conditional package pointers ship; prescriptions do not. Dated rulings: [`meta-governance.md`](.claude/rules/meta-governance.md).
+[LEARN:governance] **owner 自己领域里的方法论内容，只在 owner 有**当前**签核时才发布。** 一个技能尽管早先的提交记录过签核，仍被否决：**签核附着于它审过的内容，而不是那个表面的名字**——经过实质性编辑或提升进公开模板之后，签核即失效，直到重新签发，无论该表面的评测多好。范围两次扩大（2026-08-22/23）：先是所有规定性的实证实践内容，然后是一般的因果方法。分类法与条件式的包指针可以发布；规定性的东西不行。带日期的裁定：[`meta-governance.md`](.codebuddy/rules/meta-governance.md)。
 
-## v2.5.1 Cycle Lessons (2026-08-23)
+## v2.5.1 周期的教训（2026-08-23）
 
-[LEARN:audit] **Gate every number you publish — including in the release that adds the rule.** A release stating *a count is a computation, not a reading* shipped three counts of its own test battery: one agent wrote the prose while another was still adding cases. **Sequence the change and its count — never parallelize them — and make the count derived**, so a checker recomputing it from source turns silent drift into a red gate.
+[LEARN:audit] **给你发布的每一个数字都上把门禁——包括在引入这条规则的那个发布里。** 一个宣称「计数是一次计算，不是一次读数」的发布，自己就发出了三处关于测试组的计数：一个代理在写散文，另一个还在加用例。**把改动与它的计数排成顺序——绝不并行——并让计数是派生出来的**，这样检查器从源头重算就能把静默漂移变成红门禁。
 
-[LEARN:safety] **When a check keeps leaking, stop patching cases — stop predicting.** A clean-tree guard tried to infer from a chained command whether the tree would still be dirty by the merge. Enumerating safe forms leaked; deny-on-doubt leaked less but still leaked, because each round found one more unmodelled dimension — flags, subcommands, segments, redirection, substitution — then a semantic one: `git stash` does not stash untracked files, so a correctly-parsed *this cleans the tree* was false. Deleting the prediction was necessary and not sufficient: a reading taken before execution proves only that the tree was clean when the command was *authorized*, and a referee chained a write ahead of the op on a clean tree. The class closed only once the op was also required to be a **standalone simple command** — nothing left on the line that could write in between. **Predicting an effect you could measure is itself the defect — and a measurement taken before the effect is not a measurement of it.**
+[LEARN:safety] **当一个检查反复漏，就别再打补丁补用例——别再预测。** 一个干净树防线试图从一条链式命令推断合并时树是否仍然脏。枚举安全形态会漏；「有疑就拒」漏得少一些但仍在漏，因为每一轮都发现一个未建模的维度——旗标、子命令、分段、重定向、替换——然后是一个语义维度：`git stash` 不会暂存未跟踪文件，于是一个解析正确的「这会把树清干净」是假的。删掉预测是必要的，但不充分：在执行之前取的一次读数只证明那条命令被*授权*时树是干净的，而一位审稿人在干净树上把一次写入串在了该操作之前。只有在还要求该操作是**独立的简单命令**——行上不留任何能在中途写入的东西——之后，这一类才关上。**预测一个你本可以测量的效果，本身就是缺陷——而在效果之前取的测量，不是对它的测量。**

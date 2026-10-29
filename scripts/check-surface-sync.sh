@@ -11,7 +11,7 @@
 #      2 = internal script error.
 #   3. check-model-versions.sh — flags superseded Claude model versions
 #      presented as current in user-facing surfaces.
-#      SSoT: .claude/references/model-versions.md.
+#      SSoT: .codebuddy/references/model-versions.md.
 #      Exit codes: 0 = clean, 1 = drift, 2 = internal error.
 #   4. check-links.py — every relative markdown link and heading anchor
 #      resolves. Catches renamed/removed files and stale cross-references.

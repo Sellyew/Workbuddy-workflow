@@ -6,17 +6,38 @@ claims that were true once and are not any more, plus source/render divergence.
 
 Exit: 0 clean, 1 stale content found, 2 internal error.
 """
-import re, os, sys, glob, subprocess
+import re, os, sys, glob, hashlib, subprocess
+from datetime import date as _date_cls
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # defect-library.md is a CATALOGUE of anti-patterns to seed — it contains them by design.
 SKIP = re.compile(r'(^|/)(CHANGELOG\.md|defect-library\.md|\.git/|node_modules/|quality_reports/)')
 
+def render_fp(p):
+    """Content fingerprint of a source or render: sha256 前 16 位，行尾先归一成 LF。
+
+    必须与 scripts/stamp-render.py 的 fp() 给出同一个值。
+    行尾归一成 LF 之后再算。不归一的话，Windows 上 Quarto 写出的 CRLF 产物盖的戳，
+    在 LF 的**全新 clone** 上必然对不上，这道门就会在干净的树上一直红 —— 而「干净的
+    树上一直红」唯一的教学效果是教人绕过它。归一是安全的：篡改一个字节仍然变红，
+    见 tests/portability/test_scripts.py 里的两条用例。
+    """
+    with open(p, "rb") as fh:
+        return hashlib.sha256(fh.read().replace(b"\r\n", b"\n")).hexdigest()[:16]
+
 def surfaces():
     out = []
-    for pat in ["*.md", ".claude/**/*.md", "templates/**/*.md", "guide/*.qmd", "docs/*.html", ".github/**/*.md"]:
-        out += glob.glob(os.path.join(ROOT, pat), recursive=True)
-    return [p for p in sorted(set(out)) if not SKIP.search(os.path.relpath(p, ROOT))]
+    # glob.escape(ROOT)：路径含 `[` `]` `*` `?` 的检出（例如 `Paper [2026]/repo`）
+    # 会让整条 pattern 变成一个匹配不到任何文件的字符类。见 check-links.py
+    # 顶部同一处注释。
+    glob_root = glob.escape(ROOT)
+    for pat in ["*.md", ".codebuddy/**/*.md", "templates/**/*.md", "guide/*.qmd", "docs/*.html", ".github/**/*.md"]:
+        out += glob.glob(os.path.join(glob_root, pat), recursive=True)
+    # [WorkBuddy 适配] relpath 在 Windows 返回反斜杠，而 SKIP 正则按 `/` 写。
+    # 不归一化的话，跳过清单在 Windows 上整体失效——「按设计含反面案例」的
+    # defect-library.md 会被当成真实违规报出来（实测：本次迁移首次跑门 6 命中）。
+    return [p for p in sorted(set(out))
+            if not SKIP.search(os.path.relpath(p, ROOT).replace(os.sep, "/"))]
 
 # (id, description, regex, allow-marker regex or None)
 CHECKS = [
@@ -25,13 +46,23 @@ CHECKS = [
  ("STALE-AUTOMODE", "describes auto mode as plan-gated (it is the Pro/Max/Team default since 2026-08-14)",
   r'auto mode\s+(requires|needs)\s+(Team|Enterprise)|rolling out to Max', r'UPDATED|no longer|was\b'),
  ("STALE-SUPERLATIVE", "unfalsifiable product claim",
-  r'\bthe only (public )?(workflow|template|repo)\b|\bnobody else (has|can)\b|\bbest-in-class\b|\bthe first (public )?workflow\b', r'Banned|never claim|Seed|seed|anti-pattern|example of'),
+  # [WorkBuddy 适配] 允许标记加中文同义说法：本模板的中文记忆与规则用「禁用 / 绝不 /
+  # 反例 / 不要」来**点名**这些词是禁用的。只认英文时，一句「发布文案里禁用的词：
+  # best-in-class」会被判成「你在做排他性断言」——把禁令读成了违规，正好读反。
+  r'\bthe only (public )?(workflow|template|repo)\b|\bnobody else (has|can)\b|\bbest-in-class\b|\bthe first (public )?workflow\b', r'Banned|never claim|Seed|seed|anti-pattern|example of|禁用|禁止|绝不|反例|不要写'),
  ("STALE-BLOCKER", "cites a closed issue as an open blocker",
   r'blocked (on|by) .{0,40}#11278|#11278.{0,40}(blocker|quirk)', r'UNBLOCKED|closed'),
 ]
 
 def main():
     files = surfaces()
+    # 空扫描必须是错误，不是通过（见 check-links.py 同一处注释）。返回 2 而不是 1：
+    # 1 表示「查了，有问题」，2 表示「没查成」。把两者混为一谈会让一次失效的
+    # glob 看起来像一次干净的检查。
+    if not files:
+        print("check-staleness: nothing was checked — the glob matched no files. "
+              "Refusing to report success on an empty scan.", file=sys.stderr)
+        return 2
     hits = []
     for f in files:
         rel = os.path.relpath(f, ROOT)
@@ -53,7 +84,6 @@ def main():
     # Instead: compare a fingerprint of the SOURCE against the fingerprint the
     # last render recorded. Content, not clock.
     render = []
-    import hashlib
     stamp_path = os.path.join(ROOT, ".render-stamp")
     recorded = {}
     if os.path.exists(stamp_path):
@@ -61,13 +91,14 @@ def main():
             parts = line.strip().split(":")
             if len(parts) == 3:
                 recorded[parts[0]] = (parts[1], parts[2])   # (source_hash, output_hash)
+    # 行尾归一在 render_fp 里（模块级，便于 tests/portability 直接比对两处实现）。
     for src, out in [("guide/workflow-guide.qmd", "guide/workflow-guide.html"),
                      ("guide/workflow-guide.qmd", "docs/workflow-guide.html")]:
         s_path, o_path = os.path.join(ROOT, src), os.path.join(ROOT, out)
         if not (os.path.exists(s_path) and os.path.exists(o_path)):
             continue
-        src_hash = hashlib.sha256(open(s_path, "rb").read()).hexdigest()[:16]
-        out_hash = hashlib.sha256(open(o_path, "rb").read()).hexdigest()[:16]
+        src_hash = render_fp(s_path)
+        out_hash = render_fp(o_path)
         rec = recorded.get(out)
         if rec is None:
             render.append(f"{out}: no render stamp — run scripts/stamp-render.sh after rendering")
@@ -81,12 +112,16 @@ def main():
 
     # currency expiry — a verified_on date that has aged out
     expired = []
-    mv = os.path.join(ROOT, ".claude/references/model-versions.md")
+    mv = os.path.join(ROOT, ".codebuddy/references/model-versions.md")
     if os.path.exists(mv):
         t = open(mv, encoding='utf-8', errors='ignore').read()
         m = re.search(r'\*\*Expires:\*\*\s*(\d{4}-\d{2}-\d{2})', t)
         if m:
-            today = subprocess.run(["date","+%Y-%m-%d"],capture_output=True,text=True).stdout.strip()
+            # [WorkBuddy 适配] 原实现调外部 `date` 命令。Windows 没有 date.exe，
+            # subprocess 直接抛 WinError 2，整个门禁以 rc=2 崩溃——看起来像
+            # 「检查发现问题」，实际是「检查根本没跑」。用标准库取当天日期，
+            # 无外部依赖，跨平台一致。
+            today = _date_cls.today().isoformat()
             if today > m.group(1):
                 expired.append(f"model-versions.md expired {m.group(1)} (today {today}) — re-verify against the docs")
 
@@ -113,7 +148,7 @@ def main():
     for base in ("guide/workflow-guide.qmd", "templates/skill-template.md"):
         p = os.path.join(ROOT, base)
         if os.path.exists(p): scan.append(p)
-    skdir = os.path.join(ROOT, ".claude/skills")
+    skdir = os.path.join(ROOT, ".codebuddy/skills")
     if os.path.isdir(skdir):
         for d in sorted(os.listdir(skdir)):
             p = os.path.join(skdir, d, "SKILL.md")

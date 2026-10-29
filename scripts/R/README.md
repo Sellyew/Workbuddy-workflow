@@ -65,7 +65,7 @@ list.files("output/")
 
 ## Reviewing
 
-`/review-r scripts/R/03_analyze.R` runs the R code-review agent, which checks seed handling, flags absolute paths, and expects a clean `Rscript` run on a fresh clone. `/audit-reproducibility <manuscript>` checks every number the manuscript reports against `output/`, within the tolerances in `.claude/rules/replication-protocol.md`; it expects `output/sessionInfo.txt` and asks you to re-run `00_run_all.R` first if the outputs are missing or older than the manuscript.
+`/review-r scripts/R/03_analyze.R` runs the R code-review agent, which checks seed handling, flags absolute paths, and expects a clean `Rscript` run on a fresh clone. `/audit-reproducibility <manuscript>` checks every number the manuscript reports against `output/`, within the tolerances in `.codebuddy/rules/replication-protocol.md`; it expects `output/sessionInfo.txt` and asks you to re-run `00_run_all.R` first if the outputs are missing or older than the manuscript.
 
 ## Removing this template
 

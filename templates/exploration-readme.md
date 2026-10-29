@@ -1,20 +1,20 @@
-# [Project Name]
+# [项目名]
 
-## Goal
-[1-2 sentence description]
+## 目标
+[1-2 句说明]
 
-## Status
-[IN PROGRESS / COMPLETED / ABANDONED] (started [DATE])
+## 状态
+[IN PROGRESS / COMPLETED / ABANDONED]（始于 [日期]）
 
-## Hypotheses to Test
-1. [Hypothesis 1]
-2. [Hypothesis 2]
+## 待检验的假设
+1. [假设 1]
+2. [假设 2]
 
-## Success Criteria
-- [Something you can measure]
+## 成功标准
+- [某个你可以度量的东西]
 
-## Findings
-(Updated as work progresses)
+## 发现
+（随工作推进更新）
 
-## Timeline
-- [DATE]: Started exploration
+## 时间线
+- [日期]：开始探索

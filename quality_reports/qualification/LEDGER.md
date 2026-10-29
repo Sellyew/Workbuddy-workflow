@@ -3,7 +3,7 @@
 Every check, gate, and review agent that is allowed to clear work must have a row here.
 **A checker with no row is unqualified, and its green light means nothing.**
 
-Written by `/vaccinate`. See [`verification-ladder.md`](../../.claude/references/verification-ladder.md) rung 0.
+Written by `/vaccinate`. See [`verification-ladder.md`](../../.codebuddy/references/verification-ladder.md) rung 0.
 
 Verdicts: **PASS** (detects its named class at the stated threshold) · **FAIL** (misses it) ·
 **BLOCKED** (could not be run — reason required; never record as PASS).
@@ -23,6 +23,7 @@ Verdicts: **PASS** (detects its named class at the stated threshold) · **FAIL**
 
 | 2026-08-21 | `scripts/backtest.sh` — **full stress test, all 7 gates** | `README.md`, `CLAUDE.md`, `docs/index.html`, `scripts/`, a skill | count drift (compound) · count drift (template verb) · superseded model · broken link · broken anchor · superlative · stale auto-mode claim · root scratch file · draft copy · undeclared tool | 10 | **10/10** | **0/1** on the clean-repo control | n/a (composite) | **PASS** |
 | 2026-08-21 | `check-surface-sync.py` coverage of `docs/index.html` | landing page | count drift on the published page | 1 | 1/1 | 0/0 | n/a | **PASS** (see note) |
+| 2026-10-29 | `scripts/portability-tests.py` (7 modules: rot, hooks, gitout, gates, scripts, harness, `_winsim`) | this repo's own scripts and hooks, loaded with `os.path` swapped for `ntpath`; the cases that are not Windows-specific run natively. 100 of 236 cases skipped on this host (no POSIX shell, no `os.symlink`) | T1 `.claude` → `.codebuddy` path left behind · T2 path separator in gate/hook comparisons · T3 locale/code-page decode of `git ls-files` · T4 CRLF-blind anchored regex · T5 git C-quoting of non-ASCII names · T6 case-varied path on a case-insensitive disk · T7 BOM on read · T8 the suite's own counting (skip reported as pass, unexpected success, empty scan) | 236 cases (136 exercised here) | 108/108 — the suite opened at 108 red cases against the un-ported tree and closed at 0, module by module; every case was red for the reason it names, and the fix that closed it was that module's fix | 0 unexpected reds on the tree after the port; 1 red on the first run of the wired gate was the docs still claiming the old gate count, which is the gate working | the tree at the start of the port (108 red / 126 green): a suite that never goes red proves nothing | **PASS — with a stated ceiling.** The 100 skips are named case by case and printed as `portability-ceiling: 100 of 236 cases not exercised on this host`; `scripts/backtest.py` reports this gate as PARTIAL, never as PASS, and treats an all-skipped run as exit 2 |
 
 ## Harness qualification (2026-08-21)
 

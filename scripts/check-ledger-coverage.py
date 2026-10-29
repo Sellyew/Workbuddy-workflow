@@ -13,7 +13,7 @@ Both directions fail here:
   2. a ledger row naming a checker that is no longer on disk — a qualification for
      a ghost, which reads as coverage the repo does not have.
 
-Plus wiring: a mistyped path in `.claude/settings.json` costs you the GUARDING,
+Plus wiring: a mistyped path in `.codebuddy/settings.json` costs you the GUARDING,
 and no other gate in the suite notices — nothing else reads the settings file
 against the disk, so a hook can be wired to nothing while every check stays green.
 That is the failure this checker exists to catch. The symptom is not silence, and
@@ -23,7 +23,7 @@ error nobody reads as a config error; a bare path exits 127 (126 if present but 
 executable), a non-blocking error that scrolls past while the guard stops guarding.
 
 Registered checks are derived LIVE from three sources of truth — the `run` lines in
-`scripts/backtest.sh`, the hook commands in `.claude/settings.json`, and the
+`scripts/backtest.sh`, the hook commands in `.codebuddy/settings.json`, and the
 `.githooks/pre-commit` entry point. Never a hardcoded list: a list here would drift
 exactly the way the ledger does, and this checker would be the last to notice.
 
@@ -35,7 +35,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(ROOT, "scripts")
 
 LEDGER = "quality_reports/qualification/LEDGER.md"
-SETTINGS = ".claude/settings.json"
+SETTINGS = ".codebuddy/settings.json"
 BACKTEST = "scripts/backtest.sh"
 PRECOMMIT = ".githooks/pre-commit"
 
@@ -54,7 +54,7 @@ INTERPRETERS = {"python", "python3", "bash", "sh", "zsh", "node", "Rscript", "pe
 SCRIPT_TOKEN = re.compile(r'^[\w./-]+\.(?:py|sh)$')
 
 # Where an unqualified (directory-less) ledger name may live.
-SEARCH_DIRS = ["", "scripts", ".claude/hooks", ".claude/scripts", ".githooks"]
+SEARCH_DIRS = ["", "scripts", ".codebuddy/hooks", ".codebuddy/scripts", ".githooks"]
 
 
 class CannotRun(Exception):
@@ -69,9 +69,26 @@ def read(rel):
 
 
 def expand(tok):
-    """Resolve the two path variables the harness and the gate runner inject."""
-    tok = tok.replace("${CLAUDE_PROJECT_DIR}", ROOT).replace("$CLAUDE_PROJECT_DIR", ROOT)
+    """Resolve the path variables the harness and the gate runner inject.
+
+    [WorkBuddy 适配] 新增两种写法：
+      * `${CODEBUDDY_PROJECT_DIR}` / `$CODEBUDDY_PROJECT_DIR` —— WorkBuddy 的变量名
+      * `${CODEBUDDY_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}` —— 本仓库 hook 命令
+        实际使用的「带默认值的嵌套展开」写法。不识别它的话，settings.json 里
+        每条 hook 都会被解析成一个字面量路径，WIRING 检查整体失效——
+        而 WIRING 是唯一能发现「hook 接在不存在文件上」的检查。
+    """
+    tok = re.sub(
+        r"\$\{CODEBUDDY_PROJECT_DIR:-\$\{(?:CODEBUDDY|CLAUDE)_PROJECT_DIR:-\.\}\}",
+        lambda _m: ROOT, tok)   # lambda：ROOT 是 Windows 路径，直接当替换串会让 re 解释 \w \t
+    for var in ("CODEBUDDY_PROJECT_DIR", "CLAUDE_PROJECT_DIR"):
+        tok = tok.replace("${%s}" % var, ROOT).replace("$%s" % var, ROOT)
     return tok.replace("${DIR}", SCRIPTS).replace("$DIR", SCRIPTS)
+
+
+# [WorkBuddy 适配] hook 统一入口：`.codebuddy/hooks/hook-runner.sh <hook 文件名>`。
+# 真实脚本是它后面的那个参数，不是 runner 本身。
+HOOK_RUNNER = "hook-runner.sh"
 
 
 def script_of(command, where):
@@ -90,7 +107,24 @@ def script_of(command, where):
     if i >= len(toks):
         raise CannotRun(f"{where}: no script path in command: {command}")
     p = expand(toks[i])
-    return os.path.normpath(p if os.path.isabs(p) else os.path.join(ROOT, p)), interp
+    p = os.path.normpath(p if os.path.isabs(p) else os.path.join(ROOT, p))
+    # 跟随 runner 间接调用，否则每条 hook 都会被记成 hook-runner.sh，
+    # 台账里 11 条 hook 的记录会全部「对不上」，而门禁看起来仍是绿的。
+    #
+    # runner 位于 `.codebuddy/hooks/lib/`，但它把参数解析成
+    # `$ROOT/.codebuddy/hooks/<hook>`（见 hook-runner.sh 的 HOOK_PATH），
+    # 即相对 **hooks/** 而不是相对自己的 **lib/**。按 lib/ 解析会让 12 条 hook
+    # 全部报 MISSING——这正是本检查存在的意义：接线错了要喊出来。
+    if os.path.basename(p) == HOOK_RUNNER and i + 1 < len(toks):
+        inner = expand(toks[i + 1])
+        if os.path.isabs(inner):
+            p = os.path.normpath(inner)
+        else:
+            base = os.path.dirname(p)
+            if os.path.basename(base) == "lib":
+                base = os.path.dirname(base)
+            p = os.path.normpath(os.path.join(base, inner))
+    return p, interp
 
 
 def registered():
@@ -181,9 +215,15 @@ def ledger_names(known):
 
 
 def named_by(path, names):
-    """Does `names` (basename -> {tokens}) name this path? A token with a directory must match it."""
-    rel = os.path.relpath(path, ROOT)
-    return any("/" not in tok or rel.endswith(tok)
+    """Does `names` (basename -> {tokens}) name this path? A token with a directory must match it.
+
+    [WorkBuddy 适配] 历史台账行写的是迁移前的 `.claude/hooks/…` 拼写。台账是
+    历史记录，不得改写（见 meta-governance.md「Historical records are never
+    edited」），所以这里按别名双向比对：同一个文件搬了目录，资质仍对应它。
+    """
+    rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
+    rel_legacy = rel.replace(".codebuddy/", ".claude/", 1)
+    return any("/" not in tok or rel.endswith(tok) or rel_legacy.endswith(tok)
                for tok in names.get(os.path.basename(path), ()))
 
 
@@ -191,12 +231,24 @@ def resolve(tok):
     """Where a ledger name lives on disk, or None."""
     cands = [os.path.join(ROOT, tok)] if "/" in tok else \
             [os.path.join(ROOT, d, tok) for d in SEARCH_DIRS]
-    return next((os.path.normpath(c) for c in cands if os.path.isfile(c)), None)
+    found = next((os.path.normpath(c) for c in cands if os.path.isfile(c)), None)
+    if found:
+        return found
+    # [WorkBuddy 适配] 迁移前的拼写 → 迁移后的位置（单向别名，不改写台账）
+    tok2 = tok.replace(".claude/", ".codebuddy/", 1)
+    if tok2 == tok:
+        return None
+    cands2 = [os.path.join(ROOT, tok2)] if "/" in tok2 else \
+             [os.path.join(ROOT, d, tok2) for d in SEARCH_DIRS]
+    return next((os.path.normpath(c) for c in cands2 if os.path.isfile(c)), None)
 
 
 def tracked_files():
-    r = subprocess.run(["git", "-C", ROOT, "ls-files"], capture_output=True, text=True)
-    files = {f for f in r.stdout.split("\n") if f}
+    # -z 加显式 UTF-8 解码：普通 `ls-files` 会把非 ASCII 文件名 C-quote 成
+    # （".codebuddy/hooks/lembrete_sess\303\243o.py"），于是已入库的钩子被读成
+    # UNTRACKED；而 text=True 用 Windows 代码页解码，遇到它会变成乱码或直接崩。
+    r = subprocess.run(["git", "-C", ROOT, "ls-files", "-z"], capture_output=True)
+    files = {f for f in r.stdout.decode("utf-8", "surrogateescape").split("\0") if f}
     if not files:
         raise CannotRun("git ls-files returned nothing (not a git repo?) — cannot verify that "
                         "the registered checks survive a fresh clone")
@@ -204,6 +256,14 @@ def tracked_files():
 
 
 def main():
+    # 报告每次都会打一个破折号。cp932 或 Latin-1 的 stdout（日文 Windows 上的管道、
+    # 老式 POSIX locale）编码不了它，门禁就会因为一个控制台细节以 exit 1 死掉——
+    # 无论控制台是什么，都按 UTF-8 打。
+    for s in (sys.stdout, sys.stderr):
+        try:
+            s.reconfigure(encoding="utf-8", errors="backslashreplace")
+        except (AttributeError, ValueError):
+            pass
     try:
         checks = registered()
         qualified, debt = ledger_names({os.path.basename(p) for _, p, _, _ in checks})
@@ -213,7 +273,7 @@ def main():
         print("  A check that could not run is not a passing check.", file=sys.stderr)
         return 2
 
-    rel = lambda p: os.path.relpath(p, ROOT)
+    rel = lambda p: os.path.relpath(p, ROOT).replace(os.sep, "/")
     errs, warns = [], []
     n = lambda src: sum(1 for s, _, _, _ in checks if s == src)
     art = lambda src: ("an " if src[0] in "aeiou" else "a ") + src

@@ -1,56 +1,56 @@
-# Requirements Specification: [Title]
+# 需求规格：[标题]
 
-**Date:** [YYYY-MM-DD]
-**Status:** DRAFT | APPROVED
-
----
-
-## Objective
-
-[One sentence: what success looks like]
+**日期：** [YYYY-MM-DD]
+**状态：** DRAFT | APPROVED
 
 ---
 
-## Requirements
+## 目标
 
-### MUST Have (Non-Negotiable)
-
-- [ ] [Required feature or constraint]
-- [ ] [Required feature or constraint]
-
-### SHOULD Have (Preferred)
-
-- [ ] [Preferred feature or enhancement]
-- [ ] [Preferred feature or enhancement]
-
-### MAY Have (Optional, If Time)
-
-- [ ] [Nice-to-have enhancement]
-- [ ] [Nice-to-have enhancement]
+[一句话：做成什么样算成功]
 
 ---
 
-## Clarity Status
+## 需求
 
-| Aspect | Status | Notes |
+### MUST（不可谈判）
+
+- [ ] [必需的功能或约束]
+- [ ] [必需的功能或约束]
+
+### SHOULD（优先争取）
+
+- [ ] [优先争取的功能或改进]
+- [ ] [优先争取的功能或改进]
+
+### MAY（可选，时间允许才做）
+
+- [ ] [锦上添花的改进]
+- [ ] [锦上添花的改进]
+
+---
+
+## 清晰度状态
+
+| 方面 | 状态 | 备注 |
 |--------|--------|-------|
-| [Ambiguous aspect] | CLEAR / ASSUMED / BLOCKED | [How it was resolved or why it's assumed] |
-| [Another aspect] | CLEAR / ASSUMED / BLOCKED | [Explanation] |
+| [含糊的方面] | CLEAR / ASSUMED / BLOCKED | [它如何被解决，或为何做此假设] |
+| [另一个方面] | CLEAR / ASSUMED / BLOCKED | [说明] |
 
-**Status Definitions:**
-- **CLEAR:** Fully specified, no ambiguity
-- **ASSUMED:** Reasonable assumption made in absence of clarity; user can override
-- **BLOCKED:** Cannot proceed until this is answered
-
----
-
-## Success Criteria
-
-- [Measurable criterion for completion]
-- [Measurable criterion for completion]
+**状态定义：**
+- **CLEAR：** 已完全指定，没有含糊之处
+- **ASSUMED：** 在信息不清的情况下做了一个合理假设；用户可覆盖
+- **BLOCKED：** 在这一点被回答之前无法推进
 
 ---
 
-## Approval
+## 成功标准
 
-[ ] User approved: [Date]
+- [可度量的完成标准]
+- [可度量的完成标准]
+
+---
+
+## 批准
+
+[ ] 用户已批准：[日期]

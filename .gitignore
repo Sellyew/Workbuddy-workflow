@@ -1,5 +1,5 @@
 # ==============================================================================
-# .gitignore for Academic Claude Code Projects
+# .gitignore for Academic WorkBuddy Projects
 # ==============================================================================
 
 # LaTeX build artifacts
@@ -36,10 +36,28 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Claude Code local files (not shared across machines)
+# 本机文件——同一份工作副本，不同机器上内容本就该不同（不跨机器共享）
+#
+# [WorkBuddy 适配] 配置根从 `.claude/` 迁到 `.codebuddy/` 之后，本机覆盖文件与
+# 状态目录也跟着搬家。下面这两条新路径是**真正生效**的：
+#   `.codebuddy/settings.local.json` —— 本机权限/Hook 覆盖。permission-check、
+#   repo-hygiene、commit 三个技能都把它点名为「本机、不入库」，但此前没有任何
+#   忽略规则，`git add -A` 会把它扫进提交。
+#   `.codebuddy/state/` —— 会话状态。
+.codebuddy/settings.local.json
+.codebuddy/state/
+# 旧路径保留：一个从上游 fork 来的仓库升级到 v3.0.0 之后，`.claude/` 里可能还留着
+# 旧的 settings.local.json 与 state/。它们同样是本机数据，不该因为改了目录名就漏网。
+# `CLAUDE.local.md` 同属这一类——本平台没有这个文件，留着只为拦住升级时的遗留。
 .claude/settings.local.json
 .claude/state/
 CLAUDE.local.md
+
+# [WorkBuddy 适配] 本机工作记忆（`memory/` 下的会话日志与状态）。它确实存在于每个
+# 工作副本的根目录（`check-repo-hygiene.py` 的 ROOT_ALLOW_DIRS 已按「存在但不入库」
+# 收录），但此前没有任何忽略规则——一次 `git add -A` 就会把整份会话日志提交进去。
+# 规矩见 `.codebuddy/rules/meta-governance.md`：「本机存放、永不提交」。
+.workbuddy/
 
 # IDE
 # .vscode/settings.json ships in the template (carries shipped Claude Code permission-mode
@@ -84,7 +102,7 @@ quality_reports/inbox/*
 # Generated results live in output/ (AEA layout: code in scripts/, results
 # apart from it). Final tables, figures and logs ARE committed, so co-authors
 # can diff them; on restricted data, only after disclosure clearance
-# (.claude/rules/confidential-data.md). Regenerable intermediates are not.
+# (.codebuddy/rules/confidential-data.md). Regenerable intermediates are not.
 output/**/*.rds
 output/**/*.RData
 output/**/*.rda

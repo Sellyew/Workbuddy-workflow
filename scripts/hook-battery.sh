@@ -2919,7 +2919,7 @@ expect_contains "i10 the temp file holding the body is removed after the create"
 # The three verdicts are computed here and handed to `expect_contains` through
 # `verdict`, rather than calling ok/no directly, because the derived-counts
 # gate counts `expect_` CALL SITES as the case count and the battery prints
-# PASS+FAIL: a case that skips the helpers makes those two numbers disagree,
+# PASS + FAIL: a case that skips the helpers makes those two numbers disagree,
 # which is the drift that gate exists to stop. Exactly three calls are made on
 # every path, including the one where the decoy repo cannot be built.
 echo ""

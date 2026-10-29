@@ -1,27 +1,27 @@
-# Skill Creation Template
+# 技能创建模板
 
-**Use this template to create domain-specific skills for your academic workflow.**
-
----
-
-## When to Create a Custom Skill
-
-Create a skill when you find yourself:
-- Repeatedly explaining the same 3+ step workflow to Claude
-- Needing domain-specific quality checks (citation style, notation consistency, lab protocols)
-- Enforcing field-specific output formats (thesis structure, journal templates, lab notebooks)
-- Coordinating multi-tool workflows (Figma → R → LaTeX, data → analysis → manuscript)
-
-**Don't create a skill for:**
-- One-time tasks
-- Workflows that change frequently
-- Simple 1-2 step operations
+**用这个模板为你的学术工作流创建领域专用的技能。**
 
 ---
 
-## Template Structure
+## 什么时候该自建技能
 
-Copy the structure below to `.claude/skills/[your-skill-name]/SKILL.md`:
+当你发现自己出现下面这些情况时，就该建一个技能：
+- 反复向 Claude 解释同一套 3 步以上的工作流
+- 需要领域专用的质量检查（引用格式、记号一致性、实验室规程）
+- 要强制领域专用的输出格式（学位论文结构、期刊模板、实验记录本）
+- 要协调多工具工作流（Figma → R → LaTeX、数据 → 分析 → 稿件）
+
+**以下情形不要建技能：**
+- 一次性任务
+- 变动频繁的工作流
+- 简单的 1-2 步操作
+
+---
+
+## 模板结构
+
+把下面的结构复制到 `.codebuddy/skills/[your-skill-name]/SKILL.md`：
 
 ```markdown
 ---
@@ -79,127 +79,127 @@ Step 3: [Final action and verification]
 
 ---
 
-## Advanced Frontmatter Fields
+## 高级 frontmatter 字段
 
-Beyond the basic fields shown above, skills support additional YAML frontmatter for fine-grained control:
+除了上面展示的基本字段，技能还支持额外的 YAML frontmatter，用于细粒度控制：
 
-| Field | Purpose | Example |
+| 字段 | 用途 | 示例 |
 |-------|---------|---------|
-| `effort` | Override reasoning effort level | `high` (for review skills), `low` (for formatting) |
-| `context` | Set to `fork` to run in an isolated subagent context | Protects main conversation from verbose output |
-| `agent` | Link to an agent definition in `.claude/agents/` | `proofreader` |
-| `hooks` | Skill-specific hooks (same syntax as settings.json) | Custom pre/post actions |
-| `model` | Force a specific model | `haiku` (cheaper), `opus` (smarter) |
-| `disable-model-invocation` | Prevent Claude from auto-triggering | `true` (only invoked via `/skill-name`) |
-| `disallowed-tools` | **Remove** tools from Claude's pool while the skill is active — the actual restriction mechanism (see the semantics note below) | `["Edit", "Write"]` for a read-only audit |
-| `paths` | Glob patterns that scope when the skill auto-activates — the skill-level analogue of path-scoped rules | `["scripts/**/*.R"]` |
-| `when_to_use` | Extra routing context for auto-invocation, beyond the description | `"after any merge conflict"` |
-| `arguments` | Named positional arguments for `$name` substitution in the body | `[infile, outfile]` |
+| `effort` | 覆盖推理 effort 级别 | `high`（审读类技能）、`low`（格式化类） |
+| `context` | 设为 `fork` 即在隔离子代理上下文里运行 | 保护主对话不被冗长输出淹没 |
+| `agent` | 链接到 `.codebuddy/agents/` 里的代理定义 | `proofreader` |
+| `hooks` | 技能专属钩子（语法同 settings.json） | 自定义前置/后置动作 |
+| `model` | 强制指定某个模型档位 | `lite`（更便宜）、`reasoning`（更聪明） |
+| `disable-model-invocation` | 阻止 Claude 自动触发 | `true`（只能经 `/skill-name` 调用） |
+| `disallowed-tools` | 技能生效期间**移除** Claude 工具池里的工具——真正的限制机制（见下面的语义说明） | 只读审计用 `["Edit", "Write"]` |
+| `paths` | glob 模式，划定技能何时自动激活——相当于路径作用域规则在技能层面的对应物 | `["scripts/**/*.R"]` |
+| `when_to_use` | 自动调用时额外的路由上下文，超出 description 之外 | `"after any merge conflict"` |
+| `arguments` | 供正文里 `$name` 替换的具名位置参数 | `[infile, outfile]` |
 
-### `allowed-tools` vs `disallowed-tools` — the semantics matter {#allowed-vs-disallowed}
+### `allowed-tools` vs `disallowed-tools` —— 语义很要紧 {#allowed-vs-disallowed}
 
-**`allowed-tools` is a pre-approval list, not a sandbox.** Per the official docs: it "grants permission for the listed tools while the skill is active, so Claude can use them without prompting you for approval. **It does not restrict which tools are available: every tool remains callable**" — unlisted tools just go through your normal permission settings. Omitting `Bash` from `allowed-tools` does **not** make a skill read-only.
+**`allowed-tools` 是一份预先批准清单，不是沙箱。** 按官方文档的说法：它「在技能生效期间为所列工具授予权限，这样 Claude 使用它们时不必向你请求批准。**它不限制哪些工具可用：每个工具仍然可调用**」——没列出的工具只是走你正常的权限设置。把 `Bash` 从 `allowed-tools` 里省掉，**并不**会让技能变成只读。
 
-**To actually remove tools, use `disallowed-tools`.** Tools listed there are taken out of Claude's available pool while the skill is active (the restriction clears on your next message). For autonomous or forked review skills that must never write — or never stall a background loop on a question — disallow explicitly:
+**要真正移除工具，用 `disallowed-tools`。** 列在那里的工具会在技能生效期间被从 Claude 的可用池里拿走（限制在你下一条消息时解除）。对必须永不写入——或者永不因为一个提问而卡住后台循环——的自主型或 fork 型审读技能，就显式禁用：
 
 ```yaml
 allowed-tools: ["Read", "Grep", "Glob"]        # pre-approve the read path (no prompts)
 disallowed-tools: ["Edit", "Write", "Bash"]    # actually remove the write path
 ```
 
-**Dynamic content** — skills can include live data using string substitutions:
+**动态内容**——技能可以用字符串替换注入实时数据：
 
-- `$ARGUMENTS` — full argument string (e.g., `/skill-name Lecture01` → `Lecture01`)
-- `$0`, `$1` — positional arguments (0-based)
-- `${CLAUDE_SKILL_DIR}` — path to the skill's directory (for bundled supporting files)
-- `` !`git log --oneline -5` `` — dynamic command output injected when skill loads
+- `$ARGUMENTS` —— 完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）
+- `$0`、`$1` —— 位置参数（从 0 开始）
+- `${CLAUDE_SKILL_DIR}` —— 技能所在目录的路径（用于随技能打包的辅助文件）
+- `` !`git log --oneline -5` `` —— 技能加载时注入的动态命令输出
 
-See the [guide's Skill Frontmatter Reference](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#skill-frontmatter) for details and examples.
+细节与示例见[指南的技能 frontmatter 参考](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#skill-frontmatter)。
 
-### When to set `disable-model-invocation: true` {#when-to-disable-model-invocation}
+### 什么时候该设 `disable-model-invocation: true` {#when-to-disable-model-invocation}
 
-Set this flag whenever the skill writes a **persistent, load-bearing file** that the user must explicitly intend to create. Otherwise, Claude may auto-trigger the skill in response to a vaguely-matching prompt and produce a file that's hard to undo without manual cleanup.
+凡是技能会写入**持久的、承重的文件**、而用户必须明确意图才能创建这类文件时，就设这个旗标。否则，Claude 可能在一条含糊匹配的提示词下自动触发该技能，产出一个不做手工清理就很难撤销的文件。
 
-**Set it for skills that:**
+**以下技能要设：**
 
-- Create new persistent source files (`/create-lecture` → new `.tex`, `/new-diagram` → new TikZ source).
-- Write a self-modifying artifact (`/learn` → new SKILL.md, `/checkpoint` → state snapshot, `/preregister` → preregistration document).
-- Run a long, file-writing cycle (`/simulation-study` → seeded Monte Carlo run and results, `/vaccinate` → qualification-ledger row, `/deep-audit` → audit-and-fix loop).
+- 创建新的持久源文件（`/create-lecture` → 新的 `.tex`，`/new-diagram` → 新的 TikZ 源）。
+- 写入会自我修改的产物（`/learn` → 新的 SKILL.md，`/checkpoint` → 状态快照，`/preregister` → 预注册文档）。
+- 跑长时间的写文件循环（`/simulation-study` → 带种子的蒙特卡洛运行与结果，`/vaccinate` → 资格台账的一行，`/deep-audit` → 审计并修复的循环）。
 
-**Don't set it for skills that:**
+**以下技能不要设：**
 
-- Produce transient analysis output (`/proofread`, `/review-r`, `/visual-audit` — write reports under `quality_reports/` that are easy to delete).
-- Are read-only diagnostics (`/permission-check`, `/context-status`).
-- Compile / render / deploy from existing source (`/compile-latex`, `/deploy`, `/extract-tikz`).
+- 产出临时分析输出（`/proofread`、`/review-r`、`/visual-audit`——写在 `quality_reports/` 下，容易删）。
+- 是只读诊断（`/permission-check`、`/context-status`）。
+- 从既有源码编译 / 渲染 / 部署（`/compile-latex`、`/deploy`、`/extract-tikz`）。
 
-The flag still allows direct invocation as `/skill-name` — it only blocks the model from auto-triggering on a heuristic match.
+这个旗标仍然允许用 `/skill-name` 直接调用——它只挡住模型凭启发式匹配自动触发。
 
-### CLAUDE.md `@import` syntax (Anthropic Apr 2026)
+### CODEBUDDY.md 的 `@import` 语法（Anthropic 2026 年 4 月）
 
-Anthropic's `CLAUDE.md` supports `@path/to/import` to pull in additional files. Example:
+Anthropic 的 `CODEBUDDY.md` 支持 `@path/to/import` 来引入额外文件。示例：
 
 ```markdown
 See @README.md for project overview and @package.json for available commands.
 
 # Personal overrides
-@~/.claude/my-project-instructions.md
+@~/.workbuddy/my-project-instructions.md
 
 # Domain-specific instructions
 @docs/git-instructions.md
 ```
 
-**This template's `CLAUDE.md` deliberately does NOT use `@import`** — it is deliberately lean, and importing fragments fractures the onboarding context (forkers expect "one file to load at session start"). Mention this here for forkers whose customization grows large enough to warrant splitting; for short CLAUDE.md files, splitting tends to hurt more than help.
+**本模板的 `CODEBUDDY.md` 刻意不用 `@import`** ——它刻意保持精简，而引入碎片会把入门上下文打碎（forker 期待的是「会话启动时加载一个文件」）。这里提一句，是给那些定制内容已经大到值得拆分的 forker；对简短的 CODEBUDDY.md，拆分往往弊大于利。
 
 ---
 
-## Writing Effective Descriptions
+## 写出有效的描述
 
-The `description` field determines when Claude loads your skill. Use this structure:
+`description` 字段决定 Claude 何时加载你的技能。用这个结构：
 
 ```
 [What it does] + [When to use it] + [Key capabilities]
 ```
 
-### Good Examples (Field-Specific)
+### 好的示例（领域专用）
 
-**Citation Style Enforcement (APA Psychology):**
+**引用格式强制（APA 心理学）：**
 ```yaml
 description: Enforces APA 7th edition citation format in manuscripts. Use when user asks to "check citations", "fix references", "apply APA style", or when reviewing .tex or .qmd files with bibliography. Checks author-year format, DOI formatting, and reference list completeness.
 ```
 
-**Lab Notebook Entry Generator (Wet Lab Biology):**
+**实验记录本条目生成（湿实验室生物学）：**
 ```yaml
 description: Generates structured lab notebook entries from experimental notes. Use when user provides "experiment notes", "protocol results", or asks to "format lab entry". Ensures date, hypothesis, materials, procedure, observations, and conclusions are documented.
 ```
 
-**Thesis Chapter Structure Checker (Graduate Students):**
+**学位论文章节结构检查（研究生）：**
 ```yaml
 description: Validates thesis chapter structure against institutional requirements. Use when user asks to "check chapter format", "validate thesis structure", or when editing thesis .tex or .docx files. Verifies required sections, heading levels, and citation density.
 ```
 
-**Econometric Specification Review (Economics):**
+**计量设定审读（经济学）：**
 ```yaml
 description: Reviews econometric specifications for common errors. Use when user shares regression code in R or Stata, or asks to "check model spec", "review estimation". Validates: standard error clustering, fixed effects structure, missing covariates, and replication commands.
 ```
 
-### Bad Examples (Too Generic)
+### 坏的示例（太泛）
 
 ❌ `description: Helps with citations`
-→ Too vague, doesn't specify style or when to trigger
+→ 太含糊，没说明风格，也没说明何时触发
 
 ❌ `description: Checks lab notebooks`
-→ Missing trigger phrases, no format specification
+→ 缺触发短语，没有格式说明
 
 ❌ `description: Reviews thesis chapters`
-→ Doesn't specify what aspects or when to activate
+→ 没说清查哪些方面，也没说何时激活
 
 ---
 
-## Academic Domain Examples
+## 学术领域的示例
 
-### Example 1: Citation Cross-Reference Checker
+### 示例 1：引用交叉核对器
 
-**File:** `.claude/skills/validate-citations/SKILL.md`
+**文件：** `.codebuddy/skills/validate-citations/SKILL.md`
 
 ```markdown
 ---
@@ -253,9 +253,9 @@ Step 4: **Report findings**
 
 ---
 
-### Example 2: Regression Output Formatter
+### 示例 2：回归输出排版器
 
-**File:** `.claude/skills/format-regression-tables/SKILL.md`
+**文件：** `.codebuddy/skills/format-regression-tables/SKILL.md`
 
 ```markdown
 ---
@@ -335,9 +335,9 @@ Step 4: **Save and verify**
 
 ---
 
-### Example 3: Experimental Protocol Validator
+### 示例 3：实验协议校验器
 
-**File:** `.claude/skills/validate-protocol/SKILL.md`
+**文件：** `.codebuddy/skills/validate-protocol/SKILL.md`
 
 ```markdown
 ---
@@ -395,61 +395,61 @@ Step 4: **Generate report**
 
 ---
 
-## Testing Your Skill
+## 测试你的技能
 
-### Step 1: Manual Test
-1. Create skill directory: `mkdir -p .claude/skills/your-skill-name`
-2. Copy SKILL.md template and customize
-3. Skills hot-reload automatically --- changes are detected without restarting
-4. Trigger skill: Use one of your trigger phrases
-5. Verify: Skill loads, instructions are clear, output is correct
+### 第 1 步：手工测试
+1. 创建技能目录：`mkdir -p .codebuddy/skills/your-skill-name`
+2. 复制 SKILL.md 模板并定制
+3. 技能会热重载——改动无需重启就会被检出
+4. 触发技能：用你的一条触发短语
+5. 核验：技能加载了、指令清楚、输出正确
 
-### Step 2: Iteration
-- **If skill doesn't trigger:** Revise description with more specific trigger phrases
-- **If instructions unclear:** Add more examples and detail to Steps
-- **If output wrong:** Add validation steps, troubleshooting section
+### 第 2 步：迭代
+- **技能不触发：** 用更具体的触发短语改 description
+- **指令不清：** 给 Steps 补更多示例与细节
+- **输出不对：** 加校验步骤、加故障排查一节
 
-### Step 3: Success Criteria
-- ✅ Skill triggers on 90%+ of relevant queries
-- ✅ Complete workflow in expected number of steps
-- ✅ Zero API errors during normal operation
-- ✅ Same task yields consistent outputs across sessions
-
----
-
-## Field-Specific Customization Checklist
-
-When adapting this template to your domain:
-
-- [ ] Replace example trigger phrases with your field's terminology
-- [ ] Add domain-specific file types (`.R`, `.py`, `.ipynb`, `.tex`, `.stan`)
-- [ ] Include field conventions (notation, formatting, citation styles)
-- [ ] Reference standard tools (`ggplot2`, `pandas`, `TikZ`, `Stata`)
-- [ ] Add common error messages from your toolchain
-- [ ] Include institutional requirements (thesis formats, journal templates)
+### 第 3 步：成功标准
+- ✅ 技能在 90%+ 的相关查询上触发
+- ✅ 用预期步数走完整个工作流
+- ✅ 正常运行时零 API 错误
+- ✅ 同一任务跨会话产出一致
 
 ---
 
-## Allowed Tools Reference
+## 领域定制清单
 
-| Tool | Use For |
+把本模板适配到你的领域时：
+
+- [ ] 用你领域的术语替换示例触发短语
+- [ ] 加上领域特有的文件类型（`.R`、`.py`、`.ipynb`、`.tex`、`.stan`）
+- [ ] 写进领域惯例（记号、格式、引用风格）
+- [ ] 引用标准工具（`ggplot2`、`pandas`、`TikZ`、`Stata`）
+- [ ] 加上你工具链里常见的错误信息
+- [ ] 写进机构要求（学位论文格式、期刊模板）
+
+---
+
+## 允许工具参考
+
+| 工具 | 用于 |
 |------|---------|
-| `Read` | Reading file contents (scripts, manuscripts, data) |
-| `Write` | Creating new files (reports, tables, outputs) |
-| `Edit` | Modifying existing files in place |
-| `Grep` | Searching file contents (citations, function names) |
-| `Glob` | Finding files by pattern (*.R, *.tex, *.csv) |
-| `Bash` | Running commands (R scripts, LaTeX compilation, git) |
-| `Agent` | Launching subagents (for complex multi-step workflows) |
+| `Read` | 读文件内容（脚本、稿件、数据） |
+| `Write` | 创建新文件（报告、表格、输出） |
+| `Edit` | 原地修改既有文件 |
+| `Grep` | 搜索文件内容（引用、函数名） |
+| `Glob` | 按模式找文件（*.R、*.tex、*.csv） |
+| `Bash` | 跑命令（R 脚本、LaTeX 编译、git） |
+| `Agent` | 派生子代理（用于复杂的多步工作流） |
 
-**Security note:** `allowed-tools` only pre-approves — it does **not** restrict (see [the semantics note](#allowed-vs-disallowed)). For a genuinely read-only validation skill, add `disallowed-tools: ["Edit", "Write", "Bash"]`; for autonomous/background skills, also disallow `AskUserQuestion` so the loop can't stall on a prompt. Listing only what you use in `allowed-tools` is still good hygiene (it documents intent and minimizes silent pre-approvals), but it is not a sandbox.
+**安全说明：** `allowed-tools` 只做预先批准——它**不**做限制（见[语义说明](#allowed-vs-disallowed)）。对真正只读的校验类技能，加 `disallowed-tools: ["Edit", "Write", "Bash"]`；对自主/后台技能，还要禁用 `AskUserQuestion`，免得循环卡在某个提问上。只把你会用到的工具列进 `allowed-tools` 仍是好卫生（它记录了意图、把静默的预先批准降到最少），但它不是沙箱。
 
 ---
 
-## Where This Template Lives
+## 这个模板住在哪
 
-- **File:** `templates/skill-template.md`
-- **Purpose:** Starter for domain-specific skills
-- **Usage:** Copy to `.claude/skills/[name]/SKILL.md`, customize for your field
+- **文件：** `templates/skill-template.md`
+- **用途：** 领域专用技能的起点
+- **用法：** 复制到 `.codebuddy/skills/[name]/SKILL.md`，按你的领域定制
 
-For existing skills examples, see `.claude/skills/` directory (61 skills for LaTeX, R, Quarto, and research workflows).
+已有技能的示例见 `.codebuddy/skills/` 目录（63 个技能，覆盖 LaTeX、R、Quarto 与研究工作流）。

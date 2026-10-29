@@ -1,146 +1,114 @@
-# Screening Rubric: [What Is Being Screened]
+# 筛选评分细则：[在筛什么]
 
-**Date:** [YYYY-MM-DD]
-**Screened by:** [N parallel agents / by hand]
-**Screen type:** [precision-first — a shortlist you will act on | recall-first — a sweep asking what you might be missing]
-**Default verdict:** [EXCLUDE for precision-first · INCLUDE-or-NEEDS-HUMAN for recall-first — see below]
+**日期：** [YYYY-MM-DD]
+**筛选者：** [N 个并行代理 / 手工]
+**筛选类型：** [precision-first——一份你会照着行动的入围名单 | recall-first——一次「我可能漏了什么」的普查]
+**默认判定：** [precision-first 用 EXCLUDE · recall-first 用 INCLUDE-or-NEEDS-HUMAN——见下]
 
-> Write this **before** the screen runs. A rubric invented per candidate is not a rubric — it is
-> the screener's taste, applied N times
-> ([`research-agent-laws.md`](../.claude/references/research-agent-laws.md) law 21).
+> 在筛选跑起来**之前**写好它。为每个候选临时想一份评分细则，那不是评分细则——那是筛选者的口味，重复 N 遍（[`research-agent-laws.md`](../.codebuddy/references/research-agent-laws.md) 法则 21）。
 >
-> **Set the default by asking which error you could still catch later.** A wrong INCLUDE
-> survives to the next stage, where someone sees it. A wrong EXCLUDE leaves no trace anywhere —
-> on a recall-first screen it is how relevant evidence disappears silently. Precision-first
-> screens default to EXCLUDE; recall-first screens must not, and anything genuinely undecidable
-> belongs in **NEEDS-HUMAN** rather than resolved toward whichever side is tidier.
+> **靠「哪个错误你日后还能抓住」来定默认判定。** 一个错的 INCLUDE 会活到下一阶段，在那里有人看见它。一个错的 EXCLUDE 哪儿都不留痕迹——在 recall-first 的筛选上，相关的证据就是这样无声消失的。precision-first 的筛选默认 EXCLUDE；recall-first 的不能这么默认，而任何真正无法判定的东西都属于 **NEEDS-HUMAN**，而不是朝着更整齐的那一边解决掉。
 
 ---
 
-## The question this screen answers
+## 这次筛选要回答的问题
 
-[One sentence. What survives the screen, and what will be done with it. If the answer is "we'll
-see", the screen is premature — the criteria below cannot be written without it.]
+[一句话。什么东西能活过筛选，以及它将被怎么用。若答案是「再看吧」，这次筛选就太早了——没有它，下面的判据根本写不出来。]
 
 ---
 
-## Criteria
+## 判据
 
-INCLUDE requires **every** criterion to hold, each with cited evidence. Anything else takes the
-default verdict declared above — which on a recall-first screen is *not* EXCLUDE.
+INCLUDE 要求**每一条**判据都成立，且各有引用到的证据。其余一切取上文声明的默认判定——而在 recall-first 的筛选上，那不是 EXCLUDE。
 
-| # | Criterion (must hold) | How it is checked | Verdict if it fails |
+| # | 判据（必须成立） | 如何核查 | 不成立时的判定 |
 |---|-----------------------|-------------------|---------------------|
-| C1 | [requirement] | [the field, file, page, or command that decides it] | [the declared default] |
-| C2 | [requirement] | [how it is checked] | [the declared default] |
-| C3 | [disqualifier stated positively] | [how it is checked] | [the declared default] |
+| C1 | [要求] | [定案所依据的字段、文件、页或命令] | [声明的默认判定] |
+| C2 | [要求] | [如何核查] | [声明的默认判定] |
+| C3 | [以正面方式陈述的排除条件] | [如何核查] | [声明的默认判定] |
 
-**The default is the failure case — whichever default you declared above.** *"Might be relevant"*
-and *"looks promising"* take it, because they cite nothing. *"Could not check"* does not: a
-candidate failing **only** on a criterion the screener could not verify is a BORDERLINE and goes
-to the protocol below, on either kind of screen. An unverified criterion is an open question, not
-a decided one, and resolving it toward whichever side is tidier is what this rubric exists to
-stop.
+**默认判定就是失败情形——用你上文声明的那个默认。** *「可能相关」* 与 *「看起来有希望」* 取它，因为它们什么也没引用。*「无法核查」* 不取它：一个候选**仅**在筛选者无法核验的判据上失败，那是 BORDERLINE，两种筛选类型都进入下面的协议。一条未核验的判据是一个未决问题，不是一个已决问题——而「朝更整齐的那一边解决掉」正是这份评分细则要阻止的事。
 
 ---
 
-## Per-candidate evidence
+## 逐候选的证据
 
-Each candidate returns one row, and each verdict names **where** it came from:
+每个候选返回一行，每个判定都要点名它来自**哪里**：
 
-| Field | Requirement |
+| 字段 | 要求 |
 |-------|-------------|
-| `id` | Stable identifier assigned by the dispatcher **before** the screen runs |
-| `verdict` | INCLUDE / EXCLUDE / BORDERLINE / NEEDS-HUMAN — the declared default must be one of these |
-| `failing_criterion` | The first criterion that failed (empty for INCLUDE) |
-| `evidence` | Locator plus quoted text — page, line, field name, or command output |
+| `id` | 派发者在筛选跑起来**之前**分配的稳定标识 |
+| `verdict` | INCLUDE / EXCLUDE / BORDERLINE / NEEDS-HUMAN——声明的默认判定必须是其中之一 |
+| `failing_criterion` | 第一个不成立的判据（INCLUDE 时为空） |
+| `evidence` | 定位信息加引文——页、行、字段名或命令输出 |
 
-A verdict with no locator is not a result; it is re-screened. Verdicts join to candidates **by
-`id`**, never by a title or a name the screener wrote down — a model-authored key silently drops
-rows, and a dropped row looks exactly like an exclusion.
+没有定位信息的判定不是结果；它要被重筛。判定与候选按 **`id`** 连接，绝不按标题或筛选者自己记下的名字——模型自造的键会静默丢行，而丢掉的一行看起来和一次排除一模一样。
 
 ---
 
-## Borderline protocol
+## 边界情形协议
 
-A candidate that fails **only** on a criterion the screener could not verify is marked
-**BORDERLINE** and returned unresolved, with the single question that would settle it. Borderlines
-are decided by the dispatcher **after the whole wave returns** — never by the screening agent, and
-never by whichever agent returned first.
+一个候选若**仅**在筛选者无法核验的判据上失败，就标为 **BORDERLINE**，带着那个能定案的问题原样返回、不予解决。边界情形由派发者在**整波返回之后**裁定——绝不由筛选中代理裁定，也绝不由哪个先返回的代理裁定。
 
-**Rubric-failure threshold:** if borderlines exceed [X %] of candidates, the rubric is the
-problem. Rewrite it and re-run the screen; do not adjudicate a hundred coin flips one at a time.
+**评分细则失灵阈值：** 若边界情形超过候选的 [X %]，问题在评分细则。重写它并重跑筛选；不要一次一枚地裁定一百次抛硬币。
 
 ---
 
-## Adjudication (after the whole wave returns)
+## 裁定（整波返回之后）
 
-Early returns are **status, not input.** Nothing is decided until every screener has reported;
-the wave is then reconciled in one pass into a single table:
+提前返回只是**状态，不是输入。** 在每个筛选者都报完之前什么都不定；然后把整波一次归并成一张表：
 
-| id | Candidate | Verdict | Failing criterion | Evidence | Screener |
+| id | 候选 | 判定 | 不成立的判据 | 证据 | 筛选者 |
 |----|-----------|---------|-------------------|----------|----------|
-| [id] | [name] | EXCLUDE | C2 | [locator + quote] | [agent] |
-| [id] | [name] | INCLUDE | — | [locator + quote per criterion] | [agent] |
+| [id] | [名称] | EXCLUDE | C2 | [定位 + 引文] | [代理] |
+| [id] | [名称] | INCLUDE | —— | [逐判据的定位 + 引文] | [代理] |
 
-Two screeners disagreeing on one candidate is a **rubric defect** until shown otherwise: fix the
-criterion's wording, then re-screen the affected candidates.
-
----
-
-## Dispatcher spot-check
-
-Before acting on the wave, re-screen a sample **by hand** against this rubric:
-
-- **Sample size:** [max(3, 10 % of candidates)], drawn at random within verdicts and **never
-  hand-picked** — at least one INCLUDE, one EXCLUDE, and one BORDERLINE, with EXCLUDE and
-  BORDERLINE deliberately **oversampled** relative to their share of the wave (at least half the
-  sample). A lenient screen fails by excluding things it should have kept, so confirming a
-  handful of obvious INCLUDEs proves nothing about the errors you are looking for.
-- **Disagreement on any sampled candidate invalidates the wave.** Repair the rubric and re-run;
-  do not patch the individual verdict and keep the rest.
-
-An unchecked screen is an opinion poll with citations.
+两位筛选者在同一个候选上分歧，在未证明其不然之前就是一次**评分细则缺陷**：改那条判据的措辞，然后重筛受影响的候选。
 
 ---
 
-## Filled example (synthetic)
+## 派发者抽查
 
-**Question.** Which publicly available datasets could support an independent re-analysis of a
-published result, using only what we can obtain and redistribute this term?
+在照着这一波行动之前，**手工**用这份评分细则重筛一个样本：
 
-**Screen type:** precision-first — a shortlist we will act on this term. **Default verdict:**
-EXCLUDE, which is why every cell in the last column below reads EXCLUDE. A recall-first sweep of
-the same literature would fill that column with its own declared default instead.
+- **样本量：** [max(3, 候选的 10 %)]，在判定内部随机抽取、**绝不手挑**——至少一个 INCLUDE、一个 EXCLUDE、一个 BORDERLINE，并且 EXCLUDE 与 BORDERLINE 相对它们在整波中的占比要刻意**超额抽取**（至少占样本一半）。一次宽松的筛选是靠排掉本该留下的东西来失败的，所以确认几个明显的 INCLUDE，对你真正在找的那些错误毫无证明力。
+- **任何被抽样候选上的分歧都使整波作废。** 修评分细则并重跑；不要打补丁改那一个判定、把其余的留着。
 
-**Criteria.**
+一次没被抽查的筛选，就是一场带引文的民意投票。
 
-| # | Criterion (must hold) | How it is checked | Verdict if it fails |
+---
+
+## 填好的示例（虚构）
+
+**问题。** 哪些可公开获取的数据集能支撑对一项已发表结果的独立再分析，且只用手头能在本学期取得并再分发的东西？
+
+**筛选类型：** precision-first——一份我们本学期会照着行动的入围名单。**默认判定：** EXCLUDE，这就是下面最后一列每一格都写 EXCLUDE 的原因。对同一批文献做 recall-first 的普查，那一列就会改成它自己声明的默认判定。
+
+**判据。**
+
+| # | 判据（必须成立） | 如何核查 | 不成立时的判定 |
 |---|-----------------------|-------------------|---------------------|
-| C1 | Record-level observations, not published tabulations only | Codebook lists an observation unit and per-record variables | EXCLUDE |
-| C2 | Covers the full period the re-analysis needs | Coverage statement or first/last observation date in the documentation | EXCLUDE |
-| C3 | Licence permits redistribution of derived files | Licence text names redistribution or an open licence | EXCLUDE |
-| C4 | Variable definitions documented well enough to reconstruct the outcome | Codebook defines the outcome and its denominator | EXCLUDE |
-| C5 | Access obtainable without an agreement that outlasts the project | Access page states the process and typical turnaround | EXCLUDE |
+| C1 | 有记录级观测，不只是已发布的汇总表 | Codebook 列出了观测单位与逐记录变量 | EXCLUDE |
+| C2 | 覆盖再分析所需的完整时段 | 文档里的覆盖说明或首/末观测日期 | EXCLUDE |
+| C3 | 许可允许再分发派生文件 | 许可文本点名了再分发或属开放许可 | EXCLUDE |
+| C4 | 变量定义记录得足以重建结果变量 | Codebook 定义了结果变量及其分母 | EXCLUDE |
+| C5 | 获取不需要一份比项目更长的协议 | 获取页面写明了流程与典型周期 | EXCLUDE |
 
-**Sample rows.**
+**样例行。**
 
-| id | Candidate | Verdict | Failing criterion | Evidence | Screener |
+| id | 候选 | 判定 | 不成立的判据 | 证据 | 筛选者 |
 |----|-----------|---------|-------------------|----------|----------|
-| `c-014` | National monitoring archive | INCLUDE | — | Codebook p. 4 "one record per site-day"; coverage 2009–2024; CC-BY; outcome defined p. 11; instant download | agent-2 |
-| `c-021` | Regional summary series | EXCLUDE | C1 | Landing page: "annual totals by region"; no record-level file offered | agent-1 |
-| `c-027` | Partner registry extract | EXCLUDE | C5 | Access page: data-use agreement, "8–12 weeks", exceeds the term | agent-3 |
-| `c-033` | University repository copy | BORDERLINE | C3 | Deposit page shows no licence; question that would settle it: does the deposit record carry a licence field? | agent-2 |
+| `c-014` | 全国监测档案 | INCLUDE | —— | Codebook p. 4「一站点-日一记录」；覆盖 2009–2024；CC-BY；结果变量定义见 p. 11；可即时下载 | agent-2 |
+| `c-021` | 区域汇总序列 | EXCLUDE | C1 | 落地页：「按区域年度总计」；未提供记录级文件 | agent-1 |
+| `c-027` | 合作方登记表摘录 | EXCLUDE | C5 | 获取页：数据使用协议，「8–12 周」，超出本学期 | agent-3 |
+| `c-033` | 大学机构库副本 | BORDERLINE | C3 | 存缴页未见许可；能定案的问题：存缴记录里是否带许可字段？ | agent-2 |
 
-**Spot-check.** Three candidates re-screened by hand (`c-014`, `c-021`, `c-033`); all three
-verdicts reproduced from the cited locators. Two of the three are an EXCLUDE and a BORDERLINE,
-drawn that way on purpose: the INCLUDEs are the ones a later reader will check anyway, and a
-dropped candidate is the error nothing downstream ever surfaces.
+**抽查。** 手工重筛了三个候选（`c-014`、`c-021`、`c-033`）；三个判定都能从所引的定位复现。三个里有两个是 EXCLUDE 与 BORDERLINE，这是刻意这么抽的：INCLUDE 是后来的读者无论如何都会去看的那些，而被漏掉的候选才是下游永远浮不出来的错误。
 
 ---
 
-## Cross-references
+## 交叉引用
 
-- [`research-agent-laws.md`](../.claude/references/research-agent-laws.md) — law 21 (screens and waves), law 1 (read the artifact, and the join that dropped rows)
-- [`orchestrator-protocol.md`](../.claude/rules/orchestrator-protocol.md) — screening fan-outs as a runtime primitive
-- [`executor-contract.md`](executor-contract.md) — the dispatch contract each screener is launched under
+- [`research-agent-laws.md`](../.codebuddy/references/research-agent-laws.md) —— 法则 21（筛选与波次）、法则 1（先读产物，以及那个丢了行的连接）
+- [`orchestrator-protocol.md`](../.codebuddy/rules/orchestrator-protocol.md) —— 作为运行时基元的筛选扇出
+- [`executor-contract.md`](executor-contract.md) —— 每个筛选者启动时所依据的派发契约

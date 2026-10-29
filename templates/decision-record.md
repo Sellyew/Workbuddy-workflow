@@ -1,45 +1,45 @@
-# ADR-NNNN: [Decision Title]
+# ADR-NNNN：[决策标题]
 
-**Status:** [PROPOSED | ACCEPTED | SUPERSEDED by ADR-NNNN]
-**Date:** YYYY-MM-DD
-**Context:** [Skill / Workflow / Phase that prompted this decision]
+**状态：** [PROPOSED | ACCEPTED | SUPERSEDED by ADR-NNNN]
+**日期：** YYYY-MM-DD
+**上下文：** [促使做出这个决策的技能 / 工作流 / 阶段]
 
-## Problem
+## 问题
 
-[1-3 sentences: what needs deciding and why.]
+[1-3 句话：需要决定什么，以及为什么。]
 
-## Options considered
+## 考虑过的选项
 
-### Option A: [Name]
+### 选项 A：[名称]
 
-[2-3 sentences. What it is, why it might be right.]
+[2-3 句话。它是什么，为什么可能是对的。]
 
-**Pro:** ...
-**Con:** ...
+**优点：** ……
+**缺点：** ……
 
-### Option B: [Name]
+### 选项 B：[名称]
 
-[2-3 sentences.]
+[2-3 句话。]
 
-**Pro:** ...
-**Con:** ...
+**优点：** ……
+**缺点：** ……
 
-### Option C: [Name] (if applicable)
+### 选项 C：[名称]（若适用）
 
-[...]
+[……]
 
-## Decision
+## 决策
 
-**Chose:** [Option letter + name]
+**选择：** [选项字母 + 名称]
 
-**Rationale:** [Why this one wins — the specific tradeoff that tips the scales. One paragraph max.]
+**依据：** [为什么这个胜出——那个决定天平倾斜的具体取舍。最多一段。]
 
-## Consequences
+## 后果
 
-- [What changes as a result. Files created, rules added, skills modified.]
-- [What future decisions this constrains or enables.]
-- [Known risks or technical debt this creates.]
+- [作为结果会变什么。新建了哪些文件、加了哪些规则、改了哪些技能。]
+- [这个决策约束或放行了哪些后续决策。]
+- [它引入了哪些已知风险或技术欠账。]
 
-## Rejected alternatives — why not
+## 被否决的替代方案——为什么不选
 
-- **[Option letter]:** [One sentence: the specific reason this lost.]
+- **[选项字母]：** [一句话：它落选的具体原因。]
