@@ -331,8 +331,9 @@ class ValidateSetupIdentity(unittest.TestCase):
         _git(self.repo, "config", "user.email", "t@example.invalid")
         stubs = os.path.join(self.tmp, "bin")
         # `claude` is not consumed by validate-setup any more (the desktop app has
-        # no command line). It stays as the last rung of run-skill-eval's probe
-        # chain — pinned separately by SkillEvalCliProbe.
+        # no command line), so this stub is inert for the three tests below. The
+        # last rung of run-skill-eval's probe chain is pinned by
+        # SkillEvalCliProbe.test_falls_back_to_claude_as_last_rung, not here.
         for name in ("claude", "xelatex", "quarto", "R", "gh"):
             _write(stubs, name, self.STUB, mode=0o755)
         self.home = os.path.join(self.tmp, "home")        # no ~/.gitconfig
@@ -532,6 +533,16 @@ class SkillEvalCliProbe(unittest.TestCase):
         rc, out = self._run_eval(EVAL_CLI=other)
         self.assertEqual(rc, 0, out)
         self.assertEqual({name for name, _ in self._calls()}, {"some-other-cli"}, out)
+
+    def test_falls_back_to_claude_as_last_rung(self):
+        # `claude` stays in the probe chain as the last resort: someone who already
+        # has the upstream CLI installed should not have to install a second one.
+        # Nothing else pins that rung — without this test, deleting it from
+        # run-skill-eval.sh would leave the suite green.
+        self._stub("claude")
+        rc, out = self._run_eval()
+        self.assertEqual(rc, 0, out)
+        self.assertEqual({name for name, _ in self._calls()}, {"claude"}, out)
 
     def test_no_cli_exits_2_and_names_the_real_install(self):
         rc, out = self._run_eval()

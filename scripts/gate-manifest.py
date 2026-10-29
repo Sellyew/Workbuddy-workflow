@@ -124,7 +124,8 @@ GATES = [
             "建不出夹具的用例记成 UNREACHABLE，剩下的仍会因宿主差异判错"
             "（同一棵脏树把事件 cwd 换成 C:/… 就正确变红，已对照验证）。"
             "所以这里只跑 check-hooks.py —— 迁移关键子集。"
-            "全量用例在本宿主上未执行；它需要 POSIX 宿主，本次未在任何 POSIX 宿主上验证过。"
+            "全量用例在本宿主上未执行；它需要 POSIX 宿主，由 .github/workflows/gates.yml "
+            "在 ubuntu-latest 上执行。"
         ),
     },
     {

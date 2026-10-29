@@ -3,7 +3,7 @@ title: "我的 WorkBuddy 配置"
 subtitle: "AI 辅助学术工作流完全指南：幻灯片、论文、数据分析与其他"
 author: "Pedro H. C. Sant'Anna"
 date: "2026-09-27"
-version: "3.0.0"
+version: "3.0.1"
 date-modified: last-modified
 format:
   html:
@@ -1087,7 +1087,7 @@ WorkBuddy 桌面客户端**不提供命令行入口**——它只有工作空间
       {
         "hooks": [{
           "type": "command",
-          "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.codebuddy/hooks/log-reminder.py",
+          "command": "bash \"${CODEBUDDY_PROJECT_DIR:-.}/.codebuddy/hooks/lib/hook-runner.sh\" log-reminder.py",
           "timeout": 10
         }]
       }
@@ -1096,88 +1096,84 @@ WorkBuddy 桌面客户端**不提供命令行入口**——它只有工作空间
 }
 ```
 
-在 Manual 模式下几乎不弹任何提示。Auto 模式去掉一刀切的 `Bash(*)`，把 shell 命令交给它的分类器。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model) 里的 "Keep restricted data off the model"。
+在**默认权限**档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（`.git`、`.codebuddy` 等）照旧会问，`allow` 里写什么都不算数。切到**完全访问权限**时，询问与安全检查都被跳过，但 `deny` 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model) 里的 "Keep restricted data off the model"。
 
-**权限模式。** WorkBuddy 有六种权限模式，控制它得到多少自主权：
+**权限档位。** 桌面客户端把这件事收成**两档**：
 
-| 模式 | 内部名 | 行为 | 何时用 |
-|------|--------------|----------|-------------|
-| **Normal** | `default` | 有风险动作前先问 | 日常工作 --- 每次编辑都批准 |
-| **Auto-accept edits** | `acceptEdits` | 自动批准文件编辑 | 可信的批量操作（跨 20 个文件改名） |
-| **Don't ask** | `dontAsk` | 除非已在允许清单里预批，否则自动拒绝工具 | 只有允许清单内工具可跑的受限环境 |
-| **Plan** | `plan` | 只读 --- 在你批准计划前阻止编辑（但在可绕过权限的交互式终端会话里，该阻止不被执行） | 探索代码、动手前先审读 |
-| **Auto** | `auto` | 由分类器把关；除非标记为有风险，一切照跑。**本平台的默认起始模式**，适用于交互式终端与 VS Code 会话，不需要任何启用标志 | 有安全网的长时自主任务 --- 对可信仓库而言，当 bypass 过于宽松时的推荐模式 |
-| **Bypass** | `bypassPermissions` | 跳过**全部**权限提示与安全检查（deny 规则仍然生效）--- 包括对受保护路径（`.git`、`.vscode`、`.idea`、`.husky`、`.codebuddy`）的写入（旧信任根 `.claude` 同样受保护，迁移期双保护）。Anthropic 文档建议只把它留给隔离环境 | CI/CD、无头脚本，以及 --- 睁着眼睛上的话 --- 可信仓库的日常使用：什么都不弹，所以配上计划先行与自带的 `git-guardrails` 钩子 --- 后者收窄常见事故，而不是替代你关掉的那个提示 |
+| 档位 | 界面键 | 行为 | 何时用 |
+|------|--------|------|--------|
+| **默认权限** | `sandbox.defaultPermission` | 常规动作按上面的 `allow` 规则放行；写入受保护路径（`.git`、`.vscode`、`.idea`、`.husky`、`.codebuddy`，旧信任根 `.claude` 同样受保护）、装软件、联网这类照旧逐个询问 | 日常 |
+| **完全访问权限** | `sandbox.fullAccessPermission` | 跳过询问与安全检查（`deny` 规则与钩子仍然生效） | 隔离环境、可信仓库的成批操作；界面上有一个确认框，勾了才会开 |
 
-设置方式：输入框旁的模式选择，或 `Shift+Tab` 循环；要让新会话默认以 bypass 启动，写在 `~/.workbuddy/settings.json` 里（项目设置里写的默认值不被承认）。`--permission-mode` 是命令行那条产品线的东西，桌面客户端没有命令行。
+切换位置在输入框旁的权限选择。**别再去找上游那六档**（`default` / `acceptEdits` / `dontAsk` / `plan` / `auto` / `bypassPermissions`）：引擎内部认得这些名字，但本客户端没有把它们暴露成可选档位；`Shift+Tab` 循环与 `--permission-mode` 标志都不存在（后者是命令行那条产品线的）。桌面端以选择器当前的位置为准，写进配置文件的 `permissions.defaultMode` 不会有可观察的效果。
 
-### 六层权限栈（上游的层栈，本平台不解析它）
+### 六层权限栈（上游对照表；本平台只实现三层）
 
-上游 Claude Code 把权限模式解析成**六层**，后面的层覆盖前面的层。**本平台没有这套层栈**：桌面客户端只从 `.codebuddy/settings.json` 与 `settings.local.json` 里读 `hooks` 段——`permissions.*` 与 `claudeCode.*` 写进任何一层都不会报错，只是静默地什么都不做。所以下面这张表照抄上游，用途是**对照**：它解释的是「照着上游文档改配置，为什么一点反应都没有」。要判断某个动作到底被谁拦下，跑 [`/permission-check`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md)。
+上游 Claude Code 把权限模式解析成**六层**，后面的层覆盖前面的层。**本平台只实现其中三层**：`.codebuddy/settings.json` 与 `settings.local.json` 里的 `hooks` 与 `permissions` 都生效，`~/.workbuddy/settings.json` 同样；`claudeCode.*` 那两层（第 1–2 层）在这里不存在，而档位不是从文件解析出来的 —— 它在界面里选。下面这张表照抄上游，用途是**对照**：它解释的是「照着上游文档改配置，为什么一点反应都没有」。要判断某个动作到底被谁拦下，跑 [`/permission-check`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md)。
 
 | # | 层 | 位置 | 键 |
 |---|---|---|---|
 | 1 | VSCode 用户 | `~/Library/Application Support/Code/User/settings.json`（macOS）、`~/.config/Code/User/settings.json`（Linux）、`%APPDATA%/Code/User/settings.json`（Windows） | `claudeCode.initialPermissionMode` --- 上游 VS Code 扩展层，本平台不读 |
 | 2 | VSCode 工作区 | `<repo>/.vscode/settings.json` | 同一个键 --- 上游层；本仓库不再提供这个文件 |
-| 3 | CLI 用户 | `~/.workbuddy/settings.json` | `permissions.defaultMode` --- 上游层，本平台不读 |
-| 4 | CLI 项目 | `<repo>/.codebuddy/settings.json` | `permissions.defaultMode` --- 本平台读这个文件，但只读 `hooks` |
-| 5 | CLI 项目本地（已 gitignore） | `<repo>/.codebuddy/settings.local.json` | 同一个键 --- 同样只有 `hooks` 有意义 |
-| 6 | **会话内运行时** | （临时） | 用 `Shift+Tab` 或输入框旁的模式切换 |
+| 3 | CLI 用户 | `~/.workbuddy/settings.json`（旧版 `~/.codebuddy/settings.json`） | `hooks` 与 `permissions.*` --- **本平台读**；`defaultMode` 只在无头路径里作回退 |
+| 4 | CLI 项目 | `<repo>/.codebuddy/settings.json` | `hooks` 与 `permissions.*` --- **本平台读**，本模板那七条通配 `allow` 就在这一层 |
+| 5 | CLI 项目本地（已 gitignore） | `<repo>/.codebuddy/settings.local.json` | 同上，覆盖项目层 |
+| 6 | **会话内档位** | 输入框旁的权限选择 | 默认权限 / 完全访问权限 两档 |
 
-**真正决定起始模式的是第 6 层**，这一点最让人措手不及：模式在**会话开始时**定下，中途改只对当次会话有效。上游那两个「让人意外的例外」（项目级 `.codebuddy/` 里的 `defaultMode` 不被承认、VS Code 扩展不读项目设置）在本平台表现为更简单的一条规则——**项目文件里根本没有生效的默认模式**。要让新会话默认以 bypass 启动，只有一条路：写进 `~/.workbuddy/settings.json`。没有任何覆盖时，本平台以 auto 模式启动。
+**真正决定行为的是第 6 层**，这一点最让人措手不及：档位由界面选择器决定，文件里写什么都压不过它。上游那两个「让人意外的例外」（项目级 `defaultMode` 不被承认、VS Code 扩展不读项目设置）在本平台表现为更简单的一条规则 --- **项目文件里的默认模式没有可观察的效果**。默认档位是「默认权限」。
 
-### 故障排查：设了 `bypassPermissions` 却仍然弹提示
+### 故障排查：切了「完全访问权限」却仍然弹提示
 
 这是最常见的困惑来源。按顺序走这份清单：
 
-1. **看状态行。** 本仓库配了 `statusLine` 之后，当 WorkBuddy 报告模式时它会打印 `[AUTO]`、`[BYPASS]`、`[PLAN]`、`[AUTO-EDIT]` 或 `[PROMPT]`；任何其他模式（例如 `dontAsk`）按其原名显示，如 `[dontAsk]`。如果它没显示 `[BYPASS]`，要么 bypass 设在了 WorkBuddy 忽略的地方（项目设置 --- 见上），要么你有会话内覆盖；`Shift+Tab` 循环切换模式。
-2. **跑 `/permission-check`**，看每一层的值、解析后的合并状态，以及任何漂移（例如只在项目设置里设了 bypass，那会被 WorkBuddy 忽略）。
+1. **看模式选择器。** 桌面端的权限只有两档：**默认权限** 与 **完全访问权限**（界面对应的键是 `sandbox.defaultPermission` / `sandbox.fullAccessPermission`）。上游那五档（Manual / Auto / Plan / Accept edits / Bypass）在本客户端不存在，所以「设了 `bypassPermissions` 却没生效」这个问法本身要换掉：先确认选择器停在哪一档。本仓库**不配置状态行** --- 引擎实现了 `statusLine`，桌面渲染层却不消费它（2026-10-30 核查：本机客户端包里 `statusLine` 的 8 次命中全是 HTTP 状态行），所以别指望在状态栏看模式徽标。
+2. **跑 `/permission-check`**，把三处来源摊开看：`permissions.allow` / `deny` 匹配到了哪几条、钩子链拒了哪条命令、选择器停在哪一档。它不会给你「解析出的模式」——本平台没有那个东西。
 3. **检查是否有过期会话。** 如果设置最近改过，而会话早于那次改动，它仍在旧模式下运行。重载窗口（`Cmd+Shift+P` → "Developer: Reload Window"）并开一个新会话。
 4. **检查 `deny` 列表。** 任何一层 `deny` 里的匹配都会拦住该工具，不管别处的 `allow` 怎么写。
-5. **VSCode 与 CLI 的分裂。** 如果 VSCode 各层说 bypass 而没有 CLI 层这么说，从终端启动的 WorkBuddy 仍会弹提示。把它们对齐。
+5. **分清是钩子拒的，还是平台问的。** 被 `.codebuddy/hooks/` 里的守卫拒掉，会点名具体脚本与具体命令；被平台问的不会在任何配置文件里留下痕迹。两者的补救方式完全不同，混在一起改只会越改越乱。
 
 ### 计划 → 执行的交接（推荐的日常驱动）
 
-计划模式加一个低提示的执行模式 --- **auto 模式**，或者你决定用的话 bypass --- 串成一条工作流，给你**先审后执行**的便利：动手之前你先看到做法，然后执行阶段逐工具都不弹提示。
+计划模式加一个低提示的执行档位 --- **完全访问权限**，或者日常就用默认权限配计划先行 --- 串成一条工作流，给你**先审后执行**的便利：动手之前你先看到做法，然后执行阶段不再逐个工具被打断。
 
 ::: {.callout-warning}
 ## 批准计划不是一道强制边界
 
-通过 `ExitPlanMode` 批准计划，会把会话交给批准提示处设定的模式 --- 当前版本在那里给出显式选项（批准进入 auto 模式、批准但保留人工审阅编辑、继续规划）；在 bypass 配置下，被批准的计划不再逐工具弹提示地往下走。一旦到了那里，此后任何工具调用（Edit、Write、Bash）都在你 `settings.json` 的完整允许清单下执行，而不是在由计划推导出的范围里。一次错误的实现仍可能改动无关文件，或跑出破坏性的 shell 命令，没有第二个检查点。
+通过 `ExitPlanMode` 批准计划，会把你交回执行阶段。一旦到了那里，此后任何工具调用（Edit、Write、Bash）都在 `.codebuddy/settings.json` 的 `permissions.allow` 与当前档位下执行，**不是**在由计划推导出的范围里。一次错误的实现仍可能改动无关文件，或跑出破坏性的 shell 命令，没有第二个检查点。
 
-把这条流程当作便捷模式，不是安全控制。如果你需要一道硬性强制边界，就在模式选择里切到 Plan（模板的 `.codebuddy/settings.json` 没设默认模式，所以会话以 auto 启动），并删掉模板里的通配 `Bash(*)`、`Edit(**)` 与 `Write(**)` 允许项，或给高风险工具加 `ask`/`deny` 规则，让每一个都单独弹提示。或者，整个会话都跑在 `plan` 模式下，手工把动作复制出来执行。
+把这条流程当作便捷机制，不是安全控制。如果你需要一道硬性强制边界：把档位留在**默认权限**，并删掉模板里的通配 `Bash(*)`、`Edit(**)` 与 `Write(**)`，或给高风险工具加 `deny` 规则，让每一个都单独弹提示。
 :::
 
 流程如下：
 
 ```
-Start session in plan mode  (pick Plan in the mode selector, or Shift+Tab at startup)
+Ask for a plan first  (say "先给方案"; I enter plan mode and stop for your approval)
      |
      | Read-only exploration + planning
-     |   Claude can Read, Grep, run Bash readonly, spawn Explore/Plan agents
-     |   Claude CANNOT edit files (except the plan file itself)
+     |   I can Read, Grep, run read-only Bash, spawn Explore/Plan agents
+     |   I CANNOT edit files (except the plan file itself)
      |
      v
-Plan drafted, saved to quality_reports/plans/YYYY-MM-DD_description.md
+Plan drafted, saved to ~/.workbuddy/plans/<name>.md   (平台固定路径，见「计划目录」)
      |
      v
-User approves via ExitPlanMode UI
+You approve in the plan-review UI
      |
-     | The approval prompt sets the post-plan mode (current versions
-     | offer explicit choices there). On a bypass-default setup, the
-     | approved plan proceeds with no per-tool prompts.
+     | Approval returns the session to execution. Under 完全访问权限 the
+     | approved plan proceeds with no per-tool prompts; under 默认权限 the
+     | allow-list still lets routine edits through.
      v
-Orchestrator executes the plan end-to-end --- no prompts.
+Orchestrator executes the plan end-to-end.
 ```
 
 **为什么这是推荐的日常流程：**
 
-- 动手之前你先看到做法（计划模式阻止编辑 --- 但在可绕过权限的终端会话里，这条纪律得你自己守）。
-- 一旦批准，此后每个动作 --- 编辑、bash、多文件重构 --- 都不被打断地跑。
-- 不需要会话中途切换 --- 批准提示是唯一的交接点（把它的选项读一遍；它们设定计划后的模式）。
+- 动手之前你先看到做法（计划模式下不能编辑文件，这一条由平台强制，不靠自觉）。
+- 一旦批准，此后常规动作不再逐个打断。
+- 不需要会话中途切换 --- 批准就是唯一的交接点。
 - 与本仓库强制的计划先行规则严丝合缝。
 
-**前提：** 要无提示版本，bypass 必须可用 --- 在输入框旁的模式选择里切，或把 bypass 写进 `~/.workbuddy/settings.json`，因为项目设置里写的默认值不被承认。更安全的日常驱动，是把计划批准进 **auto 模式**：常规动作在执行时仍不逐工具弹提示，而有风险的那些之间还隔着一个分类器。
+**前提：** 要完全不被打断，档位得是**完全访问权限**（在输入框旁切换；`permissions.defaultMode` 在桌面端没有可观察效果）。更稳妥的日常驱动是留在**默认权限**：那七条通配 `allow` 已经让常规编辑与命令直接通过，只有受保护路径、装软件、联网这类会问 --- 而问的那几次恰好是最该看一眼的。
 
 ### 会话管理 {#sec-session-management}
 
@@ -1213,13 +1209,7 @@ Orchestrator executes the plan end-to-end --- no prompts.
 ::: {.callout-warning}
 ## 计划目录
 
-默认情况下，WorkBuddy 把计划存到一个全局目录（`~/.workbuddy/plans/`），而不是你的项目。本模板已经把它们留在项目里：它的 `.codebuddy/settings.json` 把 `plansDirectory` 设为 `quality_reports/plans`（并且模板 gitignore 了 `quality_reports/plans/` --- 计划是本地的过程记录）。如果你把这套工作流搬进另一个仓库，把同样的设置加到那个仓库的 `.codebuddy/settings.json`：
-
-```json
-{
-  "plansDirectory": "quality_reports/plans"
-}
-```
+计划**固定落在全局目录** `~/.workbuddy/plans/`，不在你的项目里。上游有一个 `plansDirectory` 设置可以把它们挪进仓库，本平台的引擎**完全不认这个键**（2026-10-30 核查：客户端引擎零命中），所以别去找它，也别往 `.codebuddy/settings.json` 里加 —— 加了不会有任何效果，只会让下一个读文件的人以为计划已经跟着仓库走了。需要把计划留在项目里，就在批准之后自己拷一份到 `quality_reports/plans/`（模板 gitignore 了这个目录 --- 计划是本地的过程记录）。
 :::
 
 **Stop 钩子**在每次回复后跑一个快速 Python 脚本（`.codebuddy/hooks/log-reminder.py`）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 `quality_reports/session_logs/YYYY-MM-DD_auto.md` 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 `Slides/*.tex` 或 `Quarto/*.qmd`）；设 `CLAUDE_COMPILE_GATE=block` 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 `.codebuddy/rules/` 里自动加载的规则执行 --- 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。
@@ -3209,7 +3199,7 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 | `/context-status` | `.codebuddy/skills/context-status/` | 显示会话健康度与上下文用量 |
 | `/deep-audit` | `.codebuddy/skills/deep-audit/` | 对理论、证明、论文、代码库或一组论断做对抗式审计（拆解、独立怀疑者、每条发现配独立裁判、修、再核）；仓库一致性审计只是其中一个应用，见 `references/repo-infrastructure-audit.md` |
 | `/seven-pass-review` | `.codebuddy/skills/seven-pass-review/` | 七遍对抗式稿件审读（并行 fork 的子代理） |
-| `/permission-check` | `.codebuddy/skills/permission-check/` | 诊断权限层级（六层栈） |
+| `/permission-check` | `.codebuddy/skills/permission-check/` | 诊断权限规则、钩子与档位哪个在拦 |
 | `/verify-claims` | `.codebuddy/skills/verify-claims/` | 对任何草稿做验证链式事实核查（v1.7.0） |
 | `/checkpoint` | `.codebuddy/skills/checkpoint/` | 结构化会话交接快照 --- 叙事型会话日志的配套（v1.8.0） |
 | `/preregister` | `.codebuddy/skills/preregister/` | 从研究规格生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0） |
@@ -3382,13 +3372,17 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 2. 检查技能是否开启了自动调用（没有 `disable-model-invocation: true`）
 3. 技能描述决定 WorkBuddy 知不知道何时该用 --- 检查描述是否清楚
 
-### 计划存到了错的目录
+### 计划存到了全局目录，不在项目里
 
-**症状：** 计划存进了 `~/.workbuddy/plans/`，而不是你的项目目录。
+**症状：** 计划出现在 `~/.workbuddy/plans/`，而不是 `quality_reports/plans/`。
 
-**修法：** 本模板的 `.codebuddy/settings.json` 已经设了 `"plansDirectory": "quality_reports/plans"`。WorkBuddy 按项目根目录解析这个相对路径，当路径指向项目之外时就回退到 `~/.workbuddy/plans/`。如果你把这套工作流搬到了别的仓库，请在那个仓库的 `.codebuddy/settings.json` 里加上同一行。（上游文档在这里还会要求一个最低 CLI 版本；桌面客户端没有 `--version`，版本号在「关于」页里看。）
+**这不是故障，是本平台的固定行为。** 引擎不认 `plansDirectory`（2026-10-30 核查：客户端引擎零命中），项目里写这个键不会有任何效果，计划总是落在全局目录。要把某份计划留在仓库里，就自己拷过去：
 
-这样计划会落在项目里，但**不会**被提交：模板的 `.gitignore` 排除了 `quality_reports/plans/*`，因为计划是本地工作记录。要让某份计划进版本控制，用 `git add -f`，或从你 fork 的 `.gitignore` 里删掉那一行。
+```bash
+cp ~/.workbuddy/plans/<name>.md quality_reports/plans/
+```
+
+拷过去之后**不会**被提交：模板的 `.gitignore` 排除了 `quality_reports/plans/*`，因为计划是本地工作记录。要让某份计划进版本控制，用 `git add -f`，或从你 fork 的 `.gitignore` 里删掉那一行。
 
 ---
 

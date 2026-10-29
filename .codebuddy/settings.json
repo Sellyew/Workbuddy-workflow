@@ -1,4 +1,16 @@
 {
+  "permissions": {
+    "allow": [
+      "Edit(**)",
+      "Write(**)",
+      "MultiEdit(**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch",
+      "Read(**)"
+    ],
+    "deny": []
+  },
   "hooks": {
     "PreToolUse": [
       {
