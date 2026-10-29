@@ -46,13 +46,14 @@ Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp
 
 ### WorkBuddy 为每个工具反复询问权限
 
-在手动模式下，多数未被允许清单覆盖的编辑与 shell 命令，WorkBuddy 都会先问。从监管最多到最少，选项中（见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
+先看档位。桌面端只有两档（见指南的[权限一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
 
-- **自动模式**——新的会话默认就以它启动：分类器批准常规操作，拦住或询问有风险的操作。
-- **接受编辑**——`Shift+Tab` 循环到该模式：自动批准文件编辑与工作目录内的常见文件系统命令。
-- **Bypass**——在模式选择里切到 Bypass：跳过权限询问与安全检查（拒绝规则仍然生效）。Anthropic 把它限定在隔离容器与虚拟机内，它从 CLI 参数、`--settings` 或用户/托管设置生效——写在项目 `.codebuddy/settings.json` 里的 `bypassPermissions` 不被承认，会话以手动模式启动。（VS Code 里的 bypass 是上游扩展层的选择，键名带 `claudeCode.` 前缀；本客户端不读那一层，本仓库也不再提供 `.vscode/settings.json`。）
+- **默认权限** —— 常规编辑与 shell 命令按 `.codebuddy/settings.json` 的 `permissions.allow` 直接通过；写入受保护路径、装软件、联网这类仍然逐个询问。
+- **完全访问权限** —— 跳过询问与安全检查（`deny` 规则与钩子仍然生效）。界面上有一个确认框，勾了才会开。Anthropic 把等价能力限定在隔离容器与虚拟机内，这里同理：只在你信任的仓库、并且清楚它会做什么时用。
 
-本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），且不设默认模式，所以在手动模式下多数常规工作都不询问就能跑。自动模式会撤掉一刀切的 `Bash(*)` 规则，改为把 shell 命令送进它的分类器。要在任何模式下都把受限数据挡在模型之外，就加上拒绝规则——见下方[「让受限数据不进入模型」](#keep-restricted-data-off-the-model)。
+上游指南里的另外几档（自动、接受编辑、Plan、dontAsk）在本客户端没有暴露成可选档位；`Shift+Tab` 循环与 `--permission-mode` 标志也不存在 —— 哪份文档让你用它们，那份文档写的是命令行那条产品线。
+
+本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），`deny` 为空，所以在默认档位下多数常规工作都不询问就能跑。要在任何档位下都把受限数据挡在模型之外，就加上拒绝规则 —— 见下方[「让受限数据不进入模型」](#keep-restricted-data-off-the-model)。
 
 ## 模型与 API
 
@@ -219,30 +220,34 @@ WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidentia
 
 ### 权限询问太多了？
 
-**本平台没有「允许清单」这个旋钮。** 上游那套 `permissions.allow` / `defaultMode` 的分层配置在这里不生效
-（写进去不报错，也什么都不做），所以上游的 `/fewer-permission-prompts` 那种「扫描转录、生成允许清单」的补救办法
-**在这里不存在**——不要照它的说明去改配置，那只会得到一份假开关。
+先分清是哪一处在问。本平台有三处会发声，彼此独立：
 
-本平台能真正减少询问的只有三条：
+1. **`permissions` 规则** —— `.codebuddy/settings.json` 的 `allow` / `deny` 会被逐条匹配到工具上（上面「让受限数据不进入模型」那一节用的就是同一套机制）。本模板自带七条通配 `allow`，`deny` 为空。
+2. **界面上的档位选择器** —— 只有两档：**默认权限** 与 **完全访问权限**（`sandbox.defaultPermission` / `sandbox.fullAccessPermission`）。
+3. **PreToolUse 钩子** —— 钩子可以直接 deny，且**不看**权限规则。
 
-1. **让钩子放行明确的只读操作。** 询问多半来自「这条命令要不要动文件」这件事本身；把反复出现的只读命令
-   写进钩子的判定里，比加一条允许规则更可靠（因为钩子真的会被执行）。
-2. **把一个反复出现的操作变成一个技能。** 一条 `/foo` 比每次手打五条命令少五次判断。
-3. **收窄一次动作的范围。** 一次 `Edit` 比一次批量脚本少一次询问；批量改动经脚本走，反而更容易被守卫拦。
+所以「每次都问」不一定是配置错了。按这个顺序排查：
+
+1. **先确认是不是钩子在拒。** 被守卫拒掉会点名具体脚本；被平台问的不会在任何配置文件里留下痕迹。两者的修法完全不同。
+2. **再确认档位。** 选择器停在「默认权限」时，写入受保护路径、装软件、联网这类动作照旧会问 —— 那是设计，不是配置漏了。
+3. **最后才加规则。** 确实是一个反复出现的常规动作，就把它写进 `permissions.allow`（格式与上游一致，例如 `"Bash(git status:*)"`）。别把 `Bash(*)` 之外的宽泛规则一次加一堆 —— 加得越多，后面越难看出到底是哪条在放行。
+
+上游的 `/fewer-permission-prompts` 那种「扫描转录、自动生成允许清单」的工具在这里**没有对应物**：规则是有人读、有人审的文件，不是自动生成的产物。要加就自己写、自己看 diff。
 
 先跑 `/permission-check` 弄清是「守卫拦的」还是「平台问的」——两者的补救方式完全不同，混在一起改只会越改越乱。
 
-### 状态栏显示 `?` 或是空的
+### 状态栏什么都不显示（包括 `gate:off` 徽标）
 
-会话 JSON 解析失败。检查 `.codebuddy/scripts/statusline.sh` 可执行（`chmod +x`），且 `python3` 在 `PATH` 上。退路输出是 `? @ <branch>`（没有模式徽标，模型显示 `?`）——若你看到的是这个，说明脚本解析不了会话 JSON。重启 WorkBuddy。
+**这是对的，不是故障。** 引擎实现了 `statusLine`（`settings.json` 里那个键它真读），但桌面渲染层不消费它 —— 2026-10-30 核查本机客户端包，`statusLine` 的 8 次命中全是 HTTP 状态行，没有任何 UI 接线。`.codebuddy/scripts/statusline.sh` 留着是给上游 CLI 用的；本客户端不会显示它，也不该有人去「修」它。
 
-### 状态栏显示 `gate:off`
+由此带来两个后果，各自有替代：
 
-仓库自带一个 pre-commit 门禁（`.githooks/pre-commit`），但 git 没指向它，所以一次普通的 `git commit` 会跳过所有检查——只有 `/commit` 会跑它们。每个克隆跑一次 `./scripts/install-hooks.sh`（它把 `core.hooksPath` 设为 `.githooks`），徽标就消失了。
+- **看不到模式徽标** → 直接看界面上的档位选择器（默认权限 / 完全访问权限）。
+- **看不到 `gate:off` 徽标** → 用它本来要提醒你的那条命令自查：`git config --get core.hooksPath` 应当输出 `.githooks`；不是的话跑一次 `./scripts/install-hooks.sh`。没有它，一次普通的 `git commit` 会跳过全部门禁。
 
-### 改 `.codebuddy/`、`.git/`、`.vscode/` 会弹询问（或被送进分类器）
+### 改 `.codebuddy/`、`.git/` 会弹询问
 
-这**不是 bug**。写入*受保护路径*——`.git`、`.vscode`、`.idea`、`.husky`、`.devcontainer`、`.codebuddy`（`.codebuddy/worktrees` 除外）、shell 的 rc 文件、`.mcp.json` 以及另外几个——永远不会被放行规则自动批准。会发生什么取决于模式：手动与接受编辑下**弹询问**，自动模式下**送进分类器**，dontAsk 下**被拒**，只有 bypass 下才**放行**（以及开着 bypass 的终端计划模式会话）。当询问针对项目的 `.codebuddy/` 目录弹出时，它会给一个会话作用域的选项：「允许编辑本项目 `.codebuddy` 目录里的文件」。
+这**不是 bug**。写入*受保护路径*——`.git`、`.vscode`、`.idea`、`.husky`、`.devcontainer`、`.codebuddy`（`.codebuddy/worktrees` 除外）、shell 的 rc 文件、`.mcp.json` 以及另外几个——永远不会被放行规则自动批准，`allow` 里写了 `Bash(*)` 也一样。会发生什么取决于档位：**默认权限** 下弹询问，**完全访问权限** 下放行。当询问针对项目的 `.codebuddy/` 目录弹出时，它会给一个会话作用域的选项：「允许编辑本项目 `.codebuddy` 目录里的文件」。
 
 要在 `.codebuddy/rules/`、`.codebuddy/references/`、`.codebuddy/skills/` 或 `.codebuddy/agents/` 下做批量编辑，经 Bash 工具跑一次脚本化的编辑，可以免掉每个文件一次询问。本模板自带的 `root-of-trust-guard.py` 钩子**拒绝**写入 `.codebuddy/settings*.json`、`.codebuddy/hooks/` 与 `.githooks/` 的 shell 写操作——在那几处用 Edit/Write，这样每一次对门禁的改动都留下可审读的 diff。
 

@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 平台事实与归属收尾
+## v3.0.1 — 2026-10-30（项目配置与文档对齐）
 
 ### Fixed — 命令不再指向本平台不存在的入口
 
@@ -61,6 +61,52 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
   两处第一人称（代原作者发言）改为中性表述。
 - `LICENSE` 不动：MIT 版权行是原作者的，本仓库不追加第二行。
 - 仓库 `description` 与 `homepage` 从空改为实际值。
+
+### Fixed — 项目配置被掏空，文档在替它辩护
+
+v3.0.0 把 `.codebuddy/settings.json` 改成只剩 `hooks`，理由是「`permissions` /
+`plansDirectory` / `statusLine` 三项在 WorkBuddy 无对应机制」。**这个理由对两项是错的。**
+
+引擎的顶层键白名单里有 `permissions` 与 `statusLine`；`settingsManager.get("permissions")`
+读出的 `defaultMode` 会被用作回退，`deny` 会被 `extractWholeToolRules` 拿去过滤工具。只有
+`plansDirectory` 是真的零命中。也就是说：迁移删掉了一个**能用**的功能，然后仓库里写了四份
+文档解释它为什么该被删（本文件 v3.0.0 段、`permission-check` 技能、项目记忆、指南）。
+错误起点是 `P1_migration_verification.md` 的 T13 一行，没有落到引擎原文。
+
+- **恢复 `permissions` 块**（七条通配 `allow`、空 `deny`，与上游一致）。不加 `$schema`，
+  不加 `defaultMode` —— 后者在桌面端没有可观察效果，写进去只会再多一个「看着像配置、其实
+  不改变行为」的键。
+- **指南重写配置节。** 原先展示的是上游那份文件（`permissions` + `$CLAUDE_PROJECT_DIR`
+  调 `python3`），本仓库的真实写法是经 `hook-runner.sh` 转发。六层权限栈改为「上游对照表；
+  本平台只实现第 3–5 层」，第 4/5 层的说明从「只读 `hooks`」改成「读 `hooks` 与 `permissions`」。
+- **删掉 `plansDirectory` 的两处说明**（正文 callout 与「计划存到了错的目录」）。引擎不认
+  这个键，计划固定落在 `~/.workbuddy/plans/`；原来那段让读者把同一行加到别的仓库，
+  加了不会有任何效果。顺带把「计划存到 `quality_reports/plans/`」的承诺改成「自己拷过去」。
+- **权限档位从六档改成两档。** 桌面客户端只有「默认权限」与「完全访问权限」
+  （`sandbox.defaultPermission` / `sandbox.fullAccessPermission`），上游那五档没有暴露成
+  可选档位，`Shift+Tab` 与 `--permission-mode` 都不存在。指南的模式表、排障清单、
+  「计划 → 执行」一节与 `TROUBLESHOOTING` 的对应段落一并改写。
+- **状态行不提供任何信息。** 引擎实现了 `statusLine`，但桌面渲染层不消费它（2026-10-30 核查
+  客户端包：`statusLine` 的 8 次命中全是 HTTP 状态行）。所以**不接**这个键，并把两节
+  「状态栏显示 `?` / `gate:off`」改成「什么都不显示是对的，替代做法是这两条命令」。
+- `TROUBLESHOOTING` 的「本平台没有『允许清单』这个旋钮」是同一错误的下游，改成真的：
+  规则读、`deny` 生效、要加就自己写进 `permissions.allow`。
+
+**v3.0.0 那段里「三项在 WorkBuddy 无对应机制」的表述，对 `permissions` 与 `statusLine`
+判断有误；`plansDirectory` 那半句仍然成立。** 历史条目按仓库治理规则不回改，以此条为准。
+
+### Fixed — 门禁与台账
+
+- `scripts/gate-manifest.py` 门 10 的上限说明末句「本次未在任何 POSIX 宿主上验证过」与
+  `.github/workflows/gates.yml` 在 `ubuntu-latest` 上跑全量电池自相矛盾，改为指向该工作流。
+  不写「CI 已通过」——那需要一条可引用的运行记录，此处不代为断言。`hook-battery.sh` 本身
+  保持不动（312 cases, seconds to run），本机跑的仍是 `check-hooks.py` 子集。
+- `tests/portability/test_scripts.py` 补 `SkillEvalCliProbe.test_falls_back_to_claude_as_last_rung`：
+  `run-skill-eval.sh` 的探测链末档是 `claude`，此前没有任何用例钉它，删掉那一档套件依然全绿。
+- `LEDGER.md` 门 11 行从「100 of 236」改为实测的「73 of 245」，并写明复现命令与「以
+  `portability-ceiling:` 自报值为准」。原数字已不再描述代码，而它是该门判 PARTIAL 的唯一依据。
+
+**Inventory at release: 63 skills, 19 agents, 37 rules, 11 hooks, 11 gates**
 
 ---
 
