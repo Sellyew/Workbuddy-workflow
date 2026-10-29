@@ -1,79 +1,36 @@
 #!/usr/bin/env bash
-# backtest.sh — prove the whole repo is internally consistent and currently true.
+# backtest.sh — forward to scripts/backtest.py.
 #
-# Run this after ANY change. It is the difference between a maintained repo and
-# one that merely looks maintained. Eleven gates:
+# 这个文件**不再列举任何门禁**。清单的唯一真源是 `scripts/gate-manifest.py`，
+# 执行者是 `scripts/backtest.py`。此前三段文字各自从本文件的 `run "..."` 行里
+# 推导门禁清单（编排器跑它们、派生计数数它们、台账覆盖核对它们），于是加一门
+# 要同时满足三处解析器的隐含假设，漏一处就是静默少算。
 #
-#   1. surface-sync        counts + enumerative tables match what is on disk
-#   2. skill-integrity     frontmatter <-> body tool parity, anchors, flag parity
-#   3. model-versions      no superseded model presented as current (internal
-#                         consistency against the model SSoT; the EXPIRY on that
-#                         SSoT is enforced by gate 6, staleness)
-#   4. links               every relative link and heading anchor resolves
-#   5. spec-conformance    every skill obeys the Agent Skills spec
-#   6. staleness           stale recommendations, source/render divergence, expired currency
-#   7. repo-hygiene       no scratch-as-main, no root clutter, archives documented
-#   8. derived-counts     enumerable claims (journals, patterns, phases, snippets)
-#                         verified against their own source of truth
-#   9. ledger-coverage    the qualification ledger and the checks that actually run
-#                         agree in BOTH directions, and every hook in settings.json
-#                         is wired to a file that exists (a mistyped path there
-#                         disables a hook in silence)
-#  10. hook-battery       the active guard hooks are driven with synthetic events
-#                         and must still go red on the failure each one targets —
-#                         gate 9 proves a hook is wired, this proves it still acts
-#  11. portability-tests  the path, encoding, line-ending and git-output cases that
-#                         differ between hosts — gates 1-10 prove the repo is right
-#                         HERE, this proves it does not answer differently on Windows
-#                         (local addition: upstream ships this suite without it,
-#                          and no upstream gate can go red on a host difference)
-#   +  findings-validator  smoke test, so a review run cannot fail at the last step
+# 为什么还留一个 `.sh`：CI 的两个 workflow、`.githooks/pre-commit`、以及文档
+# 与上游习惯都写 `./scripts/backtest.sh`。删掉它会把「跑门禁」这件事从 bash 用户
+# 和从上游 fork 过来的人手里拿走。它只做转发，参数与退出码原样透传 ——
+# 于是「两套编排器」变成「一个实现，两个入口」。
 #
-# Every gate runs to completion even if an earlier one fails — you get the whole
-# picture in one pass. Exit code is the max of all gates.
-#
-# No `set -e`: it would abort after the first failure and hide the rest.
+# 解释器：python3 优先，退回 python。Windows 上 `python3` 常常是 Microsoft Store
+# 的 App Execution Alias —— `command -v` 找得到、执行时只打印一句提示并以 49
+# 退出。本仓库的目标宿主就是 Windows，所以这里探一次能不能真的跑，而不是查名字。
 set -uo pipefail
 
 DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
-if [ -z "$DIR" ] || [ ! -d "$DIR" ]; then
+if [ -z "${DIR:-}" ] || [ ! -d "$DIR" ]; then
     echo "backtest: cannot resolve script directory" >&2; exit 2
 fi
 
-RC=0
-run() {  # run <label> <command...>
-    local label="$1"; shift
-    echo ""
-    echo "── $label ──"
-    "$@"
-    local rc=$?
-    [ "$rc" -gt "$RC" ] && RC=$rc
-    return 0
-}
-
-echo "═══ BACKTEST: is this repo internally consistent and currently true? ═══"
-
-run "surface-sync"       python3 "$DIR/check-surface-sync.py"
-run "skill-integrity"    python3 "$DIR/check-skill-integrity.py"
-run "model-versions"     "$DIR/check-model-versions.sh"
-run "links"              python3 "$DIR/check-links.py"
-run "spec-conformance"   python3 "$DIR/check-spec-conformance.py"
-run "staleness"          python3 "$DIR/check-staleness.py"
-run "repo-hygiene"       python3 "$DIR/check-repo-hygiene.py"
-run "derived-counts"     python3 "$DIR/check-derived-counts.py"
-run "ledger-coverage"    python3 "$DIR/check-ledger-coverage.py"
-run "hook-battery"       bash "$DIR/hook-battery.sh"
-run "portability-tests"  python3 "$DIR/portability-tests.py"
-
-echo ""
-echo "── findings-validator smoke test ──"
-echo '[]' | python3 "$DIR/validate-findings.py"
-rc=$?; [ "$rc" -gt "$RC" ] && RC=$rc
-
-echo ""
-if [ "$RC" -eq 0 ]; then
-    echo "═══ BACKTEST PASSED — repo is fresh and internally consistent ═══"
-else
-    echo "═══ BACKTEST FAILED (exit $RC) — fix before shipping ═══"
+PY=""
+for cand in python3 python; do
+    if command -v "$cand" >/dev/null 2>&1 && "$cand" -c 'import sys' >/dev/null 2>&1; then
+        PY="$cand"; break
+    fi
+done
+if [ -z "$PY" ]; then
+    echo "backtest: no working python interpreter on PATH (tried python3, python)" >&2
+    echo "  A gate suite that cannot start is not a passing gate suite." >&2
+    exit 2
 fi
-exit "$RC"
+
+exec "$PY" "$DIR/backtest.py" "$@"

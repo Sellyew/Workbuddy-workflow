@@ -6,7 +6,8 @@
 在 Windows 上不可执行，而一个跑不起来的总门禁等于没有总门禁。逐门语义与
 原版一致，不做增删。
 
-十一门（编号沿用原 backtest.sh 的注释，便于与上游对照）
+十一门（清单在 `scripts/gate-manifest.py` —— 唯一真源；编号沿用上游
+backtest.sh 的注释，便于与上游对照）
 --------------------------------------------------------
   1 surface-sync        计数与枚举表 ↔ 磁盘实际内容
   2 skill-integrity     frontmatter ↔ 正文工具一致性、锚点、flag 一致性
@@ -38,12 +39,13 @@
 ----------------------------------------
   * 第 3 门是 Bash 脚本，无 POSIX shell 时记为 SKIPPED 并明确报告，
     绝不记为 PASS。
-  * 第 10 门：有 POSIX shell 时跑上游 `hook-battery.sh`（全量用例）；
-    否则跑 `check-hooks.py`（迁移关键子集）。两者都跑时结果取严。
+  * 第 10 门：POSIX 宿主上跑上游 `hook-battery.sh`（全量用例）**并**跑
+    `check-hooks.py`，两者取严；Windows 宿主上电池无法判定（见清单里的
+    `posix_reason`），只跑 `check-hooks.py` 并记为 PARTIAL，上限原因逐条打印。
   * 第 9/10 门读的是 `.codebuddy/settings.json`（迁移后位置）。
   * **第 11 门是本地新增的**，上游只有十门。原因是迁移把脚本与 hook 从 macOS
     搬到了真 Windows：上游的十门里没有一门会在「换个宿主」这件事上变红，而
-    本项目已经因为宿主差异交过几次学费（`text=True` 按代码页解码、`/` 与 `\`
+    本项目已经因为宿主差异交过几次学费（`text=True` 按代码页解码、`/` 与 `\\`
     混用、`python3` 是 Microsoft Store 存根）。第 11 门把这类缺陷固定成用例，
     并且**把本机跑不到的用例显式记成上限**，而不是让它们悄悄消失。
 
@@ -62,6 +64,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import shutil
 import subprocess
@@ -124,57 +127,94 @@ def ceiling_of(out: str) -> str | None:
 
 
 # (编号, 名称, 说明, 构造函数 -> argv 或 None(表示跳过原因), 跳过原因)
+MANIFEST = HERE / "gate-manifest.py"
+
+
+def load_manifest() -> list[dict]:
+    """读门禁清单 —— 全套门禁的**唯一真源**（scripts/gate-manifest.py）。
+
+    三段文字曾经各自从 `scripts/backtest.sh` 的正则里推导这份清单：本文件跑它们，
+    `check-derived-counts.py` 数它们，`check-ledger-coverage.py` 核对它们有没有
+    台账行。加一门要同时满足三处隐含假设，漏一处就是静默少算 —— 新门不进台账、
+    计数不涨、两道门各自绿着。清单现在只是数据，三个消费者读同一份。
+
+    文件名叫 `gate-manifest.py` （带连字符）无法按包名 import，所以走
+    spec_from_file_location。读不到清单不是「零道门」，是 CANNOT RUN：
+    空扫描报绿是本仓库最贵的 bug 类型。
+    """
+    spec = importlib.util.spec_from_file_location("_gate_manifest", MANIFEST)
+    if spec is None or spec.loader is None:
+        sys.exit(f"backtest: 无法加载门禁清单 {MANIFEST} —— 清单缺失时继续跑等于空扫描报绿")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    gates = getattr(mod, "GATES", None)
+    if not gates:
+        sys.exit(f"backtest: {MANIFEST.name} 里没有 GATES —— 清单格式变了，继续跑等于空扫描报绿")
+    return gates
+
+
+def _expand(tokens: list[str]) -> list[str]:
+    return [t.replace("{PY}", PY).replace("{BASH}", BASH or "")
+             .replace("{SCRIPTS}", str(HERE)) for t in tokens]
+
+
+def _missing_script(argv: list[str]) -> str | None:
+    """argv 点到的、位于 scripts/ 下的脚本里，第一个不在盘上的。"""
+    for tok in argv:
+        if tok.startswith(str(HERE)) and not os.path.isfile(tok):
+            return os.path.basename(tok)
+    return None
+
+
 def gate_specs() -> list[dict]:
-    g: list[dict] = []
+    out: list[dict] = []
+    for m in load_manifest():
+        e = {
+            "num": m["num"], "name": m["name"], "desc": m["desc"],
+            "scripts": [HERE / s for s in m["scripts"]],
+            "argv": None, "also": None, "skip": None, "note": None, "ceiling": None,
+        }
 
-    def py_gate(num, name, script, desc):
-        path = HERE / script
-        g.append({
-            "num": num, "name": name, "desc": desc,
-            "argv": [PY, str(path)] if path.is_file() else None,
-            "skip": None if path.is_file() else f"脚本不存在：{path.name}",
-        })
+        # pre-commit 会在「没暂存任何 hook / settings / 电池本身」时设这个变量。
+        # 它必须表现为 SKIPPED（一次没跑的检查），绝不是 PASS —— 让被跳过的电池
+        # 显示成绿，正是本仓库历史上最贵的 bug 类型。
+        if m["name"] == "hook-battery" and os.environ.get("BACKTEST_SKIP_HOOK_BATTERY") == "1":
+            e["skip"] = ("BACKTEST_SKIP_HOOK_BATTERY=1：pre-commit 判定没有暂存的 hook、"
+                         "settings 或电池本身，CI 会跑全量 —— 本次未执行，不等于通过")
+            out.append(e)
+            continue
 
-    py_gate(1, "surface-sync", "check-surface-sync.py", "计数/枚举表 ↔ 磁盘")
-    py_gate(2, "skill-integrity", "check-skill-integrity.py", "skill 结构与工具一致性")
-    py_gate(4, "links", "check-links.py", "相对链接与锚点")
-    py_gate(5, "spec-conformance", "check-spec-conformance.py", "Agent Skills 规范")
-    py_gate(6, "staleness", "check-staleness.py", "推荐过期/源渲染不一致")
-    py_gate(7, "repo-hygiene", "check-repo-hygiene.py", "根目录卫生与归档说明")
-    py_gate(8, "derived-counts", "check-derived-counts.py", "可枚举断言对照真源")
-    py_gate(9, "ledger-coverage", "check-ledger-coverage.py", "台账覆盖 + hook 接线")
-    py_gate(11, "portability-tests", "portability-tests.py", "路径/编码/行尾/git 输出可移植性")
+        host_block = bool(m.get("posix_only")) and os.name == "nt"
+        shell_block = m.get("requires") == "bash" and BASH is None
 
-    # 第 3 门：Bash 脚本
-    mv = HERE / "check-model-versions.sh"
-    if not mv.is_file():
-        g.append({"num": 3, "name": "model-versions", "desc": "模型版本一致性",
-                  "argv": None, "skip": f"脚本不存在：{mv.name}"})
-    elif BASH is None:
-        g.append({"num": 3, "name": "model-versions", "desc": "模型版本一致性",
-                  "argv": None,
-                  "skip": "该门是 Bash 脚本，本环境无 POSIX bash —— 未执行，不等于通过"})
-    else:
-        g.append({"num": 3, "name": "model-versions", "desc": "模型版本一致性",
-                  "argv": [BASH, str(mv)], "skip": None})
+        # 候选顺序：能跑就跑全量 → 退到子集 → 跳过并说明。
+        # 退到子集时，PARTIAL 的上限必须逐条点名「为什么这台机器判定不了」，
+        # 否则这一行只是另一种沉默。
+        if not (host_block or shell_block):
+            argv, also = _expand(m["run"]), (_expand(m["also"]) if m.get("also") else None)
+            if _missing_script(argv) is None:
+                e["argv"], e["also"] = argv, also
+                out.append(e)
+                continue
+            e["skip"] = f"脚本不存在：{_missing_script(argv)}"
+            out.append(e)
+            continue
 
-    # 第 10 门：hook 电池
-    battery = HERE / "hook-battery.sh"
-    pybat = HERE / "check-hooks.py"
-    if BASH is not None and battery.is_file():
-        g.append({"num": 10, "name": "hook-battery", "desc": "守卫 hook 仍会在目标失败模式上变红",
-                  "argv": [BASH, str(battery)], "skip": None,
-                  "also": [PY, str(pybat)] if pybat.is_file() else None})
-    elif pybat.is_file():
-        g.append({"num": 10, "name": "hook-battery", "desc": "守卫 hook 仍会在目标失败模式上变红",
-                  "argv": [PY, str(pybat)], "skip": None,
-                  "note": "上游 hook-battery.sh 需 POSIX bash，本环境改跑 check-hooks.py（迁移关键子集）"})
-    else:
-        g.append({"num": 10, "name": "hook-battery", "desc": "守卫 hook 仍会在目标失败模式上变红",
-                  "argv": None, "skip": "hook-battery.sh 与 check-hooks.py 都不存在"})
+        if m.get("fallback") and _missing_script(_expand(m["fallback"])) is None:
+            e["argv"] = _expand(m["fallback"])
+            if host_block:
+                e["ceiling"] = m.get("posix_reason")
+            else:
+                e["note"] = "该门需要 POSIX bash，本机改跑 fallback（迁移关键子集）—— 未执行的部分不代表通过"
+            out.append(e)
+            continue
 
-    g.sort(key=lambda d: d["num"])
-    return g
+        e["skip"] = (m.get("posix_reason") if host_block
+                     else "该门是 Bash 脚本，本环境无 POSIX bash —— 未执行，不等于通过")
+        out.append(e)
+
+    out.sort(key=lambda d: d["num"])
+    return out
 
 
 def main() -> int:
@@ -211,12 +251,13 @@ def main() -> int:
         # 「also」：两个电池都跑时取更严重的
         if spec.get("also"):
             rc2, out2 = run(spec["also"])
-            out = out + "\n--- check-hooks.py ---\n" + out2
+            out = out + f"\n--- 附加：{os.path.basename(spec['also'][-1])} ---\n" + out2
             rc = max(rc, rc2)
 
         status = "PASS" if rc == 0 else "FAIL"
-        # 通过但有上限：第 11 门跑完了，却有用例因本机缺机制而跳过。
-        ceiling = ceiling_of(out) if rc == 0 else None
+        # 通过但有上限，两种来源：门自己打印的用例上限（第 11 门），
+        # 或清单声明这条门在本宿主上判定不了、只跑了子集（第 10 门在 Windows 上）。
+        ceiling = (ceiling_of(out) or spec.get("ceiling")) if rc == 0 else None
         if ceiling:
             status = "PARTIAL"
         worst = max(worst, rc)
