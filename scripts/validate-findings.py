@@ -28,6 +28,11 @@ outside a quotation is not checked. A PDF is read through pdftotext; a file that
 read as text leaves its quotes unchecked (reported, not failed). Each miss is printed with
 the closest line of the file. Paths resolve against --root (default: the current directory).
 
+A report that quotes nothing fails instead of passing: if no finding's `evidence` carries a
+12+ character double-quoted span there is nothing to match, and not quoting would be a
+cheaper way to beat this gate than inventing a quotation. Findings left unquoted inside an
+otherwise-quoted report are listed but do not fail it.
+
 Exit: 0 valid, 1 invalid, 2 internal error.
 """
 import json, sys, os, hashlib, re, subprocess, unicodedata, difflib, posixpath
@@ -223,13 +228,17 @@ def check_quotes(args):
             cache[path] = (txt, why, None if txt is None else
                            {(l, d): _norm(txt, l, d) for l in (False, True) for d in (0, 1, 2)})
         return cache[path]
-    misses, unchecked, checked = [], [], 0
+    misses, unchecked, unquoted, checked, n_quotes = [], [], [], 0, 0
+    findings = 0
     for i, f in enumerate(data):
         if not isinstance(f, dict) or not isinstance(f.get("evidence"), str):
             continue
+        findings += 1
         quotes = extract_quotes(f["evidence"])
         if not quotes:
+            unquoted.append(f"findings[{i}] ({f.get('file')}:{f.get('line')}, {f.get('locus', '')})")
             continue
+        n_quotes += len(quotes)
         where = f"findings[{i}] ({f.get('file')}:{f.get('line')}, {f.get('locus', '')})"
         # The id folds Slides\deck.tex into Slides/deck.tex; so must the read, or a
         # report written on Windows had its ids accepted and its quotes "file not
@@ -256,14 +265,33 @@ def check_quotes(args):
             near = difflib.get_close_matches(q, lines, n=1, cutoff=0.0)
             misses.append(f'{where}: quote not in {" or ".join(sources)}: "{q}"'
                           + (f'\n      closest line: "{near[0][:160]}"' if near else ""))
+    # A gate that checked nothing is not a gate that passed. Writing `evidence` as
+    # plain prose leaves no quotation to match, and the check then has no input at
+    # all — it used to print "quotes OK (0 quote(s) checked)" and exit 0, so a report
+    # of ten invented findings passed by not quoting anything. Fail instead. The
+    # other zero is an environment one (every quote left unchecked because its file
+    # is a PDF without pdftotext, or unreadable): that one stays a report, not a
+    # failure, or a machine missing poppler would fail every review it runs.
+    if findings and n_quotes == 0:
+        print(f"validate-findings: 0 quotation(s) to check — none of the {findings} "
+              "finding(s) quotes its source in double quotes, so the "
+              "invented-quotation check verified nothing", file=sys.stderr)
+        for u in unquoted:
+            print(f"  no quotation: {u}", file=sys.stderr)
+        print('  a quotation is the source file\'s own words inside "..." (12+ characters); '
+              "prose evidence cannot be checked (orchestration-schemas.md §1)", file=sys.stderr)
+        return 1
     for u in unchecked:
         print(f"  unchecked: {u}")
+    for u in unquoted:
+        print(f"  no quotation: {u}")
     if misses:
         print(f"validate-findings: {len(misses)} quotation problem(s) — a quote must be the file's own text")
         for m in misses:
             print(f"  {m}")
         return 1
     print(f"validate-findings: quotes OK ({checked} quote(s) checked"
+          + (f"; {findings - len(unquoted)} of {findings} finding(s) quoted" if unquoted else "")
           + (f"; {len(unchecked)} finding(s) with quotes left unchecked" if unchecked else "") + ")")
     return 0
 
