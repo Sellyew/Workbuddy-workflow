@@ -80,7 +80,7 @@ cd my-project
 - **一套真的编排运行时。** 审读会扇出给 fork 出来的专职代理，按共享的发现 schema 归并，经幻觉门禁裁定，循环到空轮为止——见 [`orchestrator-protocol.md`](.codebuddy/rules/orchestrator-protocol.md)。
 - **把真相当成一个流程。** 不一致并不总是失败：一个有据可依、*被点名*的替代做法记为 `EXPLAINED`，并带进你的回复审稿人函；而真正的错误仍然按失败关闭处理。
 
-这**不是**一个自主守护进程——循环永远由你或某项技能发起，而你始终是审计者。定时自动化只处理周期性的杂活，且只在有发现时通知——云端 [Routines](.codebuddy/references/scheduled-routines.md) 用于已提交仓库的检查（每周文献增量），Desktop 定时任务用于任何触及本地数据的事（收件箱分诊，以及夜间的可复现性检查）。
+这**不是**一个自主守护进程——循环永远由你或某项技能发起，而你始终是审计者。定时自动化只处理周期性的杂活，且只在有发现时通知——[automation](.codebuddy/references/scheduled-routines.md) 负责需要日程、指定目录与权限档位的作业（收件箱分诊、夜间可复现性检查），会话内的短轮询用 `CronCreate`，要活过今晚的用它的 `durable: true`。三种原语都跑在你这台机器上，代价是机器得开着。
 
 ### 承包商模式
 

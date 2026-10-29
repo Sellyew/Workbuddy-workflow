@@ -403,9 +403,19 @@ CONTROL 证明它不是「拒绝一切」。但如果一条用例你以为是 PI
 
 ### 会话一关 `CronCreate` 就死
 
-按设计如此。`CronCreate` 在本平台 REPL 自己的事件循环里调度——REPL 一退出（你关了窗口、客户端崩了、你的用量撞上限额导致会话终止），这个 cron 也随之而去。即便 `durable: true` 也救不了你，只要触发时没有 REPL 在跑。
+**默认模式如此，但这是参数问题，不是平台的缺陷**（2026-10-30 按引擎实测改正：此前这一节说
+「即便 `durable: true` 也救不了你」——那句话在本平台不成立）。
 
-对**活动会话内的短延时轮询**（例如「我干活的时候每 5 分钟查一次构建」），`CronCreate` 没问题。对任何必须**挺过会话终止**的东西，改用**云端 Routines**（2026 年 4 月）。Routines 跑在平台的网页基础设施上——每次触发时不需要你的电脑在线。用 Routines 来做：定时审计、过夜批处理、你不在时的自主执行。完整对比见 `.codebuddy/references/audit-pet-peeves.md` 第 17 条。
+- `CronCreate(cron, prompt)` —— 只在内存里，会话结束即消失。适合活动会话内的短延时轮询
+  （例如「我干活的时候每 5 分钟查一次构建」）。
+- `CronCreate(cron, prompt, durable: true)` —— 落到 `.codebuddy/scheduled_tasks.json`，
+  **挺过重启**，由一个专用任务会话执行。过夜工作、定时审计用它。
+- 需要指定工作目录、权限档位、连接器，或者想要一个能在界面里看见、能暂停的日程 —— 用
+  automation（`automation_update`）。
+
+**本平台没有云端例程。** 三种原语都跑在你的机器上，所以「笔记本合上它还在跑」这件事在这里
+做不到——你要拿本地文件可见性，就得接受机器得开着。完整对比见
+[`.codebuddy/references/scheduled-routines.md`](.codebuddy/references/scheduled-routines.md)。
 
 ### 我批准了计划，PreCompact 还是不停阻断
 

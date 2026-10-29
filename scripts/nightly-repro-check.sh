@@ -2,17 +2,22 @@
 #
 # Nightly reproducibility-drift check (cron-able; no client/auth needed).
 #
-# A thin LOCAL equivalent of the "Reproducibility drift" Routine in
-# .codebuddy/references/scheduled-routines.md, for users who prefer a machine
-# cron over a managed Routine. It does NOT re-run analysis — it flags
-# passport claims whose source_file / output_file, OR any file declared as a
-# display in appears_in, is newer than the claim's last_verified_on (i.e. the
-# number on disk may have moved, or two artifacts showing it may have fallen
-# out of step, since it was last checked). Exits 1 if any claim is stale, so
-# cron can email you.
+# A thin ZERO-DEPENDENCY runner for the "Reproducibility drift" routine in
+# .codebuddy/references/scheduled-routines.md: it never goes through a session,
+# so real cron / a systemd timer / Windows Task Scheduler can drive it. It does
+# NOT re-run analysis — it flags passport claims whose source_file / output_file,
+# OR any file declared as a display in appears_in, is newer than the claim's
+# last_verified_on (i.e. the number on disk may have moved, or two artifacts
+# showing it may have fallen out of step, since it was last checked). Exits 1 if
+# any claim is stale, so cron can email you.
 #
-# For the full re-audit, run /audit-reproducibility inside WorkBuddy (or
-# prefer the managed Routine, which survives a closed laptop).
+# The tradeoff is the opposite of the in-session primitives: an automation or a
+# `CronCreate(durable: true)` job sees your uncommitted local files but needs the
+# client running; this script needs nothing but a shell, and cannot see anything
+# a shell cannot.
+#
+# For the full re-audit, run /audit-reproducibility inside WorkBuddy — the
+# mechanical staleness check above is the cheap half, not the whole thing.
 #
 # Usage:  ./scripts/nightly-repro-check.sh   (run from the repo root or via cron)
 #
