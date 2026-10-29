@@ -8,7 +8,7 @@
 
 **在线站点：** [sellyew.github.io/Workbuddy-workflow](https://sellyew.github.io/Workbuddy-workflow/)
 
-一块可以直接 fork 的、AI 辅助学术工作的地基。你说出你想要什么——讲义幻灯片、一篇研究论文、一次数据分析、一个复现包——Claude 就规划做法、调度专职代理、修掉问题、核验质量、交付结果。像一个把整活全包下来的承包商。它源自一门真实开过的博士课程，并由一个不断壮大的[社区](#社区与扩展)持续扩展。
+一块可以直接 fork 的、AI 辅助学术工作的地基。你说出你想要什么——讲义幻灯片、一篇研究论文、一次数据分析、一个复现包——WorkBuddy 就规划做法、调度专职代理、修掉问题、核验质量、交付结果。像一个把整活全包下来的承包商。它源自一门真实开过的博士课程，并由一个不断壮大的[社区](#社区与扩展)持续扩展。
 
 ---
 
@@ -46,7 +46,7 @@ cd my-project
 
 [完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-first-session)里有带全部细节的完整起始提示词。
 
-**这一步做了什么：** Claude 读全部配置文件，填入你的项目名、机构与偏好，然后进入承包商模式——规划、实施，并在（你所调用技能的）范围内跑「审读 + 核验」循环。你批准计划、调用一项技能，剩下的由该技能在其范围内处理。
+**这一步做了什么：** WorkBuddy 读全部配置文件，填入你的项目名、机构与偏好，然后进入承包商模式——规划、实施，并在（你所调用技能的）范围内跑「审读 + 核验」循环。你批准计划、调用一项技能，剩下的由该技能在其范围内处理。
 
 > **要把 CODEBUDDY.md 大幅改造成非学术项目？** 本平台的对应做法是 `/init-research-project`——它按你的项目信息填好 `CODEBUDDY.md` 里的占位符，并按学科裁剪规则与代理，作为起点。本模板预置的 CODEBUDDY.md 已经覆盖了学术场景——只有当你 fork 出来的东西差异很大时（例如一个不用 LaTeX 或 Quarto 的 Python/ML 项目）才需要它。
 
@@ -58,7 +58,7 @@ cd my-project
 ./scripts/validate-setup.sh        # Checks XeLaTeX, Quarto, Python, git, etc.
 ```
 
-然后在 Claude 里：
+然后在 WorkBuddy 里：
 
 ```text
 /compile-latex HelloWorld          # Compiles Slides/HelloWorld.tex to PDF
@@ -84,7 +84,7 @@ cd my-project
 
 ### 承包商模式
 
-你描述一个任务。对复杂或含糊的请求，Claude 先写一份需求规格，带 MUST/SHOULD/MAY 优先级与清晰度状态（CLEAR/ASSUMED/BLOCKED）。你批准规格，然后 Claude 规划做法并跑对的技能——或者，对 `/create-lecture` 这类由用户调用的技能，告诉你该跑哪一个（例如 `/create-lecture`、`/qa-quarto`、`/review-paper --adversarial`）。该技能在内部实现编排运行时——实施、核验、审读、修复、再核验、打分——并在工作达到质量标准时返回一份总结。说一句「直接干」，它就跑完整循环；提交仍然需要明确的 `/commit`（之后由 pre-commit 钩子把关）。
+你描述一个任务。对复杂或含糊的请求，WorkBuddy 先写一份需求规格，带 MUST/SHOULD/MAY 优先级与清晰度状态（CLEAR/ASSUMED/BLOCKED）。你批准规格，然后 WorkBuddy 规划做法并跑对的技能——或者，对 `/create-lecture` 这类由用户调用的技能，告诉你该跑哪一个（例如 `/create-lecture`、`/qa-quarto`、`/review-paper --adversarial`）。该技能在内部实现编排运行时——实施、核验、审读、修复、再核验、打分——并在工作达到质量标准时返回一份总结。说一句「直接干」，它就跑完整循环；提交仍然需要明确的 `/commit`（之后由 pre-commit 钩子把关）。
 
 ### 专职代理
 
@@ -115,7 +115,7 @@ cd my-project
 
 ### 上下文存活
 
-计划、规格与会话日志能挺过自动压缩与会话边界。PreCompact 钩子在 Claude 的自动压缩触发之前存下一份上下文快照，确保关键决策永不丢失。MEMORY.md 跨会话累积经验，于是在一个会话里发现的模式会滋养后续工作。
+计划、规格与会话日志能挺过自动压缩与会话边界。PreCompact 钩子在 WorkBuddy 的自动压缩触发之前存下一份上下文快照，确保关键决策永不丢失。MEMORY.md 跨会话累积经验，于是在一个会话里发现的模式会滋养后续工作。
 
 对*强制*压缩（长流水线、计划中途交接），`/compress-session`（v1.9.0）把对话蒸馏成一份结构化笔记——决策、下一步动作、以及**按噪声丢弃的东西**——而不是让自动压缩去截断。`/promote-memory`（v1.9.0）定期通过一个五评审议事会，把原生自动记忆里的通用经验收割进已提交的 MEMORY.md。
 
@@ -136,7 +136,7 @@ cd my-project
 
 它涵盖：
 1. **这套工作流为什么存在**——问题与愿景
-2. **上手**——fork、粘一条提示词，剩下的 Claude 来搭
+2. **上手**——fork、粘一条提示词，剩下的 WorkBuddy 来搭
 3. **系统如何运作**——专职代理、对抗式 QA、质量打分
 4. **积木**——CODEBUDDY.md、规则、技能、代理、钩子、记忆
 5. **工作流模式**——幻灯片、研究、可复现性、演示修辞、顺序对抗式审计等等
@@ -299,7 +299,7 @@ cd my-project
 
 ### 规则（`.codebuddy/rules/`）
 
-规则按路径作用域加载：**常开**规则每个会话都加载；**按路径作用域**的规则只在 Claude 处理匹配文件时加载。指令文件越长，遵守度越差（官方指引：把 `CODEBUDDY.md` 控制在约 200 行以内），所以少即是多。
+规则按路径作用域加载：**常开**规则每个会话都加载；**按路径作用域**的规则只在 WorkBuddy 处理匹配文件时加载。指令文件越长，遵守度越差（官方指引：把 `CODEBUDDY.md` 控制在约 200 行以内），所以少即是多。
 
 **常开**（无 `paths:` frontmatter——每个会话都加载）：
 
