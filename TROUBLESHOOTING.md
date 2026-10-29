@@ -50,7 +50,7 @@ claude mcp add stata-mcp --scope user -- uvx stata-mcp
 
 - **自动模式**——新的会话默认就以它启动：分类器批准常规操作，拦住或询问有风险的操作。
 - **接受编辑**——`Shift+Tab` 循环到该模式：自动批准文件编辑与工作目录内的常见文件系统命令。
-- **Bypass**——在模式选择里切到 Bypass：跳过权限询问与安全检查（拒绝规则仍然生效）。Anthropic 把它限定在隔离容器与虚拟机内，它从 CLI 参数、`--settings` 或用户/托管设置生效——写在项目 `.codebuddy/settings.json` 里的 `bypassPermissions` 不被承认，会话以手动模式启动。（在 VS Code 里，bypass 是用户设置层面的选择：在你的 VS Code *用户*设置里把 `claudeCode.initialPermissionMode` 设为 `bypassPermissions`，并打开 `claudeCode.allowDangerouslySkipPermissions`。两者都是机器作用域的，所以扩展忽略工作区里的值，本模板的 `.vscode/settings.json` 不会改变起始模式。）
+- **Bypass**——在模式选择里切到 Bypass：跳过权限询问与安全检查（拒绝规则仍然生效）。Anthropic 把它限定在隔离容器与虚拟机内，它从 CLI 参数、`--settings` 或用户/托管设置生效——写在项目 `.codebuddy/settings.json` 里的 `bypassPermissions` 不被承认，会话以手动模式启动。（VS Code 里的 bypass 是上游扩展层的选择，键名带 `claudeCode.` 前缀；本客户端不读那一层，本仓库也不再提供 `.vscode/settings.json`。）
 
 本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），且不设默认模式，所以在手动模式下多数常规工作都不询问就能跑。自动模式会撤掉一刀切的 `Bash(*)` 规则，改为把 shell 命令送进它的分类器。要在任何模式下都把受限数据挡在模型之外，就加上拒绝规则——见下方[「让受限数据不进入模型」](#keep-restricted-data-off-the-model)。
 
@@ -181,12 +181,12 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 三个原因，按常见程度排序：
 
-1. **这项设置在项目设置里。** 写在 `.codebuddy/settings.json` 或 `.codebuddy/settings.local.json` 里的 `defaultMode: "bypassPermissions"` 不被承认，会话以手动模式启动（那里的 `"auto"` 同样会退回内置默认值）。把它从项目文件里删掉，然后在 `~/.workbuddy/settings.json` 里设 bypass、或传 `--permission-mode bypassPermissions`、或（VS Code）在你的 VS Code **用户**设置里设 `claudeCode.initialPermissionMode`，同时打开扩展的 *Allow dangerously skip permissions* 开关（`claudeCode.allowDangerouslySkipPermissions`）——两者都是机器作用域的，所以工作区 `.vscode/settings.json` 里的值被忽略。VS Code 扩展在起始模式上根本不读项目设置。
+1. **这项设置在项目设置里。** 写在 `.codebuddy/settings.json` 或 `.codebuddy/settings.local.json` 里的 `defaultMode: "bypassPermissions"` 不被承认，会话以手动模式启动（那里的 `"auto"` 同样会退回内置默认值）。把它从项目文件里删掉，然后在 `~/.workbuddy/settings.json` 里设 bypass，或者在输入框旁的模式选择里切到 Bypass——项目设置不认它，是因为模式由会话启动时决定。（`claudeCode.*` 那几个键属于上游 VS Code 扩展层，本客户端不读；本仓库也不提供会让人误以为能生效的 `.vscode/settings.json`。）
 2. **会话中途的切换。** `Shift+Tab`（CLI）或模式指示器（VS Code）会覆盖文件设置，直到会话结束。
 3. **过期的会话。** 设置在会话启动之后才改；开一个新会话。
 
 跑 `/permission-check`——它会读**钩子链**（`.codebuddy/settings.json` 的 `hooks` 段）、
-本地覆盖（`settings.local.json`、`.vscode/settings.json`）与三个守卫脚本，告诉你这个动作是被
+本地覆盖（`settings.local.json`，以及若存在的 `.vscode/settings.json`）与三个守卫脚本，告诉你这个动作是被
 哪条守卫拦下的、还是被平台自己问的；并明确指出哪些照上游文档写进去的开关（`permissions.*`、
 `claudeCode.initialPermissionMode`）在本平台**根本不生效**——这类配置不会报错，只会静默地什么都不做。
 
@@ -242,9 +242,11 @@ WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidentia
 
 要在 `.codebuddy/rules/`、`.codebuddy/references/`、`.codebuddy/skills/` 或 `.codebuddy/agents/` 下做批量编辑，经 Bash 工具跑一次脚本化的编辑，可以免掉每个文件一次询问。本模板自带的 `root-of-trust-guard.py` 钩子**拒绝**写入 `.codebuddy/settings*.json`、`.codebuddy/hooks/` 与 `.githooks/` 的 shell 写操作——在那几处用 Edit/Write，这样每一次对门禁的改动都留下可审读的 diff。
 
-### VS Code：bypass 模式无法从 `.vscode/settings.json` 生效
+### 本仓库为什么不再提供 `.vscode/settings.json`
 
-VS Code 扩展读的是 **`claudeCode.allowDangerouslySkipPermissions`**，带 `claudeCode.` 前缀；裸的 `allowDangerouslySkipPermissions` 键永远不会被读到。这一项把「Bypass permissions」加进模式选择器，而它关着的时候扩展会把 `bypassPermissions` 的启动降级为手动模式，于是写入受保护路径仍然弹询问。它和 `claudeCode.initialPermissionMode` 都是机器作用域的：VS Code 只从你的**用户**设置里读它们，忽略工作区 `.vscode/settings.json` 里的值。想让新对话以 bypass 启动，打开用户设置（`Cmd+,` → Extensions → 本平台的扩展），把 `"claudeCode.allowDangerouslySkipPermissions": true` 与 `"claudeCode.initialPermissionMode": "bypassPermissions"` 设上，然后重载窗口。只在没有联网的沙箱里用 bypass。
+上游模板带了这个文件，里面是两个 Claude Code VS Code 扩展的键（`claudeCode.initialPermissionMode`、`claudeCode.allowDangerouslySkipPermissions`）。本平台的桌面客户端不读 VS Code 的工作区设置，本机也没有与之对应的扩展，所以那两个键在这里不会产生任何行为——留着它，读者会以为自己已经开了 bypass，然后在写入受保护路径时被询问，再去追一个并不存在的 bug。
+
+要在本平台用 bypass，只有一条路：在输入框旁的模式选择里切到 Bypass，或把 bypass 写进 `~/.workbuddy/settings.json`。想确认某个动作到底被谁拦下，跑 [`/permission-check`](.codebuddy/skills/permission-check/SKILL.md)——它读钩子链与守卫脚本，不读一个不存在的配置文件。
 
 ## 同行评审流水线（v1.5.0）
 

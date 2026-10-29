@@ -1,7 +1,7 @@
 ---
 name: permission-check
-description: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹出一个动作的批准请求、以及为什么某个动作被直接拦下。默认只读仓库本地层（`.codebuddy/settings.json` 的 PreToolUse 钩子链、`.codebuddy/settings.local.json` 的本地覆盖、`.vscode/settings.json`）。宿主全局层（`~/.workbuddy/`、VSCode 用户设置）**只在用户明确确认后**才读 —— 那些文件里可能含有无关的路径或密钥。当用户说 "why is it asking me to approve?"、"permission check"、"why am I getting prompts?"、"bypass isn't working"、"check my permissions" 时使用。只读诊断。本平台没有 `permissions.allow` 那套分层权限配置，本技能不假装检查它。
-description_zh: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹出一个动作的批准请求、以及为什么某个动作被直接拦下。默认只读仓库本地层（`.codebuddy/settings.json` 的 PreToolUse 钩子链、`.codebuddy/settings.local.json` 的本地覆盖、`.vscode/settings.json`）。宿主全局层（`~/.workbuddy/`、VSCode 用户设置）**只在用户明确确认后**才读 —— 那些文件里可能含有无关的路径或密钥。当用户说 "why is it asking me to approve?"、"permission check"、"why am I getting prompts?"、"bypass isn't working"、"check my permissions" 时使用。只读诊断。本平台没有 `permissions.allow` 那套分层权限配置，本技能不假装检查它。
+description: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹出一个动作的批准请求、以及为什么某个动作被直接拦下。默认只读仓库本地层（`.codebuddy/settings.json` 的 PreToolUse 钩子链、`.codebuddy/settings.local.json` 的本地覆盖、`.vscode/settings.json` 若存在——本仓库不提供）。宿主全局层（`~/.workbuddy/`、VSCode 用户设置）**只在用户明确确认后**才读 —— 那些文件里可能含有无关的路径或密钥。当用户说 "why is it asking me to approve?"、"permission check"、"why am I getting prompts?"、"bypass isn't working"、"check my permissions" 时使用。只读诊断。本平台没有 `permissions.allow` 那套分层权限配置，本技能不假装检查它。
+description_zh: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹出一个动作的批准请求、以及为什么某个动作被直接拦下。默认只读仓库本地层（`.codebuddy/settings.json` 的 PreToolUse 钩子链、`.codebuddy/settings.local.json` 的本地覆盖、`.vscode/settings.json` 若存在——本仓库不提供）。宿主全局层（`~/.workbuddy/`、VSCode 用户设置）**只在用户明确确认后**才读 —— 那些文件里可能含有无关的路径或密钥。当用户说 "why is it asking me to approve?"、"permission check"、"why am I getting prompts?"、"bypass isn't working"、"check my permissions" 时使用。只读诊断。本平台没有 `permissions.allow` 那套分层权限配置，本技能不假装检查它。
 argument-hint: "(no arguments)"
 allowed-tools: ["Read", "Bash", "Glob"]
 disallowed-tools: ["Edit", "MultiEdit"]
@@ -16,7 +16,7 @@ disallowed-tools: ["Edit", "MultiEdit"]
 ## 六个层（优先级：越靠下越赢）
 
 1. **VSCode 用户设置** —— `~/Library/Application Support/Code/User/settings.json`（macOS）、`%APPDATA%/Code/User/settings.json`（Windows）、`~/.config/Code/User/settings.json`（Linux）。键：`claudeCode.initialPermissionMode`。（上游 Claude Code 的层，本平台不读）
-2. **VSCode 工作区设置** —— `<repo>/.vscode/settings.json`。同一个键。胜过用户层。（上游层，本平台不读；这个文件本技能仍然会看，但看的是别的设置）
+2. **VSCode 工作区设置** —— `<repo>/.vscode/settings.json`。同一个键。胜过用户层。（上游 VS Code 扩展层，本平台不读。本仓库不再提供这个文件；如果你是从上游 fork 里保留下来的，本技能仍会读它，但里面没有本平台会消费的开关）
 3. **CLI 用户设置** —— `~/.workbuddy/settings.json`。键：`permissions.defaultMode`。（上游层，本平台不读）
 4. **CLI 项目设置** —— `<repo>/.codebuddy/settings.json`。同一个键。胜过用户层。（本平台读这个文件，但只读 `hooks`；这里的 `permissions.*` 不生效）
 5. **CLI 项目本地设置** —— `<repo>/.codebuddy/settings.local.json`。同一个键。胜过项目层。（本平台读这个文件，同样只有 `hooks` 有意义；`permissions.*` 不生效）
