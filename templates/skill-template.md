@@ -114,7 +114,7 @@ disallowed-tools: ["Edit", "Write", "Bash"]    # actually remove the write path
 - `${CLAUDE_SKILL_DIR}` —— 技能所在目录的路径（用于随技能打包的辅助文件）
 - `` !`git log --oneline -5` `` —— 技能加载时注入的动态命令输出
 
-细节与示例见[指南的技能 frontmatter 参考](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#skill-frontmatter)。
+细节与示例见[指南的技能 frontmatter 参考](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#skill-frontmatter)。
 
 ### 什么时候该设 `disable-model-invocation: true` {#when-to-disable-model-invocation}
 

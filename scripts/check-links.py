@@ -78,7 +78,11 @@ SCAN = []
 # glob.escape: the clone's own path is part of the pattern, and a folder named
 # "Paper [2026]" read as a character class — nothing matched, and "0 files
 # scanned" passed (#171). Not root_dir=: that is Python 3.10+, and 3.9 is supported.
-for pat in ["*.md", ".codebuddy/**/*.md", "templates/**/*.md", ".github/**/*.md", "guide/*.qmd"]:
+for pat in ["*.md", ".codebuddy/**/*.md", "templates/**/*.md", ".github/**/*.md", "guide/*.qmd",
+            # 这两处是用户会照做的说明（受限数据放哪里、探索文件夹怎么用），却长期不在
+            # 扫描范围内：master_supporting_docs/README.md 里那条 `../.claude/rules/...`
+            # 在迁移后指向不存在的目录，而门禁一直是绿的。
+            "explorations/**/*.md", "master_supporting_docs/**/*.md"]:
     SCAN += glob.glob(os.path.join(glob.escape(ROOT), pat), recursive=True)
 if not SCAN:
     # A scan that found nothing is a broken gate, not a clean tree.

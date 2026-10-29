@@ -24,7 +24,7 @@ drafts. **Read-only inputs, not working files.**
 3. **Supersession is explicit.** When a newer version arrives, keep the predecessor and mark
    which is current. Silent overwrite destroys the record of what an earlier analysis used.
 4. **Nothing confidential.** Restricted-use data and materials under a DUA never enter the
-   repo — see [`.claude/rules/confidential-data.md`](../.claude/rules/confidential-data.md).
+   repo — see [`.codebuddy/rules/confidential-data.md`](../.codebuddy/rules/confidential-data.md).
 5. **Refereed work stays out.** A manuscript you are refereeing, or a proposal on a review
    panel, is held in confidence. This folder is committed and forks are public, so it never goes
    here. Check the journal's or funder's reviewer rules before it enters a Claude session at

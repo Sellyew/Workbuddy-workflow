@@ -6,7 +6,7 @@
 
 > **持续维护中。** 一份我如何用 WorkBuddy 做学术工作的总结——幻灯片、论文、数据分析等等——打包成你可以直接 fork 的形态，用于你自己的研究。最新变更见 [CHANGELOG.md](CHANGELOG.md)。
 
-**在线站点：** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
+**在线站点：** [sellyew.github.io/Workbuddy-workflow](https://sellyew.github.io/Workbuddy-workflow/)
 
 一块可以直接 fork 的、AI 辅助学术工作的地基。你说出你想要什么——讲义幻灯片、一篇研究论文、一次数据分析、一个复现包——Claude 就规划做法、调度专职代理、修掉问题、核验质量、交付结果。像一个把整活全包下来的承包商。它源自一门真实开过的博士课程，并由一个不断壮大的[社区](#社区与扩展)持续扩展。
 
@@ -24,9 +24,10 @@
 
 ```bash
 # Fork this repo on GitHub (click "Fork" on the repo page), then:
-git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
+git clone https://github.com/YOUR_USERNAME/Workbuddy-workflow.git my-project
 cd my-project
 ./scripts/validate-setup.sh        # reports missing tools with install links
+./scripts/install-hooks.sh         # activates the pre-commit gate on every commit
 ```
 
 把 `YOUR_USERNAME` 换成你的 GitHub 用户名。
@@ -37,15 +38,15 @@ cd my-project
 claude
 ```
 
-**用 VS Code？** 改用 WorkBuddy 面板打开即可。一切行为相同——细节见[完整指南](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-setup)。
+**用 VS Code？** 改用 WorkBuddy 面板打开即可。一切行为相同——细节见[完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-setup)。
 
-> **避开提示词疲劳。** 新的交互式会话默认以**自动模式**启动（由分类器把关——多数操作直接执行，有风险的才询问）；自动模式不可用时，手动模式会对每个有风险的工具调用逐次询问。若你仍看到过多询问，切换到**自动接受编辑**模式（一个快捷键；见指南的[权限模式一节](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks)），或运行 `claude --permission-mode acceptEdits`。**Bypass** 模式跳过权限询问与安全检查（拒绝规则仍然生效），Anthropic 把它限定在隔离容器与虚拟机内；它从 CLI 参数、`--settings` 或用户/托管设置（`~/.workbuddy/settings.json`）生效——写在项目 `.codebuddy/settings.json` 里的 bypass 默认值不被承认（会话以手动模式启动）。本模板的 `.codebuddy/settings.json` 不设默认模式（终端会话拿到平台的自动模式）；它的 `.vscode/settings.json` 带两个 bypass 键，但当前 VS Code 扩展不读它们（扩展只从你的 VS Code *用户*设置里读 `claudeCode.initialPermissionMode` 与 `claudeCode.allowDangerouslySkipPermissions`，且从不读无前缀的 `allowDangerouslySkipPermissions` 键），所以除非你的用户设置另有说明，VS Code 会话同样以自动模式启动——想在 VS Code 里用 bypass，就在那儿把两个 `claudeCode.` 键都设上——另外 `.codebuddy/settings.json` 附带宽泛的兜底放行（`Bash(*)`、`Edit(**)`、`Write(**)`——7 条通配符规则，不是一份精选清单），所以在手动模式下几乎什么都不询问；自动模式会撤掉这条一刀切的 `Bash(*)`，改为把 shell 命令送进它的分类器。在处理受限数据？加上拒绝规则——见 [TROUBLESHOOTING](TROUBLESHOOTING.md#keep-restricted-data-off-the-model)。
+> **避开提示词疲劳。** 新的交互式会话默认以**自动模式**启动（由分类器把关——多数操作直接执行，有风险的才询问）；自动模式不可用时，手动模式会对每个有风险的工具调用逐次询问。若你仍看到过多询问，切换到**自动接受编辑**模式（一个快捷键；见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)），或运行 `claude --permission-mode acceptEdits`。**Bypass** 模式跳过权限询问与安全检查（拒绝规则仍然生效），Anthropic 把它限定在隔离容器与虚拟机内；它从 CLI 参数、`--settings` 或用户/托管设置（`~/.workbuddy/settings.json`）生效——写在项目 `.codebuddy/settings.json` 里的 bypass 默认值不被承认（会话以手动模式启动）。本模板的 `.codebuddy/settings.json` 不设默认模式（终端会话拿到平台的自动模式）；它的 `.vscode/settings.json` 带两个 bypass 键，但当前 VS Code 扩展不读它们（扩展只从你的 VS Code *用户*设置里读 `claudeCode.initialPermissionMode` 与 `claudeCode.allowDangerouslySkipPermissions`，且从不读无前缀的 `allowDangerouslySkipPermissions` 键），所以除非你的用户设置另有说明，VS Code 会话同样以自动模式启动——想在 VS Code 里用 bypass，就在那儿把两个 `claudeCode.` 键都设上——另外 `.codebuddy/settings.json` 附带宽泛的兜底放行（`Bash(*)`、`Edit(**)`、`Write(**)`——7 条通配符规则，不是一份精选清单），所以在手动模式下几乎什么都不询问；自动模式会撤掉这条一刀切的 `Bash(*)`，改为把 shell 命令送进它的分类器。在处理受限数据？加上拒绝规则——见 [TROUBLESHOOTING](TROUBLESHOOTING.md#keep-restricted-data-off-the-model)。
 
-然后从指南里粘贴[起始提示词](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session)，填上你的项目细节：
+然后从指南里粘贴[起始提示词](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-first-session)，填上你的项目细节：
 
 > 我正要在这个仓库里开始做 **[项目名]**。**[用 2–3 句话描述你的项目。]** 我已经搭好了 WorkBuddy 的学术工作流……请读这些配置文件，并为我的项目做适配。进入计划模式，开始。
 
-[完整指南](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session)里有带全部细节的完整起始提示词。
+[完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-first-session)里有带全部细节的完整起始提示词。
 
 **这一步做了什么：** Claude 读全部配置文件，填入你的项目名、机构与偏好，然后进入承包商模式——规划、实施，并在（你所调用技能的）范围内跑「审读 + 核验」循环。你批准计划、调用一项技能，剩下的由该技能在其范围内处理。
 
@@ -133,7 +134,7 @@ claude
 
 ## 指南
 
-想要一份完整的走查，读[**完整指南**](https://psantanna.com/claude-code-my-workflow/workflow-guide.html)（或看[源码](guide/workflow-guide.qmd)）。
+想要一份完整的走查，读[**完整指南**](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html)（或看[源码](guide/workflow-guide.qmd)）。
 
 它涵盖：
 1. **这套工作流为什么存在**——问题与愿景
@@ -420,7 +421,7 @@ claude
 
 ## 社区与扩展
 
-经济学、能源、政治学与工程学的研究组都 fork 并改造过这套工作流——**2026 年 3 月的调查里有 15+ 个研究组**；此后本仓库已越过 **2,900 次 fork** 与 1,500 颗星（GitHub，2026-08-24——一次 fork 不等于一个研究组，所以调查数字与 fork 数要当成两回事来读）。基础设施（编排器、钩子、质量门禁）无需改动即可迁移。
+经济学、能源、政治学与工程学的研究组都 fork 并改造过这套工作流——**2026 年 3 月的调查里有 15+ 个研究组**；此后**上游仓库**已越过 **2,900 次 fork** 与 1,500 颗星（GitHub，2026-08-24——一次 fork 不等于一个研究组，所以调查数字与 fork 数要当成两回事来读）。基础设施（编排器、钩子、质量门禁）无需改动即可迁移。
 
 **扩展工作流：**
 
@@ -430,7 +431,7 @@ claude
 - **[autoresearch](https://github.com/karpathy/autoresearch)**，作者 Andrej Karpathy——以 `program.md` 为宪制文件的、基于约束的自主研究
 - **[ClaudeCodeTools](https://github.com/aspi6246/ClaudeCodeTools)**——「The Editor」人格：七审顺序式论文审读协议
 
-详细描述、设计原则与更多资源见[指南的生态一节](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-ecosystem)。
+详细描述、设计原则与更多资源见[指南的生态一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-ecosystem)。
 
 ---
 
