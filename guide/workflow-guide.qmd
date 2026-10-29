@@ -264,7 +264,7 @@ git checkout -- README.md      # undo
 
 ```bash
 # Fork this repo on GitHub (click "Fork" on the repo page), then:
-git clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project
+git clone https://github.com/YOUR_USERNAME/Workbuddy-workflow.git my-project
 cd my-project
 ```
 
@@ -629,10 +629,10 @@ Anthropic 那篇博文还提醒了一件有用的事：跑 `/review-paper --peer
 
 | 参考文件 | 什么时候读 |
 |---|---|
-| [`verification-ladder.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/verification-ladder.md) | 你想从头到尾走完 7 级阶梯 --- 给检查器做资格认定、确定性门禁、四层产物阶梯、独立性、解析核验、台账、外部裁判 |
-| [`external-oracle-process.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/external-oracle-process.md) | 你要把论文或证明送给外部前沿模型，需要提示词契约、覆盖率清单与裁定协议 |
-| [`provenance-and-ground-truth.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/provenance-and-ground-truth.md) | 你在移植、复现或升级，而「数字对得上」即将为一条断言背书 |
-| [`release-engineering.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/release-engineering.md) | 你交付的是软件而不是结果 --- 一个包、一个 `.ado`、一件带版本的复现产物 --- 需要提交信息与静默处理的普查、为一次移植冻结的特性矩阵、以哈希声明的继承测试，以及按 commit 固定下游版本 |
+| [`verification-ladder.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/verification-ladder.md) | 你想从头到尾走完 7 级阶梯 --- 给检查器做资格认定、确定性门禁、四层产物阶梯、独立性、解析核验、台账、外部裁判 |
+| [`external-oracle-process.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/external-oracle-process.md) | 你要把论文或证明送给外部前沿模型，需要提示词契约、覆盖率清单与裁定协议 |
+| [`provenance-and-ground-truth.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/provenance-and-ground-truth.md) | 你在移植、复现或升级，而「数字对得上」即将为一条断言背书 |
+| [`release-engineering.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/release-engineering.md) | 你交付的是软件而不是结果 --- 一个包、一个 `.ado`、一件带版本的复现产物 --- 需要提交信息与静默处理的普查、为一次移植冻结的特性矩阵、以哈希声明的继承测试，以及按 commit 固定下游版本 |
 
 另外，一条命令跑完这一切里机械的那一半：
 
@@ -645,7 +645,7 @@ Anthropic 那篇博文还提醒了一件有用的事：跑 `/review-paper --peer
 
 第 11 道，**可移植性回归集**，换了一个问题：前面十道都在回答「这套仓库现在对不对」，它回答「换一台机器之后，答案会不会悄悄变成另一个」。路径分隔符、代码页、行尾、`git ls-files` 对非 ASCII 文件名的引用方式，这些在 macOS 上从不发作，在 Windows 上每一处都能让一道门禁静默失效。本机缺少对应机制而跑不到的用例不会消失，它会被逐条点名，并把整道门禁记成一次**有上限**的通过 —— 跑完了，但只钉住了跑到的那些。
 
-审查发现本身是机器检查而非口头描述的：审阅者输出一个 JSON 数组，由 `scripts/validate-findings.py` 对照 [`finding-schema.json`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/finding-schema.json) 校验。每条发现都必须引用它所违反的**规则**（不引用规则的发现只是意见），并给出一个**失败用例** --- 一个能打破该断言的具体配置，而不是「这里可以更清楚」。发现的 id 是确定性的，所以跨轮审读的去重是精确的，而不是模糊的。
+审查发现本身是机器检查而非口头描述的：审阅者输出一个 JSON 数组，由 `scripts/validate-findings.py` 对照 [`finding-schema.json`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/finding-schema.json) 校验。每条发现都必须引用它所违反的**规则**（不引用规则的发现只是意见），并给出一个**失败用例** --- 一个能打破该断言的具体配置，而不是「这里可以更清楚」。发现的 id 是确定性的，所以跨轮审读的去重是精确的，而不是模糊的。
 
 
 ### 五个可信度问题
@@ -950,7 +950,7 @@ Save findings to: quality_reports/[FILENAME]_report.md
 
 **Fable 层**（别名 `fable`）是上游 Claude Code 的最高层 --- 通过 `/model fable` 或 `best` 别名选择启用，为超出一次性坐席规模的任务而造；它在动手前先调查，并且比小模型更常核验自己的产出。它**不是**任何账号类型的默认值，价格是 Opus 的数倍。**Opus 层**是上游 Claude Code 的默认，也是本模板把审稿人、编辑与核验器路由到的那一层（本平台上写作 `reasoning`）；它的自适应思考始终开启，默认 `medium` 努力档。**Sonnet** 是主力中层；**Haiku** 是快速/机械层。Anthropic 自己的路由建议：从当前 Opus 起步，当在更高 Opus 努力档上的评测仍不达标时再换 Fable。
 
-别名解析**依提供商而异**，而具体版本号的变动比任何指南都快。单一真源是 [`model-versions.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/references/model-versions.md)，它载有当前版本、按提供商分的别名表，以及一个带过期日的 `verified_on` 日期 --- 该过期日一过，`scripts/check-staleness.py` 就让构建失败，而 `scripts/check-model-versions.sh` 会抓出任何被当作当前版本的已弃用版本。**不要在这里硬编码具体版本号。**
+别名解析**依提供商而异**，而具体版本号的变动比任何指南都快。单一真源是 [`model-versions.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/model-versions.md)，它载有当前版本、按提供商分的别名表，以及一个带过期日的 `verified_on` 日期 --- 该过期日一过，`scripts/check-staleness.py` 就让构建失败，而 `scripts/check-model-versions.sh` 会抓出任何被当作当前版本的已弃用版本。**不要在这里硬编码具体版本号。**
 
 **退役留意：**Sonnet 4 与最早的 Opus 4 已于 2026-06-15 退役；当前 Haiku 模型的退役下限是 2026-10-15（见 SSoT）。如果你的环境钉住了模型字符串（`ANTHROPIC_MODEL`、`ANTHROPIC_DEFAULT_*_MODEL`、CI 里硬编码的 ID），请对照 SSoT 复查。**本平台没有「升到某个版本才拿得到某一层」这回事：** 深度只由三档决定（`default` / `lite` / `reasoning`），档位在 `model:` 字段里直接钉住 --- 见 `.codebuddy/rules/model-routing.md`。
 :::
@@ -1055,7 +1055,7 @@ tools: ["Read", "Grep", "Glob"]
 ::: {.callout-warning}
 ## Agent SDK 额度池拆分 --- 2026-06-15
 
-自 2026-06-15 起，`claude -p` 无头子进程调用（`scripts/run-skill-eval.sh` 以及任何以 `-p` 模式调 WorkBuddy 的脚本或例行任务所用）从**独立的月度 Agent SDK 额度池**支取，与交互式额度脱钩。如果一次无头运行因额度耗尽而失败、而你的交互会话却正常，那就是 Agent SDK 池空了。迁移细节见 [TROUBLESHOOTING.md](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md)。
+自 2026-06-15 起，`claude -p` 无头子进程调用（`scripts/run-skill-eval.sh` 以及任何以 `-p` 模式调 WorkBuddy 的脚本或例行任务所用）从**独立的月度 Agent SDK 额度池**支取，与交互式额度脱钩。如果一次无头运行因额度耗尽而失败、而你的交互会话却正常，那就是 Agent SDK 池空了。迁移细节见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md)。
 :::
 
 ## 设置 --- 权限与钩子 {#settings---permissions-and-hooks}
@@ -1090,7 +1090,7 @@ tools: ["Read", "Grep", "Glob"]
 }
 ```
 
-在 Manual 模式下几乎不弹任何提示。Auto 模式去掉一刀切的 `Bash(*)`，把 shell 命令交给它的分类器。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model) 里的 "Keep restricted data off the model"。
+在 Manual 模式下几乎不弹任何提示。Auto 模式去掉一刀切的 `Bash(*)`，把 shell 命令交给它的分类器。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model) 里的 "Keep restricted data off the model"。
 
 **权限模式。** WorkBuddy 有六种权限模式，控制它得到多少自主权：
 
@@ -1271,7 +1271,7 @@ WorkBuddy 有一个自动记忆系统，位于 `~/.workbuddy/projects/[project]/
 
 #### 两层记忆架构（`MEMORY.md` vs 原生自动记忆）
 
-模板把记忆分成两层（见 [`meta-governance.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/meta-governance.md)）：
+模板把记忆分成两层（见 [`meta-governance.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md)）：
 
 - **`MEMORY.md`**（已提交，≤ 200 行）--- 对所有 fork 者都有用的通用经验：工作流模式、设计原则、文档标准、跨领域通用的质量阈值。
 - **原生自动记忆**（`~/.workbuddy/projects/<project>/memory/`，本机存放，永不提交）--- 机器相关与用户相关的经验：TeX 安装怪癖、文件路径、个人档位偏好、工具版本变通。
@@ -1290,7 +1290,7 @@ fork 的用户 `git clone` 之后拿到的是通用的 `MEMORY.md`。他们自�
 4. **证据** --- 它引用了原始事故 / 文件 / 原因吗？
 5. **格式** --- 它遵循 `[LEARN:category] wrong → right` 吗？
 
-多数（5 票中 3 票以上 YES）建议晋升；由用户批准最终挪动。批评者跑在*隔离的独立上下文*里 --- 它们看不见彼此的投票 --- 所以各维度是被独立审的，没有群体思维。批评者用 `lite`（依 [model-routing.md](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/model-routing.md)），因为这项审读偏机械。
+多数（5 票中 3 票以上 YES）建议晋升；由用户批准最终挪动。批评者跑在*隔离的独立上下文*里 --- 它们看不见彼此的投票 --- 所以各维度是被独立审的，没有群体思维。批评者用 `lite`（依 [model-routing.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/model-routing.md)），因为这项审读偏机械。
 
 何时跑：每月做一次记忆维护（设个提醒并在本地会话里跑 --- 它由用户调用、读本机自动记忆，所以定时例行任务跑不了它），分享 fork 之前，或一轮论文/课程交付之后。
 
@@ -1325,13 +1325,13 @@ git 提交记录改了什么，但不记录*为什么*。会话日志填这个�
 >
 > *关闭评论：*3,412 是限制前的计数，在平衡面板筛选之前拷过来的。试过从日志重新推导 --- 与 3,142 一致。在 a1b2c3d 里修好：§1 现在引用筛选后的计数并点名该筛选。已核验：`/audit-reproducibility` 通过该样本量的断言。
 
-**技能。** [`/issues`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/skills/issues/SKILL.md) 让这个习惯变便宜。`/issues file <report>` 把一次审读确认的发现转成 issue（`/review-paper`、`/seven-pass-review` 与 `/adjudicate-review` 在结尾提供它）；`/issues list` 显示手头这项工作还开着什么，并建议下一条接什么；`/issues close 41` 从提到该 issue 的提交起草关闭评论。每一份草稿都给你看，没有你的同意什么都不发。
+**技能。** [`/issues`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/issues/SKILL.md) 让这个习惯变便宜。`/issues file <report>` 把一次审读确认的发现转成 issue（`/review-paper`、`/seven-pass-review` 与 `/adjudicate-review` 在结尾提供它）；`/issues list` 显示手头这项工作还开着什么，并建议下一条接什么；`/issues close 41` 从提到该 issue 的提交起草关闭评论。每一份草稿都给你看，没有你的同意什么都不发。
 
 **每次都查重，不靠良好意愿。** 当同一个问题住在三个地方时，issue 追踪器就不再是记忆了。所以每个新 issue 都走 `scripts/file-issue.py`，它在创建任何东西之前用几种方式搜索未关闭*与*已关闭的 issue --- 标题里最具辨识度的词放在一起搜一次、取前三个词单独搜一次、你补充的任何词、以及该 issue 点名的至多三条文件路径，最多八次搜索 --- 并且在每个找到的候选都被审过之前拒绝创建。issue 正文记录这些搜索与判定。`issue-guard` 钩子拒绝 WorkBuddy 直接发起的裸 `gh issue create`，并指向那个脚本；它只为 `gh` 命令生成，所以会话其余部分不为它付任何成本。
 
 **从清单开始会话（可选）。** 设 `CLAUDE_ISSUES_AT_START=1` --- 放在 `.codebuddy/settings.local.json` 的 `env` 下，只对你本机开启 --- 启动时 `open-issues` 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。
 
-**两点告诫。** 公开仓库上的 issue 就是公开的：把论文工作留在**私有**仓库里，否则未发表的结果与你正在修的弱点任何人都看得见。绝不要把受限数据放进 issue --- 数据使用协议之下的数据，其数值、标识符、路径、截图都不行；抽象地描述问题，把证据留在数据所在之处。这一切背后的规则是 [`issue-ledger.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/issue-ledger.md)：什么该开 issue、一份报告必须带什么、以及关闭评论必须说什么。
+**两点告诫。** 公开仓库上的 issue 就是公开的：把论文工作留在**私有**仓库里，否则未发表的结果与你正在修的弱点任何人都看得见。绝不要把受限数据放进 issue --- 数据使用协议之下的数据，其数值、标识符、路径、截图都不行；抽象地描述问题，把证据留在数据所在之处。这一切背后的规则是 [`issue-ledger.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/issue-ledger.md)：什么该开 issue、一份报告必须带什么、以及关闭评论必须说什么。
 
 ### 一切如何咬合
 
@@ -1713,7 +1713,7 @@ Follow-up skills you invoke yourself afterwards:
 
 从白纸开始写 TikZ 会稳定地产出标签压在箭头上的碰撞，因为编译器不为此告警。模板交付了三层加固：
 
-- **[`templates/tikz-snippets/`](https://github.com/pedrohcgs/claude-code-my-workflow/tree/main/templates/tikz-snippets)** --- 8 个开箱即用的 TikZ 片段（基础 DAG、中介 DAG、两期 DiD、事件研究、时间轴、回归散点、三步流程图、供需）。每一个都在构造上嵌入了预防规则（显式节点尺寸、坐标图、带方位关键词的边标签）。
+- **[`templates/tikz-snippets/`](https://github.com/Sellyew/Workbuddy-workflow/tree/main/templates/tikz-snippets)** --- 8 个开箱即用的 TikZ 片段（基础 DAG、中介 DAG、两期 DiD、事件研究、时间轴、回归散点、三步流程图、供需）。每一个都在构造上嵌入了预防规则（显式节点尺寸、坐标图、带方位关键词的边标签）。
 - **规则 `tikz-prevention.md` + `tikz-measurement.md`** --- 上游的写作规则（P1–P6）与带公式的六遍碰撞协议（贝塞尔深度、字符宽度、0.4 cm 边界间隙）。改编自 Scott Cunningham 的 [MixtapeTools](https://github.com/scunning1975/MixtapeTools)。
 - **[`/new-diagram`](#all-skills) 技能** --- 从画廊搭骨架，编译前跑 P3/P4 预检（`scripts/check-tikz-prevention.py`），调用 `tikz-reviewer` 并要求引用度量，循环到 APPROVED。
 
@@ -1767,7 +1767,7 @@ Phase 4: Only then extend
 在一门课上，我们发现一个广泛使用的 R 包由于一个微妙的设定问题，静悄悄地产出**错误的估计**。这个 bug 在不同脚本里被抓到 3 次。没有复现优先协议，这些错误数字就会被教给博士生。
 :::
 
-**源语言覆盖：** 这个模式与语言无关。模板为 R 优先的项目交付 [`/data-analysis`](#all-skills)，为 Stata 优先的项目交付 [`/stata-replication`](#all-skills)（v1.9.0）（与 `/data-analysis` 完全镜像；同样形状的编号流水线，不同语言；经 `stata-mcp` MCP 服务器执行）。Python 优先的项目遵循同一约定：编号脚本放在 `scripts/python/`，结果写进共享的顶层 `output/`，每种语言都往那里写。对 Stata 用户，[`stata-code-conventions.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md)（v1.9.0）把文件头（`version 18`、`clear all`、`set seed`/`set sortseed`）、编号流水线（00–99）、给 `\input{}` 表格用的 `esttab`、聚类纪律（`reghdfe`）、用 `iebaltab` 做的平衡性、以及 AEA 数据编辑合规都成文了。
+**源语言覆盖：** 这个模式与语言无关。模板为 R 优先的项目交付 [`/data-analysis`](#all-skills)，为 Stata 优先的项目交付 [`/stata-replication`](#all-skills)（v1.9.0）（与 `/data-analysis` 完全镜像；同样形状的编号流水线，不同语言；经 `stata-mcp` MCP 服务器执行）。Python 优先的项目遵循同一约定：编号脚本放在 `scripts/python/`，结果写进共享的顶层 `output/`，每种语言都往那里写。对 Stata 用户，[`stata-code-conventions.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md)（v1.9.0）把文件头（`version 18`、`clear all`、`set seed`/`set sortseed`）、编号流水线（00–99）、给 `\input{}` 表格用的 `esttab`、聚类纪律（`reghdfe`）、用 `iebaltab` 做的平衡性、以及 AEA 数据编辑合规都成文了。
 
 ::: {.callout-note}
 ## 经 `passport.yaml` 做断言溯源（v1.9.0）
@@ -1798,7 +1798,7 @@ Phase 4: Only then extend
 这个数字有一条被声明的 `appears_in` 条目指向那页幻灯片。横向检查在记录的 locator 处打开 `Slides/Methods_Binding.tex`，按两个精度里较粗的那个，把 0.42 对稿件的 0.38 一比，判定该断言失败。YAML 文件里的一行，就是「抓到它」与「教了它一学期」的差别。
 :::
 
-起手文件：[`templates/passport-template.yaml`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/passport-template.yaml)。每篇论文拷一次。模式归属 [Imbad0202/academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 "Material Passport" 概念（为本模板缩小了范围：只做数值断言）。
+起手文件：[`templates/passport-template.yaml`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/templates/passport-template.yaml)。每篇论文拷一次。模式归属 [Imbad0202/academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 "Material Passport" 概念（为本模板缩小了范围：只做数值断言）。
 :::
 
 ## Pattern 6 — 多代理审读 {#pattern-6-multi-agent-review}
@@ -1922,7 +1922,7 @@ Phase 4: QUALITY GATE
 
 一个分叉出去的审阅者在*上下文*上是独立的。它在*文件系统*上并不独立。它仍然握着那份仓库检出，而那份检出里有上一轮的审稿报告、裁判的判定、记录论文每一条数值断言的护照、记录每个检查器被证明能检出什么的台账，以及说明当前构建来自什么的渲染戳记。一边让一个代理「独立审读这个」，一边它又能 `grep` 出答案，那是配了搜索工具的荣誉制。
 
-[`review-fencing.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/review-fencing.md)（v2.5.1，按路径作用于被隔离运行所触及的产物与答案键 --- `*.tex`、`*.qmd`、`master_supporting_docs/`、资格台账、护照、复现与设定日志、审计报告 --- 外加 `claim-verifier` 代理）把这条规则表述成一个派发之前要问的问题：这位审阅者的*环境*若去看会泄露什么 --- 然后把那东西移走，而不是指示它别看。在实践中这意味着：把一份产物副本放在检出之外，用中立文件名（`artifact-a.tex`，而不是 `paper_round3_after_referee_fixes.tex` --- 一个宣告第几轮的文件名，已经报告了上轮查出了什么）；扣留先前的判定；在展示任何别人的发现之前，先记录审阅者自己的读法。隔离适用于那些输出即将被拿去与某物**比对**的审读；而当仓库上下文正是要点时，例如从论文到表格到输出到脚本的跨产物遍历，仓库内审读才是对的。
+[`review-fencing.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/review-fencing.md)（v2.5.1，按路径作用于被隔离运行所触及的产物与答案键 --- `*.tex`、`*.qmd`、`master_supporting_docs/`、资格台账、护照、复现与设定日志、审计报告 --- 外加 `claim-verifier` 代理）把这条规则表述成一个派发之前要问的问题：这位审阅者的*环境*若去看会泄露什么 --- 然后把那东西移走，而不是指示它别看。在实践中这意味着：把一份产物副本放在检出之外，用中立文件名（`artifact-a.tex`，而不是 `paper_round3_after_referee_fixes.tex` --- 一个宣告第几轮的文件名，已经报告了上轮查出了什么）；扣留先前的判定；在展示任何别人的发现之前，先记录审阅者自己的读法。隔离适用于那些输出即将被拿去与某物**比对**的审读；而当仓库上下文正是要点时，例如从论文到表格到输出到脚本的跨产物遍历，仓库内审读才是对的。
 
 ::: {.callout-warning collapse="true"}
 ## 四分钟 vs 九秒
@@ -1982,9 +1982,9 @@ WorkBuddy 能用 `Agent` 工具**同时生成多个代理**。这不限于审读
 
 并行会放大你发出去的任何东西，包括含糊。存在两份模板，是因为同一条指令会以同样两种方式被写坏。
 
-[`templates/executor-contract.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/executor-contract.md) 是一个可派发任务的形状：**目标**、决定什么叫完成的**验收线**、要触碰的确切**路径**、工作必须通过的**门禁**、它必须交回的**产出契约**，以及它被允许**拒绝**的机理。一个不知道验收线的代理会报告成功，因为从任务内部看，没有别的可报告。
+[`templates/executor-contract.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/templates/executor-contract.md) 是一个可派发任务的形状：**目标**、决定什么叫完成的**验收线**、要触碰的确切**路径**、工作必须通过的**门禁**、它必须交回的**产出契约**，以及它被允许**拒绝**的机理。一个不知道验收线的代理会报告成功，因为从任务内部看，没有别的可报告。
 
-[`templates/screening-rubric.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/screening-rubric.md) 覆盖另一种情形 --- 决定哪些候选留下，不管是论文、数据集、设定还是发现。它把**默认判定做成一个被声明的决定，而不是一个常量**：精确优先的短名单默认 EXCLUDE，所以一个候选除非被一条写下来的标准接纳，否则出局；而召回优先的扫描不能这么做，因为一次错误的排除不会给下游留下任何可追的痕迹。两种情形下，每个候选的证据都被记录。它以一张裁定表收尾，外加派发者对少数几个决定做抽查，因为写这份细则的人是唯一能分辨它到底被执行了、还是只是被引用了的人。而且一次扇出是作为整波裁定的 --- 把每一份返回都收进来、一起对账、然后决定 --- 而不是哪个代理先完工就先按它的办。
+[`templates/screening-rubric.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/templates/screening-rubric.md) 覆盖另一种情形 --- 决定哪些候选留下，不管是论文、数据集、设定还是发现。它把**默认判定做成一个被声明的决定，而不是一个常量**：精确优先的短名单默认 EXCLUDE，所以一个候选除非被一条写下来的标准接纳，否则出局；而召回优先的扫描不能这么做，因为一次错误的排除不会给下游留下任何可追的痕迹。两种情形下，每个候选的证据都被记录。它以一张裁定表收尾，外加派发者对少数几个决定做抽查，因为写这份细则的人是唯一能分辨它到底被执行了、还是只是被引用了的人。而且一次扇出是作为整波裁定的 --- 把每一份返回都收进来、一起对账、然后决定 --- 而不是哪个代理先完工就先按它的办。
 
 ::: {.callout-note collapse="true"}
 ## 二十篇里有十九篇看着都相关
@@ -2004,10 +2004,12 @@ WorkBuddy 能用 `Agent` 工具**同时生成多个代理**。这不限于审读
 - 代理是**独立的** --- 它们看不见彼此的活。如果任务 B 依赖任务 A 的输出，它们必须串行。
 - 每个代理消耗自己的上下文窗口。对非常大的文件，串行处理可能更可靠。
 
+::: {#cost-conscious-parallelism}
 ::: {.callout-tip}
 ## 成本意识的并行
 
 并行代理会成倍放大 token 用量。对成本敏感的任务，把贵活（`reasoning` 档的代理）串行跑，把便宜活（`default` 档的代理）并行跑。编排器不会替你做这件事：一个扇出型技能会把它的所有透镜一波并行发出去，不管它们是什么档（在 `/slide-excellence` 里，`reasoning` 档的 quarto-critic、tikz-reviewer 与 domain-reviewer 与 `default` 档的透镜一起跑）。要省钱，就把 `reasoning` 档的透镜放到另一次更晚的调用里跑。
+:::
 :::
 
 ### Pattern 10 — 研究探索工作流 {#pattern-10-exploration}
@@ -2769,7 +2771,7 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 
 **为何本模板需要它：** v1.9.0 为 Stata 优先的项目加了 [`/stata-replication`](#sec-appendix)，该技能依赖这个 MCP 服务器。R 优先的项目（本模板最初的关注点）继续用 [`/data-analysis`](#sec-appendix)；两个技能是平行的 --- 流水线形状相同，只是源语言不同。原始复现包用 Stata 写的 AEA 投稿，就是它的典型用例。
 
-端到端的 Stata 工作流见 [`.codebuddy/rules/stata-code-conventions.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md)（文件头脚手架、带编号的流水线、esttab 表格、聚类纪律、AEA Data Editor 合规）。
+端到端的 Stata 工作流见 [`.codebuddy/rules/stata-code-conventions.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md)（文件头脚手架、带编号的流水线、esttab 表格、聚类纪律、AEA Data Editor 合规）。
 
 ## ClaudeCodeTools：编辑人格
 
@@ -2871,7 +2873,7 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 3. 必要时更新 SCSS 里的 CSS 类名。
 4. 调整 `beamer-translator` 的环境映射，与新类名对应。
 
-**配色契约。** 核心配色名（`primary-blue`、`primary-gold`、`highlight-yellow`、`light-bg`、`jet`）必须两边都存在。`templates/tikz-snippets/` 里的片段目前把颜色内联写死，以便独立编译；但真正 `\input{header}` 的讲义会自动继承配色。完整契约与 TikZ 样式库见 [`Preambles/README.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/Preambles/README.md)。
+**配色契约。** 核心配色名（`primary-blue`、`primary-gold`、`highlight-yellow`、`light-bg`、`jet`）必须两边都存在。`templates/tikz-snippets/` 里的片段目前把颜色内联写死，以便独立编译；但真正 `\input{header}` 的讲义会自动继承配色。完整契约与 TikZ 样式库见 [`Preambles/README.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/Preambles/README.md)。
 
 ## 第 4 步：创建自定义技能 {#sec-create-skills}
 

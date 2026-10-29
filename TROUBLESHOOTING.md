@@ -46,7 +46,7 @@ claude mcp add stata-mcp --scope user -- uvx stata-mcp
 
 ### Claude 为每个工具反复询问权限
 
-在手动模式下，多数未被允许清单覆盖的编辑与 shell 命令，Claude 都会先问。从监管最多到最少，选项中（见指南的[权限模式一节](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
+在手动模式下，多数未被允许清单覆盖的编辑与 shell 命令，Claude 都会先问。从监管最多到最少，选项中（见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)）：
 
 - **自动模式**——新的会话默认就以它启动：分类器批准常规操作，拦住或询问有风险的操作。
 - **接受编辑**——`Shift+Tab`，或 `claude --permission-mode acceptEdits`：自动批准文件编辑与工作目录内的常见文件系统命令。
@@ -402,5 +402,5 @@ CONTROL 证明它不是「拒绝一切」。但如果一条用例你以为是 PI
 
 ## 还是卡住？
 
-- 读[指南的故障排查一节](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#troubleshooting)，有更长的恢复场景。
-- 到 <https://github.com/pedrohcgs/claude-code-my-workflow/issues> 开个 issue——缺陷报告模板会问我们要的那些环境细节。
+- 读[指南的故障排查一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#troubleshooting)，有更长的恢复场景。
+- 到 <https://github.com/Sellyew/Workbuddy-workflow/issues> 开个 issue——缺陷报告模板会问我们要的那些环境细节。

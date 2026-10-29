@@ -190,4 +190,4 @@ dir.create("output/analysis", recursive = TRUE, showWarnings = FALSE)
 2. 启动 Monitor，命令跟踪该日志并过滤里程碑与失败，例如 `tail -f output/03_analyze.log | grep --line-buffered -E "Coefficients table written|Error|Execution halted"`。Monitor 没有 job-id 参数：它自己 `command` 的 stdout 就是事件流。`tail -f` 永不退出，所以把 `timeout_ms` 设得高于预期运行时长（或用 `persistent: true`），并在任务结束后用 TaskStop 停掉监视。
 3. 依据流里露出的信息决定继续还是纠正方向。
 
-这样既避免了轮询循环这一反模式（`sleep 30; check; sleep 30; check`），也避免把缓存耗在空等上。与指南的 [Cost-Conscious Parallelism](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#cost-conscious-parallelism) 一节配合使用时尤其有用。
+这样既避免了轮询循环这一反模式（`sleep 30; check; sleep 30; check`），也避免把缓存耗在空等上。与指南的 [Cost-Conscious Parallelism](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#cost-conscious-parallelism) 一节配合使用时尤其有用。
