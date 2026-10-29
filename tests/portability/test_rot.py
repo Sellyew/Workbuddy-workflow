@@ -314,7 +314,16 @@ def win_fire(command, cwd=None, project=None):
         try:
             mod.main()
         except Exception:
-            pass                     # the hook fails open: nothing on stdout
+            # The hook fails open by design: a crash leaves stdout empty, which
+            # reads exactly like "allowed". That equivalence is why a broken
+            # simulation and a real hole look identical from the assertion. On
+            # CI the crash (and the resolved scope) goes to the real stderr so
+            # the log distinguishes the two; local runs stay quiet.
+            if os.environ.get("WB_WINSIM_DEBUG") or os.environ.get("CI"):
+                import traceback
+                traceback.print_exc(file=sys.__stderr__)
+                print(f"[winsim] _PROJECT={getattr(mod, '_PROJECT', '<none>')!r} "
+                      f"_CWD={getattr(mod, '_CWD', '<none>')!r}", file=sys.__stderr__)
         return sys.stdout.getvalue()
     finally:
         sys.stdin, sys.stdout = saved[0], saved[1]
