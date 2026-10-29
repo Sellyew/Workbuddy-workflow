@@ -120,6 +120,26 @@ WorkBuddy 桌面客户端不提供命令行入口。要在脚本、cron 或例�
 
 ## Git / 钩子 / CI
 
+### 桌面通知不出现
+
+先看它到底有没有被触发过：
+
+```bash
+tail -5 quality_reports/session_logs/notifications.log
+```
+
+文件里有行 = 钩子跑过了（每一行带时间与原始 title/message），那么问题在终端/通知中心，
+不在钩子。文件是空的或不存在 = 钩子没跑到，按顺序查两段：
+
+1. **命令到没到达钩子文件。** `python scripts/check-hooks.py` 末尾会打印
+   `[OK] 注册接线：…（12 条）`。断言失败时它会指名哪条事件、哪条命令。这一步查的是
+   `hook-runner.sh` 的仓库根与解释器分派——2026-10-30 之前它是坏的，而 `notify.sh` 被
+   `check_wiring()` 跳过，所以两种坏法都没人发现。
+2. **平台发没发 `Notification`。** 这一层目前仍需运行时证据；`platform-facts.md` 的钩子表
+   记着它的级别。
+
+想单独验一次而不弹窗：`NOTIFY_DRY_RUN=1` 跳过桌面通知、保留日志行。
+
 ### 钩子脚本 permission denied
 
 `chmod +x .codebuddy/hooks/*.py .codebuddy/hooks/*.sh`。`./scripts/validate-setup.sh` 也会报告不可执行的钩子。

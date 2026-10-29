@@ -89,7 +89,7 @@
     },
     "evidence": {
       "type": "string",
-      "description": "what was actually inspected \u2014 a quote, a computed value, a command and its output"
+      "description": "what was actually inspected \u2014 the source's own words in double quotes (12+ characters), a computed value, a command and its output. A report in which no finding quotes anything fails --check-quotes: prose evidence leaves the invented-quotation check with nothing to compare"
     },
     "failing_case": {
       "type": "string",

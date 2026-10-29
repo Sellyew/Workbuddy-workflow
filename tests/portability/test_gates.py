@@ -434,6 +434,71 @@ class FindingIds(Tmp):
         self.assertIn("duplicate of findings[0]", out)
 
 
+class FindingsQuoteCoverage(Tmp):
+    """quotes-check-vacuous-pass: a quote gate that checked nothing reported OK.
+
+    Evidence written as prose extracts no quotation, so the gate had no input: it
+    printed "quotes OK (0 quote(s) checked)" and exited 0. Beating the invented-
+    quotation check was therefore cheaper by not quoting than by lying. The two
+    zeros are now different: no quote written is a failure, every quote left
+    unchecked because its file could not be read is still a report, not a failure.
+    """
+
+    def _report(self, name, *evidence):
+        rows = [dict(FINDING, line=i + 1, evidence=e) for i, e in enumerate(evidence)]
+        _write(self.tmp, name, json.dumps(rows, ensure_ascii=False))
+        return self.tmp, os.path.join(self.tmp, name)
+
+    def test_prose_evidence_fails_instead_of_passing_vacuously(self):
+        # quotes-check-vacuous-pass
+        _write(self.tmp, "paper.md", "The estimated effect is large.\n")
+        _, p = self._report("f.json", "The sentence on line 1 overstates the effect.")
+        rc, out = _run([sys.executable, os.path.join(SCRIPTS, "validate-findings.py"),
+                        "--check-quotes", p, "--root", self.tmp])
+        self.assertEqual(rc, 1, out)
+        self.assertIn("0 quotation(s) to check", out)
+        self.assertNotIn("quotes OK", out)
+
+    def test_one_quoted_finding_out_of_two_passes_but_reports_coverage(self):
+        # Control, and the deliberate limit: the gate fails a report that quotes
+        # nothing, not a report that leaves one finding unquoted. It says how many.
+        _write(self.tmp, "paper.md", "The estimated effect is large \u2014 roughly 12 percent.\n")
+        _, p = self._report(
+            "f.json",
+            'Written: "effect is large \u2014 roughly 12 percent".',
+            "The second finding is stated in prose only.")
+        rc, out = _run([sys.executable, os.path.join(SCRIPTS, "validate-findings.py"),
+                        "--check-quotes", p, "--root", self.tmp])
+        self.assertEqual(rc, 0, out)
+        self.assertIn("1 of 2 finding(s) quoted", out)
+        self.assertIn("no quotation: findings[1]", out)
+
+    def test_unreadable_source_stays_a_report_not_a_failure(self):
+        # Control: the other zero. A binary file leaves its quotes unchecked, and a
+        # host without poppler has the same shape for PDFs — failing here would fail
+        # every review on that machine, which is not what the vacuous-pass fix means.
+        _write(self.tmp, "scan.bin", b"\x00\x01\x02binary, not text\x00")
+        _, p = self._report("f.json", 'The line reads "a quotation nobody can read here".')
+        with open(p, encoding="utf-8") as f:
+            rows = json.load(f)
+        rows[0]["file"] = "scan.bin"
+        _write(self.tmp, "f.json", json.dumps(rows, ensure_ascii=False))
+        rc, out = _run([sys.executable, os.path.join(SCRIPTS, "validate-findings.py"),
+                        "--check-quotes", p, "--root", self.tmp])
+        self.assertEqual(rc, 0, out)
+        self.assertIn("left unchecked", out)
+
+    def test_empty_report_is_not_a_vacuous_pass(self):
+        # Control: zero findings is a clean manuscript, not a review that dodged the
+        # check. Nothing to quote is different from refusing to quote.
+        _write(self.tmp, "paper.md", "Clean.\n")
+        _, p = self._report("f.json")
+        rc, out = _run([sys.executable, os.path.join(SCRIPTS, "validate-findings.py"),
+                        "--check-quotes", p, "--root", self.tmp])
+        self.assertEqual(rc, 0, out)
+        self.assertIn("quotes OK (0 quote(s) checked)", out)
+
+
 class FindingsEncoding(Tmp):
     def test_fill_then_check_quotes_on_a_windows_code_page(self):
         # validate-findings-locale-read: the report and stdin were read, and the filled

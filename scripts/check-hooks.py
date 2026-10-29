@@ -236,8 +236,8 @@ def run_case(case) -> tuple[str, str, str]:
     return PASS, f"判定为 {verdict}", detail
 
 
-def check_wiring() -> list:
-    """每条注册在 settings.json 里的命令，必须真的到达它的 hook 文件。
+def check_wiring() -> tuple:
+    """(问题列表, 检查的命令数)。每条注册在 settings.json 里的命令，必须真的到达它的 hook 文件。
 
     2026-10-30 发现的缺陷：hook-runner.sh 用 `SCRIPT_DIR/../..` 推导仓库根，
     而它自己位于 `<repo>/.codebuddy/hooks/lib/`，于是 ROOT 停在 `.codebuddy`，
@@ -248,31 +248,67 @@ def check_wiring() -> list:
     """
     import json as _json
     import subprocess as _sp
+    import tempfile as _tf
 
     settings = HOOK_DIR.parent / "settings.json"
     try:
         data = _json.loads(settings.read_text(encoding="utf-8"))
     except Exception as exc:                       # noqa: BLE001
-        return [f"读不到 {settings}: {exc}"]
+        return [f"读不到 {settings}: {exc}"], 0
 
     repo_root = str(HOOK_DIR.parent.parent)
-    bad = []
+    bad, seen = [], 0
     for event, entries in (data.get("hooks") or {}).items():
         for entry in entries:
             for hook in entry.get("hooks", []):
                 cmd = hook.get("command", "")
-                if "notify.sh" in cmd:             # 会真的弹桌面通知
-                    continue
+                seen += 1
+                # notify.sh used to be skipped here ("it pops a desktop
+                # notification"), which left the only shell hook in the tree
+                # outside the wiring check — and it was being handed to Python on
+                # every fire. NOTIFY_DRY_RUN skips the pop; NOTIFY_LOG_DIR moves the
+                # trace out of the developer's own session log. Do NOT redirect
+                # CODEBUDDY_PROJECT_DIR for this: the registered command builds the
+                # runner's path from it, so the runner is not found, bash says
+                # "No such file", no known marker matches — and the check reports
+                # green without ever reaching the hook. That false green is how the
+                # first version of this function passed a deliberately broken runner.
+                is_notify = "notify.sh" in cmd
+                env = dict(os.environ, NOTIFY_DRY_RUN="1")
+                tmpdir = None
+                if is_notify:
+                    tmpdir = _tf.mkdtemp()
+                    env["NOTIFY_LOG_DIR"] = tmpdir
                 try:
                     proc = _sp.run(["bash", "-c", cmd], input="{}", text=True,
-                                   capture_output=True, timeout=90, cwd=repo_root)
+                                   capture_output=True, timeout=90, cwd=repo_root, env=env)
                 except Exception as exc:           # noqa: BLE001
                     bad.append(f"{event}: 无法执行 → {exc}")
+                    if tmpdir:
+                        import shutil as _sh
+                        _sh.rmtree(tmpdir, ignore_errors=True)
                     continue
                 err = proc.stderr or ""
-                if "hook 文件不存在" in err or "未找到可用的 Python" in err:
-                    bad.append(f"{event}: {err.strip().splitlines()[0]}")
-    return bad
+                if is_notify:
+                    # A run that reached the hook leaves a line behind. Silence with
+                    # exit 0 is what a mis-dispatched hook looks like from outside,
+                    # so the trace is the only positive evidence of "it ran".
+                    import shutil as _sh
+                    log = os.path.join(tmpdir, "notifications.log")
+                    if not (os.path.exists(log) and os.path.getsize(log) > 0):
+                        bad.append(f"{event}: notify.sh 没有留下日志行——命令没有真正到达钩子")
+                    _sh.rmtree(tmpdir, ignore_errors=True)
+                # The second defect of the same day: a runner that dispatched every
+                # hook to Python, so notify.sh died on a SyntaxError. Both shapes
+                # reach the checked hook and both leave the hook unrun, so both are
+                # failures here — otherwise "green" means "the interpreter error
+                # printed to a stream nobody reads".
+                marks = ("hook 文件不存在", "未找到可用的 Python", "SyntaxError",
+                         "Traceback (most recent call last)", "无法判断")
+                hit = next((m for m in marks if m in err), None)
+                if hit:
+                    bad.append(f"{event}: {err.strip().splitlines()[0] if err.strip() else hit}")
+    return bad, seen
 
 
 def main() -> int:
@@ -312,15 +348,22 @@ def main() -> int:
             for line in detail.splitlines():
                 print(f"        | {line}")
 
-    print("-" * 96)
-    print(f"PASS {counts[PASS]}   FAIL {counts[FAIL]}   SKIP {counts[SKIP]}")
-
-    wiring = check_wiring()
+    # Wiring runs before the summary line, so its failures are counted in it. It
+    # is also *printed* when it passes: a check that says nothing on success is
+    # indistinguishable from a check that did not run, which is the whole reason
+    # this function exists.
+    wiring, wired = check_wiring()
     if wiring:
+        counts[FAIL] += len(wiring)
         print(f"\n[FAIL] 注册接线：{len(wiring)} 条命令到不了 hook 文件")
         for line in wiring:
             print(f"  {line}")
-        counts[FAIL] += len(wiring)
+    else:
+        print(f"\n[OK] 注册接线：settings.json 里每条命令都到达了它的 hook 文件"
+              f"（{wired} 条）")
+
+    print("-" * 96)
+    print(f"PASS {counts[PASS]}   FAIL {counts[FAIL]}   SKIP {counts[SKIP]}")
 
     if counts[FAIL]:
         print("\n失败明细：")
@@ -331,9 +374,9 @@ def main() -> int:
                 print(f"  输出：{detail}")
         return 1
 
-    print("\n全部通过。注意：本测试器不覆盖需要真实 shell 的 "
-          "hook-runner.sh 与 notify.sh，"
-          "也不证明 hook 已被平台在正确事件上触发——后者见运行时验收记录。")
+    print("\n全部通过。本测试器覆盖两层：cases 直接调用 hook 文件（逻辑），"
+          "注册接线逐条执行 settings.json 里的命令（钩子是否被接上、是否交给了"
+          "正确的解释器）。它仍不证明平台会在正确的事件上触发——后者见运行时验收记录。")
     return 0
 
 

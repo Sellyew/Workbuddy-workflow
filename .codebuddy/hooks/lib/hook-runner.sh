@@ -48,7 +48,23 @@ if [ ! -f "$HOOK_PATH" ]; then
   exit 0
 fi
 
-# --- 4. 解释器探测 ---
+# --- 4. 解释器分派：按扩展名，不看内容 ---
+# This used to be `exec $PY` for everything, which handed notify.sh — a bash
+# script — to Python, and every Notification died on a SyntaxError nobody read.
+# A runner that can only execute one language silently vetoes every hook written
+# in another, so the extension decides and an unknown extension is reported
+# rather than guessed.
+case "$HOOK" in
+  *.sh)
+    if ! command -v bash >/dev/null 2>&1; then
+      echo "hook-runner: $HOOK 是 shell 脚本，但找不到 bash；已跳过。" >&2
+      exit 0
+    fi
+    exec bash "$HOOK_PATH" "$@"
+    ;;
+esac
+
+# --- 5. 解释器探测（Python hooks）---
 # 顺序：显式指定 > python > python3 > py -3
 # 每一项都要真实跑一次 import sys 才算可用。
 PY=""
@@ -66,5 +82,12 @@ if [ -z "$PY" ]; then
   exit 0
 fi
 
-# --- 5. 转发 stdin，执行 hook ---
+case "$HOOK" in
+  *.py|*.pyw) ;;
+  *)
+    echo "hook-runner: 无法判断 $HOOK 该用哪个解释器（只认 .py / .sh）；已按 Python 执行。" >&2
+    ;;
+esac
+
+# --- 6. 转发 stdin，执行 hook ---
 exec $PY "$HOOK_PATH" "$@"
