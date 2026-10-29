@@ -136,10 +136,10 @@ Apply where: <which future situations would benefit>
 ✓ Checkpoint saved: quality_reports/checkpoints/YYYY-MM-DD_<slug>.md
   Branch: <branch>     Status: <in_progress|paused|ready-to-merge>
   Active plan: <path or none>     Open questions: <count>
-  Resume: the next fresh `claude` here receives this checkpoint once from the session-handoff
-          hook (within 7 days, unless a newer checkpoint or /compress-session note is written
-          first). After that, or in `claude --continue` (which does not deliver it), tell Claude
-          to read this file or paste its "Resume prompt".
+  Resume: 下一次在同一个目录里新建任务时，会话交接钩子会把这份检查点递过去一次
+          （7 天内有效，除非期间又写了更新的检查点或 /compress-session 注记）。
+          若你是接着旧任务继续聊而不是新建任务，钩子不会递送 —— 直接让 WorkBuddy
+          读这个文件，或粘贴它的 "Resume prompt"。
 ```
 
 如果提议过记忆候选，说明用户接受了哪几条（若有）。
@@ -162,7 +162,7 @@ Apply where: <which future situations would benefit>
 3. 记录：分支 `feat/v1.8.0-polisci-apr2026`，领先 main 4 个提交，改动 8 个文件。
 4. 写 `quality_reports/checkpoints/2026-04-27_v180-polisci.md`，文件指针指向写了一半的 `methods-referee.md` 和尚未开工的 `journal-profiles.md` 政治学板块。
 5. 提议 1 条 `[LEARN:scope]` 候选条目，关于学科广度的线性成本。
-**结果：** 下一次会话：开一个全新的 `claude` —— 交接钩子会把 `quality_reports/checkpoints/2026-04-27_v180-polisci.md` 交给它 —— 然后从动作 1 开始。
+**结果：** 下一次会话：新建一个任务 —— 交接钩子会把 `quality_reports/checkpoints/2026-04-27_v180-polisci.md` 交给它 —— 然后从动作 1 开始。
 
 ### 示例 2 —— 中途切换模型
 **用户说：** "I want to switch to Sonnet for the cheap doc edits — checkpoint first"

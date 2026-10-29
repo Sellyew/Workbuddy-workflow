@@ -580,7 +580,7 @@ class ValidateSetup(Tmp):
         _write(self.repo, ".codebuddy/hooks/guard.py", "print()\n", mode=0o644)     # run as `python3 <file>`
         _write(self.repo, ".codebuddy/hooks/notify.sh", "#!/usr/bin/env bash\n", mode=0o755)
         _git(self.repo, "init", "-q")
-        stubs = _bin(self.tmp, claude=self.STUB, xelatex=self.STUB, quarto=self.STUB, R=self.STUB, gh=self.STUB)
+        stubs = _bin(self.tmp, xelatex=self.STUB, quarto=self.STUB, R=self.STUB, gh=self.STUB)
         self.path = stubs + os.pathsep + os.environ.get("PATH", "")
 
     def setup_out(self, cwd):
