@@ -6,6 +6,64 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## Unreleased — 平台事实与归属收尾
+
+### Fixed — 命令不再指向本平台不存在的入口
+
+- **MCP 装法**：`claude mcp add --scope user` 在四处出现（`TROUBLESHOOTING`、
+  `stata-replication` 技能、指南的附录与「扩展」节）。本平台的入口是
+  「插件 → MCP 服务器 → 配置 MCP」，落盘在 `~/.workbuddy/mcp.json`（用户级）或
+  `<项目>/.workbuddy/mcp.json`（项目级），**没有 `--scope`**。四处改成真实入口 +
+  可粘贴的 `mcpServers` 片段。`stata-code-conventions.md` 原先只写「上游命令，本平台
+  无对应机制」——那句话没说错，但读完不知道该怎么办，现在给了路径。
+- **无头运行**：指南的能力表把「CLI/无头模式」列成本平台能力，并给出 `claude -p`。
+  桌面客户端没有命令行；无头来自**另装的** CodeBuddy Code CLI（`codebuddy -p`，配置
+  目录 `~/.codebuddy`，与桌面端分开）。指南新增一节「无头运行」交代这件事、它的
+  安装方式，以及本仓库唯一依赖它的 `scripts/run-skill-eval.sh` 不参与任何门禁。
+  同时删掉「Agent SDK 额度池 2026-06-15 拆分」那条断言：那是上游产品的计费事实，
+  本仓库无法核验，改名保留等于把没核验的强断言搬到另一个产品上。
+- **权限模式与标志**：`--permission-mode`、`claudeCode.initialPermissionMode` 一类命令行
+  与 VS Code 扩展的开关，在指南与 `TROUBLESHOOTING` 里改成「在模式选择里切」。六层权限
+  栈一节现在明说：**本平台不解析那套层栈**，只读 `.codebuddy/settings.json` 的 `hooks`，
+  那张表保留作对照——它解释的是「照上游文档改配置为什么没反应」。
+- **会话续接**：`claude --continue` / `--resume`（指南、`plan-first-workflow` 规则、
+  `checkpoint` 技能输出模板）改成「点任务卡片继续 / 新建任务」。
+- **`claude agents` / `plugin eval` / `claude --version`**：标为上游 CLI 能力，并说明
+  本平台用什么替代（任务列表、`run-skill-eval.sh`、「关于」页）。
+- **`CLAUDE.local.md`**、`templates/passport-template.yaml` 的 `.claude/rules/` 两条死路径。
+
+### Fixed — 假开关与自相矛盾的说明
+
+- **删除 `.vscode/settings.json`**。它是上游 v1.8.0 加的两个 Claude Code VS Code 扩展键；
+  本平台引擎零次读取它，本机也没有对应扩展。此前 README 与两处 `TROUBLESHOOTING`
+  为它写了道歉式说明——发布一个已知无效的开关，比不发布更糟。
+- **指南里的受保护路径**从 `.claude` 改成 `.codebuddy`（旧信任根 `.claude` 仍受保护，
+  迁移期双保护，已注明）。同一仓库此前两处说法不一致。
+- **`nightly-repro-check.sh`** 头部自称「不需要 Claude」，下一行又叫你去 Claude Code 里跑；
+  改成 WorkBuddy。
+
+### Changed — 评测脚本
+
+- `scripts/run-skill-eval.sh` 不再硬编码 `claude`：按 `EVAL_CLI` → `codebuddy` → `cbc` →
+  `claude` 探测，四个标志（`-p`、`--disallowedTools`、`--output-format text`、
+  `--setting-sources user`）一个不改。找不到时以 `2` 退出并打印真实安装命令。
+  **本机未安装 CLI，真实调用未验证**；新增 4 个桩测试钉住 argv 契约与探测优先序。
+- 同一脚本结尾的 `python3` 换成探测（Windows 的 Git Bash 只有 `python`）——那一行原本
+  会让整次运行以 127 结束。
+
+### Changed — 归属与引用
+
+- `CITATION.cff` 只改 `message` 与 `abstract` 首句：声明这是中文移植版、个人学习用途，
+  引用请引原始作品。作者、`repository-code`、`url`、`version` 不动——它们此刻指的是
+  上游 v2.6.0，内部自洽；把作者改成自己会让引用按钮指向一个原作者并不拥有的仓库。
+- `.github/CODE_OF_CONDUCT.md` 的举报渠道从上游作者的个人站点改到 GitHub 私密通道。
+- 落地页与 `README`「由来」补上缺失的上游仓库链接与「个人学习用移植版」说明；
+  两处第一人称（代原作者发言）改为中性表述。
+- `LICENSE` 不动：MIT 版权行是原作者的，本仓库不追加第二行。
+- 仓库 `description` 与 `homepage` 从空改为实际值。
+
+---
+
 ## v3.0.0 — 2026-10-29（WorkBuddy 迁移基线）
 
 **平台迁移版本。** 本版本把整套科研 Harness 从 Claude Code 的 `.claude/` 搬到腾讯
