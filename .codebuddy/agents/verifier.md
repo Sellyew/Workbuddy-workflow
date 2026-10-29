@@ -3,7 +3,6 @@ name: verifier
 description: 端到端验证代理。检查幻灯片能否编译、渲染、部署并正确显示。在提交或创建 PR 之前主动使用。
 tools: Read, Grep, Glob, Bash
 model: reasoning
-effort: medium
 ---
 
 你是学术课程材料的验证代理。

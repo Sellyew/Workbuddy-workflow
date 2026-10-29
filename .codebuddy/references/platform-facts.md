@@ -83,14 +83,37 @@
 | 原生定时 | automations：一次性（`scheduledAt`）与循环（RRULE），跑在**指定的工作目录**，不是云端全新克隆 | L3 | 平台原生能力，本会话工具面可见 | 2026-10-30 |
 | `/schedule` / Routines / `CronCreate` | 上游机制，本平台**没有对应入口** | ⏳ 待测 | 尚未在引擎内定位，先按「未观测」处理 | — |
 
-## 已知不一致（台账查出来的，还没处理）
+## 已知不一致
 
-1. **16 个 agent 文件仍带 `effort:`**（10 `high` / 7 `medium` / 1 `low`），而
-   [`model-routing.md`](../rules/model-routing.md) 第 10、36 行明写「本平台没有 effort 字段」，
-   `INERT_FIELDS` 也这么认定，`normalize-model-tiers.py` 对技能已经在删它、对代理没删。
-   [`agent-fleet.md`](agent-fleet.md) 的「投入」一列整列建立在这个字段上。
-   一个看起来像配置、实际不改变行为的键，比没有这个键更糟——与 v3.0.1 删 `.vscode/settings.json`
-   是同一条理由。**待办**：删字段 + 重写那一列。
+### 已处理
+
+1. ~~18 个 agent 文件带 `effort:`~~ —— **2026-10-30 已删**。`normalize-model-tiers.py`
+   现在对代理与技能一视同仁（此前代理走 `drop_effort=False` 分支，留着这个字段）。
+   同时重写了 [`agent-fleet.md`](agent-fleet.md)：四节标题从「Opus 层 / Sonnet 层，effort: X」
+   改成三档，删掉「投入」一列，并写明 `default` 内没有强度旋钮、审读与应用两组现在同档。
+   一并修掉三处把它当活字段用的地方：`templates/skill-template.md` 的字段表、
+   `new-skill` 的 frontmatter 清单、`deep-audit` 的模型分工（那段还提到本平台没有的
+   「Fable 层」与「先加努力度」）。**教训**：`model-routing.md` 早在迁移时就写对了
+   （「本平台没有 effort 字段」），错的是它周围没人去删字段——一条正确的规则，挡不住
+   三个仍然照旧写的文件。
+
+### 未处理
+
+2. **[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制**（`/schedule`、
+   Routines、`CronCreate`、claude.ai 连接器）。替代物是 automations，但语义不同：上游例程跑在
+   云端全新克隆上、看不到本地未提交数据；automation 跑在指定 cwd 里。原文的核心论断
+   （「云端例程够不到你的数据目录」）在替代物上可能正好相反。**待办**：先实测 automation 的
+   可见范围，再重写。
+3. **`README.md`「2026 年的能力」还剩三条未核的上游断言**：`worktree.baseRef` 的
+   `fresh` / `head`、内置技能清单（`/fewer-permission-prompts`、`/team-onboarding`、
+   `/autofix-pr`、`/powerup`、Ultraplan、`/loop`）、以及「高级代理配置」里的 `maxTurns`。
+   其中 `effort`、`effort.level` 与五档权限三处已在 2026-10-30 按本台账改正。
+   **待办**：逐条落到 L0–L3，核不了就删。
+4. **技能级 `model:` 两处说法相反。** [`model-routing.md`](../rules/model-routing.md)
+   说「技能用同样的字段在 `SKILL.md` 的 frontmatter 里设定」，而
+   `check-spec-conformance.py` 把 `model` 列在 `INERT_FIELDS` 里、会对写了它的技能发
+   「无对应语义」告警。目前没人被坑到——63 个技能里 0 个写 `model:`——但两处必须统一。
+   **待办**：用一次带 `model:` 的技能实测它是否影响运行时，再改错的那一边。
 2. **[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制**（`/schedule`、
    Routines、`CronCreate`、claude.ai 连接器）。替代物是 automations，但语义不同：上游例程跑在
    云端全新克隆上、看不到本地未提交数据；automation 跑在指定 cwd 里。原文的核心论断

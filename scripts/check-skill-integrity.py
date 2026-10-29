@@ -479,11 +479,16 @@ RULE_KEYWORDS: dict[str, list[str]] = {
     "post-flight-verification.md": ["claim-verifier", "Post-Flight"],
     "summary-parity.md": [],  # empty = explicitly skipped; applies to edits
     # empty = explicitly skipped. model-routing governs the OPTIONAL `model:`
-    # and `effort:` frontmatter fields, and "inheritance is fine" is a
-    # documented, correct choice for most skills — so there is no keyword a
-    # conforming SKILL.md must contain, and any non-empty list here would fail
-    # 59 of 60 skills for obeying the rule. Enforced instead by
-    # check-model-versions.sh (the tier NAMES stay current) and by review.
+    # frontmatter field, and "inheritance is fine" is a documented, correct
+    # choice for most skills — so there is no keyword a conforming SKILL.md
+    # must contain, and any non-empty list here would fail 59 of 60 skills for
+    # obeying the rule. Enforced instead by check-model-versions.sh (the tier
+    # NAMES stay current) and by review.
+    # (2026-10-30: this comment used to say "`model:` and `effort:`". `effort:`
+    # is not a field on this platform at all — the agent metadata schema has no
+    # slot for it and the Effect Struct drops unknown keys, so there is nothing
+    # for a rule to govern; see references/platform-facts.md. Declaring it here
+    # kept four documents defending a knob that does not exist.)
     "model-routing.md": [],
     # empty = explicitly skipped. orchestrator-protocol is path-scoped to skill
     # and agent files so its runtime contract loads while those are being

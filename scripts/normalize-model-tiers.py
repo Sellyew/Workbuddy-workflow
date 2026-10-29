@@ -16,6 +16,15 @@ WorkBuddy 的子代理/技能 frontmatter 只认三档：
 同时删除 `effort:` 字段：本平台没有 effort 轴（只由模型档位决定深度），
 留着它会让读者以为存在一个实际不存在的成本杠杆。
 
+`effort:` 起初只从技能里删，代理留着——理由是「上游的船队表按 effort 分层」。
+2026-10-30 复核推翻了这个理由：引擎的代理元数据 schema
+（`name`/`description`/`path`/`source`/`model`/`tools`/`color`）里没有 `effort`，
+Effect Struct 会把未知键剥掉，所以代理文件里的 `effort:` 一个字都没被读过
+（证据与命令见 `.codebuddy/references/platform-facts.md`）。留着它的实际效果是：
+`agent-fleet.md` 用一整列「投入」让读者相信存在一个成本旋钮，而
+`model-routing.md` 第 10 行写着「本平台没有 effort 字段」——两处自相矛盾。
+现在两边都删，代理与技能一视同仁。
+
 幂等：重复运行不改变任何东西。退出码 0 = 完成，1 = 有文件无法解析。
 """
 import os
@@ -76,6 +85,11 @@ def process(path, drop_effort):
         fm = new_fm
     if drop_effort and EFFORT_RE.search(fm):
         fm = EFFORT_RE.sub("", fm)
+        # 切片**不含**闭合行前的那个换行（见 EFFORT_RE 上方的注释），所以当
+        # `effort:` 是最后一个键时，删掉整行会在末尾**留下一个空行**，frontmatter
+        # 以空行收尾。第一版就是这么干出 18 个「多了个空行」的 diff 的。
+        # 规范形是「以最后一个键的文字收尾」，由 text[e:] 那个换行接上 `---`。
+        fm = fm.rstrip("\r\n")
         note.append("dropped effort:")
     return ("; ".join(note) or "unchanged"), text, text[:s] + fm + text[e:]
 
@@ -86,7 +100,7 @@ def main():
     agents = os.path.join(ROOT, ".codebuddy", "agents")
     for name in sorted(os.listdir(agents)):
         if name.endswith(".md"):
-            targets.append((os.path.join(agents, name), False))
+            targets.append((os.path.join(agents, name), True))
     skills = os.path.join(ROOT, ".codebuddy", "skills")
     for name in sorted(os.listdir(skills)):
         p = os.path.join(skills, name, "SKILL.md")

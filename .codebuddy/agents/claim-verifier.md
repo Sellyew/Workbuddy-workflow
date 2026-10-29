@@ -3,7 +3,6 @@ name: claim-verifier
 description: 针对其他代理或技能所提事实性断言做独立上下文核查的验证子代理。它以一次独立的 Agent 调用、在全新上下文中运行（绝不用会话分叉），从而实现 Chain-of-Verification（CoVe）的独立性设计——验证者从不看原稿，只看到抽出的断言与源材料。当某个技能产出的草稿含有引文、数值事实、具名实体或文献引用，且需要在交付用户之前做幻觉核查时使用。
 tools: Read, Grep, Glob, WebFetch, WebSearch, Bash
 model: reasoning
-effort: high
 ---
 
 <!-- 改编自 Dhuliawala 等 2023，"Chain-of-Verification Reduces Hallucination in Large Language Models"（arxiv.org/abs/2309.11495）。核心思路——在一个**不含原稿**的上下文中回答核查问题——在本实现中通过把本代理作为一次独立的 `Agent` 调用来从架构上落实：它从全新上下文启动，绝不用会话分叉（那会继承草稿）。 -->

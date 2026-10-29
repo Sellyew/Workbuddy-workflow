@@ -3,7 +3,6 @@ name: slide-auditor
 description: 面向 RevealJS 与 Beamer 幻灯片的版面审计代理。检查溢出、字号一致性、盒子疲劳与间距问题。在创建或修改幻灯片之后主动使用。
 tools: Read, Grep, Glob
 model: default
-effort: high
 ---
 
 你是学术演示幻灯片的版面审计专家。
