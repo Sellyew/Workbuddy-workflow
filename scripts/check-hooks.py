@@ -236,6 +236,45 @@ def run_case(case) -> tuple[str, str, str]:
     return PASS, f"判定为 {verdict}", detail
 
 
+def check_wiring() -> list:
+    """每条注册在 settings.json 里的命令，必须真的到达它的 hook 文件。
+
+    2026-10-30 发现的缺陷：hook-runner.sh 用 `SCRIPT_DIR/../..` 推导仓库根，
+    而它自己位于 `<repo>/.codebuddy/hooks/lib/`，于是 ROOT 停在 `.codebuddy`，
+    HOOK_PATH 变成 `.codebuddy/.codebuddy/hooks/<name>`。12 条命令全部以 exit 0
+    结束、只在 stderr 留一行——fail-open 让「一条都没跑」看起来和「全跑过了」
+    一样。下面的用例集测不到它，因为用例直接调用 hook 文件，从不经过注册的
+    命令字符串。本函数补的正是这一层：**注册的路径是否可用**。
+    """
+    import json as _json
+    import subprocess as _sp
+
+    settings = HOOK_DIR.parent / "settings.json"
+    try:
+        data = _json.loads(settings.read_text(encoding="utf-8"))
+    except Exception as exc:                       # noqa: BLE001
+        return [f"读不到 {settings}: {exc}"]
+
+    repo_root = str(HOOK_DIR.parent.parent)
+    bad = []
+    for event, entries in (data.get("hooks") or {}).items():
+        for entry in entries:
+            for hook in entry.get("hooks", []):
+                cmd = hook.get("command", "")
+                if "notify.sh" in cmd:             # 会真的弹桌面通知
+                    continue
+                try:
+                    proc = _sp.run(["bash", "-c", cmd], input="{}", text=True,
+                                   capture_output=True, timeout=90, cwd=repo_root)
+                except Exception as exc:           # noqa: BLE001
+                    bad.append(f"{event}: 无法执行 → {exc}")
+                    continue
+                err = proc.stderr or ""
+                if "hook 文件不存在" in err or "未找到可用的 Python" in err:
+                    bad.append(f"{event}: {err.strip().splitlines()[0]}")
+    return bad
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="hook 功能冒烟测试")
     ap.add_argument("-v", "--verbose", action="store_true", help="打印原始输出")
@@ -275,6 +314,13 @@ def main() -> int:
 
     print("-" * 96)
     print(f"PASS {counts[PASS]}   FAIL {counts[FAIL]}   SKIP {counts[SKIP]}")
+
+    wiring = check_wiring()
+    if wiring:
+        print(f"\n[FAIL] 注册接线：{len(wiring)} 条命令到不了 hook 文件")
+        for line in wiring:
+            print(f"  {line}")
+        counts[FAIL] += len(wiring)
 
     if counts[FAIL]:
         print("\n失败明细：")

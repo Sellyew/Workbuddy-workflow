@@ -126,3 +126,10 @@ Quarto/*_files/
 .codebuddy/scheduled_tasks.json
 .codebuddy/scheduled_tasks.scheduler.lock
 .codebuddy/scheduled_task_executions.json
+
+# E2E acceptance fixture and its review output. `manuscript.qmd` carries
+# deliberate defects (wrong n, wrong effect size, a p=0.08 called significant);
+# committing it would put a broken manuscript in every fork's tree and let
+# citation/link gates trip on text that is wrong on purpose.
+quality_reports/acceptance/
+quality_reports/paper_review_*
