@@ -138,7 +138,7 @@ Stata（`/stata-replication`）、R 包（`/r-package-check`）、TikZ（`/extra
 ## 平台约定（WorkBuddy 原生）
 
 - **项目配置根是 `.codebuddy/`**：`rules/` `agents/` `skills/` `hooks/` `references/` `output-styles/`。
-- **子代理模型只有三档**：`default` / `lite` / `reasoning`；没有 `effort` 字段。把认知需求映射到这三档，别再照搬 opus / sonnet / haiku 的说法。
+- **子代理模型只有三档**：`default` / `lite` / `reasoning`，另有 `effort:`（`minimal`–`max`）调同一档内的思考预算——代理可设、技能不可设。把认知需求映射到这两根轴，别再照搬 opus / sonnet / haiku 的说法。
 - **规则按 `paths:` 实时生效**：改文件时匹配的规则即刻注入，不必重开会话。
 - **计划文件落在用户级** `~/.workbuddy/plans/`；项目内留档用 `quality_reports/plans/`。
 - **记忆落在** `.workbuddy/memory/YYYY-MM-DD.md`（按日追加）与 `.workbuddy/memory/MEMORY.md`（长期）。

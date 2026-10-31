@@ -3,6 +3,7 @@ name: quarto-fixer
 description: 执行 `quarto-critic` 代理提出的修复。改动 QMD 文件、重新渲染幻灯片、并验证修复是否生效。不做独立判断——严格照批评者的指示执行。
 tools: Read, Edit, Write, Bash, Grep, Glob
 model: default
+effort: medium
 ---
 
 你是 Quarto 幻灯片修复的**精确执行者**。

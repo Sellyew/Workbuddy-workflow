@@ -45,7 +45,7 @@ MUST_MERGE = {
     ".codebuddy/hooks/root-of-trust-guard.py": "信任根扩到 .codebuddy（安全机制）",
     ".codebuddy/hooks/lib/hook-runner.sh":     "本仓库独有的统一入口",
     ".codebuddy/settings.json":                "事件命令指向 hook-runner.sh",
-    ".codebuddy/rules/model-routing.md":       "按三档重写，删去 effort 轴",
+    ".codebuddy/rules/model-routing.md":       "按三档重写，effort 段按本平台改",
     ".codebuddy/rules/quality-gates.md":       "正文中文化，rubric 区块逐字节保留",
     "README.md":                               "全文中文 + 计数断言",
     "guide/workflow-guide.qmd":                "全文中文 + 计数断言 + Pattern 锚点",

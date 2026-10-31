@@ -484,11 +484,14 @@ RULE_KEYWORDS: dict[str, list[str]] = {
     # must contain, and any non-empty list here would fail 59 of 60 skills for
     # obeying the rule. Enforced instead by check-model-versions.sh (the tier
     # NAMES stay current) and by review.
-    # (2026-10-30: this comment used to say "`model:` and `effort:`". `effort:`
-    # is not a field on this platform at all — the agent metadata schema has no
-    # slot for it and the Effect Struct drops unknown keys, so there is nothing
-    # for a rule to govern; see references/platform-facts.md. Declaring it here
-    # kept four documents defending a knob that does not exist.)
+    # (2026-10-30: this comment once said "`model:` and `effort:`", then briefly
+    # said `effort:` does not exist on this platform at all. Both were wrong in
+    # different directions. The accurate split: `model:` IS read by the skill
+    # loader and validated against the model catalog; `effort:` is NOT read by
+    # the skill loader — but it IS read by the *agent* loader, so a rule can
+    # govern it for `.codebuddy/agents/*.md` and not for skills. Neither is
+    # declared here because neither has a keyword every SKILL.md must carry.
+    # See references/platform-facts.md.)
     "model-routing.md": [],
     # empty = explicitly skipped. orchestrator-protocol is path-scoped to skill
     # and agent files so its runtime contract loads while those are being

@@ -3,6 +3,7 @@ name: beamer-translator
 description: 把 Beamer LaTeX 幻灯片翻译为 Quarto RevealJS 的专职代理。负责内容翻译、环境映射、引文转换与格式处理。在 `/translate-to-quarto` 工作流中作为子代理，承担逐页翻译的实际工作。
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: default
+effort: medium
 ---
 
 你是把学术 Beamer 幻灯片翻译为 Quarto RevealJS 格式的专家。

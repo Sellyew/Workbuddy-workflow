@@ -2576,7 +2576,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 30, 2026</p>
+      <p class="date-modified">October 31, 2026</p>
     </div>
   </div>
     
@@ -4169,8 +4169,8 @@ APPROVED   NEEDS WORK
 <td><code>worktree</code>（见 <a href="#pattern-12-branch-isolation">Pattern 12</a>）</td>
 </tr>
 <tr class="even">
-<td><code>effort</code>（本平台无此字段）</td>
-<td>深度由 <code>model:</code> 的三档决定，没有 effort 轴</td>
+<td><code>effort</code>（代理读、技能不读）</td>
+<td>代理 frontmatter 的 <code>effort:</code> 调同一档内的思考预算，不改模型档位；技能里写它无效</td>
 <td>见 <code>.codebuddy/rules/model-routing.md</code></td>
 </tr>
 <tr class="odd">
@@ -4251,7 +4251,7 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>按代理在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 里用 <code>model:</code> 设置。在我们的用法里，相对全部跑 <code>reasoning</code> 的典型节省：<strong>路由过的技能上 50–80%</strong>，在机械层没有观察到质量损失（经验法则，不是基准）。社区趋同的比例记录在 <a href="https://augmentcode.com">Augment Code 的路由数据</a>里，并与 Aider 的架构者/编辑者分工一致；我们引用 Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>作为该模式的一手来源背书。</p>
-<p><strong>3. 深度预算。</strong> 下面的<a href="#sec-effort">深度档位</a>一节讲本平台的<strong>三档</strong> — <code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong>本平台没有 effort 轴</strong>：没有 <code>low | medium | high | xhigh | max</code> 这级阶梯，也没有 <code>maxEffortLevel</code> 这类给努力档封顶的设置。深度只由档位决定，所以：让 <code>default</code> 做默认；只在假 PASS 代价高昂的门禁上钉 <code>reasoning</code>（本模板对编辑、两位审稿人、断言核验器，以及 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 这类核验门禁或正确性关键的技能这么做 — 完整清单在 <code>model-routing.md</code>）；机械活降到 <code>lite</code>；扩展探索（深度搜索、大重构、最难的 <code>/review-paper</code> 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 <code>reasoning</code> 碰判断点。</p>
+<p><strong>3. 深度预算。</strong> 下面的<a href="#sec-effort">深度档位</a>一节讲本平台的<strong>三档</strong> — <code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一根轴</strong>：代理 frontmatter 的 <code>effort:</code> 取 <code>minimal</code>–<code>max</code>，调的是同一档内的思考预算，不改模型档位（技能里写它无效）；<code>maxEffortLevel</code> 这类封顶设置不存在。两根轴正交，所以：让 <code>default</code> 做默认；只在假 PASS 代价高昂的门禁上钉 <code>reasoning</code>（本模板对编辑、两位审稿人、断言核验器，以及 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 这类核验门禁或正确性关键的技能这么做 — 完整清单在 <code>model-routing.md</code>）；机械活降到 <code>lite</code>；扩展探索（深度搜索、大重构、最难的 <code>/review-paper</code> 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 <code>reasoning</code> 碰判断点。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4569,7 +4569,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </section>
 <section id="sec-effort" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="sec-effort"><span class="header-section-number">4.7</span> 深度档位 — 成本 vs 彻底程度</h2>
-<p><strong>本平台没有 effort 轴，深度由档位决定，详见 <code>.codebuddy/rules/model-routing.md</code>。</strong> 没有 <code>low | medium | high | xhigh | max</code> 这级阶梯，没有 <code>/effort</code> 命令，也没有 <code>maxEffortLevel</code> 这类封顶设置。档位只有三档 — <code>default</code> / <code>lite</code> / <code>reasoning</code> — 换档就是换模型路由，而不是拧一个「想多久」的旋钮（见<a href="#sec-cost">成本意识组合</a>）。</p>
+<p><strong>本平台有两根正交的轴：档位选模型，<code>effort</code> 调思考预算。</strong> 详见 <code>.codebuddy/rules/model-routing.md</code>。档位三档 — <code>default</code> / <code>lite</code> / <code>reasoning</code>，换档就是换模型路由；<code>effort</code> 六档 — <code>minimal</code> / <code>low</code> / <code>medium</code> / <code>high</code> / <code>xhigh</code> / <code>max</code>，另有一条 <code>/effort</code> 命令改当前会话。代理 frontmatter 里写 <code>effort:</code> 生效，技能里写它不生效。<code>maxEffortLevel</code> 这类封顶设置不存在（见<a href="#sec-cost">成本意识组合</a>）。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4615,7 +4615,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </table>
 <p><strong>怎么设档位：</strong></p>
 <ul>
-<li><strong>按会话：</strong>换档就是换你这次会话用的模型档；没有 <code>/effort</code> 这类会话内旋钮，也没有交互式滑块可以把深度临时拧上去。</li>
+<li><strong>按会话：</strong>换档就是换你这次会话用的模型档；<code>/effort</code> 可以在会话内改努力档（含一个 <code>ultracode</code> 档），但它改的是思考预算，不是模型。</li>
 <li><strong>按技能：</strong>在技能 frontmatter 里写 <code>model:</code>，而不是写一个深度数字（见<a href="#skill-frontmatter">技能 frontmatter 参考</a>）</li>
 <li><strong>按代理：</strong>在代理 frontmatter 里写 <code>model:</code>，扇出时逐代理生效（见<a href="#sec-agent-config">高级代理配置</a>）</li>
 <li><strong>在提示里：</strong>没有 <code>ultrathink</code> 这类关键词可分配额外深度；“think hard” 之类的话会被当作普通指令。要更深，就把那一步交给 <code>reasoning</code>，或者把任务拆成有界的几块</li>
@@ -7092,8 +7092,8 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <td><code>[infile, outfile]</code></td>
 </tr>
 <tr class="odd">
-<td><code>effort</code>（本平台无此字段）</td>
-<td>深度由 <code>model:</code> 的三档决定，没有 effort 轴</td>
+<td><code>effort</code>（代理读、技能不读）</td>
+<td>代理 frontmatter 的 <code>effort:</code> 调同一档内的思考预算，不改模型档位；技能里写它无效</td>
 <td>见 <code>.codebuddy/rules/model-routing.md</code></td>
 </tr>
 <tr class="even">
