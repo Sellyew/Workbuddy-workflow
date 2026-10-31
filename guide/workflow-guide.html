@@ -8152,7 +8152,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="latex-编译不过" class="level3" data-number="8.5.1">
 <h3 data-number="8.5.1" class="anchored" data-anchor-id="latex-编译不过"><span class="header-section-number">8.5.1</span> LaTeX 编译不过</h3>
 <p><strong>症状：</strong> <code>xelatex</code> 报错或宏包缺失。</p>
-<p><strong>修法：</strong> 1. 确认装了 XeLaTeX：<code>which xelatex</code> 2. 确保 <code>TEXINPUTS</code> 包含 <code>Preambles/</code>：<code>/compile-latex</code> 技能会处理这件事 3. 缺宏包？用 TeX Live 装：<code>tlmgr install [package]</code></p>
+<p><strong>修法：</strong> 1. 确认装了 XeLaTeX：<code>which xelatex</code> 2. 用 <code>/compile-latex</code>（或直接 <code>scripts/compile-beamer.sh &lt;名字&gt;</code>）编译——它负责 <code>TEXINPUTS</code> 与 <code>BIBINPUTS</code>，<strong>包括平台分隔符</strong> 3. 缺宏包？用 TeX Live 装：<code>tlmgr install [package]</code></p>
+<p><strong>另一个症状，特别容易查错方向：<code>! I can&#39;t find file &#39;Lecture1.tex&#39;</code>，但那个文件就在 <code>Slides/</code> 里。</strong></p>
+<p>这是手写 <code>TEXINPUTS=../Preambles:$TEXINPUTS</code> 的典型后果。<code>kpathsea</code> 的语义是「你给的值<strong>替换</strong>默认搜索路径，<strong>除非它以路径分隔符结尾</strong>」；少了结尾那个分隔符，当前目录 <code>.</code> 就一起从搜索路径里消失，于是连主文件都找不到。而分隔符本身是平台相关的——POSIX 是 <code>:</code>，<strong>Windows 版 TeX Live 是 <code>;</code></strong>——所以在 Windows 上写 <code>:</code> 等于没写结尾分隔符。报错说的是「文件不存在」，照它去查文件会一无所获。用 <code>scripts/compile-beamer.sh</code> 就绕开了这个问题。</p>
 </section>
 <section id="quarto-渲染不出来" class="level3" data-number="8.5.2">
 <h3 data-number="8.5.2" class="anchored" data-anchor-id="quarto-渲染不出来"><span class="header-section-number">8.5.2</span> Quarto 渲染不出来</h3>

@@ -16,13 +16,16 @@ effort: medium
 
 ### 对 `.tex` 文件（Beamer 幻灯片）：
 ```bash
-cd Slides
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode FILENAME.tex 2>&1 | tail -20
+scripts/compile-beamer.sh FILENAME
 ```
-- 检查退出码（0 = 成功）
-- 用 Grep 找 `Overfull \\hbox` 警告并计数
-- 用 Grep 找 `undefined citations`——这些属于错误
-- 确认 PDF 已生成：`ls -la FILENAME.pdf`
+- 检查退出码：`0` 通过、`1` 编译有错误、`2` 找不到文件
+- 它的报告里已经含 `Overfull \hbox` 条数与未定义引文／引用数；未定义引文会逐个列键名
+- 确认 PDF 已生成：`ls -la Slides/FILENAME.pdf`
+
+**不要手写 `TEXINPUTS=../Preambles:$TEXINPUTS xelatex ...` 来代替这一步。** 那条命令
+少了平台分隔符的尾缀（POSIX 是 `:`，Windows 版 TeX Live 是 `;`），而 `TEXINPUTS`
+不以分隔符结尾时会把默认搜索路径整个替换掉，连主文件都找不到——报错写的是
+「I can't find file」，看上去像文件不存在。详见 `/compile-latex` 技能。
 
 ### 对 `.qmd` 文件（Quarto 幻灯片）：
 ```bash
