@@ -50,7 +50,10 @@ cd Figures/$ARGUMENTS
 
 ### 第 3 步：编译 extract_tikz.tex 文件
 ```bash
-TEXINPUTS=../../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode extract_tikz.tex
+# kpathsea 的路径分隔符平台相关：POSIX 用 ':'，Windows 版 TeX Live 用 ';'。
+# 而且末尾那个分隔符不能省——缺了它，默认搜索路径（含 '.'）会被整个替换掉。
+SEP=$([ "${OS:-}" = "Windows_NT" ] && echo ';' || echo ':')
+TEXINPUTS="../../Preambles$SEP${TEXINPUTS:-}" xelatex -interaction=nonstopmode extract_tikz.tex
 ```
 
 ### 第 4 步：数清页数

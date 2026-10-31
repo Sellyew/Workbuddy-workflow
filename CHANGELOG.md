@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子接线、引文、effort、远程只读
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译
 
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
@@ -248,6 +248,39 @@ synthesises an instant deny`，立即拒绝而非等待），需要审批的工�
 `git remote set-url --push upstream no_push`（这是本地配置，不在版本库内）；`UPSTREAM.md`
 的接好步骤里也加了这一行，免得下一个 fork 的人重新踩。`sync-check.py` 只按名字找
 `upstream`，不看 URL，因此不受影响。
+
+### Fixed — Beamer 在 Windows 上根本编译不了，报错却说「文件不存在」
+
+`TEXINPUTS=../Preambles:$TEXINPUTS xelatex ...` 在 6 个文件里出现 14 次。它是从上游
+照搬的，**在 Windows 上永远不会成功**——而它的失败信息把人指向完全相反的方向。
+
+`kpathsea` 的规则是「你给的值**替换**默认搜索路径，**除非它以路径分隔符结尾**」。
+默认值里含 `.`，也就是当前目录。`$TEXINPUTS` 通常是空的，于是结果 `../Preambles:`
+看起来没问题；但 **Windows 版 TeX Live 的分隔符是 `;` 不是 `:`**——那个冒号在那里
+不是分隔符，等价于「没有结尾分隔符」：
+
+```
+! I can't find file `Lecture1.tex'.
+! Emergency stop.
+```
+
+文件就在 `Slides/` 里。四组对照确认了根因，也确认 `../Preambles;` 在同一台机器上
+产出 4 页（证据见 `platform-facts.md` 的「宿主工具链」节）。
+
+- 新增 **`scripts/compile-beamer.sh`**：按 `$OS` 选分隔符、保证 `TEXINPUTS` 与
+  `BIBINPUTS` 都以分隔符结尾、三遍 xelatex + bibtex、报告页数与 Overfull／未定义引文、
+  支持 `--dry-run`。它还会识别「PDF 是上一次编译留下的」——`PDF 存在` 不足以说明
+  这一次成功了，而这个区别正是最容易糊过去的地方。
+- 14 处命令改为调用脚本。`extract-tikz` 那处路径不同（`../../Preambles`），改成带
+  分隔符检测的等价写法。`guide/workflow-guide.qmd` 的「LaTeX 编译不过」一节补了
+  这个症状与它的错误方向。
+- `meta-governance.md` 里拿 `TEXINPUTS=../Preambles` 当「机器相关设置」举例的两处删了：
+  它现在恰恰是**通用**的、由脚本吸收；留着会让人以为应该写进本机记忆。
+- 新增 `BeamerCompileEnv` 四条用例：分隔符选对、`TEXINPUTS` 与 `BIBINPUTS` 都以分隔符
+  结尾、缺文件退出码 2。**负例反证**：把 Windows 分支改回 `:`，4 条全红。
+
+这条是「端到端第二条主线」（幻灯片线）验收时撞到的第一个缺陷——它挡在编译这一步，
+不修就走不下去。
 
 ---
 

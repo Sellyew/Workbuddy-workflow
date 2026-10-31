@@ -53,7 +53,7 @@ paths:
 - 随用户语境调整的规则（按路径作用域的规则）
 
 **特定（留在本机，或写进 gitignore）：**
-- 机器相关的路径（macOS 上的 `TEXINPUTS=../Preambles`）
+- 本机工具链的安装路径（TeX Live / Quarto 的 bin 目录在哪）
 - 工具版本（`Quarto 1.3.x vs 1.4.x`）
 - 机构要求（Emory 学位论文格式）
 - 个人偏好（本项目 90/100 的质量门禁）
@@ -138,7 +138,7 @@ paths:
 不是正确性缺陷——见 [`replication-protocol.md`](replication-protocol.md)。
 
 **放什么：**
-- 机器设置：`[LEARN:latex] XeLaTeX on macOS requires TEXINPUTS=../Preambles`
+- 机器设置：`[LEARN:files] TeX Live 装在这里，PATH 要加上它的 bin 目录`
 - 工具怪癖：`[LEARN:quarto] Version 1.4.x has nested div bug, use 1.3.x`
 - 本地路径：`[LEARN:files] Bibliography at ~/Dropbox/References/main.bib`
 - 个人工作流：`[LEARN:workflow] I prefer 90/100 for lecture slides, 80/100 for explorations`

@@ -6,7 +6,7 @@ Shared LaTeX/Beamer preamble for lectures in this project.
 
 ```latex
 \documentclass{beamer}
-\input{header}   % resolves via TEXINPUTS=../Preambles:$TEXINPUTS
+\input{header}   % 需要 TEXINPUTS 含 ../Preambles（见下面的编译说明）
 
 \title{Your Lecture}
 \author{You}
@@ -18,11 +18,16 @@ Shared LaTeX/Beamer preamble for lectures in this project.
 \end{document}
 ```
 
-Compile with `/compile-latex <file>` — the skill sets `TEXINPUTS` for you. For manual compilation:
+Compile with `/compile-latex <file>`, or run `scripts/compile-beamer.sh <file>` directly — it
+sets `TEXINPUTS` and `BIBINPUTS` for you, including the platform's path separator.
+For manual compilation, **the trailing separator is not optional** (POSIX `:` / Windows `;`);
+without it kpathsea replaces the default search path and cannot even find your `.tex`:
 
 ```bash
 cd Slides
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode YourLecture.tex
+SEP=$([ "${OS:-}" = "Windows_NT" ] && echo ';' || echo ':')
+TEXINPUTS="../Preambles$SEP${TEXINPUTS:-}" BIBINPUTS="..$SEP${BIBINPUTS:-}" \
+    xelatex -interaction=nonstopmode YourLecture.tex
 ```
 
 ## The palette contract

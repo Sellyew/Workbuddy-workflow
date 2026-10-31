@@ -41,6 +41,17 @@
 | 钩子发射、子代理派发、模型解析 | `$WB/app.asar.unpacked/node_modules/@genie/agent-harness/cli/dist-server/shared.cjs`、`$WB/app.asar.unpacked/cli/dist/codebuddy-lite-wb.mjs` |
 | 事件枚举、agent 元数据 schema | `$H/lib/runtime/component-protocol.js`、`$H/lib/agent-registry/schemas.js`（`H=$WB/app.asar.unpacked/node_modules/@genie/agent-harness`） |
 
+### 宿主工具链
+
+下面几条不是 WorkBuddy 的事实，是**这台机器能不能把工作流跑起来**的事实——同一类坑：
+装好了、命令存在、错误信息却在说别的事。
+
+| 事实 | 观测级别 | 证据 | 日期 |
+|---|---|---|---|
+| kpathsea 的路径分隔符**平台相关**：POSIX `:`，**Windows 版 TeX Live `;`**。且 `TEXINPUTS` / `BIBINPUTS` **必须以分隔符结尾**——否则默认搜索路径（含 `.`）被整个替换掉 | L3 | Windows 上 `TEXINPUTS="../Preambles:"` → `! I can't find file 'HelloWorld.tex'`（文件就在）；`TEXINPUTS="../Preambles;"` → 4 页；`TEXINPUTS="../Preambles"` 同样失败；`TEXINPUTS=""` → 4 页 | 2026-10-31 |
+| 本机 `xelatex` = TeX Live 2026（Windows 构建），`quarto`、`pdftotext`（poppler）在 PATH；**没有 R / Rscript** | L3 | `xelatex --version`；`which Rscript R` → not found | 2026-10-31 |
+| `quarto render` 会去取 Google Fonts。代理不通时它打印 `ProxyConnectException … 502`，但**仍然产出 HTML** | L3 | 本次渲染：`(ProxyConnectException "fonts.googleapis.com" 443 … 502)` 之后紧接 `Output created: workflow-guide.html` | 2026-10-31 |
+
 ## 事实表
 
 ### 配置与权限
