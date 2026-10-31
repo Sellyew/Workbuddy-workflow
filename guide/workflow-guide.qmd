@@ -3315,8 +3315,12 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 
 **修法：**
 1. 确认装了 XeLaTeX：`which xelatex`
-2. 确保 `TEXINPUTS` 包含 `Preambles/`：`/compile-latex` 技能会处理这件事
+2. 用 `/compile-latex`（或直接 `scripts/compile-beamer.sh <名字>`）编译——它负责 `TEXINPUTS` 与 `BIBINPUTS`，**包括平台分隔符**
 3. 缺宏包？用 TeX Live 装：`tlmgr install [package]`
+
+**另一个症状，特别容易查错方向：`! I can't find file 'Lecture1.tex'`，但那个文件就在 `Slides/` 里。**
+
+这是手写 `TEXINPUTS=../Preambles:$TEXINPUTS` 的典型后果。`kpathsea` 的语义是「你给的值**替换**默认搜索路径，**除非它以路径分隔符结尾**」；少了结尾那个分隔符，当前目录 `.` 就一起从搜索路径里消失，于是连主文件都找不到。而分隔符本身是平台相关的——POSIX 是 `:`，**Windows 版 TeX Live 是 `;`**——所以在 Windows 上写 `:` 等于没写结尾分隔符。报错说的是「文件不存在」，照它去查文件会一无所获。用 `scripts/compile-beamer.sh` 就绕开了这个问题。
 
 ### Quarto 渲染不出来
 

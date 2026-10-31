@@ -81,11 +81,8 @@
 ## 命令
 
 ```bash
-# LaTeX（三遍编译，只用 XeLaTeX）
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
+# LaTeX（三遍编译 + bibtex，只用 XeLaTeX；脚本负责平台相关的 TEXINPUTS/BIBINPUTS）
+scripts/compile-beamer.sh file
 
 # 把 Quarto 部署到 GitHub Pages
 ./scripts/sync_to_docs.sh LectureN
