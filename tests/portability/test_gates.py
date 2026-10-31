@@ -21,6 +21,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -895,6 +896,52 @@ class NormalizeModelTiersEffort(Tmp):
         self.assertEqual(rc, 0, out)
         self.assertIn("0 file(s) changed", out)
         self.assertEqual(self._read(self.agent), before)
+
+
+# ── quality_score.py / Quarto 引文扫描 ──────────────────────────────────────
+
+class QuartoCitationCodeSpans(Tmp):
+    """A `@scope/pkg` inside a code span is not a citation — Pandoc never parses one.
+
+    The scanner used to read raw source, so the workflow guide's
+    `npm i -g @tencent-ai/codebuddy-code` produced "citation key not in
+    bibliography: tencent-ai/codebuddy-code" and held the guide at 85/100, below
+    the 90 PR threshold. The tempting fix — adding the npm package to
+    Bibliography_base.bib — would have silenced the report by putting a package
+    name in the reference list. The detector was wrong, not the guide.
+    """
+
+    BIB = "@book{Example2024_book,\n  title = {T}\n}\n"
+
+    def setUp(self):
+        super().setUp()
+        self.bib = pathlib.Path(self.tmp) / "refs.bib"
+        _write(self.tmp, "refs.bib", self.BIB)
+        self.scan = _load("quality_score.py").IssueDetector.check_quarto_citations
+
+    def test_scoped_package_in_inline_code_is_not_a_citation(self):
+        self.assertEqual(self.scan("装 `npm i -g @tencent-ai/codebuddy-code` 即可", self.bib), [])
+
+    def test_fenced_block_is_not_scanned(self):
+        src = "```bash\nnpm i @tencent-ai/codebuddy-code\n```\n"
+        self.assertEqual(self.scan(src, self.bib), [])
+
+    def test_real_missing_key_is_still_reported(self):
+        # Controls: blanking code must not blank the document. Both citation
+        # spellings that the detector supports keep working.
+        self.assertEqual(sorted(self.scan("正如 @nope2099 所说", self.bib)), ["nope2099"])
+        self.assertEqual(sorted(self.scan("[@Example2024_book; @nope2099]", self.bib)), ["nope2099"])
+
+    def test_known_key_is_not_reported(self):
+        self.assertEqual(self.scan("见 [@Example2024_book] 的做法", self.bib), [])
+
+    def test_unclosed_backtick_does_not_swallow_the_rest(self):
+        # Span matching stays on one line on purpose: with DOTALL a stray
+        # backtick would eat the rest of the document and every later citation
+        # error would vanish. A missed multi-line span costs a false positive;
+        # a swallowed document costs a false negative.
+        src = "`一个没闭合的反引号\n见 [@nope2099] 这里"
+        self.assertEqual(sorted(self.scan(src, self.bib)), ["nope2099"])
 
 
 if __name__ == "__main__":

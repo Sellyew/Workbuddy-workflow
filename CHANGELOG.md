@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效：平台事实、调度、钩子接线、引文检查、effort
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子接线、引文、effort、远程只读
 
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
@@ -216,6 +216,38 @@ synthesises an instant deny`，立即拒绝而非等待），需要审批的工�
 
 `tests/portability/test_gates.py` 新增 `FindingsQuoteCoverage` 四条用例：无引文判失败
 （在旧代码上会红，已实测）、部分引用通过但报覆盖率、不可读源文件仍是报告、空报告不误判。
+
+---
+
+### Fixed — 引文扫描把 npm 包名当成缺引文，指南钉在 85 分
+
+上一条修的是同一个检查器的**另一个方向**：那次它该报而不报，这次它不该报而报了。
+
+`quality_score.py` 的 Quarto 引文扫描直接读原始 Markdown，于是指南里记录
+`npm i -g @tencent-ai/codebuddy-code` 的那行代码被读成一条引文，报
+`Citation key not in bibliography: tencent-ai/codebuddy-code`，扣 15 分，把
+`guide/workflow-guide.qmd` 钉在 85/100——**低于 90 的 PR 阈值，而且只要那句话还在就永远如此**。
+
+诱人的修法是往 `Bibliography_base.bib` 里加一条 npm 包名。那会把一条假告警换成一条
+假文献，还顺手把真缺陷藏起来；下一份写了 `npm i -g @other/pkg` 的文档会重演一次。
+
+错的不是指南，是检测器：**Pandoc 不在代码里解析引文**，`` `@scope/pkg` `` 只是字面文本。
+修法是扫描前把围栏代码块与行内代码**置空**（置空而非删除，保留字符偏移，将来报行号仍准）。
+行内代码的匹配刻意**不跨行**：若用 DOTALL，一个没闭合的反引号会吞掉整篇文档，此后所有
+真引文错误一起消失——在这个方向上，漏报比误报更糟。
+
+指南 85 → **100**。`tests/portability/test_gates.py` 新增 `QuartoCitationCodeSpans`
+五条用例（行内包名、围栏块、两条控制组、未闭合反引号），并做过负例反证：撤掉修复后
+2 条变红。
+
+### Changed — `upstream` remote 的 push URL 废掉
+
+`upstream` 指向 `pedrohcgs/claude-code-my-workflow`，fetch 与 push 用的是同一个 URL。
+一个只读镜像不需要可推——本地若恰好有权限，`git push upstream` 会真的推到别人的仓库。
+
+`git remote set-url --push upstream no_push`（这是本地配置，不在版本库内）；`UPSTREAM.md`
+的接好步骤里也加了这一行，免得下一个 fork 的人重新踩。`sync-check.py` 只按名字找
+`upstream`，不看 URL，因此不受影响。
 
 ---
 
