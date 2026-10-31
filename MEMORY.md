@@ -133,7 +133,7 @@
 
 [LEARN:pattern] **伪造引用必须 HIGH-WARN 必修。** `/verify-claims` 分级：HIGH-WARN（伪造文献 / 数值或方向性矛盾）是提交前必修；MED-WARN 是临时的；LOW-WARN 是来源取不到。打 HIGH-WARN 要保守——误报会侵蚀这道门禁。CoVe 的 fork 核验者（永远看不到草稿）是架构；必修政策让它有后果。*[2026-09-26：没有任何 /commit 门禁读它；核验者 = 全新的 Agent 调用，不是 fork。]*
 
-[LEARN:pattern] **70/20/10 模型路由用于成本纪律**（`model-routing.md`）：`lite` 档做机械活，`default` 做审读/批评，`reasoning` 做高判断（上游叫 Haiku/Sonnet/Opus 层；本平台没有 `effort` 轴，档位是唯一开关）。机械档上省 50–80% 而无质量损失。反模式：把 claim-verifier / methods-referee / editor 降档——一个误报的 PASS 代价高于路由省下的钱。（原始出处：Anthropic「Decoupling brain from hands」，2026 年 4 月。）
+[LEARN:pattern] **70/20/10 模型路由用于成本纪律**（`model-routing.md`）：`lite` 档做机械活，`default` 做审读/批评，`reasoning` 做高判断（上游叫 Haiku/Sonnet/Opus 层；本平台三档之外另有 `effort` 作同一档内的思考预算——代理可设、技能不可设）。机械档上省 50–80% 而无质量损失。反模式：把 claim-verifier / methods-referee / editor 降档——一个误报的 PASS 代价高于路由省下的钱。（原始出处：Anthropic「Decoupling brain from hands」，2026 年 4 月。）
 
 [LEARN:research] **有研究支撑的计划胜过拍脑袋的路线图。** 当议题是「我们该加什么」时，先跑并行的研究代理（生态 / 社区 / 跨供应商 / 内部审计），在规划之前把不确定的东西核验清楚——计划于是可追溯到 URL 与已核验的事实，而不是观点。约 30 分钟的派发能换来不冗余、当下为真的条目。
 

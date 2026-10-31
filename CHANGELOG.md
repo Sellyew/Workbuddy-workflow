@@ -6,7 +6,53 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效：平台事实、调度、钩子接线、引文检查
+## Unreleased — 静默失效：平台事实、调度、钩子接线、引文检查、effort
+
+### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
+
+同一天早些时候，本仓库判定「agent 的 `effort:` 不被读」，据此删掉 18 个代理文件的
+该字段，并把四份文档改写成「本平台没有 effort 轴」。**那个判定是错的，错在搜错了目录。**
+
+`lib/agent-registry/schemas.js` 里的 `agentMetadataSchema` 只有七字段
+（`name`/`description`/`path`/`source`/`model`/`tools`/`color`）——但那是**名录** RPC 的
+传输 schema，不是 spawn 用的定义。真正的加载器 `parseAgentFile()` 在
+`cli/dist-server/shared.cjs`：它读 `normalizeReasoningEffort(frontmatter.effort)`，
+非法值当场告警并忽略，合法值经 `...effort:eF` 进代理定义，子代理启动时由
+`setOverrideThinking(subSessionId,{reasoningEffort})` 落到会话的思考预算。同一条链上
+还有 `--effort` 旗标（白名单 `minimal`/`low`/`medium`/`high`/`xhigh`/`max`/`ultracode`）
+与 `/effort` 命令。平台自己的代理编写说明也列着：`Optional frontmatter: tools /
+disallowedTools / model / effort / skills / permissionMode`。
+
+已原样恢复 18 个字段（10 `high` / 7 `medium` / 1 `low`，取自 `b68584f^`），
+`normalize-model-tiers.py` 改为**只对技能删 `effort`**——技能加载器 `parseSkillFile()`
+确实不读它，代理读它：**同一个键在两个对象上结论相反**，这个差别现在有回归用例
+（`NormalizeModelTiersEffort`，两条，含 `effort` 保留的负例反证）。
+
+连带更正：`model-routing.md`（重写「没有 effort 轴」一节）、`model-versions.md`、
+`agent-fleet.md`（恢复「投入」列，改为逐代理标 `effort`）、`README.md`（四处）、
+`CODEBUDDY.md`、`TROUBLESHOOTING.md`、`MEMORY.md`、`UPSTREAM.md`、`new-skill`、
+`deep-audit`、`check-spec-conformance.py`、`check-skill-integrity.py`、
+`scripts/sync-check.py`、`guide/workflow-guide.qmd`（含重新渲染与盖戳）。
+
+**教训**：`grep -rao effort "$H/lib/"` 返回 6 是真的，那个目录不含加载器也是真的。
+台账第 2 条方法教训讲「别搜错包」，这次错的是**收窄了子目录**——搜索范围越窄，
+零命中越像结论。已写进 `platform-facts.md` 方法教训第 4 条。
+
+### Fixed — 清掉 `platform-facts.md` 剩下的三条未处理项
+
+- **README 的上游断言逐条落表**：`worktree.baseRef` 与本平台无关（L0，没有这个设置键，
+  `baseRef` 只是内部 `git worktree add` 的实参）；五个「内置技能」
+  （`/fewer-permission-prompts`、`/team-onboarding`、`/autofix-pr`、`/powerup`、Ultraplan）
+  两个包零命中；`/loop` 没有命令实现，命中全在预设任务卡的示例文案里；
+  `maxTurns` / `isolation` / `background` / `memory` **成立**，但都在 agent frontmatter 里。
+- **技能级 `model:` 不是死字段**：两个 `parseSkillFile`（项目级与插件级）都返回它，
+  命令转换器还会拿它对模型目录校验。`check-spec-conformance.py` 的 `INERT_FIELDS`
+  已把 `model` 移出——`model-routing.md` 原本就是对的。
+- **`.codebuddy/routines/` 与 `.codebuddy/loop.md` 都没有实现**：它们只出现在引擎给模型的
+  一句「自我修改」安全说明里（一份「启动时会加载的配置」路径清单），是提示词文本。
+  `loop.md` 原来的「4 次命中」是子串误计——4 次全是 `agent-loop.md`。
+
+---
 
 ### Fixed — `hook-runner.sh` 的仓库根少算一级
 

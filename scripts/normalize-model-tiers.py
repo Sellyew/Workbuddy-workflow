@@ -13,17 +13,21 @@ WorkBuddy 的子代理/技能 frontmatter 只认三档：
     haiku   -> lite        机械劳动：改名、格式转换、抽取、校验
     inherit -> default     继承会话，等价于不钉
 
-同时删除 `effort:` 字段：本平台没有 effort 轴（只由模型档位决定深度），
-留着它会让读者以为存在一个实际不存在的成本杠杆。
+`effort:` 只从**技能**里删，代理保留——两个对象的结论相反，这是实测出来的：
 
-`effort:` 起初只从技能里删，代理留着——理由是「上游的船队表按 effort 分层」。
-2026-10-30 复核推翻了这个理由：引擎的代理元数据 schema
-（`name`/`description`/`path`/`source`/`model`/`tools`/`color`）里没有 `effort`，
-Effect Struct 会把未知键剥掉，所以代理文件里的 `effort:` 一个字都没被读过
-（证据与命令见 `.codebuddy/references/platform-facts.md`）。留着它的实际效果是：
-`agent-fleet.md` 用一整列「投入」让读者相信存在一个成本旋钮，而
-`model-routing.md` 第 10 行写着「本平台没有 effort 字段」——两处自相矛盾。
-现在两边都删，代理与技能一视同仁。
+- **技能**：`parseSkillFile` 返回的字段是 `context` / `agent` / `model` 等，
+  **不含 `effort`**。技能里写它没有任何消费者。
+- **代理**：`.codebuddy/agents/*.md` 的加载器 `parseAgentFile()` 会读
+  `normalizeReasoningEffort(frontmatter.effort)`，非法值当场告警并忽略，
+  合法值经 `...effort:eF` 进入代理定义，最终沿
+  `setOverrideThinking(subSessionId, {reasoningEffort})` 施加到子会话的思考预算。
+  同一条链上还有 `--effort` 命令行旗标与 `/effort` 命令
+  （取值 `low|medium|high|xhigh|max|ultracode`）。
+
+2026-10-30 曾判定「代理的 `effort:` 不被读」并据此删掉 18 个代理文件的该字段。
+那个判定错在**搜错了目录**：它只查了 `lib/agent-registry/schemas.js`——那是
+代理**列表**的传输 schema，不是 spawn 用的定义。加载器与消费点都在
+`cli/dist-server/shared.cjs`。证据与命令见 `.codebuddy/references/platform-facts.md`。
 
 幂等：重复运行不改变任何东西。退出码 0 = 完成，1 = 有文件无法解析。
 """
@@ -100,7 +104,8 @@ def main():
     agents = os.path.join(ROOT, ".codebuddy", "agents")
     for name in sorted(os.listdir(agents)):
         if name.endswith(".md"):
-            targets.append((os.path.join(agents, name), True))
+            # drop_effort=False：代理的 `effort:` 是活字段，见上方说明。
+            targets.append((os.path.join(agents, name), False))
     skills = os.path.join(ROOT, ".codebuddy", "skills")
     for name in sorted(os.listdir(skills)):
         p = os.path.join(skills, name, "SKILL.md")

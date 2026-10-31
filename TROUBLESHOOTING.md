@@ -59,7 +59,7 @@ Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp
 
 ### `/model` 里的档位没生效，或钉死的模型 ID 失败
 
-本平台只有**三个档位**——`default` / `lite` / `reasoning`——没有按型号点版本的阵容，也没有 effort 轴。各档职责、上游层级怎么映射过来，都在 [`model-versions.md`](.codebuddy/references/model-versions.md) 里。配置出错常见两种形态：
+本平台只有**三个档位**——`default` / `lite` / `reasoning`——没有按型号点版本的阵容；`effort` 是另一根轴（代理可设、技能不可设）。各档职责、上游层级怎么映射过来，都在 [`model-versions.md`](.codebuddy/references/model-versions.md) 里。配置出错常见两种形态：
 
 - **档位没落到配置上。** 代理或技能的 frontmatter 里还写着上游的层级名（`opus` / `sonnet` / `haiku` / `inherit`）：它们不会报错，但也不会起作用，留着等于给自己一个假开关。跑 `python scripts/normalize-model-tiers.py --dry-run`，它应当报 0 个文件需要改；有输出就照着它的清单改成三档之一。
 - **钉死的模型 ID 失败。** 把 `model:` 钉成具体型号既不会让结果更可复现，也会在某次更新后静默失效——型号名、最低 CLI 版本与退役日期都属于上游，本平台没有对应物。先找出这些钉法：
