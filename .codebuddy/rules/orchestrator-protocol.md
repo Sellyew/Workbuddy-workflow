@@ -59,6 +59,15 @@ Skill invoked (with a RUN_CONFIG)
 
 **在一条消息里并行**生成审读器 —— N 次 `Agent` 调用，每一次都在自己的独立上下文中（绝不是对话分叉），这样主线程保持干净，每个审读器都能拿到自己那个透镜的完整预算。`Agent` 子代理是**可移植的原语**：它们存在于每一个 WorkBuddy 安装中，所以模板依赖它们，而不依赖受会话门控的 Workflow 工具。*（在 Workflow 工具可用的地方 —— 例如 `ultracode`／动态工作流会话 —— 技能可以用它实现同样的扇出→归并→裁决形态；把那当作可选的加速器，永远不是必需项。）*
 
+> **[本平台适配 · 2026-10-31] 扇出只在主线程可用，`context: fork` 的技能里拿不到。**
+> 声明了 `context: fork` 的技能会被送进一个 detached 子会话，而那个子会话的工具集里
+> **没有 `Agent`**（`allowed-tools` 里申请了也不行）——所以本节描述的 N 次并行派发在那里面
+> 根本无法发生，透镜会退化成同一会话依次扮演。实测证据见
+> [`platform-facts.md`](../references/platform-facts.md) 的技能一节。
+> **判据**：先问这个技能是否依赖扇出。依赖就不写 `context: fork`（`qa-quarto`、
+> `slide-excellence`、`translate-to-quarto` 三个已按此办理）；不依赖、且中间过程确实
+> 会撑爆主上下文的，才 fork。
+
 哪个代理填哪个透镜、用哪个模型层级，见 [`agent-fleet.md`](../references/agent-fleet.md)。当某个透镜的判断可能被审读者看得见的东西污染时 —— 先前的判定、修订标记、作者自己的摘要 —— 就把它运行的环境围栏起来：[`review-fencing.md`](review-fencing.md)。
 
 ### 2. 归并（按类型，不靠肉眼）

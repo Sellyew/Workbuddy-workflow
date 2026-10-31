@@ -4,10 +4,21 @@ description: 把一份 Beamer `.tex` 讲稿译成 Quarto RevealJS `.qmd` 镜像�
 description_zh: 把一份 Beamer `.tex` 讲稿译成 Quarto RevealJS `.qmd` 镜像。分多个阶段：提取 TikZ → 逐页翻译 → 引文转换 → 自动 QA 一致性检查。用户说 "translate to quarto"、"port to revealjs"、"make an html version"、"convert this beamer to quarto"、"mirror this lecture in qmd" 时使用，或在一套 Beamer 幻灯片已可发布到网上时使用。产出落在 `Quarto/`。
 argument-hint: "[LectureN_Topic.tex]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"]
-context: fork
 ---
 
 # Beamer → Quarto 翻译工作流
+
+> **[本平台适配 · 2026-10-31] 这个技能刻意不声明 `context: fork`。**
+> 声明了它，技能会被送进一个 detached 子会话执行，而**那个会话的工具集里没有 `Agent`**
+> （同一目录下的 `allowed-tools` 明明申请了它，也拿不到）。这个技能的价值建立在
+> `beamer-translator` 的逐页翻译与后续的教学法/校对审读
+> 上：每个透镜要在**独立上下文**里跑，互不污染，最后归并。
+> 拿不到 `Agent` 之后，这些透镜只能由同一个会话依次扮演一遍——报告上写着「多角度审过」，
+> 实际上是同一双眼睛看了几遍，而同一双眼睛第二遍也看不见第一遍漏掉的东西。
+>
+> 代价说清楚：不 fork 意味着技能的中间过程（读文件、跑命令、试错）会占用主会话上下文，
+> 长流程可能需要中途压缩一次。**这个代价换的是独立性，值。**
+> 实测证据与复现命令见 [`platform-facts.md`](../../references/platform-facts.md) 的技能一节。
 
 把一份 Beamer LaTeX 讲稿完整译成 Quarto RevealJS HTML 幻灯片。
 

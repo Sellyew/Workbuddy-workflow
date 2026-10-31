@@ -52,6 +52,9 @@ $selection-bg: $primary-gold !default;
 .reveal .slides section {
   padding: 0.5em 1em;
   top: 0 !important;
+  // 没有这一行，padding 会加在 100% 的宽度**之外**：每一页都比幻灯片宽 2em，
+  // 右侧固定溢出 30px（30px 正文字号下的 1em）。slide-qa 量到的正是它。
+  box-sizing: border-box;
 }
 
 .reveal a {
@@ -442,6 +445,32 @@ $selection-bg: $primary-gold !default;
   height: 100% !important;
   text-align: center !important;
   background: linear-gradient(135deg, white 0%, $light-bg 100%);
+}
+
+// ==============================================================================
+// TRANSITION SLIDES
+//
+// Beamer 侧对应 \transitionslide{...}：整版深色背景、居中白字的分隔页。
+// 用法：`## 标题 {.transition}`
+// ==============================================================================
+
+.reveal .slides section.transition {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100% !important;
+  text-align: center !important;
+  background: $primary-blue !important;
+
+  h2 {
+    color: white;
+    font-size: 1.6em;
+    font-weight: 600;
+    border-bottom: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 // ==============================================================================

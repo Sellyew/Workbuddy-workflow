@@ -166,6 +166,10 @@ ERRORS=$(grep -c '^!' "$LOG" 2>/dev/null || true)
 OVERFULL=$(grep -c 'Overfull \\hbox' "$LOG" 2>/dev/null || true)
 UNDEF_CITE=$(grep -c 'Citation .* undefined' "$LOG" 2>/dev/null || true)
 UNDEF_REF=$(grep -c "Reference .* undefined" "$LOG" 2>/dev/null || true)
+# 缺字形是这套工作流里最容易被当成「编译成功」的一种失败：没有 CJK 字体时，
+# xelatex 为每个汉字打一条 Missing character，PDF 照常产出、退出码 0、错误数为 0，
+# 打开一看正文全是空白。所以它必须出现在报告里，而不是留在 log 里等人 grep。
+MISSING=$(grep -c 'Missing character' "$LOG" 2>/dev/null || true)
 PAGES=$(sed -n 's/.*Output written on .* (\([0-9][0-9]*\) page.*/\1/p' "$LOG" | tail -1)
 
 echo "────────────────────────────────────────────────"
@@ -175,7 +179,17 @@ printf '错误       : %s\n' "${ERRORS:-0}"
 printf 'Overfull   : %s 个 \\hbox\n' "${OVERFULL:-0}"
 printf '未定义引文 : %s\n' "${UNDEF_CITE:-0}"
 printf '未定义引用 : %s\n' "${UNDEF_REF:-0}"
+printf '缺字形     : %s\n' "${MISSING:-0}"
 echo "────────────────────────────────────────────────"
+
+if [ "${MISSING:-0}" -gt 0 ]; then
+    echo
+    echo "缺字形：这些字符在 PDF 里是空白，而编译本身没报错。" >&2
+    echo "  中文正文出现这一条，通常意味着没有加载 CJK 字体（Preambles/header.tex 里的" >&2
+    echo "  xeCJK 段）；其他情形多半是某个符号字体缺失。前几个缺失字符：" >&2
+    grep -o 'Missing character: There is no .* in font' "$LOG" 2>/dev/null \
+        | sed 's/^/    /' | sort -u | head -5 >&2
+fi
 
 if [ "${ERRORS:-0}" -gt 0 ]; then
     echo
