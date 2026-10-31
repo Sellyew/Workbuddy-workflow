@@ -1013,5 +1013,34 @@ class BeamerCompileEnv(Tmp):
         self.assertIn("Demo.tex", out)
 
 
+# ── Preambles/header.tex / 中文支持 ─────────────────────────────────────────
+
+class PreamblesCjk(unittest.TestCase):
+    """A missing CJK setup does not fail — it just produces blank Chinese.
+
+    Without xeCJK, xelatex emits one `Missing character` per Han glyph and still
+    writes a PDF: exit code 0, correct page count, zero errors. The deck looks
+    fine to every signal except the eyes. On a Chinese branch that is the worst
+    possible failure shape, so the load is pinned here.
+    """
+
+    def setUp(self):
+        with open(os.path.join(ROOT, "Preambles", "header.tex"), encoding="utf-8") as f:
+            self.src = f.read()
+
+    def test_cjk_loads_only_under_xetex(self):
+        # pdflatex would fail outright on xeCJK, so the guard is part of the fix.
+        self.assertIn("\\ifPDFTeX\\else", self.src)
+        self.assertIn("\\usepackage{xeCJK}", self.src)
+
+    def test_cjk_fonts_ship_with_texlive(self):
+        # Only the actual font-setting commands count: the comment above them
+        # names PingFang SC / Microsoft YaHei as the counter-example, and a
+        # blanket `assertNotIn` would trip on that mention instead of the thing.
+        self.assertIn("\\setCJKmainfont{Fandol", self.src)
+        for system_font in ("PingFang", "Microsoft"):
+            self.assertNotIn("\\setCJKmainfont{%s" % system_font, self.src)
+
+
 if __name__ == "__main__":
     unittest.main()
