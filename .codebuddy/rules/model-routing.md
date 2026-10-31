@@ -7,10 +7,11 @@ paths:
 # 逐代理模型路由（架构师 / 编辑分工）
 
 > **[WorkBuddy 适配]** 上游这一条规则是围绕 Claude Code 的四个模型层（含 `Fable`）与 `effort` 轴写的。
-> 本平台**只有三档**——`default` / `lite` / `reasoning`——**没有 `effort` 字段**。
-> 照搬原文会让读者以为存在一个实际不存在的成本杠杆，也会让 `model:` 写上无效值。
-> 下面是按本平台重写的版本：保留上游的分工思想（匹配认知需求、不降档关键关卡、挑战者≠审计者同档），
-> 删去本平台不存在的东西。上游原文见 `UPSTREAM.md` 记录的上游仓库。
+> 本平台**只有三档**——`default` / `lite` / `reasoning`——第四层不存在。
+> `effort` 轴**存在，但在另一个维度上**：它是代理 frontmatter 的 `effort:`（`minimal`–`max`），
+> 另有一条 `/effort` 命令；它调的是**思考预算**，不改模型档位。**技能里写它无效。**
+> 两个轴正交，所以下面先讲档位，末尾单独讲 effort。
+> 上游原文见 `UPSTREAM.md` 记录的上游仓库。
 
 **把模型档位匹配到工作的认知需求。** 机械劳动走 `lite`；审读与批评用 `default`；高判断力的活儿才用 `reasoning`。Aider 的架构师/编辑分工是这件事的社区标准形态。
 
@@ -33,17 +34,31 @@ model: default      # 原来是 sonnet
 
 技能用同样的字段在 `SKILL.md` 的 frontmatter 里设定。工作本来就跨档的技能可以不定（等于继承会话默认），比如 `/review-paper --peer` 派出的是混合阵容。
 
-## 本平台没有 effort 轴
+## effort 与档位是两个正交的轴
 
-上游把 `effort`（`low / medium / high / xhigh / max`）当作**第一成本杠杆**，把模型层当作第二杠杆。本平台没有这个轴：档位是唯一的路由开关。
+档位选**哪个模型**；`effort` 调**这个模型想多深**。两者都能省钱，但它们不互相替代：
 
-所以这里的成本纪律只有三条，而且顺序不能反：
+- **`effort:` 只在代理里生效。** 写在 `.codebuddy/agents/*.md` 的 frontmatter 里，
+  取值 `minimal` / `low` / `medium` / `high` / `xhigh` / `max`；非法值引擎会告警并忽略。
+  它经 `setOverrideThinking(reasoningEffort)` 落到子代理会话的思考预算上。
+- **技能里写 `effort:` 不起作用。** 技能加载器不读这个字段——`parseSkillFile` 只带
+  `context` / `agent` / `model`。想让某个技能跑得更深，改它派出的代理的档位或 effort。
+- **`/effort` 命令**改的是当前会话的档位，带一个 `ultracode` 档；它不动代理的
+  frontmatter。
 
-1. **先降档，不是先砍流程。** 一个活儿能用 `lite` 干，就不要用 `default` 再配一堆「请简洁」的嘱咐——档位是硬约束，嘱咐是软的。
-2. **关卡不降档。** `editor`、`domain-referee`、`methods-referee`、`claim-verifier` 留在 `reasoning`。详见下面的反面模式。
-3. **省钱的第一手段是缩小上下文，不是降档。** 独立上下文的子代理只读它要审的那份材料，比把整套仓库塞给一个大模型便宜得多——这也是 `orchestrator-protocol.md` 的扇出之所以同时省钱和提质的原因。
+成本纪律因此有三条，顺序不能反：
 
-**不要在文档里写「提高 effort」或「降低 effort」。** 本平台没有这个旋钮，写了就是给后来的人指一条不存在的路。要更多思考就换 `reasoning`，要更少就换 `lite`。
+1. **先降档，再降 effort。** 换档是换模型，跨档的价差通常大于同一档内思考预算的价差；
+   而`effort` 的下限（`minimal`）仍然花在同一个模型上。
+2. **关卡两个都不降。** `editor`、`domain-referee`、`methods-referee`、`claim-verifier`
+   留在 `reasoning` + `effort: high`。详见下面的反面模式。
+3. **省钱的第一手段是缩小上下文，不是降档。** 独立上下文的子代理只读它要审的那份材料，
+   比把整套仓库塞给一个大模型便宜得多——这也是 `orchestrator-protocol.md` 的扇出之所以
+   同时省钱和提质的原因。
+
+**不要再写「本平台没有 effort 轴」。** 那是 2026-10-30 早些时候的一条错误判断
+（原因：只查了代理**名录**的 schema，没查加载器），它导致 18 个代理的 `effort:` 被删、
+又被同一批人恢复。证据与命令见 [`platform-facts.md`](../references/platform-facts.md)。
 
 ## 为什么不是所有代理都用 `reasoning`
 
@@ -118,4 +133,6 @@ Aider 的模式是同一个模型既规划又执行。我们刻意不这样做�
 - [`.codebuddy/rules/post-flight-verification.md`](post-flight-verification.md) —— CoVe / 独立上下文核查（按上面「反面模式：把高判断力代理降档」，`claim-verifier` 应留在 `reasoning`）。
 - [`agent-fleet.md`](../references/agent-fleet.md) —— 每个代理钉在哪一档，与这里的分工一致。
 
-> **讲档位，不讲具体型号。** 本条规则刻意只说 `default` / `lite` / `reasoning`——这是本平台唯一稳定的东西。具体型号与版本会变，且不由本仓库决定；不要在这里硬编码型号，也不要写 `effort`。
+> **讲档位，不讲具体型号。** 本条规则只用两组枚举：档位 `default` / `lite` / `reasoning`，
+> 与 `effort` 的 `minimal`–`max`——它们是本平台稳定的东西。具体型号与版本会变，
+> 且不由本仓库决定；不要在这里硬编码型号。

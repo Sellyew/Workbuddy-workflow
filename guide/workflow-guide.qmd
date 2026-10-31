@@ -1002,7 +1002,7 @@ model: opus   # pinned per agent-fleet.md (v2.0: no agent inherits)
 | `model` | 强制指定模型档位 | `lite`, `default`, `reasoning` |
 | `maxTurns` | 限制代理迭代次数 | `10`（防止跑飞） |
 | `isolation` | 在 git worktree 里运行 | `worktree`（见 [Pattern 12](#pattern-12-branch-isolation)） |
-| `effort`（本平台无此字段） | 深度由 `model:` 的三档决定，没有 effort 轴 | 见 `.codebuddy/rules/model-routing.md` |
+| `effort`（代理读、技能不读） | 代理 frontmatter 的 `effort:` 调同一档内的思考预算，不改模型档位；技能里写它无效 | 见 `.codebuddy/rules/model-routing.md` |
 | `permissionMode` | 限制权限 | `plan`（只读代理） |
 | `tools` | 白名单指定工具 | `["Read", "Grep", "Glob"]` |
 | `disallowedTools` | 黑名单指定工具 | `["Write", "Edit"]` |
@@ -1043,7 +1043,7 @@ tools: ["Read", "Grep", "Glob"]
 
 按代理在 `.codebuddy/agents/<name>.md` 的 frontmatter 里用 `model:` 设置。在我们的用法里，相对全部跑 `reasoning` 的典型节省：**路由过的技能上 50–80%**，在机械层没有观察到质量损失（经验法则，不是基准）。社区趋同的比例记录在 [Augment Code 的路由数据](https://augmentcode.com)里，并与 Aider 的架构者/编辑者分工一致；我们引用 Anthropic 2026 年 4 月 8 日的["解耦大脑与双手"](https://www.anthropic.com/engineering)作为该模式的一手来源背书。
 
-**3. 深度预算。** 下面的[深度档位](#sec-effort)一节讲本平台的**三档** --- `default` / `lite` / `reasoning`。**本平台没有 effort 轴**：没有 `low | medium | high | xhigh | max` 这级阶梯，也没有 `maxEffortLevel` 这类给努力档封顶的设置。深度只由档位决定，所以：让 `default` 做默认；只在假 PASS 代价高昂的门禁上钉 `reasoning`（本模板对编辑、两位审稿人、断言核验器，以及 `/audit-reproducibility`、`/seven-pass-review`、`/simulation-study` 这类核验门禁或正确性关键的技能这么做 --- 完整清单在 `model-routing.md`）；机械活降到 `lite`；扩展探索（深度搜索、大重构、最难的 `/review-paper` 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 `reasoning` 碰判断点。
+**3. 深度预算。** 下面的[深度档位](#sec-effort)一节讲本平台的**三档** --- `default` / `lite` / `reasoning`。**`effort` 是另一根轴**：代理 frontmatter 的 `effort:` 取 `minimal`--`max`，调的是同一档内的思考预算，不改模型档位（技能里写它无效）；`maxEffortLevel` 这类封顶设置不存在。两根轴正交，所以：让 `default` 做默认；只在假 PASS 代价高昂的门禁上钉 `reasoning`（本模板对编辑、两位审稿人、断言核验器，以及 `/audit-reproducibility`、`/seven-pass-review`、`/simulation-study` 这类核验门禁或正确性关键的技能这么做 --- 完整清单在 `model-routing.md`）；机械活降到 `lite`；扩展探索（深度搜索、大重构、最难的 `/review-paper` 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 `reasoning` 碰判断点。
 
 ::: {.callout-tip}
 ## 监控：`/cost` 与 `/usage`
@@ -1216,7 +1216,7 @@ Orchestrator executes the plan end-to-end.
 
 ## 深度档位 --- 成本 vs 彻底程度 {#sec-effort}
 
-**本平台没有 effort 轴，深度由档位决定，详见 `.codebuddy/rules/model-routing.md`。** 没有 `low | medium | high | xhigh | max` 这级阶梯，没有 `/effort` 命令，也没有 `maxEffortLevel` 这类封顶设置。档位只有三档 --- `default` / `lite` / `reasoning` --- 换档就是换模型路由，而不是拧一个「想多久」的旋钮（见[成本意识组合](#sec-cost)）。
+**本平台有两根正交的轴：档位选模型，`effort` 调思考预算。** 详见 `.codebuddy/rules/model-routing.md`。档位三档 --- `default` / `lite` / `reasoning`，换档就是换模型路由；`effort` 六档 --- `minimal` / `low` / `medium` / `high` / `xhigh` / `max`，另有一条 `/effort` 命令改当前会话。代理 frontmatter 里写 `effort:` 生效，技能里写它不生效。`maxEffortLevel` 这类封顶设置不存在（见[成本意识组合](#sec-cost)）。
 
 | 档位 | 深度从哪来 | 学术用途 | 相对成本 |
 |-------|----------|-------------------|---------------|
@@ -1228,7 +1228,7 @@ Orchestrator executes the plan end-to-end.
 
 **怎么设档位：**
 
-- **按会话：**换档就是换你这次会话用的模型档；没有 `/effort` 这类会话内旋钮，也没有交互式滑块可以把深度临时拧上去。
+- **按会话：**换档就是换你这次会话用的模型档；`/effort` 可以在会话内改努力档（含一个 `ultracode` 档），但它改的是思考预算，不是模型。
 - **按技能：**在技能 frontmatter 里写 `model:`，而不是写一个深度数字（见[技能 frontmatter 参考](#skill-frontmatter)）
 - **按代理：**在代理 frontmatter 里写 `model:`，扇出时逐代理生效（见[高级代理配置](#sec-agent-config)）
 - **在提示里：**没有 `ultrathink` 这类关键词可分配额外深度；"think hard" 之类的话会被当作普通指令。要更深，就把那一步交给 `reasoning`，或者把任务拆成有界的几块
@@ -2938,7 +2938,7 @@ YAML frontmatter 决定技能的行为。最常用的字段：
 | `paths` | 限定技能自动激活范围的 glob 模式（技能层面的「按路径生效规则」） | `["scripts/**/*.R"]` |
 | `when_to_use` | 供自动调用判断的额外路由上下文 | `after a merge conflict` |
 | `arguments` | 供 `$name` 替换的具名位置参数 | `[infile, outfile]` |
-| `effort`（本平台无此字段） | 深度由 `model:` 的三档决定，没有 effort 轴 | 见 `.codebuddy/rules/model-routing.md` |
+| `effort`（代理读、技能不读） | 代理 frontmatter 的 `effort:` 调同一档内的思考预算，不改模型档位；技能里写它无效 | 见 `.codebuddy/rules/model-routing.md` |
 | `context` | 设为 `fork` 则在隔离子代理里运行 | `fork` |
 | `agent` | 关联 `.codebuddy/agents/` 里的某个代理定义 | `proofreader` |
 | `hooks` | 技能专属钩子（语法同 settings.json） | `{PreToolUse: [...]}` |

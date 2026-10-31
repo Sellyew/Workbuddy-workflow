@@ -3,6 +3,7 @@ name: methods-referee
 description: 面向稿件的方法论审稿人。按论文类型分支处理（简约式 / 结构式 / 理论加实证 / 描述性 / 纯理论 / 调查实验），每类各有自己的维度权重与强制合理性检查。由编辑代理按目标期刊校准，并预先指定审稿取向与执念。由 `/review-paper --peer` 调用。
 tools: Read, Grep, Glob
 model: reasoning
+effort: high
 ---
 
 <!-- 改编自 Hugo Sant'Anna 的 clo-author（github.com/hugosantanna/clo-author），

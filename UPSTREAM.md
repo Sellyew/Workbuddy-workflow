@@ -81,7 +81,7 @@ after redaction」），而真正要合并的是它改了哪几行判定。只�
 | `.codebuddy/hooks/root-of-trust-guard.py` | 信任根从 `.claude` 扩到 `.codebuddy`（`CONFIG_DIR_NAMES`） | **这是安全机制**。上游若改判定结构，必须重新验证「改 `.codebuddy/` 会被拒」确实生效 |
 | `.codebuddy/hooks/lib/hook-runner.sh` | 本仓库独有的统一入口（解释器探测 + 双环境变量 + UTF-8） | 上游没有这个文件 |
 | `.codebuddy/settings.json` | 事件命令全部指向 `hook-runner.sh` | 上游改事件结构时要逐条对 |
-| `.codebuddy/rules/model-routing.md` | 按本平台**三档**（`default`/`lite`/`reasoning`）重写，删去 `effort` 轴 | 上游改路由思想可以吸收，**档位名与 effort 段不能照搬** |
+| `.codebuddy/rules/model-routing.md` | 按本平台**三档**（`default`/`lite`/`reasoning`）重写；`effort` 段按本平台改写（代理生效、技能无效） | 上游改路由思想可以吸收，**档位名不能照搬** |
 | `.codebuddy/rules/quality-gates.md` | 正文中文化，`<!-- BEGIN rubric -->` 区块**逐字节保留** | 区块必须仍然等于 `python scripts/quality_score.py --print-rubric` |
 | `README.md` / `guide/workflow-guide.qmd` | 全文中文；计数断言按 `docs/translation-conventions.md` §4 | 上游的新卖点要译，且**不要新增计数站点** |
 
@@ -116,7 +116,7 @@ after redaction」），而真正要合并的是它改了哪几行判定。只�
 ## 5. 已知的上游依赖与本地偏差
 
 1. **模型档位不可照搬。** 上游按 opus / sonnet / haiku / fable 四层 + `effort` 轴路由；
-   本平台只有三档且没有 effort。`model-routing.md` 已重写，`.codebuddy/agents/*.md` 的
+   本平台只有三档；`effort` 是代理 frontmatter 的活字段，技能加载器不读它。`model-routing.md` 已重写，`.codebuddy/agents/*.md` 的
    `model:` 已归一化（可由 `scripts/normalize-model-tiers.py` 幂等重跑）。
 2. **计数断言是双语的。** 上游的英文措辞仍然被识别（英文分支永不删），中文分支按本仓库的措辞约定。
    改中文措辞必须同步改 `check-derived-counts.py` / `check-surface-sync.py`，否则该站点脱管。

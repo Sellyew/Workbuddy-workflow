@@ -152,16 +152,16 @@ cd my-project
 > 那一张表是唯一出处；本节与它冲突时以它为准。
 
 - **模型档位**——本平台只有**三档**：`default`（审读与批评的默认档）、`lite`（机械劳动）、`reasoning`（高判断力：期刊编辑、审稿人、事实核查、对抗式批评、TikZ 空间推理）。没有第四档，也没有按型号点版本的阵容、价格表与别名表。各档的职责、上游层级怎么映射过来、怎么改档位，都在单一真源 [`model-versions.md`](.codebuddy/references/model-versions.md) 里——这里的表述停留在档位抽象上，所以不会过时；而单一真源自身的有效期一过，陈旧度门禁就会让构建失败。
-- **没有 effort 轴**——本平台没有 `low` / `medium` / `high` / `xhigh` / `max` 这条 effort 轴，也没有 `maxEffortLevel` 这个天花板开关：深度由档位决定，要更少思考就降档，要更多就升档。frontmatter 里写着 `effort:` 不会报错，但也不会起作用——留着等于给自己一个假开关（见[模型单一真源](.codebuddy/references/model-versions.md)）。
+- **effort 轴（分对象，结论相反）**——**代理**的 `effort:` 是真开关：取值 `minimal` / `low` / `medium` / `high` / `xhigh` / `max`，另有一条 `/effort` 命令；它调子会话的思考预算，与模型档位正交。**技能**里写它则不起作用——技能加载器不读这个字段。`maxEffortLevel` 这个天花板键不存在（见[模型单一真源](.codebuddy/references/model-versions.md)）。
 - **`/goal <可核验条件>`**（v1.9.0；Anthropic 2026 年 5 月）——跨多轮持续工作，直到一个快模型确认条件成立。与 `/commit` 的质量门禁搭配，用于「核验过终态」的运行。
 - **并行任务视图**——并行审读工作（`/review-paper --peer`、`/slide-excellence`）在侧边栏的任务列表里看。上游 CLI 有一个 `claude agents` 单屏仪表盘，本平台桌面端没有这条命令，也不需要它。
 - **成本自觉的编排**——提示词缓存 TTL、70/20/10 模型路由（`lite` / `default` / `reasoning`）、`/cost` + `/usage` 监控。（上游订阅的额度池与缓存时长规则不适用于本平台，本仓库也不代为说明。）
-- **技能 frontmatter**——`context: fork`、`agent`、`hooks`、`disable-model-invocation`（v1.8.0+）、`disallowed-tools`（*真正的*工具限制——`allowed-tools` 只是预先批准）、`paths`（glob 作用域的自动激活）以及动态内容（`$ARGUMENTS`、`!command` 语法）。**`effort` 不在其中**——本平台没有这条轴，写了不会报错，也不会起作用。
+- **技能 frontmatter**——`context: fork`、`agent`、`model`、`hooks`、`disable-model-invocation`（v1.8.0+）、`disallowed-tools`（*真正的*工具限制——`allowed-tools` 只是预先批准）、`paths`（glob 作用域的自动激活）以及动态内容（`$ARGUMENTS`、`!command` 语法）。**`effort` 不在其中**——技能加载器不读它（代理读，见上一条）。
 - **权限档位**——桌面端只有两档：**默认权限**（`sandbox.defaultPermission`，越界就问）与**完全访问权限**（`sandbox.fullAccessPermission`，不问）。上游那五档（手动 / 接受编辑 / 计划 / 自动 / Bypass）在本平台没有暴露成可选档位，`--permission-mode` 与 `Shift+Tab` 也不存在。
-- **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件（引擎实际认 28 个，本仓库注册 7 个）。**钩子看不到 `effort.level`**：本平台没有 effort 轴。
-- **高级代理配置**——model、maxTurns、隔离、工具限制；`model-routing.md` 规则把逐代理的层级写成成文规定（v1.9.0）
-- **Worktree 基线**（v1.9.0；Anthropic 2026 年 4 月）——`worktree.baseRef` 设定控制新 worktree 用 `fresh`（默认；远端默认分支）还是 `head`（本地 HEAD）
-- **内置技能**——`/fewer-permission-prompts`、`/team-onboarding`、`/autofix-pr`、`/powerup`、Ultraplan、`/loop`（自我调速）
+- **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件（引擎实际认 28 个，本仓库注册 7 个）。**钩子载荷里没有 `effort.level`**——那个字段属于会话状态（`statusline` 读的是它），不是钩子输入。
+- **高级代理配置**——`model`、`effort`、`maxTurns`、`isolation: worktree`、`tools` / `disallowedTools`、`memory`、`background`，全部写在 `.codebuddy/agents/*.md` 的 frontmatter 里；`model-routing.md` 规则把逐代理的档位写成成文规定（v1.9.0）
+- **没有 `worktree.baseRef` 设置**——上游用这个键决定新 worktree 从远端默认分支（`fresh`）还是本地 HEAD（`head`）拉；本平台没有这个键，`baseRef` 只是内部 `git worktree add` 的一个实参
+- **上游那些内置技能在本平台不存在**——`/fewer-permission-prompts`、`/team-onboarding`、`/autofix-pr`、`/powerup`、Ultraplan 与 `/loop` 在包里都查不到（`/loop` 只作为预设任务卡的示例文案出现）。本平台的对应物是 `.codebuddy/skills/` 里的技能
 - **插件**——`/discover-plugins` 用来找第三方扩展
 - **2026 年中的新增**（2026 年 6–9 月）——`/skill-doctor`（每项技能在上下文里花多少、多久触发一次）、插件评测（上游 `plugin eval`；本平台的对应工具是 `scripts/run-skill-eval.sh`，需另装 CodeBuddy Code CLI）、内置输出风格（**Concise** 用于日常；**Learning** 留一部分给你自己写——与 `/scaffold-exercises` 搭配）、子代理在后台运行且 fork 模式默认开启、`/fork`（在一个后台会话里继续对话的副本）、`/doctor`（配置体检），以及截止周用的 `autoUpdatesChannel: "stable"`
 

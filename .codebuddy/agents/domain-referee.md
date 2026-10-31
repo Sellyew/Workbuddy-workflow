@@ -3,6 +3,7 @@ name: domain-referee
 description: 面向稿件的实质性审稿人。审查贡献、文献定位、实质论证、外部有效性与期刊契合度。由编辑代理按目标期刊校准，并预先指定审稿取向与执念。由 `/review-paper --peer` 调用。
 tools: Read, Grep, Glob
 model: reasoning
+effort: high
 ---
 
 <!-- 改编自 Hugo Sant'Anna 的 clo-author（github.com/hugosantanna/clo-author），

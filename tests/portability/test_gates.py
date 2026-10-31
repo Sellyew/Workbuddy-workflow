@@ -347,8 +347,8 @@ class LinkResolution(Tmp):
 
 # ── BOM before frontmatter ────────────────────────────────────────────────────
 
-# [WorkBuddy 适配] `effort` 是**本平台不消费**的字段（Claude Code 的思考深度轴，
-# WorkBuddy 用 default/lite/reasoning 三档模型表达）。它在这里的作用是让
+# [WorkBuddy 适配] `effort` 是**技能加载器不消费**的字段（代理的 `parseAgentFile()`
+# 读它并施加到子会话；技能的不读，所以对 SKILL.md 而言它确实没有语义）。它在这里的作用是让
 # check-spec-conformance 确实产出一条 advisory，从而测到「cp932 管道下 advisory
 # 表头不崩」。原来用 argument-hint / allowed-tools 触发，但这两个字段 WorkBuddy
 # 会读（见 WB_FIELDS），按本平台语义报成「无对应语义」才是错的。
@@ -843,6 +843,58 @@ class BatteryPortability(unittest.TestCase):
             self.assertRegex(out, rf"(?m)^  UNREACHABLE  {c} ", c)
         self.assertNotRegex(out, r"(?m)^  FAIL  ")
         self.assertIn(f"ALL PASS ({self.cases} cases; 8 UNREACHABLE on this platform", out)
+
+
+class NormalizeModelTiersEffort(Tmp):
+    """`effort:` is a live field on an agent and an inert one on a skill, so the
+    normalizer has to treat the two file kinds differently.
+
+    normalizer-drops-agent-effort: until 2026-10-30 the script dropped it from BOTH,
+    because the agent metadata schema (`agentMetadataSchema`, seven fields) has no
+    slot for it and Effect Struct drops unknown keys. That schema is the payload of
+    the *listing* RPC, not the definition used to spawn: `parseAgentFile()` does
+    `normalizeReasoningEffort(frontmatter.effort)`, warns on an invalid value, and
+    carries it through `...effort:eF` into the sub-session's thinking budget. 18
+    agent files lost a working knob before anyone noticed.
+    """
+
+    AGENT = "---\nname: lens\ndescription: \"x\"\nmodel: sonnet\neffort: high\n---\n\nBody\n"
+    SKILL = "---\nname: demo\ndescription: \"x\"\nmodel: sonnet\neffort: high\n---\n\nBody\n"
+
+    def setUp(self):
+        super().setUp()
+        _copy_script(self.tmp, "normalize-model-tiers.py")
+        self.agent = _write(self.tmp, ".codebuddy/agents/lens.md", self.AGENT)
+        self.skill = _write(self.tmp, ".codebuddy/skills/demo/SKILL.md", self.SKILL)
+
+    def _run_normalizer(self):
+        return _run([sys.executable, os.path.join(self.tmp, "scripts", "normalize-model-tiers.py")])
+
+    @staticmethod
+    def _read(path):
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+
+    def test_agent_keeps_effort_while_skill_loses_it(self):
+        rc, out = self._run_normalizer()
+        self.assertEqual(rc, 0, out)
+        agent = self._read(self.agent)
+        skill = self._read(self.skill)
+        self.assertIn("effort: high", agent,
+                      "an agent's effort: is live — dropping it removes a real thinking-budget knob")
+        self.assertNotIn("effort:", skill,
+                         "a skill's effort: is inert — the skill loader never reads it")
+        # Control: the tier rename still applies to both kinds.
+        self.assertIn("model: default", agent)
+        self.assertIn("model: default", skill)
+
+    def test_rerun_changes_nothing(self):
+        self._run_normalizer()
+        before = self._read(self.agent)
+        rc, out = self._run_normalizer()
+        self.assertEqual(rc, 0, out)
+        self.assertIn("0 file(s) changed", out)
+        self.assertEqual(self._read(self.agent), before)
 
 
 if __name__ == "__main__":
