@@ -1042,5 +1042,37 @@ class PreamblesCjk(unittest.TestCase):
             self.assertNotIn("\\setCJKmainfont{%s" % system_font, self.src)
 
 
+# ── 扇出型技能的 context: fork ───────────────────────────────────────────────
+
+class FanoutSkillsKeepAgent(unittest.TestCase):
+    """`context: fork` sends a skill into a detached sub-session whose toolset has
+    no `Agent`.
+
+    For a skill built on fan-out, that turns "four reviewers look at it
+    separately" into "one reviewer looks four times" — while the report still
+    says the lenses ran. The `allowed-tools` list asking for `Agent` does not
+    help: the tool is absent regardless, which is exactly why the contradiction
+    is invisible from the frontmatter.
+
+    Evidence and the probe used are in `references/platform-facts.md`.
+    """
+
+    SKILLS = ("qa-quarto", "slide-excellence", "translate-to-quarto")
+
+    def _src(self, name):
+        path = os.path.join(ROOT, ".codebuddy", "skills", name, "SKILL.md")
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+
+    def test_fanout_skills_do_not_fork(self):
+        for name in self.SKILLS:
+            self.assertNotIn("\ncontext: fork\n", self._src(name),
+                             "%s forks, so its lenses cannot be dispatched" % name)
+
+    def test_fanout_skills_ask_for_the_agent_tool(self):
+        for name in self.SKILLS:
+            self.assertIn('"Agent"', self._src(name), name)
+
+
 if __name__ == "__main__":
     unittest.main()
