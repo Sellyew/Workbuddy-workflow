@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出
 
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
@@ -318,6 +318,31 @@ Beamer 全是白板——对一个「中文分支」来说，这是最严重的�
 
 新增 `PreamblesCjk` 两例（CJK 只在非 pdfTeX 分支加载；字体是 Fandol 不是系统字体），
 负例反证：摘掉 CJK 块，两例变红。
+
+### Fixed — 三个要派子代理的技能，其实派不出子代理
+
+`qa-quarto`、`slide-excellence`、`translate-to-quarto` 都声明了 `context: fork`，
+`allowed-tools` 里又都申请了 `Agent`。这两件事不能同时成立：
+
+`context: fork` 让技能经 `executeSkillInForkContext` 变成一个 detached 子会话，而
+**那个子会话的工具集里没有 `Agent`**——申请了也拿不到。实测（临时探针技能，已删）：
+22 个直接工具含 `Skill` / `TaskCreate` / `TaskStop`，没有 `Agent`，也没有能派生执行体的
+`Task`。`/translate-to-quarto` 自己也报了：
+
+> `beamer-translator`、`slide-auditor`、`pedagogy-reviewer`、`proofreader`、
+> `quarto-critic` 一个都没派发
+
+于是多透镜审读退化成一个会话依次扮演每个透镜，**而报告照旧写「多角度审过」**。同一双
+眼睛第二遍也看不见第一遍漏掉的东西——独立性是零，只是从产物上完全看不出来。
+
+- 三个技能删掉 `context: fork`，并在各自正文顶部写明理由与代价（中间过程会占主会话
+  上下文，长流程可能要中途压缩一次；这个代价换的是独立性）。
+- `orchestrator-protocol.md` 的「扇出」一节加限定：**扇出只在主线程可用**，判据是
+  「这个技能是否依赖扇出」——依赖就不 fork。
+- 新增 `FanoutSkillsKeepAgent` 两例钉住这个决定：三个技能不写 `context: fork`，
+  且确实申请了 `Agent`。负例反证：给 `qa-quarto` 加回一行 `context: fork`，用例变红。
+
+账本里同时记下这条平台事实（L3，含复现命令），以免下次有人「优化」回去。
 
 ---
 
