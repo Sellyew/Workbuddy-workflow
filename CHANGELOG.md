@@ -6,7 +6,7 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染
 
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
@@ -281,6 +281,43 @@ synthesises an instant deny`，立即拒绝而非等待），需要审批的工�
 
 这条是「端到端第二条主线」（幻灯片线）验收时撞到的第一个缺陷——它挡在编译这一步，
 不修就走不下去。
+
+---
+
+### Fixed — 中文讲稿编译出来是白板，而所有信号都说成功
+
+`Preambles/header.tex` 从来没有加载 CJK 字体。反证闭环（同一份中文讲稿，同一台机器）：
+
+```
+撤掉 CJK  →  退出码 0，Missing character 649 条，PDF 照常产出 10 页
+加上 CJK  →  退出码 0，Missing character 0 条
+```
+
+**汉字全是空白，而页数对、错误为零、退出码 0。** 这意味着这套工作流此前对中文用户产出的
+Beamer 全是白板——对一个「中文分支」来说，这是最严重的失败形态：坏得彻底，却没有任何
+信号说它坏。
+
+之所以一直没被发现：从来没有一份中文讲稿真的编译过，而 `compile-beamer.sh` **也不统计
+`Missing character`**（它统计错误、overfull、未定义引文，唯独漏了这个）。
+
+- `header.tex` 加 `\ifPDFTeX\else` 守卫 + `xeCJK` + **Fandol** 字族。选 Fandol 是因为它
+  随 TeX Live 分发；写成 PingFang SC / Microsoft YaHei 会把这行变成机器相关配置，
+  换台机器就找不到。
+- `compile-beamer.sh` 新增**缺字形**计数与告警：> 0 时列出前几个缺失字符，并指出中文
+  缺字通常意味着 xeCJK 没加载。退出码仍为 0——个别符号字体缺失是正常的，但它必须
+  出现在报告里，而不是留在 log 里等人 grep。
+
+同一轮还修了主题 SCSS 的两处静默错位：
+
+- **`box-sizing: border-box`**。`.reveal .slides section` 的 `padding: 0.5em 1em` 加在
+  100% 宽度**之外**，每页右侧固定溢出约 30px。slide-qa 首轮 8/10 页报溢出，补这一行后
+  降到 1/10（剩下那页是夹具故意埋的）。
+- **`.reveal .slides section.transition`**。Beamer 的 `\transitionslide` 在 Quarto 侧
+  没有对应样式，过渡页会渲染成普通白底标题页——`/translate-to-quarto` 的 Phase 0A
+  「环境对齐」扫出来的唯一缺口。
+
+新增 `PreamblesCjk` 两例（CJK 只在非 pdfTeX 分支加载；字体是 Fandol 不是系统字体），
+负例反证：摘掉 CJK 块，两例变红。
 
 ---
 
