@@ -399,11 +399,46 @@ class IssueDetector:
         return issues
 
     @staticmethod
+    def _blank_code(content: str) -> str:
+        """Blank out fenced blocks and inline code spans before scanning for citations.
+
+        Pandoc does not parse citations inside code — `` `@scope/pkg` `` renders as
+        literal text, not a reference. A detector that scans raw source therefore
+        reports keys Pandoc never sees. The guard had a concrete cost: the workflow
+        guide documents `npm i -g @tencent-ai/codebuddy-code`, and the scanner read
+        `tencent-ai/codebuddy-code` as a citation key, pinning the guide at 85/100
+        and blocking the 90+ PR threshold. The tempting "fix" — adding the npm
+        package to Bibliography_base.bib — would have put a package name in the
+        reference list and hidden the real defect.
+
+        Blanking (rather than deleting) keeps character offsets stable so any
+        future line-number reporting stays correct.
+        """
+        # Fenced code blocks: ``` or ~~~, with any info string (e.g. ```{python}).
+        def _blank(match: re.Match) -> str:
+            return re.sub(r'[^\n]', ' ', match.group(0))
+
+        content = re.sub(
+            r'(?ms)^[ \t]*(?:`{3,}|~{3,})[^\n]*\n.*?^[ \t]*(?:`{3,}|~{3,})[ \t]*$',
+            _blank, content)
+        # Inline code spans: a run of N backticks closed by the same-length run on
+        # the same line. Staying single-line is deliberate — with `(?s)` an
+        # unclosed backtick would swallow the rest of the document and silently
+        # stop reporting real citation errors. A missed multi-line span only
+        # costs a false positive; a swallowed document costs a false negative.
+        content = re.sub(r'(`+)(?!`)[^`\n]*?(?<!`)\1(?!`)', _blank, content)
+        return content
+
+    @staticmethod
     def check_quarto_citations(content: str, bib_file: Path) -> List[str]:
         """Check Quarto-style citation keys against bibliography.
 
         Supports patterns: @key, [@key], [@key1; @key2]
+
+        Code spans are excluded — see `_blank_code` for why that is a correctness
+        fix and not a whitelist.
         """
+        content = IssueDetector._blank_code(content)
         cited_keys = set()
 
         # Pattern 1: [@key] or [@key1; @key2; ...]
