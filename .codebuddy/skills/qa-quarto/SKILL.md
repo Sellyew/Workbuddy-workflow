@@ -4,10 +4,21 @@ description: 对抗式 Quarto 与 Beamer 一致性 QA。批评代理把 Quarto H
 description_zh: 对抗式 Quarto 与 Beamer 一致性 QA。批评代理把 Quarto HTML 渲染结果与 Beamer PDF 基准就内容与视觉一致性做比对；修复代理施加修改；循环至 APPROVED，或连续两轮都没有新发现为止（兜底上限 5 轮）。用户说 "qa the quarto"、"check parity"、"does the html match the pdf?"、"quarto matches beamer?" 时使用，或在一次 translate-to-quarto 运行之后使用。要求 `.qmd` 已渲染，且有一份 `.pdf` 基准。
 argument-hint: "[LectureN]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"]
-context: fork
 ---
 
 # 对抗式 Quarto 与 Beamer QA 工作流
+
+> **[本平台适配 · 2026-10-31] 这个技能刻意不声明 `context: fork`。**
+> 声明了它，技能会被送进一个 detached 子会话执行，而**那个会话的工具集里没有 `Agent`**
+> （同一目录下的 `allowed-tools` 明明申请了它，也拿不到）。这个技能的价值建立在
+> 「批评者 → 修复者 → 重审」的空轮收敛
+> 上：每个透镜要在**独立上下文**里跑，互不污染，最后归并。
+> 拿不到 `Agent` 之后，这些透镜只能由同一个会话依次扮演一遍——报告上写着「多角度审过」，
+> 实际上是同一双眼睛看了几遍，而同一双眼睛第二遍也看不见第一遍漏掉的东西。
+>
+> 代价说清楚：不 fork 意味着技能的中间过程（读文件、跑命令、试错）会占用主会话上下文，
+> 长流程可能需要中途压缩一次。**这个代价换的是独立性，值。**
+> 实测证据与复现命令见 [`platform-facts.md`](../../references/platform-facts.md) 的技能一节。
 
 用迭代的批评／修复循环，把 Quarto HTML 幻灯片与其 Beamer PDF 基准做比对。
 

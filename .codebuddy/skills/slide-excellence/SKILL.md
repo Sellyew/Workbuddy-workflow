@@ -3,10 +3,21 @@ name: slide-excellence
 description: 多代理综合性幻灯片审查（视觉 + 教学法 + 校对，另按条件加上 TikZ / 一致性 / 实质内容）。用户说 "full review"、"excellence pass"、"comprehensive check"、"review everything"、"pre-release review"、"slide excellence"，或在授课 / 交付一套幻灯片之前使用。扇出（fan-out）包装器——只要单一透镜，请直接用 `/visual-audit`、`/pedagogy-review` 或 `/proofread`。
 argument-hint: "[QMD or TEX filename] [--fast] [--skip-substance | --acknowledge-template-domain-reviewer]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task"]
-context: fork
 ---
 
 # 幻灯片卓越审查
+
+> **[本平台适配 · 2026-10-31] 这个技能刻意不声明 `context: fork`。**
+> 声明了它，技能会被送进一个 detached 子会话执行，而**那个会话的工具集里没有 `Agent`**
+> （同一目录下的 `allowed-tools` 明明申请了它，也拿不到）。这个技能的价值建立在
+> 多个透镜（版面、教学法、校对、TikZ、R 代码）的条件扇出
+> 上：每个透镜要在**独立上下文**里跑，互不污染，最后归并。
+> 拿不到 `Agent` 之后，这些透镜只能由同一个会话依次扮演一遍——报告上写着「多角度审过」，
+> 实际上是同一双眼睛看了几遍，而同一双眼睛第二遍也看不见第一遍漏掉的东西。
+>
+> 代价说清楚：不 fork 意味着技能的中间过程（读文件、跑命令、试错）会占用主会话上下文，
+> 长流程可能需要中途压缩一次。**这个代价换的是独立性，值。**
+> 实测证据与复现命令见 [`platform-facts.md`](../../references/platform-facts.md) 的技能一节。
 
 对讲稿幻灯片做一次多维度的综合审查。多个代理各自独立分析该文件，然后归并（reduce）结果。
 

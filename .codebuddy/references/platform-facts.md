@@ -102,6 +102,7 @@
 | agent 的 `background:` / `memory:` / `initialPrompt:` / `skills:` | 均被读。`memory` 只认 `user`/`project`/`local`；`background` 是布尔 | L2 | 同 `parseAgentFile()` | 2026-10-30 |
 | 技能 frontmatter 的 `model:` | **被读，并对模型目录校验**（先按 id 匹配，再按 name 回查）。项目级与插件级两个加载器都携带它 | L2 | `grep -ao 'let eO=eI.model?.trim().\{0,200\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
 | 技能 frontmatter 的 `effort:` | **不被读**。`parseSkillFile` 返回 `context`/`agent`/`model` 等字段，其中没有 `effort` | L0 | `grep -ao 'async parseSkillFile(.\{0,2200\}' "$H/cli/dist-server/shared.cjs" \| grep -c effort` → 0 | 2026-10-30 |
+| 技能 frontmatter 的 `context: fork` | **被读，而且会让技能失去 `Agent`**。写了它，技能经 `executeSkillInForkContext` 变成 `subagent_type: general-purpose` 的 **detached 任务**；那个子会话的工具集里**没有 `Agent`**——`allowed-tools` 里写了也拿不到。后果：需要「多透镜并行独立审读」的技能退化成同一会话依次扮演每个透镜，报告仍会写「多角度审过」。**多透镜技能（`qa-quarto` / `slide-excellence` / `translate-to-quarto`）已因此删掉这个字段** | L3 | 探针技能实测（输出存 `quality_reports/audits/tool-probe-fork.txt`）：22 个直接工具含 `Skill`/`TaskCreate`/`TaskStop`，**无 `Agent`**；`/translate-to-quarto` 自报「`beamer-translator`、`slide-auditor`、`pedagogy-reviewer`、`proofreader`、`quarto-critic` 一个都没派发」。代码：`grep -ao '"fork"===e_.context.\{0,120\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-31 |
 
 **`agentMetadataSchema` 是名录，不是定义。** 它只有
 `name`/`description`/`path`/`source`/`model`/`tools`/`color` 七个字段，因为它是

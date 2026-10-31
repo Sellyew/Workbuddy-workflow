@@ -25,6 +25,23 @@
   \usepackage[utf8]{inputenc}
 \fi
 
+% -----------------------------------------------------------------------------
+% CJK — XeLaTeX only.
+%
+% 用 Fandol 字族：它随 TeX Live 分发，跨平台不用装系统字体。换成系统字体
+% （macOS 的 PingFang SC、Windows 的 Microsoft YaHei）也可以，但那会把这一行
+% 变成机器相关的配置——别人的机器上会找不到它。
+%
+% 不加这一段时 xelatex 不会报错：它只为每个汉字打一条 "Missing character"
+% 警告，PDF 照常产出，正文与图里的汉字全是空白。
+% -----------------------------------------------------------------------------
+\ifPDFTeX\else
+  \usepackage{xeCJK}
+  \setCJKmainfont{FandolSong}[BoldFont=FandolHei-Regular]
+  \setCJKsansfont{FandolHei}
+  \setCJKmonofont{FandolSong}
+\fi
+
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{booktabs}
 \usepackage{graphicx}
