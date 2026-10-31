@@ -944,5 +944,74 @@ class QuartoCitationCodeSpans(Tmp):
         self.assertEqual(sorted(self.scan(src, self.bib)), ["nope2099"])
 
 
+# ── compile-beamer.sh / kpathsea 分隔符 ─────────────────────────────────────
+
+@unittest.skipUnless(shutil.which("bash"), "needs bash")
+class BeamerCompileEnv(Tmp):
+    """`TEXINPUTS` must end in the platform's path separator.
+
+    kpathsea's rule: the value *replaces* the default search path unless it ends
+    in a separator (a trailing separator means "append the defaults after this").
+    The defaults contain `.`, so dropping that trailing separator drops the current
+    directory — and xelatex then cannot find the `.tex` it was just pointed at:
+
+        ! I can't find file `Demo.tex'.
+
+    That message says the file is missing. The file is right there. The separator
+    is also platform-specific (POSIX `:`, Windows TeX Live `;`), so a hardcoded `:`
+    is not merely a cosmetic difference on Windows: `:` there is not a separator,
+    the trailing-separator guarantee evaporates, and the same misleading failure
+    returns. The negative control for the second case below is to hardcode `:`;
+    on Windows it goes red.
+
+    These cases only read `--dry-run`, so they need no TeX installation.
+    """
+
+    def setUp(self):
+        super().setUp()
+        _copy_script(self.tmp, "compile-beamer.sh")
+        _write(self.tmp, "Slides/Demo.tex", "\\documentclass{beamer}\n")
+        self.script = os.path.join(self.tmp, "scripts", "compile-beamer.sh")
+
+    def _dry(self, *args):
+        return _run([shutil.which("bash"), self.script, *args], cwd=self.tmp)
+
+    @staticmethod
+    def _sep():
+        # Deliberately not the script's own test (`$OS`): if the script ever picks
+        # its separator by another route, this case should notice.
+        return ";" if os.name == "nt" else ":"
+
+    def _field(self, out, name):
+        line = [ln for ln in out.splitlines() if ln.startswith(name)]
+        return line[0].split(":", 1)[1].strip() if line else ""
+
+    def test_separator_matches_the_platform(self):
+        rc, out = self._dry("Demo", "--dry-run")
+        self.assertEqual(rc, 0, out)
+        # The line is `sep       : ';'  (OS=Windows_NT)`; only the quoted value matters.
+        sep = self._field(out, "sep").split()[0].strip("'")
+        self.assertEqual(sep, self._sep(), out)
+
+    def test_texinputs_ends_with_the_separator(self):
+        rc, out = self._dry("Demo", "--dry-run")
+        self.assertEqual(rc, 0, out)
+        value = self._field(out, "TEXINPUTS")
+        self.assertTrue(value.endswith(self._sep()),
+                        "TEXINPUTS %r does not end in %r — kpathsea will drop '.' "
+                        "and report the .tex as missing" % (value, self._sep()))
+
+    def test_bibinputs_ends_with_the_separator(self):
+        rc, out = self._dry("Demo", "--dry-run")
+        self.assertEqual(rc, 0, out)
+        value = self._field(out, "BIBINPUTS")
+        self.assertTrue(value.endswith(self._sep()), "BIBINPUTS %r ends wrongly" % value)
+
+    def test_a_missing_deck_exits_2_and_says_what_is_there(self):
+        rc, out = self._dry("NoSuchDeck")
+        self.assertEqual(rc, 2, out)
+        self.assertIn("Demo.tex", out)
+
+
 if __name__ == "__main__":
     unittest.main()
