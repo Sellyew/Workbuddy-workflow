@@ -21,8 +21,16 @@ CC_ONLY = {"when_to_use","argument-hint","arguments","disable-model-invocation",
 # 这些字段在本平台**是被消费的**，不属于「无人读取」，所以不计违规。
 WB_FIELDS = {"description_zh","description_en","category","tags","version","agent_created",
              "allowed-tools","argument-hint","user-invocable","disable-model-invocation","agent"}
-# 无对应语义：Claude Code 读、WorkBuddy 不读且不影响运行。保留不报错，但要提示。
-INERT_FIELDS = {"effort","when_to_use","arguments","disallowed-tools","model","context",
+# 无对应语义：技能里写了不报错，但也不会起作用。
+#
+# `model` **不在**这个名单里：技能的 `parseSkillFile()` 会读它，命令转换器还会拿它
+# 去对模型目录校验（先按 id 匹配，再按 name 回查）。它属于 WB_FIELDS 之外的另一类
+# ——被读、只是不在技能 spec 里。
+#
+# `effort` 在这个名单里，因为**同一个键在两个对象上结论相反**：代理的
+# `parseAgentFile()` 读它并施加到子会话思考预算，技能加载器不读它。判据见
+# `.codebuddy/references/platform-facts.md`。
+INERT_FIELDS = {"effort","when_to_use","arguments","disallowed-tools","context",
                 "background","hooks","paths","shell"}
 NAME_RE = re.compile(r'[a-z0-9]+(-[a-z0-9]+)*')
 

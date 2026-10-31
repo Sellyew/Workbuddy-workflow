@@ -26,8 +26,9 @@
 | **⏳** | 只到 L2，没有运行时观测 | 「实现存在，未观测到」 |
 
 **L1 与 L2 的区别是这道台账的核心。** `statusLine` 在引擎字符串里出现 8 次（L1 充分），
-但没有一处消费它（L2 不成立）；`effort` 在 schema 里根本没有位置（L0），而在会话配置里
-出现 6 次（那是另一个东西）。只看命中数会得出相反的结论。
+但没有一处消费它（L2 不成立）。反过来，`effort` 在代理**列表** schema 里没有位置，
+却在加载器、`--effort` 旗标与 `/effort` 命令里各有一条消费路径——**只看命中数、
+或者只查一个 schema，都会得出与事实相反的结论**，两种错法这道台账都犯过。
 
 ## 环境
 
@@ -81,7 +82,22 @@
 | `.codebuddy/agents/` | 目录**实时加载**，会话内新建即可派发 | L3 | `P1` T6（`ping` 新建即通） | 2026-10-29 |
 | `rules` 的 `paths:` | 按路径条件注入；只碰 `*.md` 时不注入 | L3 | `P1` T2 | 2026-10-29 |
 | agent 的 `model:` | **会被解析并用于子代理会话**：`resolveAgentModel` 依次读 `CODEBUDDY_CODE_SUBAGENT_MODEL` → 元数据 `model` → `agentManager.resolveModel`；`default` / `inherit` 表示继承。合法值就是 `default` / `lite` / `reasoning` | L2 | `grep -ao 'async resolveAgentModel(t){.\{0,700\}' "$WB/app.asar.unpacked/cli/dist/codebuddy-lite-wb.mjs"`；`agentMetadataSchema` 含 `model` | 2026-10-30 |
-| agent 的 `effort:` | **不被读**。元数据 schema（`name`/`description`/`path`/`source`/`model`/`tools`/`color`）里没有它，Effect Struct 会把未知键剥掉；harness 中 `effort` 的 6 次命中全在会话级 `server-config.js`。`check-spec-conformance.py` 也已把它列进 `INERT_FIELDS` | L0 | `grep -ao 'agentMetadataSchema=e.Struct({.\{0,600\}' "$H/lib/agent-registry/schemas.js"`；`grep -rao effort "$H/lib/" \| wc -l` → 6 | 2026-10-30 |
+| agent 的 `effort:` | **被读、被归一化、并施加到子会话**。取值 `minimal`/`low`/`medium`/`high`/`xhigh`/`max`，非法值当场告警并忽略。加载器 `parseAgentFile()` 把它写进代理定义（`...effort:eF`），子代理启动时经 `setOverrideThinking(subSessionId,{reasoningEffort})` 落到会话思考预算 | L2 | `grep -ao 'let eF=(0,tF.normalizeReasoningEffort)(eI.effort)' "$H/cli/dist-server/shared.cjs"`；`grep -ao '\.\.\.eF&&{effort:eF}' 同文件`；`grep -ao 'setOverrideThinking(.\{0,80\}' 同文件` | 2026-10-30 |
+| `/effort` 命令 | **存在且已实现**：`Set the model effort level (low, medium, high, xhigh, max, ultracode)`，带 `execute()` / `parseLevel()` / `resolveEffectiveLevel()` | L2 | `grep -ao '{name:"/effort".\{0,300\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
+| `maxEffortLevel` | **不存在**。努力度的天花板不是这个键（三处零命中） | L0 | `grep -ao maxEffortLevel "$WB/app.asar" \| wc -l` → 0；`grep -rao maxEffortLevel "$H/" \| wc -l` → 0 | 2026-10-30 |
+| 钩子载荷里的 `effort.level` | **不出现**。`effort.level` 两包均零命中。它是**会话状态**的形态——`.codebuddy/scripts/statusline.sh` 读的是会话 JSON，不是钩子输入 | L0 | `grep -ao 'effort\.level' "$WB/app.asar" \| wc -l` → 0 | 2026-10-30 |
+| agent 的 `maxTurns:` | **被读**，须为正整数；非法值告警并忽略 | L2 | `grep -ao 'parsePositiveIntField(eI.maxTurns)' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
+| agent 的 `isolation:` | **只认 `worktree`**，其它值告警并忽略 | L2 | `grep -ao '.\{60\}"worktree"===eI.isolation.\{60\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
+| agent 的 `background:` / `memory:` / `initialPrompt:` / `skills:` | 均被读。`memory` 只认 `user`/`project`/`local`；`background` 是布尔 | L2 | 同 `parseAgentFile()` | 2026-10-30 |
+| 技能 frontmatter 的 `model:` | **被读，并对模型目录校验**（先按 id 匹配，再按 name 回查）。项目级与插件级两个加载器都携带它 | L2 | `grep -ao 'let eO=eI.model?.trim().\{0,200\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
+| 技能 frontmatter 的 `effort:` | **不被读**。`parseSkillFile` 返回 `context`/`agent`/`model` 等字段，其中没有 `effort` | L0 | `grep -ao 'async parseSkillFile(.\{0,2200\}' "$H/cli/dist-server/shared.cjs" \| grep -c effort` → 0 | 2026-10-30 |
+
+**`agentMetadataSchema` 是名录，不是定义。** 它只有
+`name`/`description`/`path`/`source`/`model`/`tools`/`color` 七个字段，因为它是
+「列出有哪些代理」这个 RPC 的传输 schema（还有 94 KB/cwd 的编码上限，也只有列表才需要）。
+判断某个 frontmatter 字段会不会生效，要读 `parseAgentFile()` 的返回值，
+那里面还有 `effort` / `maxTurns` / `background` / `memory` / `isolation` / `skills` /
+`initialPrompt`。**代理与技能的结论在这里正好相反**：同一个 `effort:`，代理读、技能不读。
 
 ### 调度
 
@@ -100,23 +116,40 @@
 | 失败上报 | 有 `automation.run.failure_detail` 遥测事件；推送通道是**企业微信 webhook**，设置键 `automation.wecomWebhookUrl` / `automation.wecomPushConfig.webhookUrl`。不配 = 没有推送 | L1 | `grep -ao 'automation\.wecom[A-Za-z.]*' "$S"` | 2026-10-30 |
 | `/schedule` 斜杠命令 | **不存在**。29 次命中全是 API 路由（`/v2/as/scheduler/tasks`、`/schedule/todo-source`）与打包文件名（`schedule-host-*.js`）；带引号的 `"/schedule"` 零命中 | L0 | `grep -aoF "/schedule" "$WB/app.asar" \| wc -l` → 29；`grep -aoF '"/schedule"' "$WB/app.asar" \| wc -l` → 0 | 2026-10-30 |
 | 云端 Routines | **不存在**：`Routines` 在 `app.asar` 与 `$S` 均零命中；`claude.ai` 连接器语义在 `$S` 零命中 | L0 | `grep -acF "Routines" "$WB/app.asar"` → 0 | 2026-10-30 |
-| `.codebuddy/routines/` | 只在一份「agent 启动时加载的配置路径」清单里出现 2 次；`$H/lib/` 与 `app.asar` 均零命中，未见发现逻辑 | ⏳ | `grep -rao routines "$H/lib/" \| wc -l` → 0 | 2026-10-30 |
-| `.codebuddy/loop.md` | `app.asar` 有 4 次命中，语义未核（可能是 `/loop` 的状态文件） | ⏳ | `grep -aoF "loop.md" "$WB/app.asar" \| wc -l` → 4 | 2026-10-30 |
+| `.codebuddy/routines/` | **没有实现**。全树唯一一处真实出现，是引擎写给模型的一句「自我修改」安全说明：它枚举「agent 启动时会加载的配置」，把 `routines/` 与 `loop.md` 并列写进这个清单。那是提示词里的一个路径名，不是发现逻辑 | L1 | `grep -ao '.\{500\}\.codebuddy/routines/.\{300\}' "$H/cli/dist-server/shared.cjs"`；`app.asar` 的 3 次命中全是噪音（英文散文 "recurring routines"、正则解析器的 `subroutines`、Emacs 符号 `dlwave-routines`） | 2026-10-30 |
+| `.codebuddy/loop.md` | **没有实现**。原记录的「4 次命中」是测量缺陷——那 4 次全是 `agent-loop.md`（另一个文件）。排除该前缀后零命中，唯一真实出现同样在上面那句安全说明里 | L0 | `grep -aoF "loop.md" "$WB/app.asar" \| wc -l` → 4；`grep -aoF "agent-loop.md" …` → 4；`grep -aoF ".codebuddy/loop.md" …` → 0 | 2026-10-30 |
+
+### 其它上游断言（README「2026 年的能力」逐条落表）
+
+| 上游断言 | 事实 | 级别 | 证据 | 核查 |
+|---|---|---|---|---|
+| `worktree.baseRef` 控制新 worktree 用 `fresh`（远端默认分支）还是 `head`（本地 HEAD） | **没有这个设置键**。带引号的 `"worktree"` 零命中；`baseRef` 的 15 次命中全在 `addWorktree({repoCwd,worktreePath,newBranch,baseRef})` 一个函数里——那是 `git worktree add -b <branch> <path> <baseRef>` 的实参，不是可配置项。包内也没有 `fresh`/`head` 这对枚举 | L0 | `grep -ao '"worktree"' "$WB/app.asar" \| wc -l` → 0；`grep -ao baseRef "$WB/app.asar" \| wc -l` → 15；`grep -rao baseRef "$H/" \| wc -l` → 0 | 2026-10-30 |
+| 内置技能 `/fewer-permission-prompts` · `/team-onboarding` · `/autofix-pr` · `/powerup` · Ultraplan | **五个都不存在**。两个包、大小写两种写法，全部零命中 | L0 | 对六个串名逐个 `grep -aoF`，`app.asar` 与 `$H/` 均返回 0 | 2026-10-30 |
+| `/loop`（自我调速） | **没有命令实现**。38 次命中全在「预设任务卡」的 `command` 字段里（如「每日 AI 新闻推送」的示例写 `/loop 1d 关注…`），是给用户填空的文案。命令注册表里没有 `loop` | L0 | `grep -ao '"/loop"' "$H/cli/dist-server/shared.cjs" \| wc -l` → 0；`grep -ao 'name:"loop"' …` → 0 | 2026-10-30 |
+| 高级代理配置含 `maxTurns`、隔离、工具限制 | **成立，但都在 agent frontmatter 里**，不是设置键。逐条见「技能 / 规则 / 代理」表 | L2 | 同上表 | 2026-10-30 |
 
 ## 已知不一致
 
 ### 已处理
 
-1. ~~18 个 agent 文件带 `effort:`~~ —— **2026-10-30 已删**。`normalize-model-tiers.py`
-   现在对代理与技能一视同仁（此前代理走 `drop_effort=False` 分支，留着这个字段）。
-   同时重写了 [`agent-fleet.md`](agent-fleet.md)：四节标题从「Opus 层 / Sonnet 层，effort: X」
-   改成三档，删掉「投入」一列，并写明 `default` 内没有强度旋钮、审读与应用两组现在同档。
-   一并修掉三处把它当活字段用的地方：`templates/skill-template.md` 的字段表、
-   `new-skill` 的 frontmatter 清单、`deep-audit` 的模型分工（那段还提到本平台没有的
-   「Fable 层」与「先加努力度」）。**教训**：`model-routing.md` 早在迁移时就写对了
-   （「本平台没有 effort 字段」），错的是它周围没人去删字段——一条正确的规则，挡不住
-   三个仍然照旧写的文件。
-
+1. **【更正，撤回 2026-10-30 当日早些时候的相反判断】`effort` 不是死字段。**
+   那份判断说「代理元数据 schema 里没有 `effort`，Effect Struct 会剥掉它」，据此把
+   18 个代理文件的 `effort:` 全删了，还把四份文档改成「本平台没有 effort 轴」。
+   **错在搜错了目录**：`lib/agent-registry/schemas.js` 里的 `agentMetadataSchema`
+   是代理**列表**的传输 schema（给界面列名录用的），不是 spawn 用的定义。真正的加载器
+   与消费链都在 `cli/dist-server/shared.cjs`：`parseAgentFile()` 读
+   `normalizeReasoningEffort(frontmatter.effort)`、非法值当场告警、合法值经
+   `...effort:eF` 进代理定义，子代理启动时由
+   `setOverrideThinking(subSessionId,{reasoningEffort})` 落地。同一条链上还有
+   `--effort` 旗标与 `/effort` 命令（`low|medium|high|xhigh|max|ultracode`）。
+   **已恢复** 18 个字段的原值（10 `high` / 7 `medium` / 1 `low`，取自 `b68584f^`），
+   `normalize-model-tiers.py` 改为只对技能删 `effort`。连带更正 `model-routing.md`、
+   `model-versions.md`、`agent-fleet.md`、`README.md`、`CODEBUDDY.md`、`TROUBLESHOOTING.md`、
+   `MEMORY.md`、`UPSTREAM.md`、`check-spec-conformance.py` 的 `INERT_FIELDS`。
+   **教训**：`grep -rao effort "$H/lib/"` 返回 6 —— 那个 6 **是真的**，而这个目录
+   **不包含加载器**。台账第 2 条方法教训（「在正确的包里找」）写着「搜错包得到的零命中
+   和真的不存在长得一模一样」，这次错的是**收窄了子目录**而不是包。搜索范围越窄，
+   零命中越像结论。
 
 2. ~~[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制~~ —— **2026-10-30 已重写**。
    重写前先把「上游那三件套到底哪几件在这里存在」逐条落回引擎，结果推翻了原来的判断：
@@ -132,21 +165,28 @@
    **教训**：「没搜过」和「搜过没有」必须分开写。原来的措辞是「尚未在引擎内定位」——它诚实地
    描述了「我没查」，却被下一层读成了「查了，没有」，与 T13 那次是同一种误读。
 
+3. ~~README「2026 年的能力」还剩三条未核的上游断言~~ —— **2026-10-30 已逐条落表**。
+   `worktree.baseRef` 的 `fresh`/`head` **是 L0**：没有这个设置键，`baseRef` 只是
+   `addWorktree()` 的实参。五个内置技能（`/fewer-permission-prompts`、`/team-onboarding`、
+   `/autofix-pr`、`/powerup`、Ultraplan）**是 L0**，两个包零命中。`/loop` **没有实现**，
+   命中全在预设任务卡的示例文案里。`maxTurns` / 隔离 / 工具限制**成立**，但都在 agent
+   frontmatter 里，不是设置键。逐行证据见上面新增的「其它上游断言」表；README 对应四条已改。
+
+4. ~~技能级 `model:` 两处说法相反~~ —— **2026-10-30 已定，`model-routing.md` 是对的**。
+   无需运行时实测：两个 `parseSkillFile`（项目级与插件级）都返回 `model: eB.model`，
+   命令转换器还会拿它**对模型目录校验**（先按 id 匹配，再按 name 回查 id）。
+   `check-spec-conformance.py` 的 `INERT_FIELDS` 已把 `model` 移出；`effort` 留在里面
+   是对的——技能加载器确实不读它（代理读，技能不读，这个差别写进了脚本注释）。
+
+5. ~~`.codebuddy/routines/` 与 `.codebuddy/loop.md` 是两条悬着的字符串~~ —— **2026-10-30 已定**。
+   两者都没有实现。它们共同出现在引擎给模型的一句「自我修改」安全说明里——那是一份
+   「agent 启动时会加载的配置」路径清单，是提示词文本，不是发现逻辑。`loop.md` 原来的
+   「4 次命中」是子串误计：4 次全是 `agent-loop.md`。**已在文档里明说它们没有实现**，
+   而不是留着 ⏳ 让人读成「可能有」。
+
 ### 未处理
 
-2. **`README.md`「2026 年的能力」还剩三条未核的上游断言**：`worktree.baseRef` 的
-   `fresh` / `head`、内置技能清单（`/fewer-permission-prompts`、`/team-onboarding`、
-   `/autofix-pr`、`/powerup`、Ultraplan、`/loop`）、以及「高级代理配置」里的 `maxTurns`。
-   其中 `effort`、`effort.level` 与五档权限三处已在 2026-10-30 按本台账改正。
-   **待办**：逐条落到 L0–L3，核不了就删。
-3. **技能级 `model:` 两处说法相反。** [`model-routing.md`](../rules/model-routing.md)
-   说「技能用同样的字段在 `SKILL.md` 的 frontmatter 里设定」，而
-   `check-spec-conformance.py` 把 `model` 列在 `INERT_FIELDS` 里、会对写了它的技能发
-   「无对应语义」告警。目前没人被坑到——63 个技能里 0 个写 `model:`——但两处必须统一。
-   **待办**：用一次带 `model:` 的技能实测它是否影响运行时，再改错的那一边。
-4. **`.codebuddy/routines/` 与 `.codebuddy/loop.md` 是两条悬着的字符串**（见「调度」节的 ⏳ 行）。
-   前者只出现在一份配置路径清单里、无发现逻辑；后者在 `app.asar` 有 4 次命中、语义未核。
-   **待办**：要么找到消费点升到 L2，要么在文档里明说它们没有实现。
+（空。2026-10-30 清空——上面五条是这一轮的完整清单，新条目请按规约先测再写。）
 
 ## 方法教训（下次还会犯，所以写下来）
 
@@ -154,7 +194,13 @@
    返回 695。只测一种引号形态，就会把「支持」写成「不支持」。
 2. **在正确的包里找。** 在 harness 里搜 `permissions` 得 0，不能推出「不支持」——设置管理器
    在 `app.asar` 里。搜错包得到的零命中，和真的不存在长得一模一样。
-3. **键存在 ≠ 它被用。** `statusLine` 8 次命中，全是 HTTP 状态行；`effort` 有 6 次命中，
-   全在会话级配置里，跟逐代理字段无关。命中数是 L1 证据，不是 L2。
-4. **测量方式的缺陷会被写成平台的缺陷。** P0 判 agent `model:` 为「部分支持」，真实原因是
-   模型不自报身份。结论一旦写进表格，就没人再回头问「这是平台的问题还是探针的问题」。
+3. **键存在 ≠ 它被用。** `statusLine` 8 次命中，全是 HTTP 状态行；`agentMetadataSchema`
+   里有 `model` 而列表里没有 `effort`，但这只能说明「名录上不显示」，推不出「不被读」。
+   命中数是 L1 证据，不是 L2。
+4. **收窄搜索范围会让零命中更像结论。** 「在 `$H/lib/` 里搜 `effort` 得 6，全在会话配置」
+   这句话每个字都是真的，结论却是错的——因为加载器不在 `lib/`。第 2 条说的是别搜错包，
+   这一条更隐蔽：**包对了，子目录错了**。判断某字段是否被消费，先定位**读写它的那个函数**
+   （这里是 `parseAgentFile` / `spawn`），再回头数命中，而不是先数命中再猜。
+5. **测量方式的缺陷会被写成平台的缺陷。** P0 判 agent `model:` 为「部分支持」，真实原因是
+   模型不自报身份；`.codebuddy/loop.md` 的「4 次命中」实际是 `agent-loop.md` 的子串。
+   结论一旦写进表格，就没人再回头问「这是平台的问题还是探针的问题」。
