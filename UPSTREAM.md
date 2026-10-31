@@ -21,7 +21,10 @@
 
 ```bash
 git remote add upstream https://github.com/pedrohcgs/claude-code-my-workflow.git
-git remote -v          # 应当看到 origin 与 upstream 两行
+# 废掉 upstream 的 push URL。它是一个只读镜像：`git push upstream` 默认会打到
+# pedrohcgs 的仓库（本地若恰好有权限就真推上去了），而这个 URL 不需要可推。
+git remote set-url --push upstream no_push
+git remote -v          # origin 两行正常；upstream 的 push 应当显示 no_push
 ```
 
 ## 2. 同步前先体检
