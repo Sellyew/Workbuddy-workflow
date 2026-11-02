@@ -409,22 +409,29 @@ class QualityScoreSuffix(unittest.TestCase):
 
 
 class QualityScoreRscriptPath(unittest.TestCase):
-    """quality-score-rscript-backslash-path: the path is R's argument, not R source."""
+    """quality-score-rscript-backslash-path: no file name ever reaches R.
 
-    def test_windows_path_is_passed_as_an_argument(self):
+    最初这条钉的是「路径要作为参数传，不能拼进 R 源码」（Windows 的 `\R` 是非法转义）。
+    现在更强：内容走 stdin，文件名根本不交给 R —— 于是拼源码、反斜杠转义、非 ASCII
+    文件名被 cp936 重解这三类问题一起消失。断言随之改成「R 看不到路径」。
+    """
+
+    def test_windows_path_never_reaches_r(self):
         m = load(QSCORE)
         seen = []
 
         def fake_run(cmd, *a, **k):
-            seen.append(cmd)
+            seen.append((cmd, k.get("input")))
             return subprocess.CompletedProcess(cmd, 0, "", "")
         win = pathlib.PureWindowsPath("scripts/R/01_load.R")
-        with mock.patch.object(m.subprocess, "run", fake_run):
+        with mock.patch.object(m.subprocess, "run", fake_run), \
+                mock.patch("builtins.open", mock.mock_open(read_data=b"x <- 1\n")):
             m.IssueDetector.check_r_syntax(win)
-        cmd = seen[0]
-        self.assertIn(str(win), cmd)                  # handed over verbatim, as its own argument
-        self.assertFalse(any(str(win) in c for c in cmd if "parse" in c),
-                         f"the path is spliced into R source: {cmd}")
+        cmd, data = seen[0]
+        self.assertIn("stdin", " ".join(cmd))
+        self.assertFalse(any("01_load" in c for c in cmd),
+                         f"the file name still reaches R: {cmd}")
+        self.assertEqual(data, b"x <- 1\n", "the source must travel on stdin, not as a path")
 
     @unittest.skipUnless(shutil.which("Rscript") and os.name != "nt", "needs Rscript and a POSIX file name")
     def test_rscript_reads_backslash_and_quote_names_as_files(self):
