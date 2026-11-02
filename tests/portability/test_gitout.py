@@ -409,7 +409,7 @@ class QualityScoreSuffix(unittest.TestCase):
 
 
 class QualityScoreRscriptPath(unittest.TestCase):
-    """quality-score-rscript-backslash-path: no file name ever reaches R.
+    r"""quality-score-rscript-backslash-path: no file name ever reaches R.
 
     最初这条钉的是「路径要作为参数传，不能拼进 R 源码」（Windows 的 `\R` 是非法转义）。
     现在更强：内容走 stdin，文件名根本不交给 R —— 于是拼源码、反斜杠转义、非 ASCII
@@ -419,15 +419,24 @@ class QualityScoreRscriptPath(unittest.TestCase):
     def test_windows_path_never_reaches_r(self):
         m = load(QSCORE)
         seen = []
+        fake_rscript = r"C:\Program Files\R\R-4.5.2\bin\Rscript.exe"
 
         def fake_run(cmd, *a, **k):
             seen.append((cmd, k.get("input")))
             return subprocess.CompletedProcess(cmd, 0, "", "")
         win = pathlib.PureWindowsPath("scripts/R/01_load.R")
-        with mock.patch.object(m.subprocess, "run", fake_run), \
+        # 必须自己把 Rscript 钉住：check_r_syntax 找不到 R 会提前返回，subprocess 根本
+        # 不被调用，seen 为空，下面的 seen[0] 直接 IndexError —— 而这正是 Linux CI 上
+        # 发生过的事。断言的前提要由测试自己建立，不能指望被测函数走到那一步。
+        with mock.patch.object(m.IssueDetector, "_find_rscript",
+                              staticmethod(lambda: fake_rscript)), \
+                mock.patch.object(m.subprocess, "run", fake_run), \
                 mock.patch("builtins.open", mock.mock_open(read_data=b"x <- 1\n")):
-            m.IssueDetector.check_r_syntax(win)
+            verdict, _ = m.IssueDetector.check_r_syntax(win)
+        self.assertIs(verdict, True, "a clean parse must come back True, not None")
+        self.assertEqual(len(seen), 1, f"R was never invoked: {seen}")
         cmd, data = seen[0]
+        self.assertEqual(cmd[0], fake_rscript, "the resolved interpreter must be the one that runs")
         self.assertIn("stdin", " ".join(cmd))
         self.assertFalse(any("01_load" in c for c in cmd),
                          f"the file name still reaches R: {cmd}")

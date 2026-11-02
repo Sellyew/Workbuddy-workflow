@@ -65,6 +65,24 @@ Windows 的 R 安装器默认**不**把 R 加进 PATH。于是这台机器上：
 负例反证两次，各自只打中该打中的：Python 侧探测退回只看 PATH → 2 条红；bash 侧
 `resolve_tool` 退回只看 PATH → 正好 `validate-setup` 那 1 条红。
 
+**同一个错误在 CI 上换了第三个形态。** 提交后 GitHub Actions 变红：
+
+    ERROR: test_windows_path_never_reaches_r
+    IndexError: list index out of range        # cmd, data = seen[0]
+
+本地全绿、CI 全红，因为那条测试断言的是「R 收到了什么」——而 Linux runner 上根本没有 R，
+`check_r_syntax` 在探测那一步就提前返回，`subprocess.run` 一次都没被调用，`seen` 是空的。
+测试把「被测函数会走到 subprocess」当成了既定前提，可这个前提恰恰取决于被测代码。
+
+断言的前提必须由测试自己建立：把 `_find_rscript` 钉成一个假路径，再断言它真的被执行
+（`cmd[0] == fake_rscript`、`len(seen) == 1`）。于是「R 没被调用」本身就成了一个失败，
+而不是一个 IndexError。负例重做：实现退回「路径当参数传」→ 红，报错直接点名
+`the file name still reaches R: [... 'scripts\\R\\01_load.R']`。
+
+这一轮里，「依赖被测行为」出现了三次：跳过的条件（`_find_rscript` 返回 None）、
+验收脚本的判据（没有断言，永远退出 0）、断言的前提（R 一定被调用）。三次都表现为
+**测试在说成功**。
+
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
 同一天早些时候，本仓库判定「agent 的 `effort:` 不被读」，据此删掉 18 个代理文件的
