@@ -6,6 +6,14 @@
 #   scripts/compile-beamer.sh <名字>             # Slides/<名字>.tex
 #   scripts/compile-beamer.sh Lecture1.tex
 #   scripts/compile-beamer.sh Lecture1 --dry-run  # 只打印将要用的环境变量
+#   scripts/compile-beamer.sh Lecture1 --allow-undefined-citations
+#                                                # 引文未解析只警告，仍算成功（草稿期用）
+#
+# 退出码：
+#   0 = 产出了 PDF，且没有未解析的引文/引用
+#   1 = 没有产出 PDF（编译失败；真实原因见下方诊断）
+#   2 = 用法或输入错误
+#   3 = PDF 产出了，但有未解析的引文/引用 —— 内容缺陷，不许当成功
 #
 # 为什么需要一个脚本，而不是在技能里写一行 xelatex
 # -------------------------------------------------
@@ -49,15 +57,20 @@ texinputs() { printf '%s%s%s' "../Preambles" "$SEP" "${TEXINPUTS:-}"; }
 bibinputs() { printf '%s%s%s' ".." "$SEP" "${BIBINPUTS:-}"; }
 
 usage() {
-    sed -n '3,9p' "$0" | sed 's/^# \{0,1\}//'
+    # 打印文件头里的用法段：从第 3 行起，到「为什么需要一个脚本」那句之前为止。
+    # 刻意不用固定行号——注释改一行就会把用法截断，而这种截断没人会注意到。
+    sed -n '3,/^# 为什么需要一个脚本/{/^# 为什么需要一个脚本/d;p}' "$0" \
+        | sed 's/^# \{0,1\}//' | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba'
 }
 
 NAME=""
 DRY_RUN=0
+ALLOW_UNDEF=0
 for arg in "$@"; do
     case "$arg" in
         -h|--help) usage; exit 0 ;;
         --dry-run) DRY_RUN=1 ;;
+        --allow-undefined-citations) ALLOW_UNDEF=1 ;;
         -*) echo "compile-beamer: 不认识的选项 $arg" >&2; exit 2 ;;
         *) NAME="$arg" ;;
     esac
@@ -200,8 +213,25 @@ fi
 
 if [ "${UNDEF_CITE:-0}" -gt 0 ] || [ "${UNDEF_REF:-0}" -gt 0 ]; then
     echo
-    echo "引文/引用未解析——通常是漏跑 bibtex，或键名拼错："
-    grep -E 'Citation .* undefined|Reference .* undefined' "$LOG" | sort -u | head -10 | sed 's/^/    /'
+    echo "引文/引用未解析——通常是漏跑 bibtex，或键名拼错：" >&2
+    grep -E 'Citation .* undefined|Reference .* undefined' "$LOG" | sort -u | head -10 | sed 's/^/    /' >&2
+    echo >&2
+    # 这不是排版问题：PDF 里那些位置印的是「(键名?)」，而编译一直返回 0。
+    # 2026-10-31 的验收里，三处（xelatex、citeproc、quality_score）都报了同一个
+    # 不存在的键，没有一处判失败——只看退出码的人以为幻灯片是干净的。
+    echo "这不是排版警告：产出的 PDF 在这些位置印的是 (键名?)，而编译本身没报错。" >&2
+    echo "  * 键名拼错  → 改键" >&2
+    echo "  * 真缺文献  → 按 INV-5 补进 Bibliography_base.bib（不要塞包名/变量名凑数）" >&2
+    echo "  * 静态复检  → python scripts/check-citations.py" >&2
+    if [ "$ALLOW_UNDEF" -eq 1 ]; then
+        echo "  * 本次加了 --allow-undefined-citations：按草稿处理，退出码仍为 0。" >&2
+        echo "    排版看过之后，发布前务必去掉这个开关重跑一遍。" >&2
+    else
+        echo "  * 草稿期确实要先看排版 → 加 --allow-undefined-citations" >&2
+        echo >&2
+        echo "✗ 退出码 3：PDF 产出了，但内容有未解析的引文。" >&2
+        exit 3
+    fi
 fi
 
 exit 0

@@ -252,7 +252,7 @@ Claude Code 本身安装免费（源码在 GitHub 公开，但不是开源软件
 要*相信*这套核验层，最快的办法是看着它抓你。从一个全新的 clone 开始：
 
 ```bash
-./scripts/backtest.sh          # all eleven gates green on a clean tree
+./scripts/backtest.sh          # all twelve gates green on a clean tree
 sed -i '' -E 's/[0-9]+ skills/99 skills/' README.md   # plant a lie (Linux: sed -i -E, no '')
 ./scripts/backtest.sh          # surface-sync goes RED: README claims 99 skills, disk has fewer
 git checkout -- README.md      # undo
@@ -536,7 +536,7 @@ APPROVED   NEEDS WORK
 
 | 检查 | 机制 | 范围 | 失败行为 | 绕过 | 留下的证据 |
 |---|---|---|---|---|---|
-| 门禁总检（11 个门禁） | 脚本，pre-commit + CI | 全仓库一致性/时效性，**外加门禁层自身** --- 台账覆盖率与钩子接线（第 9 道门禁）、针对各自目标失效重放防线钩子（第 10 道门禁）、换宿主后答案是否仍然相同（第 11 道门禁） | **闭合** --- 提交被拦 | `--no-verify` | 门禁输出、CI 日志 |
+| 门禁总检（12 个门禁） | 脚本，pre-commit + CI | 全仓库一致性/时效性，**外加门禁层自身** --- 台账覆盖率与钩子接线（第 9 道门禁）、针对各自目标失效重放防线钩子（第 10 道门禁）、换宿主后答案是否仍然相同（第 11 道门禁）、幻灯片内容不变量即引文可解析与每页框数（第 12 道门禁） | **闭合** --- 提交被拦 | `--no-verify` | 门禁输出、CI 日志 |
 | 质量分 ≥ 80 | 脚本，pre-commit | 已暂存的 `.tex`/`.qmd`/`.R` | **闭合**；渲染检查尽力而为 → 记 `UNVERIFIED`，不判失败 | `SKIP_QUALITY_GATE=1` | 打分报告 |
 | 破坏性 git 防线 | PreToolUse 钩子 | 会话内的 `git` 命令 | **闭合** --- 调用被拦 | 你自己在终端里跑 | 钩子消息 |
 | 信任根防线 | PreToolUse 钩子（`Bash`） | 会话内对 `.codebuddy/settings*.json`、`.codebuddy/hooks/`、`.githooks/` 的*静默 shell* 写入（尽力而为的绊线；`Edit`/`Write` 仍能通过） | **闭合** --- 调用被拦 | `ALLOW_ROOT_OF_TRUST_WRITE=1` | 钩子消息 |
@@ -639,13 +639,16 @@ Anthropic 那篇博文还提醒了一件有用的事：跑 `/review-paper --peer
 另外，一条命令跑完这一切里机械的那一半：
 
 ```bash
-./scripts/backtest.sh    # eleven gates: consistency, skill integrity, currency, links, spec, staleness,
-                         # hygiene, derived counts, ledger coverage, hook battery, portability
+./scripts/backtest.sh    # twelve gates: consistency, skill integrity, currency, links, spec, staleness,
+                         # hygiene, derived counts, ledger coverage, hook battery, portability,
+                         # slide content invariants
 ```
 
 第 9、10 两项检查的是检查层本身，而不是内容。**台账覆盖率**读资格台账与实际运行的检查集合，要求两者双向一致：注册过的检查在台账里没有行，构建失败；某行点名的检查器已不存在，构建失败；某行停在*尚未获资格*之下则告警 --- 让债务可见，而不是无声。它还核验 `.codebuddy/settings.json` 里注册的每个钩子都指向一个存在、可调用、且在 git 中被跟踪的文件。**钩子用例集**随后用合成事件逐条触发每道激活的防线钩子，要求它对当初被写来对付的那种失效仍然变红，同时干净对照必须保持绿。第 9 道门禁证明钩子接对了线；第 10 道证明它还会动作。
 
 第 11 道，**可移植性回归集**，换了一个问题：前面十道都在回答「这套仓库现在对不对」，它回答「换一台机器之后，答案会不会悄悄变成另一个」。路径分隔符、代码页、行尾、`git ls-files` 对非 ASCII 文件名的引用方式，这些在 macOS 上从不发作，在 Windows 上每一处都能让一道门禁静默失效。本机缺少对应机制而跑不到的用例不会消失，它会被逐条点名，并把整道门禁记成一次**有上限**的通过 —— 跑完了，但只钉住了跑到的那些。
+
+第 12 道，**幻灯片内容不变量**，是这十二道里唯一直接看产出的门。它数两件此前只有散文规定的事：每个引文键能否在唯一那份文献库里解析到（INV-5），以及每页彩色框是否超过两个（INV-7）。两个都是静态检查，渲染之前就能跑，不需要 LaTeX 也不需要 Quarto。补上它的理由是一次验收 --- 2026-10-31 那条幻灯片线上埋了两个缺陷：一个不存在的引文键被 xelatex、citeproc 与打分器**三处**报出来，却没有一处判失败，而 PDF 里那些位置印的是 `(键名?)`；一页放了三个框，也没有任何检查按 INV-7 报出它，**发现它的是像素度量**，因为那一页因此溢出了 26.5 像素。换一页内容短一点的，框还在，溢出消失，这个缺陷就会安静过关 --- 一条只有在有人认真读的时候才生效的规则，在匆忙的一轮里等于不存在。
 
 审查发现本身是机器检查而非口头描述的：审阅者输出一个 JSON 数组，由 `scripts/validate-findings.py` 对照 [`finding-schema.json`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/finding-schema.json) 校验。每条发现都必须引用它所违反的**规则**（不引用规则的发现只是意见），并给出一个**失败用例** --- 一个能打破该断言的具体配置，而不是「这里可以更清楚」。发现的 id 是确定性的，所以跨轮审读的去重是精确的，而不是模糊的。
 
