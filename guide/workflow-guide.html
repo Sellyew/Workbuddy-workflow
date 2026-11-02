@@ -2576,7 +2576,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 31, 2026</p>
+      <p class="date-modified">November 2, 2026</p>
     </div>
   </div>
     
@@ -2963,7 +2963,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>要<em>相信</em>这套核验层，最快的办法是看着它抓你。从一个全新的 clone 开始：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all eleven gates green on a clean tree</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all twelve gates green on a clean tree</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="at">-E</span> <span class="st">&#39;s/[0-9]+ skills/99 skills/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i -E, no &#39;&#39;)</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 skills, disk has fewer</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">--</span> README.md      <span class="co"># undo</span></span>
@@ -3414,9 +3414,9 @@ APPROVED   NEEDS WORK
 </thead>
 <tbody>
 <tr class="odd">
-<td>门禁总检（11 个门禁）</td>
+<td>门禁总检（12 个门禁）</td>
 <td>脚本，pre-commit + CI</td>
-<td>全仓库一致性/时效性，<strong>外加门禁层自身</strong> — 台账覆盖率与钩子接线（第 9 道门禁）、针对各自目标失效重放防线钩子（第 10 道门禁）、换宿主后答案是否仍然相同（第 11 道门禁）</td>
+<td>全仓库一致性/时效性，<strong>外加门禁层自身</strong> — 台账覆盖率与钩子接线（第 9 道门禁）、针对各自目标失效重放防线钩子（第 10 道门禁）、换宿主后答案是否仍然相同（第 11 道门禁）、幻灯片内容不变量即引文可解析与每页框数（第 12 道门禁）</td>
 <td><strong>闭合</strong> — 提交被拦</td>
 <td><code>--no-verify</code></td>
 <td>门禁输出、CI 日志</td>
@@ -3620,10 +3620,12 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>另外，一条命令跑完这一切里机械的那一半：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>    <span class="co"># eleven gates: consistency, skill integrity, currency, links, spec, staleness,</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># hygiene, derived counts, ledger coverage, hook battery, portability</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>    <span class="co"># twelve gates: consistency, skill integrity, currency, links, spec, staleness,</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># hygiene, derived counts, ledger coverage, hook battery, portability,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># slide content invariants</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>第 9、10 两项检查的是检查层本身，而不是内容。<strong>台账覆盖率</strong>读资格台账与实际运行的检查集合，要求两者双向一致：注册过的检查在台账里没有行，构建失败；某行点名的检查器已不存在，构建失败；某行停在<em>尚未获资格</em>之下则告警 — 让债务可见，而不是无声。它还核验 <code>.codebuddy/settings.json</code> 里注册的每个钩子都指向一个存在、可调用、且在 git 中被跟踪的文件。<strong>钩子用例集</strong>随后用合成事件逐条触发每道激活的防线钩子，要求它对当初被写来对付的那种失效仍然变红，同时干净对照必须保持绿。第 9 道门禁证明钩子接对了线；第 10 道证明它还会动作。</p>
 <p>第 11 道，<strong>可移植性回归集</strong>，换了一个问题：前面十道都在回答「这套仓库现在对不对」，它回答「换一台机器之后，答案会不会悄悄变成另一个」。路径分隔符、代码页、行尾、<code>git ls-files</code> 对非 ASCII 文件名的引用方式，这些在 macOS 上从不发作，在 Windows 上每一处都能让一道门禁静默失效。本机缺少对应机制而跑不到的用例不会消失，它会被逐条点名，并把整道门禁记成一次<strong>有上限</strong>的通过 —— 跑完了，但只钉住了跑到的那些。</p>
+<p>第 12 道，<strong>幻灯片内容不变量</strong>，是这十二道里唯一直接看产出的门。它数两件此前只有散文规定的事：每个引文键能否在唯一那份文献库里解析到（INV-5），以及每页彩色框是否超过两个（INV-7）。两个都是静态检查，渲染之前就能跑，不需要 LaTeX 也不需要 Quarto。补上它的理由是一次验收 — 2026-10-31 那条幻灯片线上埋了两个缺陷：一个不存在的引文键被 xelatex、citeproc 与打分器<strong>三处</strong>报出来，却没有一处判失败，而 PDF 里那些位置印的是 <code>(键名?)</code>；一页放了三个框，也没有任何检查按 INV-7 报出它，<strong>发现它的是像素度量</strong>，因为那一页因此溢出了 26.5 像素。换一页内容短一点的，框还在，溢出消失，这个缺陷就会安静过关 — 一条只有在有人认真读的时候才生效的规则，在匆忙的一轮里等于不存在。</p>
 <p>审查发现本身是机器检查而非口头描述的：审阅者输出一个 JSON 数组，由 <code>scripts/validate-findings.py</code> 对照 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/finding-schema.json"><code>finding-schema.json</code></a> 校验。每条发现都必须引用它所违反的<strong>规则</strong>（不引用规则的发现只是意见），并给出一个<strong>失败用例</strong> — 一个能打破该断言的具体配置，而不是「这里可以更清楚」。发现的 id 是确定性的，所以跨轮审读的去重是精确的，而不是模糊的。</p>
 </section>
 <section id="五个可信度问题" class="level3" data-number="3.6.4">

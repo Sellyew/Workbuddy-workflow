@@ -1074,5 +1074,174 @@ class FanoutSkillsKeepAgent(unittest.TestCase):
             self.assertIn('"Agent"', self._src(name), name)
 
 
+# ── check-citations.py / INV-5 ───────────────────────────────────────────────
+
+class CitationKeysResolve(Tmp):
+    """A citation key that resolves to nothing must fail, not warn.
+
+    Before this checker, a misspelled key produced `(notinbib2026?)` in the PDF
+    while xelatex, citeproc and the scorer all exited 0. The 2026-10-31 acceptance
+    seeded exactly that, and nobody failed the deck.
+
+    The hard half is the false-positive side: Pandoc does not parse citations
+    inside code, and TeX ignores everything after an unescaped `%`. A checker that
+    reads raw text reports keys that neither tool ever sees — the same trap that
+    pinned the workflow guide at 85/100 (see `lib/slide_scan.py`). The controls
+    below are what keep this checker honest; drop the blanking and they go red.
+    """
+
+    BIB = (
+        "@book{Example2024_book,\n  title = {A},\n}\n"
+        "@article{Other2025_article,\n  title = {B},\n}\n"
+    )
+
+    def setUp(self):
+        super().setUp()
+        for name in ("check-citations.py", os.path.join("lib", "slide_scan.py")):
+            dst = os.path.join(self.tmp, "scripts", name)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(os.path.join(SCRIPTS, name), dst)
+        self.bib = _write(self.tmp, "Bibliography_base.bib", self.BIB)
+        self.script = os.path.join(self.tmp, "scripts", "check-citations.py")
+
+    def _run_on(self, rel, content, *args):
+        _write(self.tmp, rel, content)
+        return _run([sys.executable, self.script, *args, os.path.join(self.tmp, rel)])
+
+    def test_resolved_keys_pass(self):
+        rc, out = self._run_on("Slides/A.tex",
+                               "See \\cite{Example2024_book} and \\citep[p.~3]{Other2025_article}.\n")
+        self.assertEqual(rc, 0, out)
+
+    def test_unknown_key_fails_and_names_the_line(self):
+        rc, out = self._run_on("Slides/A.tex", "Line one.\nSee \\cite{notinbib2026}.\n")
+        self.assertEqual(rc, 1, out)
+        self.assertIn("notinbib2026", out)
+        self.assertIn("A.tex:2", out)
+
+    def test_multi_key_list_reports_only_the_bad_one(self):
+        rc, out = self._run_on("Slides/A.tex",
+                               "\\citet{Example2024_book,ghost2021}\n")
+        self.assertEqual(rc, 1, out)
+        self.assertIn("ghost2021", out)
+        self.assertNotIn("Example2024_book", out)
+
+    def test_comments_and_code_are_not_citations(self):
+        tex = ("% \\cite{commented2020}\n"
+               "OK: \\cite{Example2024_book}\n")
+        rc, out = self._run_on("Slides/A.tex", tex)
+        self.assertEqual(rc, 0, out)
+
+        qmd = ("# Slide\n\n"
+               "<!-- @commented2020 -->\n\n"
+               "Email a@b.com, inline `@scope/pkg`.\n\n"
+               "```r\n# @codeblock2021\n```\n\n"
+               "See @Example2024_book.\n")
+        rc, out = self._run_on("Quarto/B.qmd", qmd)
+        self.assertEqual(rc, 0, out)
+
+    def test_missing_bibliography_is_an_error_not_a_pass(self):
+        os.remove(self.bib)
+        rc, out = self._run_on("Slides/A.tex", "\\cite{anything2020}\n")
+        self.assertEqual(rc, 2, out)
+        self.assertIn("Bibliography_base.bib", out)
+
+    def test_empty_bibliography_refuses_to_pass(self):
+        # An empty library makes "every key resolves" vacuously true: the worst
+        # shape of green, since nothing can ever fail.
+        _write(self.tmp, "Bibliography_base.bib", "% no entries\n")
+        rc, out = self._run_on("Slides/A.tex", "\\cite{anything2020}\n")
+        self.assertEqual(rc, 2, out)
+
+
+# ── check-box-density.py / INV-7 ─────────────────────────────────────────────
+
+class BoxDensity(Tmp):
+    """INV-7 is "at most two coloured boxes per slide" — counted, not eyeballed.
+
+    The acceptance run that motivated this found the violation by accident: the
+    three-box frame happened to overflow by 26.5px, so the pixel metric caught it.
+    Shorten the text and the boxes stay while the overflow goes — then nothing in
+    the suite notices.
+
+    The box list is read from the SCSS, so the cases below also pin that the
+    checker is not carrying a second, drifting copy of the class names.
+    """
+
+    SCSS = "// fixture\n.keybox {\n  background: #eef;\n}\n.custombox {\n  background: #fee;\n}\n"
+
+    def setUp(self):
+        super().setUp()
+        for name in ("check-box-density.py", os.path.join("lib", "slide_scan.py")):
+            dst = os.path.join(self.tmp, "scripts", name)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(os.path.join(SCRIPTS, name), dst)
+        self.scss = _write(self.tmp, "Quarto/theme-template.scss", self.SCSS)
+        self.script = os.path.join(self.tmp, "scripts", "check-box-density.py")
+
+    def _run_on(self, rel, content, *args):
+        _write(self.tmp, rel, content)
+        return _run([sys.executable, self.script, "--scss", self.scss, *args,
+                     os.path.join(self.tmp, rel)])
+
+    def test_three_boxes_in_a_frame_fail(self):
+        tex = ("\\begin{frame}{Three}\n"
+               "\\begin{block}{A}a\\end{block}\n"
+               "\\begin{block}{B}b\\end{block}\n"
+               "\\begin{alertblock}{C}c\\end{alertblock}\n"
+               "\\end{frame}\n")
+        rc, out = self._run_on("Slides/A.tex", tex)
+        self.assertEqual(rc, 1, out)
+        self.assertIn("Three", out)
+
+    def test_two_boxes_pass_and_the_limit_is_two(self):
+        tex = ("\\begin{frame}{Two}\n"
+               "\\begin{block}{A}a\\end{block}\n"
+               "\\begin{block}{B}b\\end{block}\n"
+               "\\end{frame}\n")
+        rc, out = self._run_on("Slides/A.tex", tex)
+        self.assertEqual(rc, 0, out)
+
+    def test_frames_are_counted_separately(self):
+        # Two boxes on each of two frames is fine; the counter must not add them
+        # up across the whole file, which is what a bare grep would do.
+        tex = ("\\begin{frame}{One}\n\\begin{block}{A}a\\end{block}\n\\begin{block}{B}b\\end{block}\n\\end{frame}\n"
+               "\\begin{frame}{Two}\n\\begin{block}{C}c\\end{block}\n\\begin{block}{D}d\\end{block}\n\\end{frame}\n")
+        rc, out = self._run_on("Slides/A.tex", tex)
+        self.assertEqual(rc, 0, out)
+
+    def test_comments_and_code_are_not_boxes(self):
+        tex = ("\\begin{frame}{Trap}\n"
+               "\\begin{block}{A}a\\end{block}\n"
+               "% \\begin{block}{commented}\n"
+               "\\end{frame}\n")
+        rc, out = self._run_on("Slides/A.tex", tex)
+        self.assertEqual(rc, 0, out)
+
+        qmd = ("# Slide\n\n"
+               "::: {.keybox}\na\n:::\n\n"
+               "<!-- ::: {.keybox} -->\n\n"
+               "```markdown\n::: {.keybox}\n::: {.keybox}\n::: {.keybox}\n```\n")
+        rc, out = self._run_on("Quarto/B.qmd", qmd)
+        self.assertEqual(rc, 0, out)
+
+    def test_box_classes_come_from_the_scss(self):
+        # `custombox` exists only in this fixture's SCSS. If the checker carried a
+        # hardcoded list, this page would pass — and a renamed box class in the
+        # real theme would silently stop being counted.
+        qmd = ("# Slide\n\n"
+               "::: {.custombox}\na\n:::\n\n"
+               "::: {.custombox}\nb\n:::\n\n"
+               "::: {.custombox}\nc\n:::\n")
+        rc, out = self._run_on("Quarto/B.qmd", qmd)
+        self.assertEqual(rc, 1, out)
+        self.assertIn("custombox", out)
+
+    def test_missing_scss_is_an_error_not_a_pass(self):
+        os.remove(self.scss)
+        rc, out = self._run_on("Quarto/B.qmd", "# Slide\n\n::: {.keybox}\na\n:::\n")
+        self.assertEqual(rc, 2, out)
+
+
 if __name__ == "__main__":
     unittest.main()

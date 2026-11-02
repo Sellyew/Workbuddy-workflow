@@ -7,7 +7,7 @@
 清单有三个消费者，此前各自从 `scripts/backtest.sh` 的文本里推导：
 
   * `scripts/backtest.py`        —— 跑这些门
-  * `scripts/check-derived-counts.py` —— 数它们（「11 个门禁」这句话对不对）
+  * `scripts/check-derived-counts.py` —— 数它们（「12 个门禁」这句话对不对）
   * `scripts/check-ledger-coverage.py` —— 核对每一条都在资格台账里有行
 
 三处都在解析同一段 Bash：一个用 `^run "` 数行数，一个用同一条正则取脚本路径。
@@ -134,5 +134,17 @@ GATES = [
         "desc": "路径/编码/行尾/git 输出可移植性",
         "scripts": ["portability-tests.py"],
         "run": ["{PY}", "{SCRIPTS}/portability-tests.py"],
+    },
+    {
+        # 幻灯片内容不变量。两条都是「只有散文、没有机器检查」的那类规则，直到
+        # 2026-10-31 的验收证明它们会在匆忙的一轮里整体失效：一个不存在的引文键
+        # 被三处报出来却都返回 0，一页三个框没人按 INV-7 报（只是碰巧溢出了 26.5px）。
+        # 两个检查器都是静态的（渲染之前就能跑），所以不需要 latex / quarto。
+        "num": 12,
+        "name": "slide-content",
+        "desc": "幻灯片内容不变量：引文可解析（INV-5）+ 每页框数（INV-7）",
+        "scripts": ["check-citations.py", "check-box-density.py"],
+        "run": ["{PY}", "{SCRIPTS}/check-citations.py"],
+        "also": ["{PY}", "{SCRIPTS}/check-box-density.py"],
     },
 ]
