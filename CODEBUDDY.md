@@ -113,7 +113,7 @@ python scripts/backtest.py
 | 90 | PR | 可以部署 |
 | 95 | 卓越 | 追求目标 |
 
-由 `/commit` 强制（不达标即停并要求显式覆盖）**并且** —— 在你跑过 `./scripts/install-hooks.sh` 之后 —— 由真实的 git pre-commit 钩子（`.githooks/pre-commit`）强制：它在每次提交时跑 11 个门禁（仅当暂存区里有钩子、其 settings 或钩子回归集本身时才跑钩子回归集；CI 永远全跑）外加质量门禁（≥80）。要绕过请谨慎：`SKIP_QUALITY_GATE=1` 或 `--no-verify`。
+由 `/commit` 强制（不达标即停并要求显式覆盖）**并且** —— 在你跑过 `./scripts/install-hooks.sh` 之后 —— 由真实的 git pre-commit 钩子（`.githooks/pre-commit`）强制：它在每次提交时跑 12 个门禁（仅当暂存区里有钩子、其 settings 或钩子回归集本身时才跑钩子回归集；CI 永远全跑）外加质量门禁（≥80）。要绕过请谨慎：`SKIP_QUALITY_GATE=1` 或 `--no-verify`。
 
 ---
 

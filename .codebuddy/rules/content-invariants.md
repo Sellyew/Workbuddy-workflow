@@ -17,12 +17,12 @@ paths:
 - **INV-2：Beamer↔Quarto 记号一致。**Beamer `.tex` 幻灯片里的每个数学符号、变量名和下标，都必须原样出现在它的 Quarto `.qmd` 镜像里。两者之间的记号漂移是 CRITICAL 缺陷。
 - **INV-3：Quarto CSS 覆盖契约。**必须覆盖 Bootstrap 默认值的样式（例如行内代码颜色、代码块背景）写进 `include-in-header` 的裸 `<style>` 标签里，绝不写进 SCSS 文件。SCSS 只用于不需要压过 Bootstrap 层叠的样式——否则 Bootstrap 自己的选择器会在特异性之争里赢。
 - **INV-4：TikZ 一律用 SVG。**浏览器无法内联渲染 PDF 图片。Quarto/HTML 里的所有 TikZ 图必须是 SVG，通过 `/extract-tikz` 生成。绝不要把 `.pdf` 嵌进 `.qmd` 幻灯片。
-- **INV-5：单一文献库。**`Bibliography_base.bib` 是权威文献库。不允许每讲一个 `.bib` 文件。所有引文都必须能在这一份文件里解析到。
+- **INV-5：单一文献库。**`Bibliography_base.bib` 是权威文献库。不允许每讲一个 `.bib` 文件。所有引文都必须能在这一份文件里解析到。用 `./scripts/check-citations.py` 校验（静态、双侧、渲染之前就能跑；代码块里的 `@scope/pkg` 不算引文）。**引文解析不到不是排版警告**：`compile-beamer.sh` 为此返回退出码 3，`quarto render` 则仍然只打 WARNING——所以别只看 `quarto` 的退出码。
 
 ## 幻灯片设计不变量
 
 - **INV-6：禁用 `\pause` 与 overlay。**禁止使用 Beamer 的 `\pause`、`\only`、`\visible`、`\onslide` 命令。理由见 `.codebuddy/rules/no-pause-beamer.md`。
-- **INV-7：每页最多 2 个彩色框。**滥用 `keybox`、`definitionbox` 或提示块环境会造成「框疲劳」。每页最多两个。
+- **INV-7：每页最多 2 个彩色框。**滥用 `keybox`、`definitionbox` 或提示块环境会造成「框疲劳」。每页最多两个。用 `./scripts/check-box-density.py` 校验（两侧都数：Beamer 按 `\begin{frame}` 分帧，Quarto 按一/二级标题分页；框的名单取自 `Quarto/theme-template.scss`，不另立一份）。**只看溢出抓不住这一条**——内容短的一页放三个框并不溢出，规则却已经破了。
 - **INV-8：先动机，后形式化。**每个定义之前必须先有一个引出动机的例子、直觉或现实问题。不做没有动机的数学。
 
 ## R 脚本不变量
