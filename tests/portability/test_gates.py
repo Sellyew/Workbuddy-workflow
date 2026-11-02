@@ -20,6 +20,7 @@ runner, scripts/portability-tests.py, clears those variables before any case run
 import hashlib
 import importlib.util
 import json
+import glob
 import os
 import pathlib
 import re
@@ -1241,6 +1242,123 @@ class BoxDensity(Tmp):
         os.remove(self.scss)
         rc, out = self._run_on("Quarto/B.qmd", "# Slide\n\n::: {.keybox}\na\n:::\n")
         self.assertEqual(rc, 2, out)
+
+
+# ── R 装了但不在 PATH：两个工具都曾因此断言「没装」 ──────────────────────
+def _r_installed_independently():
+    """本机是否装了 R —— 用**独立于被测逻辑**的方式判断。
+
+    这条判断不能借用 `_find_rscript()` 本身：跳过条件若依赖被测函数，「探测坏了」
+    就会表现为「跳过」，测试于是永远证明不了探测存在。用最笨的办法再查一遍。
+    """
+    if shutil.which("Rscript"):
+        return True
+    if os.name == "nt":
+        base = os.environ.get("ProgramFiles", r"C:\Program Files")
+        return bool(glob.glob(os.path.join(base, "R", "R-*", "bin", "Rscript.exe")))
+    return any(os.path.isfile(p) for p in (
+        "/Library/Frameworks/R.framework/Resources/bin/Rscript",
+        "/usr/lib/R/bin/Rscript",
+        "/opt/homebrew/bin/Rscript",
+        "/usr/local/bin/Rscript",
+    ))
+
+
+class RFoundsBeyondPath(unittest.TestCase):
+    """Windows 的 R 安装器默认不加 PATH；只看 PATH 就把「装了」报成「没装」。
+
+    validate-setup.sh 因此把 R 记成 optional（退出码 0），quality_score.py 因此
+    跳过语法检查并仍然给 100/100 [EXCELLENCE] —— 一个语法错误脚本与正确脚本同分。
+    """
+
+    def test_probe_prefers_path_when_something_is_there(self):
+        """PATH 里有 Rscript 时必须用它，不能跳去探测安装目录。"""
+        mod = _load("quality_score.py")
+        d = tempfile.mkdtemp(prefix="rprobe-")
+        self.addCleanup(shutil.rmtree, d, True)
+        name = "Rscript.exe" if os.name == "nt" else "Rscript"
+        fake = os.path.join(d, name)
+        with open(fake, "w", encoding="utf-8") as f:
+            f.write("")
+        os.chmod(fake, 0o755)
+        old = os.environ.get("PATH", "")
+        os.environ["PATH"] = d
+        try:
+            found = mod.IssueDetector._find_rscript()
+        finally:
+            os.environ["PATH"] = old
+        self.assertTrue(found and os.path.samefile(found, fake), found)
+
+    def test_probe_returns_a_real_executable_or_nothing(self):
+        """返回的路径必须真的存在；找不到就返回 None（不能凭空造一个）。"""
+        mod = _load("quality_score.py")
+        found = mod.IssueDetector._find_rscript()
+        if found is None:
+            # 只有本机确实没有 R 才允许跳过；装了却探测不到是缺陷，不是环境限制。
+            self.assertFalse(_r_installed_independently(),
+                             "R is installed on this host but the probe returned None")
+            self.skipTest("no R installation on this host (neither PATH nor install roots)")
+        self.assertTrue(os.path.isfile(found), found)
+
+    def test_broken_r_syntax_fails_instead_of_scoring_100(self):
+        """语法错误的 R 脚本必须判失败——这正是找不到 R 时被跳过的那条检查。
+
+        修之前：R 不在 PATH → check_r_syntax 返回 None → 不扣分 → 100/100 卓越。
+        修之后：探测到安装目录 → 真跑 parse → 语法错 → 自动失败。
+        """
+        mod = _load("quality_score.py")
+        if not _r_installed_independently():
+            self.skipTest("no R installation on this host to run the parse at all")
+        self.assertIsNotNone(
+            mod.IssueDetector._find_rscript(),
+            "R is installed on this host but the probe missed it — syntax checks would be "
+            "silently skipped and every R script would still score 100/100")
+        d = tempfile.mkdtemp(prefix="rbrok-")
+        self.addCleanup(shutil.rmtree, d, True)
+        bad = os.path.join(d, "broken.R")
+        with open(bad, "w", encoding="utf-8") as f:
+            f.write("x <- c(1, 2, 3\ny <- \"unclosed\n")
+        rc, out = _run([sys.executable, os.path.join(ROOT, "scripts", "quality_score.py"), bad],
+                       timeout=180)
+        # 退出码 2 是 auto_fail（语法错）；1 是「低于阈值但没有致命错」。
+        self.assertEqual(rc, 2, out)
+        self.assertIn("syntax", out.lower())
+        # 启动期的 locale 噪音不该淹没真正的错误行号
+        self.assertNotIn("Setting LC_", out)
+
+    def test_non_ascii_filename_is_not_a_syntax_error(self):
+        """语法检查真的跑起来之后，带重音的文件名曾被判成语法错。
+
+        Windows 上 R 收到的命令行参数按本机代码页解释：UTF-8 的 `ação` 变成
+        `aC'C#o`，R 报 "cannot open the connection"，一个完全合法的脚本得 0 分。
+        `encoding=` 只解码文件内容，管不了文件名——修法是把内容走 stdin，
+        文件名不交给 R。
+        """
+        mod = _load("quality_score.py")
+        if not _r_installed_independently():
+            self.skipTest("no R installation on this host")
+        self.assertIsNotNone(mod.IssueDetector._find_rscript(),
+                             "R is installed but the probe missed it")
+        d = tempfile.mkdtemp(prefix="rnasc-")
+        self.addCleanup(shutil.rmtree, d, True)
+        p = os.path.join(d, "ação.R")
+        with open(p, "w", encoding="utf-8") as f:
+            f.write("x <- 1\ny <- x + 1\n")
+        rc, out = _run([sys.executable, os.path.join(ROOT, "scripts", "quality_score.py"), p],
+                       timeout=180)
+        self.assertEqual(rc, 0, out)
+        self.assertNotIn("cannot open the connection", out)
+
+    def test_validate_setup_reports_r_beyond_path(self):
+        """R 只在绝对路径上时，输出必须说「不在 PATH」，而不是「没装」。"""
+        if not _r_installed_independently():
+            self.skipTest("no R installation on this host")
+        if shutil.which("R"):
+            self.skipTest("R is on PATH here; this case is specifically about it not being there")
+        r = _run([shutil.which("bash"), os.path.join(ROOT, "scripts", "validate-setup.sh")],
+                 cwd=ROOT, timeout=180)
+        self.assertIn("NOT on PATH", r[1])
+        self.assertNotIn("R not found (optional)", r[1])
 
 
 if __name__ == "__main__":

@@ -23,12 +23,62 @@ echo ""
 echo -e "${BOLD}Validating WorkBuddy Academic Workflow setup...${RESET}"
 echo ""
 
+# 在 PATH 里找；找不到再探测常见安装位置。
+#
+# 只查 PATH 会把「装了但没配 PATH」报成「没装」。这不是假想的场景：Windows 的 R
+# 安装器默认**不**勾选加入 PATH，于是这个模板的主干（数据线全在 R 上）在它自己的
+# 环境检查里显示为缺失，而检查仍然退出 0。macOS 的 R.framework 也会留下失效的
+# /usr/local/bin/R 符号链接。所以三个平台各探测一次，找到就报「装了，但不在 PATH」，
+# 而不是报「没装」。
+resolve_tool() {
+    local cmd="$1"
+    if command -v "$cmd" >/dev/null 2>&1; then
+        command -v "$cmd"
+        return 0
+    fi
+    local cand
+    for cand in \
+        "/c/Program Files/R"/R-*/bin/"${cmd}.exe" \
+        "/Library/Frameworks/R.framework/Resources/bin/${cmd}" \
+        "/usr/lib/R/bin/${cmd}" \
+        "/usr/local/bin/${cmd}" \
+        "/opt/homebrew/bin/${cmd}"
+    do
+        if [ -x "$cand" ]; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# 报告一个已找到的工具。区分「在 PATH 里」与「只在绝对路径上」——后者是可用的，
+# 但调用方（技能、钩子、quality_score.py）都会失败，所以必须说出来，不能只打个对勾。
+show_found() {
+    local name="$1"
+    local cmd="$2"
+    local found="$3"
+    local ver
+    # 只取版本号那一段：R 的 --version 第一行后半截是发布代号
+    # （R 4.5.2 是 "-- \"[Not] Part in a Rumble\""），括号说明会盖过版本本身。
+    ver=$("$found" --version 2>&1 | head -n1 | sed 's/ -- .*//')
+    if command -v "$cmd" >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${RESET} $name found: $ver"
+    else
+        echo -e "  ${YELLOW}✓${RESET} $name found: $ver"
+        echo -e "      ${YELLOW}but NOT on PATH${RESET} — anything that calls \`$cmd\` by name will fail."
+        echo -e "      Add this directory to PATH: ${BOLD}$(dirname "$found")${RESET}"
+        echo -e "      (found at: $found)"
+    fi
+}
+
 check_required() {
     local name="$1"
     local cmd="$2"
     local install_url="$3"
-    if command -v "$cmd" >/dev/null 2>&1; then
-        echo -e "  ${GREEN}✓${RESET} $name found: $("$cmd" --version 2>&1 | head -n1)"
+    local found
+    if found=$(resolve_tool "$cmd"); then
+        show_found "$name" "$cmd" "$found"
         pass=$((pass + 1))
     else
         echo -e "  ${RED}✗${RESET} $name NOT FOUND — install: ${install_url}"
@@ -40,8 +90,9 @@ check_optional() {
     local name="$1"
     local cmd="$2"
     local install_url="$3"
-    if command -v "$cmd" >/dev/null 2>&1; then
-        echo -e "  ${GREEN}✓${RESET} $name found: $("$cmd" --version 2>&1 | head -n1)"
+    local found
+    if found=$(resolve_tool "$cmd"); then
+        show_found "$name" "$cmd" "$found"
         pass=$((pass + 1))
     else
         echo -e "  ${YELLOW}⚠${RESET} $name not found (optional) — install: ${install_url}"
@@ -60,6 +111,9 @@ check_required "Python 3"     "python3"  "https://python.org (needed for hooks)"
 echo ""
 
 echo -e "${BOLD}Recommended tools:${RESET}"
+# R 对幻灯片线确实可选，但对数据线是必需的：/data-analysis、/review-r、
+# /simulation-study、/audit-reproducibility 的核心操作都是 Rscript，另有 12 条规则
+# 以 .R 文件为注入条件。所以它缺失时不并入「optional」那堆警告，末尾单独说一句。
 check_optional "R"            "R"        "https://www.r-project.org/"
 check_optional "GitHub CLI"   "gh"       "https://cli.github.com/"
 # Browser slide QA (scripts/slide-qa.py) runs under SLIDE_QA_PYTHON, usually a venv.
@@ -184,7 +238,17 @@ echo ""
 # read naturally.
 has_xelatex="false"; command -v xelatex >/dev/null 2>&1 && has_xelatex="true"
 has_quarto="false";  command -v quarto  >/dev/null 2>&1 && has_quarto="true"
-has_r="false";       command -v R       >/dev/null 2>&1 && has_r="true"
+has_r="false";       resolve_tool R     >/dev/null 2>&1 && has_r="true"
+
+# R 缺失不会被计入 fail（幻灯片线不需要它），但也不能只留一条黄色警告就走掉：
+# 这个模板的科研主干全在 R 上，而「装完一切就绪」的绿灯会让人以为数据线可用。
+if [ "$has_r" != "true" ]; then
+    echo -e "${BOLD}Note on R:${RESET} not found. The slide line is fully usable without it;"
+    echo "  the data line is not. These all call Rscript and will fail:"
+    echo "    /data-analysis  /review-r  /simulation-study  /audit-reproducibility"
+    echo "  plus the 12 rules keyed on .R files. Install: https://www.r-project.org/"
+    echo ""
+fi
 
 if [ "$fail" -gt 0 ]; then
     echo -e "${RED}Some required tools are missing.${RESET}"
