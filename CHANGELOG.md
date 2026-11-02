@@ -6,7 +6,82 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测
+
+### Fixed — R 装了却因为不在 PATH 而被判定为「没装」，两个工具都中了
+
+Windows 的 R 安装器默认**不**把 R 加进 PATH。于是这台机器上：
+
+    $ Rscript -e 'cat("hi")'
+    Rscript: command not found            # rc=127
+    $ ls "/c/Program Files/R"
+    R-4.5.2                               # 装着呢
+
+两个工具都只查了 PATH，然后各自给出一个错误的结论：
+
+- `validate-setup.sh` 把 R 记成 `check_optional`，输出一条黄色 `⚠ R not found (optional)`，
+  **退出码仍为 0**。而 R 不是可选项：12 条规则的注入条件是 `.R` 文件，6 个技能的核心
+  操作是 `Rscript`，14 个技能提到 R。装完「一切就绪」的那块绿灯，和根本没有数据线的
+  环境长得一模一样。
+- `quality_score.py` 的 `check_r_syntax` 用 `subprocess.run(['Rscript', ...])`，拿到
+  `FileNotFoundError` 就返回 `None` =「未能验证」，而 `None` 不扣分。于是一个 R 脚本
+  显示 **100/100 [EXCELLENCE]**，同一份报告里还写着「syntax not verified — Rscript
+  not installed」。
+
+「无法验证不判 0 分」是对的——不能因为没装 R 就把所有 R 脚本判成缺陷。错的是呈现：
+分数没动，标题却宣称卓越，而提交门禁只看分数。
+
+- **探测**：`resolve_tool()` / `_find_rscript()` 在 PATH 找不到时查常见安装位置
+  （`%ProgramFiles%\R\R-*\bin`、`/Library/Frameworks/R.framework/Resources/bin`、
+  `/usr/lib/R/bin`、`/opt/homebrew/bin`）。找到之后**明确说出它不在 PATH**，并给出该加进
+  PATH 的目录——否则用户下次自己敲 `Rscript` 还是会失败。
+- **呈现**：未验证时不再宣称卓越。标题变 `[STATIC ONLY]`，状态行写「excellence NOT
+  established until the unverified checks run」，`No critical issues - safe to commit`
+  也改成 `found by static checks (syntax unverified)`。
+
+**探测一生效，立刻暴露第二个缺陷。** 语法检查真的跑起来之后，
+`test_control_valid_accented_file_passes` 变红：一个叫 `ação.R` 的**完全合法**的脚本被
+判语法错。Windows 上 R 收到的命令行参数按本机代码页解释，UTF-8 的 `ação` 变成 `aC'C#o`：
+
+    cannot open file 'tmp_enc/aC'C#o.R': No such file or directory
+
+`parse(..., encoding="UTF-8")` 救不了它——那个参数只解码**内容**，管不了**文件名**。
+修法是把内容走 stdin，文件名根本不交给 R：
+
+    [rscript, '-e', 'invisible(parse(file = "stdin", encoding = "UTF-8"))'], input=source
+
+这一改同时收掉三个历史上的坑：非 ASCII 文件名、Windows 的 `\R` 非法转义、文件名里带引号
+时被拼进源码执行任意代码。报错里的 `stdin:` 再换回真实文件名，行号照样准确。
+
+**顺带修掉噪音盖信号。** R 在 Windows 上被喂 POSIX locale（WorkBuddy 的 bash 带
+`LC_ALL=C.UTF-8`）时会先打 4 条 `Setting LC_* failed`，它们把真正的错误挤出可见的第一屏。
+过滤掉之后，报错直接是 `bad.R:2:6: unexpected INCOMPLETE_STRING`。
+
+新增 5 个用例。**其中一条测试自己也是缺陷**：最初的跳过条件写的是「`_find_rscript()`
+返回 None 就 skip」，而那个函数正是被测对象——拆掉探测，测试全部 skip、rc=0，永远不会红。
+改成一段独立于被测逻辑的判断（直接看安装目录里有没有 `Rscript.exe`），负例才真的变红。
+**跳过条件不能依赖被测行为**，否则「实现坏了」会表现成「这台机器没有这个环境」。
+
+负例反证两次，各自只打中该打中的：Python 侧探测退回只看 PATH → 2 条红；bash 侧
+`resolve_tool` 退回只看 PATH → 正好 `validate-setup` 那 1 条红。
+
+**同一个错误在 CI 上换了第三个形态。** 提交后 GitHub Actions 变红：
+
+    ERROR: test_windows_path_never_reaches_r
+    IndexError: list index out of range        # cmd, data = seen[0]
+
+本地全绿、CI 全红，因为那条测试断言的是「R 收到了什么」——而 Linux runner 上根本没有 R，
+`check_r_syntax` 在探测那一步就提前返回，`subprocess.run` 一次都没被调用，`seen` 是空的。
+测试把「被测函数会走到 subprocess」当成了既定前提，可这个前提恰恰取决于被测代码。
+
+断言的前提必须由测试自己建立：把 `_find_rscript` 钉成一个假路径，再断言它真的被执行
+（`cmd[0] == fake_rscript`、`len(seen) == 1`）。于是「R 没被调用」本身就成了一个失败，
+而不是一个 IndexError。负例重做：实现退回「路径当参数传」→ 红，报错直接点名
+`the file name still reaches R: [... 'scripts\\R\\01_load.R']`。
+
+这一轮里，「依赖被测行为」出现了三次：跳过的条件（`_find_rscript` 返回 None）、
+验收脚本的判据（没有断言，永远退出 0）、断言的前提（R 一定被调用）。三次都表现为
+**测试在说成功**。
 
 ### Fixed — `effort` 是活字段，18 个代理的旋钮被删了又装回来
 
