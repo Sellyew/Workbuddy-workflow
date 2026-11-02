@@ -15,6 +15,8 @@ Usage:
 
 import sys
 import os
+import shutil
+import glob
 import argparse
 import subprocess
 from pathlib import Path
@@ -272,29 +274,90 @@ class IssueDetector:
         return actual_count, (actual_count >= expected)
 
     @staticmethod
+    def _find_rscript() -> Optional[str]:
+        """Locate Rscript: PATH first, then the usual install roots.
+
+        PATH-only lookup reports "not installed" for an R that IS installed.
+        That is the common case, not an edge case: the Windows R installer does
+        not add itself to PATH by default, and an expired
+        /usr/local/bin/Rscript symlink is routine on macOS. The consequence
+        here is worse than a wrong message — the script scored 100/100 with
+        "Excellence achieved!" while syntax went unchecked.
+        """
+        exe = shutil.which("Rscript")
+        if exe:
+            return exe
+
+        name = "Rscript.exe" if os.name == "nt" else "Rscript"
+        candidates: List[str] = []
+        if os.name == "nt":
+            for base in (
+                os.environ.get("ProgramFiles", r"C:\Program Files"),
+                os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)"),
+            ):
+                pattern = os.path.join(base, "R", "R-*", "bin", name)
+                # 新版本优先：4.10 要排在 4.9 前面，纯字典序会反过来
+                candidates.extend(sorted(glob.glob(pattern), reverse=True))
+        candidates.extend([
+            "/Library/Frameworks/R.framework/Resources/bin/Rscript",
+            "/usr/lib/R/bin/Rscript",
+            "/usr/local/bin/Rscript",
+            "/opt/homebrew/bin/Rscript",
+        ])
+        for cand in candidates:
+            if os.path.isfile(cand) and os.access(cand, os.X_OK):
+                return cand
+        return None
+
+    @staticmethod
     def check_r_syntax(filepath: Path) -> Tuple[Optional[bool], str]:
         """Parse the R script. Returns True (ok), False (syntax error), or
         None (could-not-verify: timed out or Rscript missing — NOT a failure)."""
         limit = _timeout("QUALITY_RSCRIPT_TIMEOUT", 10)
+        rscript = IssueDetector._find_rscript()
+        if rscript is None:
+            return None, ("syntax not verified — Rscript not found "
+                          "(checked PATH and the usual install roots)")
         try:
-            # The path goes to R as an ARGUMENT, never pasted into R source: on Windows
-            # parse("scripts\R\01_load.R") is an invalid '\R' escape, so every valid
-            # script auto-failed; and a name like `y", text="1");#.R` parsed "1" instead
-            # of the file (a broken script scored 100) or ran code of its choosing.
+            # 内容走 stdin，文件名不交给 R。这同时修掉三件事，每一件都曾让这个检查
+            # 给出错误答案：
+            #  1. 文件名含非 ASCII 时（ação.R），Windows 上 R 收到的参数被按本机代码页
+            #     重新解释，UTF-8 字节变成乱码，报 "cannot open the connection"——
+            #     一个完全合法的脚本被判语法错误。encoding= 只解码内容，管不了文件名。
+            #  2. 路径被拼进 R 源码时，Windows 的 \R 是非法转义，所有脚本自动失败。
+            #  3. 文件名里带引号或分号时，拼进源码等于执行任意代码。
+            # 走 stdin 之后三条一起消失，而 parse 仍然给出行号。
+            with open(filepath, "rb") as f:
+                source = f.read()
             result = subprocess.run(
-                ['Rscript', '-e', 'invisible(parse(file = commandArgs(trailingOnly = TRUE)[1]))',
-                 str(filepath)],
+                [rscript, '-e', 'invisible(parse(file = "stdin", encoding = "UTF-8"))'],
+                input=source,
                 capture_output=True,
-                text=True,
                 timeout=limit
             )
             if result.returncode != 0:
-                return False, result.stderr
+                stderr = result.stderr.decode("utf-8", "replace")
+                # R 在 Windows 上被喂了 POSIX locale（WorkBuddy 的 bash 会带
+                # LC_ALL=C.UTF-8）时，启动阶段先打 4 条 "Setting LC_* failed"。
+                # 它们是环境噪音，会把真正的语法错误挤出可见的第一屏——
+                # 而那正是这条检查唯一有价值的部分。
+                # 行首带 "1: " 这类序号前缀，所以按子串判，不按前缀。
+                lines = [
+                    ln for ln in stderr.splitlines()
+                    if "Setting LC_" not in ln
+                    and not ln.startswith("During startup")
+                ]
+                detail = "\n".join(lines).strip() or stderr
+                # R 只知道自己在读 stdin；换回真实文件名，否则报错指不到文件。
+                return False, detail.replace("stdin:", filepath.name + ":")
             return True, ""
         except subprocess.TimeoutExpired:
             return None, f"syntax not verified — parse exceeded {limit}s (raise QUALITY_RSCRIPT_TIMEOUT)"
         except FileNotFoundError:
-            return None, "syntax not verified — Rscript not installed"
+            return None, "syntax not verified — Rscript vanished between lookup and exec"
+        except OSError as e:
+            # 读不出文件是「未能验证」，不是「语法错」——别把 IO 问题记成脚本缺陷。
+            return None, f"syntax not verified — cannot read {filepath.name}: {e}"
 
     @staticmethod
     def check_hardcoded_paths(content: str) -> List[int]:
@@ -720,7 +783,13 @@ class QualityScorer:
             'FAIL': '[FAIL]'
         }
 
-        print(f"## Overall Score: {report['score']}/100 {status_emoji.get(report['status'], '')}")
+        # 「无法验证」必须出现在标题里，不能只躺在下面的列表里。
+        # 一个语法未验证的 R 脚本显示为 100/100 [EXCELLENCE]，读的人（和提交门禁）
+        # 会把「没检查」当成「检查通过」——那是这个工具最容易被误读的一格。
+        static_only = bool(report.get('unverified'))
+        label = '[STATIC ONLY]' if static_only else status_emoji.get(report['status'], '')
+
+        print(f"## Overall Score: {report['score']}/100 {label}")
 
         if report['status'] == 'BLOCKED':
             print(f"\n**Status:** BLOCKED - Cannot commit (score < {THRESHOLDS['commit']})")
@@ -736,7 +805,11 @@ class QualityScorer:
                 print(f"**Next milestone:** Excellence ({THRESHOLDS['excellence']})")
                 print(f"**Gap analysis:** +{gap_to_excellence} points to excellence")
         elif report['status'] == 'EXCELLENCE':
-            print(f"\n**Status:** Excellence achieved! (score >= {THRESHOLDS['excellence']})")
+            if static_only:
+                print(f"\n**Status:** {report['score']}/100 on static checks only — "
+                      f"excellence NOT established until the unverified checks run")
+            else:
+                print(f"\n**Status:** Excellence achieved! (score >= {THRESHOLDS['excellence']})")
         elif report['status'] == 'FAIL':
             print(f"\n**Status:** Auto-fail (compilation/syntax error)")
 
@@ -755,7 +828,10 @@ class QualityScorer:
         # Detailed issues
         print(f"\n## Critical Issues (MUST FIX): {report['issues']['counts']['critical']}")
         if report['issues']['counts']['critical'] == 0:
-            print("No critical issues - safe to commit\n")
+            # 未验证不能断言「safe」：语法错就是 Critical，而语法恰恰没查。
+            print("No critical issues found"
+                  + (" by static checks (syntax unverified)\n" if static_only
+                     else " - safe to commit\n"))
         else:
             for i, issue in enumerate(report['issues']['critical'], 1):
                 print(f"{i}. **{issue['description']}** (-{issue['points']} points)")
