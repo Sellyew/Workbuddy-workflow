@@ -5,7 +5,6 @@ description_zh: 对 `.tex`、`.qmd` 或 `.md` 文本做只读的 AI 腔审计 �
 argument-hint: "[filename or 'all'] [--severity low|med|high]"
 disable-model-invocation: true
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
-disallowed-tools: ["Edit", "MultiEdit"]
 metadata:
   author: Claude Code Academic Workflow
   version: 1.0.0

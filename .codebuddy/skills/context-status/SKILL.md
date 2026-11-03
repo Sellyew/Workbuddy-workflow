@@ -3,7 +3,6 @@ name: context-status
 description: 显示当前上下文状态与会话健康状况。用来查看已经用了多少上下文、自动压缩是否临近，以及哪些状态会被保留。
 description_zh: 显示当前上下文状态与会话健康状况。用来查看已经用了多少上下文、自动压缩是否临近，以及哪些状态会被保留。
 allowed-tools: ["Read", "Bash", "Glob"]
-disallowed-tools: ["Edit", "MultiEdit"]
 metadata:
   author: Claude Code Academic Workflow
   version: 1.0.0
@@ -12,6 +11,8 @@ metadata:
 # /context-status —— 检查会话健康状况
 
 显示当前会话状态，含上下文用量估计、在用的计划与保留状态。
+
+**只读诊断：**本技能只读取状态、不修改任何文件。
 
 ## 本技能显示什么
 

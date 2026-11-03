@@ -4,7 +4,6 @@ description: 针对 `.R` 脚本的只读 R 代码审读协议。检查代码质�
 description_zh: 针对 `.R` 脚本的只读 R 代码审读协议。检查代码质量、可复现性、领域正确性、tidyverse 惯用法与专业标准；产出一份报告，不改动文件。用户说 "review this R script"、"check the R code"、"audit the analysis code"、"code review on the R" 时使用，或在论文投稿过程中改动了某个 R 文件时使用。不负责运行代码——数值核验请与 `/audit-reproducibility` 搭配。
 argument-hint: "[filename or 'all' or 'LectureN']"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 审 R 脚本

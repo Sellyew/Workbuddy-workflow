@@ -6,7 +6,23 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段
+
+### Changed — 重写技能模板：不再教 WorkBuddy 不认的死字段
+
+`templates/skill-template.md` 此前把 6 个 WorkBuddy 不认的字段当活字段教（`disallowed-tools`、
+`context: fork`、`paths`、`hooks`、`when_to_use`、`arguments`），却漏教 5 个真读的字段
+（`description_zh`/`description_en`、`version`、`category`、`tags`）。照它走会生成
+WorkBuddy 用不了的技能。重写为「只教真实生效的字段」，死字段单独列一节「别写」并给替代。
+
+连带修掉一个安全语义落空：10 个「只读」技能（`devils-advocate`、`pedagogy-review`、
+`review-r`、`verify-claims`、`proofread`、`humanize`、`visual-audit`、`voice-profile`、
+`permission-check`、`context-status`）此前用 `disallowed-tools: ["Edit","MultiEdit"]` 指望
+「真正移除写入工具」，但该字段在 WorkBuddy 无对应语义——这些技能实际并不只读。改成软约束：
+`allowed-tools` 只列只读工具 + 正文写「不修改被审文件」。
+
+另修 `checkpoint`、`review-paper` 两处把 Opus/Sonnet 当本平台档位的残留（改为
+`default`/`lite`/`reasoning`）。
 
 ### Changed — 清掉最后一处「Claude / Claude Code」称谓残留与零星漏译
 

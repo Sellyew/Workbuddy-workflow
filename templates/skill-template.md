@@ -7,12 +7,14 @@
 ## 什么时候该自建技能
 
 当你发现自己出现下面这些情况时，就该建一个技能：
+
 - 反复向 WorkBuddy 解释同一套 3 步以上的工作流
 - 需要领域专用的质量检查（引用格式、记号一致性、实验室规程）
 - 要强制领域专用的输出格式（学位论文结构、期刊模板、实验记录本）
 - 要协调多工具工作流（Figma → R → LaTeX、数据 → 分析 → 稿件）
 
 **以下情形不要建技能：**
+
 - 一次性任务
 - 变动频繁的工作流
 - 简单的 1-2 步操作
@@ -27,8 +29,12 @@
 ---
 name: your-skill-name
 description: [What it does] + [When to use it] + [Key capabilities]. Use when user asks for "[trigger phrase 1]", "[trigger phrase 2]", or "[context]".
+description_zh: [与 description 同义的中文；引号内的英文触发词原样保留]
 argument-hint: "[brief hint for user]"
 allowed-tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "Agent"]
+version: "0.1.0"
+category: [所属类别]
+tags: [标签]
 ---
 
 # [Skill Name]
@@ -79,39 +85,54 @@ Step 3: [Final action and verification]
 
 ---
 
-## 高级 frontmatter 字段
+## WorkBuddy 会读的字段
 
-除了上面展示的基本字段，技能还支持额外的 YAML frontmatter，用于细粒度控制：
+这些字段在 WorkBuddy 里**生效**，可放心用：
 
 | 字段 | 用途 | 示例 |
-|-------|---------|---------|
-| `context` | 设为 `fork` 即在隔离子代理上下文里运行 | 保护主对话不被冗长输出淹没 |
+|---|---|---|
+| `name` | 技能名，小写连字符，须与目录名一致（必填） | `validate-citations` |
+| `description` | 决定何时加载技能（必填，≤1024 字符） | 见下方「写出有效的描述」 |
+| `description_zh` / `description_en` | 中/英文描述，与 `description` 同义 | `中文描述…` |
+| `argument-hint` | 给用户的简短参数提示 | `"[file or 'all']"` |
+| `allowed-tools` | 预先批准清单（见下方语义说明） | `["Read", "Grep", "Glob"]` |
+| `model` | 指定模型档位：`default` / `lite` / `reasoning` | `reasoning`（高判断力审读） |
 | `agent` | 链接到 `.codebuddy/agents/` 里的代理定义 | `proofreader` |
-| `hooks` | 技能专属钩子（语法同 settings.json） | 自定义前置/后置动作 |
-| `model` | 强制指定某个模型档位 | `lite`（更便宜）、`reasoning`（更聪明） |
-| `disable-model-invocation` | 阻止 WorkBuddy 自动触发 | `true`（只能经 `/skill-name` 调用） |
-| `disallowed-tools` | 技能生效期间**移除** WorkBuddy 工具池里的工具——真正的限制机制（见下面的语义说明） | 只读审计用 `["Edit", "Write"]` |
-| `paths` | glob 模式，划定技能何时自动激活——相当于路径作用域规则在技能层面的对应物 | `["scripts/**/*.R"]` |
-| `when_to_use` | 自动调用时额外的路由上下文，超出 description 之外 | `"after any merge conflict"` |
-| `arguments` | 供正文里 `$name` 替换的具名位置参数 | `[infile, outfile]` |
+| `disable-model-invocation` | 阻止自动触发，只能 `/name` 调用 | `true` |
+| `user-invocable` | 是否允许用户用 `/name` 直接调用 | `true` |
+| `version` | 版本号（技能市场/版本管理） | `"0.1.0"` |
+| `category` | 所属类别（技能市场） | `meta` |
+| `tags` | 标签 | `[review, proofread]` |
 
-### `allowed-tools` vs `disallowed-tools` —— 语义很要紧 {#allowed-vs-disallowed}
+## WorkBuddy 不认的字段（写了不报错，但不会生效——别写）
 
-**`allowed-tools` 是一份预先批准清单，不是沙箱。** 按官方文档的说法：它「在技能生效期间为所列工具授予权限，这样 Claude 使用它们时不必向你请求批准。**它不限制哪些工具可用：每个工具仍然可调用**」——没列出的工具只是走你正常的权限设置。把 `Bash` 从 `allowed-tools` 里省掉，**并不**会让技能变成只读。
+这些字段是上游 Claude Code 的，WorkBuddy 里**没有对应语义**：
 
-**要真正移除工具，用 `disallowed-tools`。** 列在那里的工具会在技能生效期间被从 WorkBuddy 的可用池里拿走（限制在你下一条消息时解除）。对必须永不写入——或者永不因为一个提问而卡住后台循环——的自主型或 fork 型审读技能，就显式禁用：
+| 字段 | 为什么别写 | 替代 |
+|---|---|---|
+| `disallowed-tools` | WorkBuddy 没有技能级工具黑名单 | 见下方「只读约束」 |
+| `context: fork` | 会让技能失去 `Agent`（多透镜扇出退化成串行） | 需要扇出就别写它 |
+| `paths` | 技能级不生效（路径作用域是 rules 的） | 用 `.codebuddy/rules/*.md` 的 `paths:` |
+| `hooks` | 技能级不生效（钩子只有 settings 级） | 用 `.codebuddy/settings.json` |
+| `when_to_use` / `arguments` / `effort` / `background` / `shell` | Claude Code 专用 | — |
 
-```yaml
-allowed-tools: ["Read", "Grep", "Glob"]        # pre-approve the read path (no prompts)
-disallowed-tools: ["Edit", "Write", "Bash"]    # actually remove the write path
-```
+### `allowed-tools` 是预先批准，不是沙箱 {#allowed-tools}
 
-**动态内容**——技能可以用字符串替换注入实时数据：
+**`allowed-tools` 只做「预先批准」，不做「限制」。** 列出的工具在技能生效期间免询问；没列出的工具仍然可用，只是走你正常的权限设置。把 `Bash` 从 `allowed-tools` 里省掉，**并不**会让技能变成只读。
 
-- `$ARGUMENTS` —— 完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）
-- `$0`、`$1` —— 位置参数（从 0 开始）
-- `${CLAUDE_SKILL_DIR}` —— 技能所在目录的路径（用于随技能打包的辅助文件）
-- `` !`git log --oneline -5` `` —— 技能加载时注入的动态命令输出
+**WorkBuddy 没有技能级工具黑名单**（上游的 `disallowed-tools` 在这里无对应语义，写了不生效）。要让一个技能「只读」，没有硬机制，只有两条软约束：
+
+1. `allowed-tools` 只列你打算用的只读工具（`Read`/`Grep`/`Glob`），把写入工具排除在预批准之外；
+2. 在正文里写一句明确的只读约束：「本技能不修改被审文件；如需写报告，只写到 `quality_reports/` 下」。
+
+这两条都是「意图声明 + 减少误写」，**不是硬保证**——模型仍可能调用未列出的工具。真正要紧的写入保护要靠项目级 `permissions.deny` 规则或 PreToolUse 钩子（见 `permission-check`）。
+
+**动态内容**——技能正文里可用的字符串替换：
+
+- `$ARGUMENTS` —— 完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）【已实测生效】
+- `` !`git log --oneline -5` `` —— 技能加载时注入命令输出【未实测，谨慎使用】
+
+上游的 `${CLAUDE_SKILL_DIR}` 和 `$0`/`$1` 位置参数在 WorkBuddy 里没有对应物，别用。
 
 细节与示例见[指南的技能 frontmatter 参考](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#skill-frontmatter)。
 
@@ -133,21 +154,11 @@ disallowed-tools: ["Edit", "Write", "Bash"]    # actually remove the write path
 
 这个旗标仍然允许用 `/skill-name` 直接调用——它只挡住模型凭启发式匹配自动触发。
 
-### CODEBUDDY.md 的 `@import` 语法（Anthropic 2026 年 4 月）
+### `@import` 是上游 Claude Code 的 CLAUDE.md 特性，WorkBuddy 不读
 
-Anthropic 的 `CODEBUDDY.md` 支持 `@path/to/import` 来引入额外文件。示例：
+上游 Claude Code 的 `CLAUDE.md` 支持 `@path/to/import` 引入额外文件；**WorkBuddy 的 `CODEBUDDY.md` 不读 `@import`**。要拆分指令文件，用普通 markdown 链接（如 `CODEBUDDY.md` 里写 `[MEMORY.md](MEMORY.md)`），不要用 `@` 导入。
 
-```markdown
-See @README.md for project overview and @package.json for available commands.
-
-# Personal overrides
-@~/.workbuddy/my-project-instructions.md
-
-# Domain-specific instructions
-@docs/git-instructions.md
-```
-
-**本模板的 `CODEBUDDY.md` 刻意不用 `@import`** ——它刻意保持精简，而引入碎片会把入门上下文打碎（forker 期待的是「会话启动时加载一个文件」）。这里提一句，是给那些定制内容已经大到值得拆分的 forker；对简短的 CODEBUDDY.md，拆分往往弊大于利。
+本模板的 `CODEBUDDY.md` 刻意保持精简，不拆分指令文件——forker 期待的是「会话启动时加载一个文件」，拆碎反而把入门上下文打散。
 
 ---
 
@@ -162,34 +173,38 @@ See @README.md for project overview and @package.json for available commands.
 ### 好的示例（领域专用）
 
 **引用格式强制（APA 心理学）：**
+
 ```yaml
 description: Enforces APA 7th edition citation format in manuscripts. Use when user asks to "check citations", "fix references", "apply APA style", or when reviewing .tex or .qmd files with bibliography. Checks author-year format, DOI formatting, and reference list completeness.
 ```
 
 **实验记录本条目生成（湿实验室生物学）：**
+
 ```yaml
 description: Generates structured lab notebook entries from experimental notes. Use when user provides "experiment notes", "protocol results", or asks to "format lab entry". Ensures date, hypothesis, materials, procedure, observations, and conclusions are documented.
 ```
 
 **学位论文章节结构检查（研究生）：**
+
 ```yaml
 description: Validates thesis chapter structure against institutional requirements. Use when user asks to "check chapter format", "validate thesis structure", or when editing thesis .tex or .docx files. Verifies required sections, heading levels, and citation density.
 ```
 
 **计量设定审读（经济学）：**
+
 ```yaml
 description: Reviews econometric specifications for common errors. Use when user shares regression code in R or Stata, or asks to "check model spec", "review estimation". Validates: standard error clustering, fixed effects structure, missing covariates, and replication commands.
 ```
 
 ### 坏的示例（太泛）
 
-❌ `description: Helps with citations`
+❌ `description: Helps with citations`  
 → 太含糊，没说明风格，也没说明何时触发
 
-❌ `description: Checks lab notebooks`
+❌ `description: Checks lab notebooks`  
 → 缺触发短语，没有格式说明
 
-❌ `description: Reviews thesis chapters`
+❌ `description: Reviews thesis chapters`  
 → 没说清查哪些方面，也没说何时激活
 
 ---
@@ -204,6 +219,7 @@ description: Reviews econometric specifications for common errors. Use when user
 ---
 name: validate-citations
 description: Cross-references in-text citations against bibliography entries. Use when user asks to "check citations", "validate references", or when working on .tex, .qmd, or .md files with bibliographies. Identifies missing entries, unused references, and formatting inconsistencies.
+description_zh: 交叉核对正文引文与文献库条目。用户说 "check citations"、"validate references" 时，或处理带文献库的 .tex/.qmd/.md 文件时使用。
 argument-hint: "[file or 'all']"
 allowed-tools: ["Read", "Grep", "Glob", "Write"]
 ---
@@ -256,10 +272,11 @@ Step 4: **Report findings**
 
 **文件：** `.codebuddy/skills/format-regression-tables/SKILL.md`
 
-```markdown
+````markdown
 ---
 name: format-regression-tables
 description: Converts R regression outputs to publication-ready LaTeX tables. Use when user runs regressions and says "make a table", "format results", or "export to LaTeX". Handles lm, glm, felm, and fixest objects. Applies field-specific conventions (standard errors in parentheses, stars for significance).
+description_zh: 把 R 回归输出转成可发表的 LaTeX 表格。用户跑完回归说 "make a table"、"format results"、"export to LaTeX" 时使用。
 argument-hint: "[model object name]"
 allowed-tools: ["Read", "Write", "Bash"]
 ---
@@ -323,14 +340,14 @@ Step 4: **Save and verify**
 
 ## Troubleshooting
 
-**Error:** Model object not found
-**Cause:** .rds file not in expected location
+**Error:** Model object not found  
+**Cause:** .rds file not in expected location  
 **Solution:** Check output/ directory, verify saveRDS() was called
 
-**Error:** Standard errors missing
-**Cause:** Model didn't specify clustering/robust SEs
+**Error:** Standard errors missing  
+**Cause:** Model didn't specify clustering/robust SEs  
 **Solution:** Re-run with vcov specification, document assumption
-```
+````
 
 ---
 
@@ -342,6 +359,7 @@ Step 4: **Save and verify**
 ---
 name: validate-protocol
 description: Validates experimental protocols against lab safety and reproducibility standards. Use when user provides lab protocol documents, asks to "check protocol", "validate procedure", or when reviewing .md or .docx experimental designs. Ensures required sections, safety notes, and replication details are present.
+description_zh: 校验实验协议是否符合实验室安全与可复现性标准。用户提供协议文档、说 "check protocol"、"validate procedure" 时使用。
 argument-hint: "[protocol file]"
 allowed-tools: ["Read", "Write"]
 ---
@@ -397,6 +415,7 @@ Step 4: **Generate report**
 ## 测试你的技能
 
 ### 第 1 步：手工测试
+
 1. 创建技能目录：`mkdir -p .codebuddy/skills/your-skill-name`
 2. 复制 SKILL.md 模板并定制
 3. 技能会热重载——改动无需重启就会被检出
@@ -404,11 +423,13 @@ Step 4: **Generate report**
 5. 核验：技能加载了、指令清楚、输出正确
 
 ### 第 2 步：迭代
+
 - **技能不触发：** 用更具体的触发短语改 description
 - **指令不清：** 给 Steps 补更多示例与细节
 - **输出不对：** 加校验步骤、加故障排查一节
 
 ### 第 3 步：成功标准
+
 - ✅ 技能在 90%+ 的相关查询上触发
 - ✅ 用预期步数走完整个工作流
 - ✅ 正常运行时零 API 错误
@@ -441,7 +462,7 @@ Step 4: **Generate report**
 | `Bash` | 跑命令（R 脚本、LaTeX 编译、git） |
 | `Agent` | 派生子代理（用于复杂的多步工作流） |
 
-**安全说明：** `allowed-tools` 只做预先批准——它**不**做限制（见[语义说明](#allowed-vs-disallowed)）。对真正只读的校验类技能，加 `disallowed-tools: ["Edit", "Write", "Bash"]`；对自主/后台技能，还要禁用 `AskUserQuestion`，免得循环卡在某个提问上。只把你会用到的工具列进 `allowed-tools` 仍是好卫生（它记录了意图、把静默的预先批准降到最少），但它不是沙箱。
+**安全说明：** `allowed-tools` 只做预先批准——它**不**做限制（见[语义说明](#allowed-tools)）。WorkBuddy 没有技能级工具黑名单，所以「只读技能」的约束是软性的：`allowed-tools` 只列只读工具 + 正文写一句「不修改被审文件」。只把你会用到的工具列进 `allowed-tools` 仍是好卫生（它记录了意图、把静默的预先批准降到最少），但它不是沙箱。
 
 ---
 
