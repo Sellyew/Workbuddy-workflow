@@ -4,7 +4,6 @@ description: 对讲稿 `.tex` 或 `.qmd` 文件做一遍只读校对。检查语
 description_zh: 对讲稿 `.tex` 或 `.qmd` 文件做一遍只读校对。检查语法、错字、溢出、术语一致性，以及学术写作质量；产出一份报告，不改动文件。用户说 "proofread"、"check for typos"、"look for grammar issues"、"copy-edit this"、"any writing errors?" 时使用，或在一讲发布之前使用。
 argument-hint: "[filename or 'all']"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 校对讲稿文件

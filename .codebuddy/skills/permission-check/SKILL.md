@@ -4,7 +4,6 @@ description: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹�
 description_zh: 诊断本平台（WorkBuddy）为什么（或者为什么不）弹出一个动作的批准请求、以及为什么某个动作被直接拦下。默认只读仓库本地层（`.codebuddy/settings.json` 的 `permissions` 规则与 PreToolUse 钩子链、`.codebuddy/settings.local.json` 的本地覆盖）。宿主全局层（`~/.workbuddy/`）**只在用户明确确认后**才读 —— 那里可能含有无关的路径或密钥。当用户说 "why is it asking me to approve?"、"permission check"、"why am I getting prompts?"、"bypass isn't working"、"check my permissions" 时使用。只读诊断。本平台读 `permissions.allow` / `permissions.deny`；权限档位在界面里选（默认权限 / 完全访问权限）。本技能把规则、钩子与档位三处摊开。
 argument-hint: "(no arguments)"
 allowed-tools: ["Read", "Bash", "Glob"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 权限检查

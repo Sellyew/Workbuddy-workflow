@@ -4,12 +4,13 @@ description: 对 Quarto `.qmd` 或 Beamer `.tex` 幻灯片做对抗式视觉版�
 description_zh: 对 Quarto `.qmd` 或 Beamer `.tex` 幻灯片做对抗式视觉版式审计。标出溢出、字号不一致、盒子疲劳、间距与对齐问题。用户说 "visual audit"、"check the layout"、"does this overflow?"、"look for visual issues"、"audit the slides" 时使用，或在一套幻灯片的外观被重做之后使用。不检查写作或教学法——请与 `/proofread` 或 `/pedagogy-review` 搭配。
 argument-hint: "[QMD or TEX filename]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 幻灯片视觉审计
 
 对一套幻灯片做一次彻底的视觉版式审计。
+
+**只读审计：**不修改幻灯片源文件；报告写到 `quality_reports/audits/` 下。
 
 ## 步骤
 

@@ -4,7 +4,6 @@ description: 从你自己过往的论文中提取一份书面文风画像，再�
 description_zh: 从你自己过往的论文中提取一份书面文风画像，再用它让新草稿读起来像你。通过子代理逐份读取语料，在磁盘上产出一份可复用的画像（词汇、句子节奏、你怎么开头和收尾、模糊限定的习惯、刻意的怪癖），并据此审计一份草稿。用户说 "make this sound like me"、"match my voice"、"profile my writing"、"why does this draft not sound like my papers"，或在起草将署其名的文字之前使用。是 /humanize 的正面补充，后者只检测 AI 痕迹。
 argument-hint: "[corpus directory | --audit draft.tex]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent"]
-disallowed-tools: ["Edit", "MultiEdit"]
 disable-model-invocation: true
 metadata:
   protocol: evidence-grounding

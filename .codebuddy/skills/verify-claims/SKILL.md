@@ -4,7 +4,6 @@ description: 对草稿或一段含事实性论断的文本运行验证链（Chai
 description_zh: 对草稿或一段含事实性论断的文本运行验证链（Chain-of-Verification，CoVe）。在独立上下文中派生 `claim-verifier` 代理（绝不是对话分叉），让它从头到尾看不到草稿 —— 然后报告哪些论断被支持、被反驳，或无法核验。当用户说 "verify these citations"、"check the claims in X"、"did I hallucinate anything"、"fact-check this draft"、"run CoVe on this"，或在任何断言了论文、数据集或数值结果之事实的文本生成之后使用。不用于文风/语法审读（用 `/proofread`）或实质审读（用 `/review-paper`）。
 argument-hint: "[file-or-text-path] [--source <path-or-url>] [--no-fail-closed]"
 allowed-tools: ["Read", "Grep", "Glob", "Agent", "Task", "Write"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # /verify-claims —— 对草稿做验证链

@@ -84,7 +84,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"
 - `quality_reports/peer_review_<paper>/decision_distribution.md`（汇总表 + 关切频次分析）
 - `quality_reports/peer_review_<paper>/editor_synthesis.md`（最终编辑信）
 
-**成本纪律。** 相对默认 `--peer`（跑 2 位审稿人），方差模式把审稿人这一档的成本乘以 N。审稿人仍留在其钉死的 Opus 档（[`model-routing.md`](../../rules/model-routing.md) 的「不得降档」反模式）—— 靠 N 而不是靠降档来控制成本。硬上限 N=5；想要更高的方差估计，就跑两次 `--variance 5` 再离线合并。
+**成本纪律。** 相对默认 `--peer`（跑 2 位审稿人），方差模式把审稿人这一档的成本乘以 N。审稿人仍留在其钉死的 reasoning 档（[`model-routing.md`](../../rules/model-routing.md) 的「不得降档」反模式）—— 靠 N 而不是靠降档来控制成本。硬上限 N=5；想要更高的方差估计，就跑两次 `--variance 5` 再离线合并。
 
 **互斥性。** 方差模式不能与 `--stress` 组合（后者强制 SKEPTIC×2，会毁掉抽样的意义），也不能与 `--r2`/`--r3` 组合（后者为保持连续性而沿用上一轮的取向）。若组合了互斥标志，技能会报错中止。
 

@@ -4,7 +4,6 @@ description: 对一套讲稿幻灯片（`.qmd` 或 `.tex`）做整体教学法�
 description_zh: 对一套讲稿幻灯片（`.qmd` 或 `.tex`）做整体教学法审读。检查叙事弧线、先修假设、例题、记号清晰度，以及整讲层面的节奏。用户说 "pedagogy review"、"does this teach well?"、"is the flow right?"、"will students follow?"、"review the narrative" 时使用，或在首次讲授一套幻灯片之前使用。只读；产出报告。
 argument-hint: "[QMD or TEX filename]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 讲稿幻灯片的教学法审读

@@ -21,7 +21,7 @@ metadata:
 
 ## 何时使用
 
-- 长时间休息之前、切换模型（Opus ↔ Sonnet ↔ Haiku）之前，或一个工作日结束时。
+- 长时间休息之前、切换模型档位（default ↔ lite ↔ reasoning）之前，或一个工作日结束时。
 - 在自动压缩即将丢弃中途计划上下文之前（配合 PreCompact 钩子使用）。
 - 把同一仓库的工作交接给协作者之前。
 - 多会话计划中完成一块之后，即下一次会话开口第一个问题就是「我干到哪了」的时候。
@@ -165,12 +165,12 @@ Apply where: <which future situations would benefit>
 **结果：** 下一次会话：新建一个任务 —— 交接钩子会把 `quality_reports/checkpoints/2026-04-27_v180-polisci.md` 交给它 —— 然后从动作 1 开始。
 
 ### 示例 2 —— 中途切换模型
-**用户说：** "I want to switch to Sonnet for the cheap doc edits — checkpoint first"
+**用户说：** "I want to switch to lite for the cheap doc edits — checkpoint first"
 **动作：**
 1. 收集状态。
 2. 写检查点，`status: paused`。
 3. 跳过记忆提议（改动很小 —— 只是换模型继续）。
-**结果：** 状态已在盘上；Sonnet 会话读检查点后继续，无需重新加载整份计划。
+**结果：** 状态已在盘上；lite 会话读检查点后继续，无需重新加载整份计划。
 
 ## 疑难排查
 

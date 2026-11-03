@@ -4,12 +4,13 @@ description: 对一套幻灯片的教学法选择提出 5-7 个对抗式问题�
 description_zh: 对一套幻灯片的教学法选择提出 5-7 个对抗式问题——顺序、先修要求、认知负荷、动机。用户说 "devil's advocate"、"poke holes in this deck"、"push back on my slides"、"stress-test the design"、"what would a skeptical student ask?" 时使用。只读；只提出问题，逼你重新想。比 `/pedagogy-review` 更轻。
 argument-hint: "[Lecture filename]"
 allowed-tools: ["Read", "Grep", "Glob"]
-disallowed-tools: ["Edit", "MultiEdit"]
 ---
 
 # 魔鬼代言人审读
 
 批判性地检查一套幻灯片，用 5-7 个具体的教学法问题挑战它的设计。
+
+**只读：**本技能只读幻灯片与规则、只提出问题，绝不修改任何文件。
 
 **理念：**「我们通过积极的对话达成尽可能好的呈现。」
 
