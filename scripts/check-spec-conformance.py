@@ -30,7 +30,11 @@ WB_FIELDS = {"description_zh","description_en","category","tags","version","agen
 # `effort` 在这个名单里，因为**同一个键在两个对象上结论相反**：代理的
 # `parseAgentFile()` 读它并施加到子会话思考预算，技能加载器不读它。判据见
 # `.codebuddy/references/platform-facts.md`。
-INERT_FIELDS = {"effort","when_to_use","arguments","disallowed-tools","context",
+#
+# `context` **不在**这个名单里：`context: fork` 会被读——但会害了技能（把它送进
+# detached 子会话，工具集里没有 `Agent`，多透镜扇出退化成串行）。它不是「无对应
+# 语义」，是「被读且有害」，见 platform-facts 的技能一节。
+INERT_FIELDS = {"effort","when_to_use","arguments","disallowed-tools",
                 "background","hooks","paths","shell"}
 NAME_RE = re.compile(r'[a-z0-9]+(-[a-z0-9]+)*')
 
