@@ -3,7 +3,6 @@ name: hello
 version: "0.1.0"
 description: 冒烟测试技能。用于验证 `.codebuddy/skills` 能被发现，且 `/hello` 可被调用。
 description_zh: 冒烟测试技能。用于验证 `.codebuddy/skills` 能被发现，且 `/hello` 可被调用。
-description_en: Smoke-test skill. Verifies that `skills` are discovered and slash-invocable.
 allowed-tools: ["Read", "Write", "Bash"]
 argument-hint: "[任意标记文本]"
 user-invocable: true

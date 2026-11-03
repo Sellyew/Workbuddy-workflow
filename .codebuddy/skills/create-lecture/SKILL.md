@@ -11,7 +11,7 @@ disable-model-invocation: true
 
 创建一份漂亮、教学上过硬的 Beamer 讲义。
 
-**这是一个协作式的迭代过程。愿景由授课者主导；Claude 是思考伙伴。**
+**这是一个协作式的迭代过程。愿景由授课者主导；WorkBuddy 是思考伙伴。**
 
 ---
 

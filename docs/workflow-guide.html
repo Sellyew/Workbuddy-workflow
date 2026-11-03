@@ -2576,7 +2576,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 2, 2026</p>
+      <p class="date-modified">November 3, 2026</p>
     </div>
   </div>
     
@@ -3050,7 +3050,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </ol>
 <p><strong>配置权限</strong> — 审一遍 <code>.codebuddy/settings.json</code>。模板自带七条兜底 allow 规则（<code>Bash(*)</code>、<code>Edit(**)</code>、<code>Write(**)</code>、<code>MultiEdit(**)</code>、<code>Read(**)</code>、<code>WebFetch(*)</code>、<code>WebSearch</code>）与一份空的 <code>deny</code> 列表，所以你不必再加工具。定制意味着收窄：砍掉你不想要的 allow，或加 <code>deny</code> 规则（例如让受限数据进不了模型；见 <code>TROUBLESHOOTING.md</code> 里的 “Keep restricted data off the model”）。</p>
 <p><strong>试一下：</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In Claude Code, type:</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In WorkBuddy, type:</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/compile-latex</span> MyFirstLecture</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/proofread</span> Slides/MyFirstLecture.tex</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/quality_score.py Slides/MyFirstLecture.tex</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -3081,7 +3081,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <pre><code>你：「把我讲假设检验的那一讲改好」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 要改什么（清晰度、例子、节奏）？
 2. 有学生反馈要处理吗？
 3. 有哪些约束（时间、记号改动）？
@@ -3094,7 +3094,7 @@ Claude：「我先澄清几点：
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <pre><code>你：「分析这份调查数据」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 研究问题是什么？
 2. 期望的产出形式（表格、图、报告）？
 3. 有复现目标或基准吗？
@@ -3103,7 +3103,7 @@ Claude：「我先澄清几点：
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <pre><code>你：「把我这些分析脚本收拾干净」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 痛点在哪儿（速度、可读性、bug）？
 2. 允许破坏性改动，还是要保持兼容？
 3. 有可用的测试设施吗？
@@ -3812,7 +3812,7 @@ APPROVED   NEEDS WORK
 <li><strong>技能速查</strong> — 可用斜杠命令的表格</li>
 </ul>
 <p>其余一切搬进 <code>.codebuddy/rules/</code> 的文件（带上路径作用域，让它们只在相关时加载）。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># CLAUDE.MD --- My Course Development</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># CODEBUDDY.md --- My Course Development</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>**Project:** Econ 730 --- Causal Panel Data</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>**Institution:** Emory University</span>
@@ -4319,7 +4319,7 @@ Warning
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
 <span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在<strong>默认权限</strong>档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（<code>.git</code>、<code>.codebuddy</code> 等）照旧会问，<code>allow</code> 里写什么都不算数。切到<strong>完全访问权限</strong>时，询问与安全检查都被跳过，但 <code>deny</code> 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 <code>deny</code> 规则：见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model">TROUBLESHOOTING.md</a> 里的 “Keep restricted data off the model”。</p>
+<p>在<strong>默认权限</strong>档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（<code>.git</code>、<code>.codebuddy</code> 等）照旧会问，<code>allow</code> 里写什么都不算数。切到<strong>完全访问权限</strong>时，询问与安全检查都被跳过，但 <code>deny</code> 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 <code>deny</code> 规则：见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#让受限数据不进入模型">TROUBLESHOOTING.md</a> 里的「让受限数据不进入模型」。</p>
 <p><strong>权限档位。</strong> 桌面客户端把这件事收成<strong>两档</strong>：</p>
 <table class="caption-top table">
 <colgroup>
@@ -4955,7 +4955,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
                                     post-compact-restore.py:
                                     • Reads saved state
                                     • Prints context summary
-                                    • Claude knows where it left off</code></pre>
+                                    • WorkBuddy knows where it left off</code></pre>
 </section>
 <section id="存了什么" class="level4" data-number="4.8.6.2">
 <h4 data-number="4.8.6.2" class="anchored" data-anchor-id="存了什么"><span class="header-section-number">4.8.6.2</span> 存了什么</h4>
@@ -5157,7 +5157,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="协议"><span class="header-section-number">5.1.2</span> 协议</h3>
 <pre><code>Non-trivial task arrives
   |
-  +-- Step 1: Claude enters plan mode (automatic, or say &quot;plan this first&quot;)
+  +-- Step 1: WorkBuddy enters plan mode (automatic, or say &quot;plan this first&quot;)
   +-- Step 2: Draft plan (approach, files, verification)
   +-- Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
   +-- Step 4: Present plan to user
@@ -6029,7 +6029,7 @@ Decision point (1-2 hours):
 </div>
 <p>Git worktree 创建一个<strong>独立的工作目录</strong>，链接到同一个仓库。每个目录有自己的分支，但共享提交历史。子代理可以通过 <code>isolation: worktree</code> 字段使用 worktree（见<a href="#sec-agent-config">高级代理配置</a>）。</p>
 <pre><code>your-project/                     ← main branch (stays clean)
-.worktrees/lecture-06-quarto/     ← isolated branch (Claude works here)</code></pre>
+.worktrees/lecture-06-quarto/     ← isolated branch (WorkBuddy works here)</code></pre>
 <section id="为什么用-worktree" class="level4" data-number="5.9.4.1">
 <h4 data-number="5.9.4.1" class="anchored" data-anchor-id="为什么用-worktree"><span class="header-section-number">5.9.4.1</span> 为什么用 worktree？</h4>
 <table class="caption-top table">
@@ -6461,7 +6461,7 @@ Decision point (1-2 hours):
 <h4 data-number="5.10.3.2" class="anchored" data-anchor-id="怎么实现"><span class="header-section-number">5.10.3.2</span> 怎么实现</h4>
 <p>一次性的全面审读用 <code>/review-paper</code>。当你需要更深、彼此独立的审计时（例如投稿到期刊之前），跑 <code>/seven-pass-review [manuscript]</code>。它在同一条消息里生成 7 个独立上下文子代理，所以没有任何一个看得见别人的报告，一个透镜一个审阅者：摘要、引言、方法 / 识别、结果 + 表格、稳健性、散文与引文。这套透镜集与上面 ClaudeCodeTools 那份清单不同。技能随后把经过校验的审查发现过一道门禁与一次幻觉检查，归并成一份按优先级排序的修订清单，存到 <code>quality_reports/seven_pass_[stem]/_SYNTHESIS.md</code>：</p>
 <pre><code>You: &quot;Run the seven-audit protocol on my paper&quot;
-Claude: [Runs 7 parallel forked reviews, each blind to the others]
+WorkBuddy: [Runs 7 parallel forked reviews, each blind to the others]
        → Produces 7 independent reports
        → Synthesizes into prioritized revision checklist</code></pre>
 <p><strong>适配到其他产物：</strong> 同一原则适用于复现包（7 遍：代码、数据、文档、许可、运行时间、产出、README）或基金申请（重要性、方法、创新性、环境、预算）。</p>

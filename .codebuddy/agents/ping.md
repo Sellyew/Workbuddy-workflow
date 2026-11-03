@@ -3,7 +3,6 @@ name: ping
 version: "0.1.0"
 description: 冒烟测试子代理。返回固定标记与自身实际使用的模型，用于验证 `.codebuddy/agents/` 能被派发。
 description_zh: 冒烟测试子代理。返回固定标记与自身实际使用的模型，用于验证 `.codebuddy/agents/` 能被派发。
-description_en: Smoke-test subagent. Echoes a fixed token and the model it ran on.
 model: lite
 tools:
   - Read

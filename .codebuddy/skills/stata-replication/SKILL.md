@@ -130,4 +130,4 @@ scripts/stata/
 
 ## 长跑拟合 / 批量重跑：用 Monitor 工具（2026 年 4 月）
 
-长时间的 Stata 拟合（带 `cluster bootstrap` 的数小时 bootstrap、数百万观测的大型 `reghdfe`、模拟研究）应当后台启动，并用 Monitor 工具跟踪——与 `/data-analysis` 和 `/audit-reproducibility` 在 R / Python 上的做法相同。`.do` 文件把日志写进 SMCL（`output/NN_log.smcl`）。Monitor 不会附着到后台作业或它的 stderr：只有你给它的那条命令的 stdout 才会变成事件。所以要把 Monitor 跑在一条跟踪日志、并过滤进度行与 Stata 错误的命令上，例如 `tail -f output/NN_log.smcl | grep --line-buffered -E '\{err\}|r\([0-9]+\);|<your progress marker>'`，这样 Claude 能在中途对错误作出反应（数小时的运行需要 `persistent: true`，作业结束后再 TaskStop）。
+长时间的 Stata 拟合（带 `cluster bootstrap` 的数小时 bootstrap、数百万观测的大型 `reghdfe`、模拟研究）应当后台启动，并用 Monitor 工具跟踪——与 `/data-analysis` 和 `/audit-reproducibility` 在 R / Python 上的做法相同。`.do` 文件把日志写进 SMCL（`output/NN_log.smcl`）。Monitor 不会附着到后台作业或它的 stderr：只有你给它的那条命令的 stdout 才会变成事件。所以要把 Monitor 跑在一条跟踪日志、并过滤进度行与 Stata 错误的命令上，例如 `tail -f output/NN_log.smcl | grep --line-buffered -E '\{err\}|r\([0-9]+\);|<your progress marker>'`，这样 WorkBuddy 能在中途对错误作出反应（数小时的运行需要 `persistent: true`，作业结束后再 TaskStop）。
