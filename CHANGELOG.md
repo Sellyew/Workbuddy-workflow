@@ -6,7 +6,22 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化
+
+### Changed — 指南结构性重写：把 Claude 特有章节改成 WorkBuddy 原生
+
+`guide/workflow-guide.qmd` 此前是「翻译 + 替换」的产物，多处把上游 Claude Code 的特性当成
+WorkBuddy 的能力在讲。本轮结构性改写：
+
+- **删除错误适配**：`worktree.baseRef` 段（把上游不存在的键写成本平台事实）、Claude 订阅/API/
+  Anthropic 条款段、Anthropic 提示缓存 TTL 段、上游 CLI 命令整节（`/team-onboarding`/`/autofix-pr`/
+  `/powerup`/Ultraplan/`/loop` 等，本平台无命令行）。
+- **重写模型层**：Fable/Opus/Sonnet/Haiku 四层 → 三档 `default`/`lite`/`reasoning`。
+- **修正散句**：把 `/batch`（上游内置技能）从「WorkBuddy 增加的能力」里删掉；`Computer Use` →
+  「打开成品让用户亲眼确认」；`Monitor 工具` → 「后台运行 + 轮询输出」；`Agent Teams` 与内置技能
+  补「本平台没有」。
+
+（WorkBuddy 特有章节的增补——自动化、专家、连接器、资料库、小程序、MCP——另做。）
 
 ### Changed — 重写技能模板：不再教 WorkBuddy 不认的死字段
 

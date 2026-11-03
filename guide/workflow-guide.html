@@ -2422,7 +2422,7 @@ window.Quarto = {
   <li><a href="#代理的解剖" id="toc-代理的解剖" class="nav-link" data-scroll-target="#代理的解剖"><span class="header-section-number">4.5.1</span> 代理的解剖</a></li>
   <li><a href="#multi-model-strategy-cost-vs-quality" id="toc-multi-model-strategy-cost-vs-quality" class="nav-link" data-scroll-target="#multi-model-strategy-cost-vs-quality"><span class="header-section-number">4.5.2</span> 多模型策略：成本 vs 质量</a></li>
   <li><a href="#sec-agent-config" id="toc-sec-agent-config" class="nav-link" data-scroll-target="#sec-agent-config"><span class="header-section-number">4.5.3</span> 高级代理配置</a></li>
-  <li><a href="#sec-cost" id="toc-sec-cost" class="nav-link" data-scroll-target="#sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：缓存、路由与诊断</a></li>
+  <li><a href="#sec-cost" id="toc-sec-cost" class="nav-link" data-scroll-target="#sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：路由与深度预算</a></li>
   <li><a href="#sec-headless" id="toc-sec-headless" class="nav-link" data-scroll-target="#sec-headless"><span class="header-section-number">4.5.5</span> 无头运行：桌面客户端没有命令行</a></li>
   </ul></li>
   <li><a href="#settings---permissions-and-hooks" id="toc-settings---permissions-and-hooks" class="nav-link" data-scroll-target="#settings---permissions-and-hooks"><span class="header-section-number">4.6</span> 设置 — 权限与钩子</a>
@@ -2498,7 +2498,7 @@ window.Quarto = {
   <li><a href="#autoresearch基于约束的自主研究" id="toc-autoresearch基于约束的自主研究" class="nav-link" data-scroll-target="#autoresearch基于约束的自主研究"><span class="header-section-number">6.6</span> autoresearch：基于约束的自主研究</a></li>
   <li><a href="#stata-mcp执行-stata-的-mcp-服务器" id="toc-stata-mcp执行-stata-的-mcp-服务器" class="nav-link" data-scroll-target="#stata-mcp执行-stata-的-mcp-服务器"><span class="header-section-number">6.7</span> stata-mcp：执行 Stata 的 MCP 服务器</a></li>
   <li><a href="#claudecodetools编辑人格" id="toc-claudecodetools编辑人格" class="nav-link" data-scroll-target="#claudecodetools编辑人格"><span class="header-section-number">6.8</span> ClaudeCodeTools：编辑人格</a></li>
-  <li><a href="#anthropic-在-2026-年-4-月前后发布的实用命令" id="toc-anthropic-在-2026-年-4-月前后发布的实用命令" class="nav-link" data-scroll-target="#anthropic-在-2026-年-4-月前后发布的实用命令"><span class="header-section-number">6.9</span> Anthropic 在 2026 年 4 月前后发布的实用命令</a></li>
+  <li><a href="#上游-cli-命令在本平台不存在" id="toc-上游-cli-命令在本平台不存在" class="nav-link" data-scroll-target="#上游-cli-命令在本平台不存在"><span class="header-section-number">6.9</span> 上游 CLI 命令在本平台不存在</a></li>
   <li><a href="#sec-community" id="toc-sec-community" class="nav-link" data-scroll-target="#sec-community"><span class="header-section-number">6.10</span> 社区采用情况</a></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">7</span> 为你的领域做定制</a>
@@ -2897,13 +2897,8 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p><strong>先分清两份合同。</strong> 这一段讲的是<strong>上游 Claude 那一侧</strong>的账（订阅、API 计费、使用条款）。本平台是 WorkBuddy，费用与条款以客户端内和官网的说明为准，两者不是同一份合同。</p>
-</blockquote>
-<p><strong>Claude Pro 或 Max 订阅</strong>：包含 Claude Code 用量，额度宽松。当前价格与档位细节见 <a href="https://claude.ai">claude.ai</a>。对多数学者是最优选择。</p>
-<p><strong>API 访问</strong>（按 token 付费）：适合重度用户或 CI/CD。用<a href="#sec-effort">深度档位</a>与<a href="#multi-model-strategy-cost-vs-quality">多模型策略</a>控制成本。</p>
-<p>Claude Code 本身安装免费（源码在 GitHub 公开，但不是开源软件；你的使用受 Anthropic 哪套条款约束取决于你的账号 — 见下）。你只为 Claude 模型的用量付费。</p>
-<p><strong>哪些条款适用于你的工作。</strong> 个人 Free、Pro 或 Max 账号（Claude Code 亦在其内）适用 Anthropic 的消费者条款，你的对话是否可用于模型训练是你在那里自行设定的一个开关 — 请去核查。Team、Enterprise 与 Education 套餐以及 API 适用商业条款。请到 <a href="https://www.anthropic.com/legal">anthropic.com/legal</a> 读当前条款，不要依赖本指南，并在受限或机密材料进入会话之前，先核查你所在机构与数据协议的规矩。</p>
+<p>本平台是 WorkBuddy，费用与条款以<strong>客户端内和<a href="https://www.workbuddy.cn/">官网</a>的说明为准</strong>——上游 Claude Code 的订阅、API 计费与 Anthropic 条款在这里不适用，两者不是同一份合同。</p>
+<p>省钱的手段不靠订阅档位，靠<strong>用对档位</strong>：机械活走 <code>lite</code>、审读走 <code>default</code>、高判断力走 <code>reasoning</code>（见<a href="#multi-model-strategy-cost-vs-quality">多模型策略</a>与<a href="#sec-cost">成本意识</a>），以及把长流水线拆成更小的有界调用、用独立上下文的子代理只读必要材料来缩小上下文。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -3280,12 +3275,11 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>合上视觉回路：先度量渲染，再上 Computer Use
+<span class="screen-reader-only">Note</span>合上视觉回路：先度量渲染，再看一眼
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>上面那套批评者-修复者回路比较的是 LaTeX 源与 Quarto 源，而自 v2.6 起它也度量<em>渲染后</em>的成品：<code>scripts/slide-qa.py</code> 在无头 Chrome 里加载 HTML，逐页度量溢出（每个片段状态、每个标签页）并每页存一张截图，由批评者读取。这需要 Playwright（见前置条件）；没有它，回路退回到读源。对于度量判断不了的东西 — 一处 TikZ 渲染故障、一张图是否看得清 — Anthropic 的 <strong>Computer Use</strong>（研究预览）让 WorkBuddy 在真实查看器里打开 PDF 或 HTML 亲眼看。</p>
-<p>可选，不是必需：当度量审计与截图都不够时，Computer Use 是再加的一级。</p>
+<p>上面那套批评者-修复者回路比较的是 LaTeX 源与 Quarto 源，而自 v2.6 起它也度量<em>渲染后</em>的成品：<code>scripts/slide-qa.py</code> 在无头 Chrome 里加载 HTML，逐页度量溢出（每个片段状态、每个标签页）并每页存一张截图，由批评者读取。这需要 Playwright（见前置条件）；没有它，回路退回到读源。对于度量判断不了的东西 — 一处 TikZ 渲染故障、一张图是否看得清 — 打开成品让用户亲眼确认（<code>open</code> 打开的窗口只有用户自己看得见）。</p>
 </div>
 </div>
 </section>
@@ -3990,7 +3984,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>除了本模板的 63 个技能之外，上游 Claude Code 还自带内置技能（截至 2026 年 8 月）：<code>/batch</code> 编排跨代码库的并行重构（用 git worktree 做隔离），<code>/simplify</code> 审读近期改动找简化机会，<code>/debug</code> 帮助排查会话。它们与上面这些学术技能互补。</p>
+<p>除了本模板的 63 个技能之外，上游 Claude Code 还自带一些内置技能（<code>/batch</code>、<code>/simplify</code>、<code>/debug</code> 等），本平台没有这些；它们对应的能力在本模板里以技能或子代理形式实现。</p>
 </div>
 </div>
 </section>
@@ -4045,7 +4039,7 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <p>一条提示词同时检查语法、版面、数学与代码，样样都只能做到中不溜。专职代理只管一个维度，并把它做透。<code>/slide-excellence</code> 技能把适用于该文件的审阅代理并行跑起来，再归并结果。</p>
-<p>上游 Claude Code 还提供实验性的 <strong>Agent Teams</strong> — 多个独立会话互相协调、共享发现、彼此挑战做法。这是研究预览特性（截至 2026 年 8 月）；这里描述的编排器 + 子代理模式对学术工作流更成熟。</p>
+<p>上游 Claude Code 还有一个实验性的 <strong>Agent Teams</strong> 特性（研究预览，截至 2026 年 8 月），本平台没有；这里描述的编排器 + 子代理模式对学术工作流更成熟、也更稳。</p>
 </div>
 </div>
 </section>
@@ -4057,13 +4051,17 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Anthropic 当前阵容（2026-09-26 复核；经模型 SSoT 做过期门禁）
+<span class="screen-reader-only">Note</span>三档模型，不是上游的四层
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Fable 层</strong>（别名 <code>fable</code>）是上游 Claude Code 的最高层 — 通过 <code>/model fable</code> 或 <code>best</code> 别名选择启用，为超出一次性坐席规模的任务而造；它在动手前先调查，并且比小模型更常核验自己的产出。它<strong>不是</strong>任何账号类型的默认值，价格是 Opus 的数倍。<strong>Opus 层</strong>是上游 Claude Code 的默认，也是本模板把审稿人、编辑与核验器路由到的那一层（本平台上写作 <code>reasoning</code>）；它的自适应思考始终开启，默认 <code>medium</code> 努力档。<strong>Sonnet</strong> 是主力中层；<strong>Haiku</strong> 是快速/机械层。Anthropic 自己的路由建议：从当前 Opus 起步，当在更高 Opus 努力档上的评测仍不达标时再换 Fable。</p>
-<p>别名解析<strong>依提供商而异</strong>，而具体版本号的变动比任何指南都快。单一真源是 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/model-versions.md"><code>model-versions.md</code></a>，它载有当前版本、按提供商分的别名表，以及一个带过期日的 <code>verified_on</code> 日期 — 该过期日一过，<code>scripts/check-staleness.py</code> 就让构建失败，而 <code>scripts/check-model-versions.sh</code> 会抓出任何被当作当前版本的已弃用版本。<strong>不要在这里硬编码具体版本号。</strong></p>
-<p><strong>退役留意：</strong>Sonnet 4 与最早的 Opus 4 已于 2026-06-15 退役；当前 Haiku 模型的退役下限是 2026-10-15（见 SSoT）。如果你的环境钉住了模型字符串（<code>ANTHROPIC_MODEL</code>、<code>ANTHROPIC_DEFAULT_*_MODEL</code>、CI 里硬编码的 ID），请对照 SSoT 复查。<strong>本平台没有「升到某个版本才拿得到某一层」这回事：</strong> 深度只由三档决定（<code>default</code> / <code>lite</code> / <code>reasoning</code>），档位在 <code>model:</code> 字段里直接钉住 — 见 <code>.codebuddy/rules/model-routing.md</code>。</p>
+<p>本平台只有<strong>三档</strong>：<code>default</code> / <code>lite</code> / <code>reasoning</code>。上游 Claude Code 的 Fable / Opus / Sonnet / Haiku 四层在这里<strong>不存在</strong>——不要 <code>/model fable</code> 或写 <code>model: opus</code>，档位只认这三个值：</p>
+<ul>
+<li><strong><code>lite</code></strong>：机械活（改名、引文重排、bib 校验、校对修复、简单文件查找）。</li>
+<li><strong><code>default</code></strong>：审读与批评（r-reviewer、slide-auditor、proofreader、quarto-fixer）。</li>
+<li><strong><code>reasoning</code></strong>：高判断力（editor、审稿人、claim-verifier、稿件审读）。</li>
+</ul>
+<p>档位在代理 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 <code>model:</code> 字段里直接钉住（技能也读 <code>model:</code>，但更常见的是继承会话默认）。完整的路由配方与「不得降档」反模式见 <code>.codebuddy/rules/model-routing.md</code>。<strong>不要在这里硬编码具体型号</strong>——型号会变，档位才稳定；具体型号的单一真源是 <code>model-versions.md</code>。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -4212,15 +4210,9 @@ APPROVED   NEEDS WORK
 <p>用 <code>maxTurns</code> 防审阅代理无限循环，用 <code>tools</code> 给那些只该出报告的代理落实只读行为。</p>
 </section>
 <section id="sec-cost" class="level3" data-number="4.5.4">
-<h3 data-number="4.5.4" class="anchored" data-anchor-id="sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：缓存、路由与诊断</h3>
-<p>成本在你看月账单之前是看不见的。三个杠杆，按影响排序：</p>
-<p><strong>1. 提示缓存。</strong> Anthropic 的提示缓存让重复的前缀 token（系统提示、CODEBUDDY.md、大块上下文）走缓存路径，只按输入价格的一小部分计费。fork 的人该知道两件事：</p>
-<ul>
-<li><strong>默认 TTL 在 2026 年初从 60 分钟降到 5 分钟。</strong> 一条轮次之间要花 12 分钟的 <code>/review-paper --peer</code> 长流水线，如今第二轮开始时缓存已经冷了。对 API / Bedrock / Vertex / Foundry 套餐上的长流水线，选择启用的 <code>ENABLE_PROMPT_CACHING_1H</code> 环境变量可恢复 1 小时 TTL。在 Claude Pro / Max 订阅上，WorkBuddy 自动申请 1 小时 TTL，不额外收费。</li>
-<li><strong><code>cache_miss_reason</code></strong>（Anthropic 公开测试，2026-05-13）现已在 Messages 请求上暴露。用它诊断一条长跑的流水线为什么拿不到缓存命中（最常见：某个钩子注入了时间戳，破坏了前缀；或轮次之间系统提示发生了漂移）。</li>
-</ul>
-<p>2026 年 4 月那篇 <a href="https://dev.to/whoffagents/claude-prompt-caching-in-2026-the-5-minute-ttl-change-thats-costing-you-money-4363">TTL 变更成本分析</a>估计，对没有选择启用 1 小时 TTL 的长跑流水线，有效成本上升 30–60%。值得花周六一小时，给你最贵的技能装点仪表（<code>/review-paper --peer</code> 通常是重灾区）。</p>
-<p><strong>2. 按代理做模型路由。</strong> 上面的多模型策略表给出的是原则；<strong>70/20/10 模式</strong>是它的操作形态：</p>
+<h3 data-number="4.5.4" class="anchored" data-anchor-id="sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：路由与深度预算</h3>
+<p>成本在你看月账单之前是看不见的。两个杠杆，按影响排序：</p>
+<p><strong>1. 按代理做模型路由。</strong> 上面的多模型策略表给出的是原则；<strong>70/20/10 模式</strong>是它的操作形态：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -4253,7 +4245,7 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>按代理在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 里用 <code>model:</code> 设置。在我们的用法里，相对全部跑 <code>reasoning</code> 的典型节省：<strong>路由过的技能上 50–80%</strong>，在机械层没有观察到质量损失（经验法则，不是基准）。社区趋同的比例记录在 <a href="https://augmentcode.com">Augment Code 的路由数据</a>里，并与 Aider 的架构者/编辑者分工一致；我们引用 Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>作为该模式的一手来源背书。</p>
-<p><strong>3. 深度预算。</strong> 下面的<a href="#sec-effort">深度档位</a>一节讲本平台的<strong>三档</strong> — <code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一根轴</strong>：代理 frontmatter 的 <code>effort:</code> 取 <code>minimal</code>–<code>max</code>，调的是同一档内的思考预算，不改模型档位（技能里写它无效）；<code>maxEffortLevel</code> 这类封顶设置不存在。两根轴正交，所以：让 <code>default</code> 做默认；只在假 PASS 代价高昂的门禁上钉 <code>reasoning</code>（本模板对编辑、两位审稿人、断言核验器，以及 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 这类核验门禁或正确性关键的技能这么做 — 完整清单在 <code>model-routing.md</code>）；机械活降到 <code>lite</code>；扩展探索（深度搜索、大重构、最难的 <code>/review-paper</code> 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 <code>reasoning</code> 碰判断点。</p>
+<p><strong>2. 深度预算。</strong> 下面的<a href="#sec-effort">深度档位</a>一节讲本平台的<strong>三档</strong> — <code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一根轴</strong>：代理 frontmatter 的 <code>effort:</code> 取 <code>minimal</code>–<code>max</code>，调的是同一档内的思考预算，不改模型档位（技能里写它无效）；<code>maxEffortLevel</code> 这类封顶设置不存在。两根轴正交，所以：让 <code>default</code> 做默认；只在假 PASS 代价高昂的门禁上钉 <code>reasoning</code>（本模板对编辑、两位审稿人、断言核验器，以及 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 这类核验门禁或正确性关键的技能这么做 — 完整清单在 <code>model-routing.md</code>）；机械活降到 <code>lite</code>；扩展探索（深度搜索、大重构、最难的 <code>/review-paper</code> 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 <code>reasoning</code> 碰判断点。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5091,7 +5083,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>既然你已经理解了这些构成部件，这里是新增的部分：WorkBuddy 增加了用于成本控制的<a href="#sec-effort">深度档位</a>、<a href="#hooks---automated-enforcement">扩展的钩子事件</a>、用于细粒度技能配置的<a href="#skill-frontmatter">技能 frontmatter 字段</a>、用于控制 WorkBuddy 自主权的<a href="#settings---permissions-and-hooks">权限模式</a>、<a href="#sec-agent-config">高级代理配置</a>、<a href="#extending-with-plugins">插件</a>、用于并行重构的 <code>/batch</code>，以及无头 CLI 模式。每一项都有自己的小节：多数在上面，而技能 frontmatter 与插件在后面<a href="#sec-customize">为你的领域定制</a>里讲。</p>
+<p>既然你已经理解了这些构成部件，这里是新增的部分：WorkBuddy 增加了用于成本控制的<a href="#sec-effort">深度档位</a>、<a href="#hooks---automated-enforcement">扩展的钩子事件</a>、用于细粒度技能配置的<a href="#skill-frontmatter">技能 frontmatter 字段</a>、用于控制 WorkBuddy 自主权的<a href="#settings---permissions-and-hooks">权限模式</a>、<a href="#sec-agent-config">高级代理配置</a>、<a href="#extending-with-plugins">插件</a>，以及无头 CLI 模式。每一项都有自己的小节：多数在上面，而技能 frontmatter 与插件在后面<a href="#sec-customize">为你的领域定制</a>里讲。</p>
 </div>
 </div>
 <hr>
@@ -5716,9 +5708,9 @@ Phase 4: QUALITY GATE
 </blockquote>
 <p>无论哪种，WorkBuddy 都会生成至多 3 个子代理（经 <code>Agent</code> 工具），各自同时处理一篇论文，然后归并结果。</p>
 </section>
-<section id="长跑任务monitor-工具2026-年-4-月" class="level4" data-number="5.9.1.3">
-<h4 data-number="5.9.1.3" class="anchored" data-anchor-id="长跑任务monitor-工具2026-年-4-月"><span class="header-section-number">5.9.1.3</span> 长跑任务：Monitor 工具（2026 年 4 月）</h4>
-<p>对真正长的活 — 一次 30 分钟的 R 拟合、一批跨多张表的 <code>/audit-reproducibility</code>、一份 200 页幻灯片的 Quarto 渲染 — <strong>Monitor 工具</strong>（2026 年 4 月第 15 周）让 WorkBuddy 实时跟踪一个后台进程的 stdout，并在有值得注意的事情时作出反应。模式是：把长任务放到后台（Bash 加 <code>run_in_background: true</code>），然后让 WorkBuddy 监控到某个条件触发（报错、里程碑、结束）。没有轮询循环，没有 sleep 周期。在 <code>/data-analysis</code> 里的回归步、以及在 <code>/audit-reproducibility</code> 重跑整套脚本时都有用。</p>
+<section id="长跑任务后台运行-轮询输出" class="level4" data-number="5.9.1.3">
+<h4 data-number="5.9.1.3" class="anchored" data-anchor-id="长跑任务后台运行-轮询输出"><span class="header-section-number">5.9.1.3</span> 长跑任务：后台运行 + 轮询输出</h4>
+<p>对真正长的活 — 一次 30 分钟的 R 拟合、一批跨多张表的 <code>/audit-reproducibility</code>、一份 200 页幻灯片的 Quarto 渲染 — 把任务放到后台（Bash 加 <code>run_in_background: true</code>），拿到一个任务 ID，然后用输出轮询读取进度与结果；任务完成时会有通知。没有 <code>sleep</code> 循环，也不用手动轮询。在 <code>/data-analysis</code> 里的回归步、以及在 <code>/audit-reproducibility</code> 重跑整套脚本时都有用。</p>
 </section>
 <section id="看并行代理侧边栏的任务列表上游叫-claude-agents" class="level4" data-number="5.9.1.4">
 <h4 data-number="5.9.1.4" class="anchored" data-anchor-id="看并行代理侧边栏的任务列表上游叫-claude-agents"><span class="header-section-number">5.9.1.4</span> 看并行代理：侧边栏的任务列表（上游叫 <code>claude agents</code>）</h4>
@@ -6129,24 +6121,6 @@ Decision point (1-2 hours):
 <span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="at">--autostash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
 <span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>走到同步这一步时，主 worktree 通常是脏的，而这说明模式在起作用，不是在失败。</strong> 你用 worktree 是为了在另一条分支跑的时候还能继续在 <code>main</code> 上改；那些改动还在那儿放着。<code>git-guardrails</code> 钩子在 <code>git status --porcelain</code> 非空时拒绝 <code>git merge</code>，所以 merge 被拒的时刻，正是模式刚刚尽到职责的时刻。先把树清干净 — 带标签 stash、merge、pop。这个序列能清掉进行中的改动，不管它们是已跟踪还是未跟踪，所以它是上面的首选配方而不是兜底。它清不掉 worktree 目录本身：一个嵌在 <code>.worktrees/</code> 的 worktree 在主 worktree 的 porcelain 里显示为 <code>?? .worktrees/</code>，<code>git stash push -u</code> 会跳过它（<em>“Ignoring path .worktrees/lecture-06-quarto/”</em>），于是 merge 被拒 — 这就是为什么第 1 步在创建 worktree 之前先把 <code>.worktrees/</code> 排除掉。<code>--autostash</code> 是更短的那条路，适用于脏只来自<em>已跟踪</em>文件的树：钩子读 porcelain，没有 <code>??</code> 条目就允许，有就拒绝，因为 <code>git stash</code> 不 stash 未跟踪文件 — 所以对着一条 <code>??</code> 行做 autostash，会让 merge 起始于那道检查存在的目的就是要拒绝的同一棵脏树。由此有两个后果。porcelain 里没有 <code>??</code> 行时，<code>--autostash</code> 被允许，merge 结果回来是<em>已暂存</em>的，而你恢复的进行中改动是<em>未暂存</em>的，所以上面那条朴素的 <code>git commit</code> 记录下 merge，同时不动你的活。porcelain 里出现任何 <code>??</code> 行时 — 对一个你一直在里面编辑的 worktree 而言这是常态 — 就用显式的 <code>-u</code> stash；git 自己的行为也同意：一条分支在你以未跟踪状态持有的某个路径上新增文件，会在 autostash 已经被取走之后以 <em>“untracked working tree files would be overwritten”</em> 中止。无论选哪条路，两种写法都必须是<strong>独立</strong>命令：把 stash 与 merge 串到一行，在规则 0 下会被拒。</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span><code>worktree.baseRef</code>（2026 年 4 月第 19 周）
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>WorkBuddy 的 <code>EnterWorktree</code> 工具通过 <code>.codebuddy/settings.json</code> 里的 <code>worktree.baseRef</code> 设置，从一个可配置的基准引用分出新 worktree：</p>
-<ul>
-<li><code>fresh</code>（默认）— 从<strong>远端默认分支</strong>（通常是 <code>origin/main</code>）分出。对干净试验最安全。</li>
-<li><code>head</code> — 从本地 <code>HEAD</code> 分出。当你有未提交的本地工作、而 worktree 应当继承它时使用。</li>
-</ul>
-<p>这个默认值会让有未提交进行中改动的人意外：一个 <code>fresh</code> worktree 看不到那些改动。如果你的工作流假定「从我眼下看的这个状态分出去」，就设 <code>&quot;worktree.baseRef&quot;: &quot;head&quot;</code>。</p>
-</div>
-</div>
 </section>
 <section id="何时用" class="level4" data-number="5.9.4.4">
 <h4 data-number="5.9.4.4" class="anchored" data-anchor-id="何时用"><span class="header-section-number">5.9.4.4</span> 何时用</h4>
@@ -6260,7 +6234,7 @@ Decision point (1-2 hours):
 <section id="投稿前清单" class="level4" data-number="5.10.1.3">
 <h4 data-number="5.10.1.3" class="anchored" data-anchor-id="投稿前清单"><span class="header-section-number">5.10.1.3</span> 投稿前清单</h4>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-48-contents" aria-controls="callout-48" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6269,7 +6243,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-49" class="callout-49-contents callout-collapse collapse">
+<div id="callout-48" class="callout-48-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>文档：</strong></p>
 <ul class="task-list">
@@ -6318,7 +6292,7 @@ Decision point (1-2 hours):
 └── output/                 # Tables, figures, logs, sessionInfo.txt</code></pre>
 <p>这些标准不会自己加载。<code>replication-protocol.md</code> 是按路径生效、只作用于 R 脚本的（<code>scripts/**/*.R</code>、<code>Figures/**/*.R</code>）；它覆盖复现优先的各阶段、容差阈值与 <code>passport.yaml</code> 的断言溯源，但不含上面那份清单与目录结构。要建这个存档包，就让 WorkBuddy <em>「准备一个复现包」</em>，或跑 <a href="#all-skills"><code>/replication-package</code></a>。它先写 README 并捕获环境，然后调用 <code>/audit-reproducibility</code>，任何 FAIL 就停下；只有这一步过了，它才在 <code>replication_package/</code> 下组装 DCAS 目录树的其余部分（<code>data/</code>、<code>code/</code>、<code>output/</code>），并写一份 <code>DCAS_checklist.md</code>，逐项标 PASS / FAIL / <code>[FILL]</code>。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6327,7 +6301,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-50" class="callout-50-contents callout-collapse collapse">
+<div id="callout-49" class="callout-49-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>一条直接映射到本工作流的关键原则：<strong>把科学推理与计算执行分开。</strong> 人设计诊断模板（量什么）；AI 负责执行（怎么跑）。</p>
 <p>这是模板-执行器架构 — 而你在已经在用它：</p>
@@ -6423,7 +6397,7 @@ Decision point (1-2 hours):
 <h4 data-number="5.10.2.4" class="anchored" data-anchor-id="既有代理怎么支持这件事"><span class="header-section-number">5.10.2.4</span> 既有代理怎么支持这件事</h4>
 <p><code>/slide-excellence</code> 技能已经调用 pedagogy-reviewer 与 slide-auditor，它们自动执行其中许多原则。要执行<em>全部</em> — 包括标题即断言与 MB/MC 平滑 — 就用幻灯片修辞学的透镜定制 <strong>domain-reviewer</strong> 代理（<code>.codebuddy/agents/domain-reviewer.md</code>）。这样每当你在幻灯片上运行 <code>/slide-excellence</code>，它就会通过其 substance-review 代理套用这些透镜（<code>/seven-pass-review</code> 也使用 domain-reviewer 的方法透镜）。</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-51-contents" aria-controls="callout-51" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6432,7 +6406,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-51" class="callout-51-contents callout-collapse collapse">
+<div id="callout-50" class="callout-50-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>要看完整的哲学论述 — 从亚里士多德的三种说服模式，穿过神经美学，到 Netflix 那个类比 — 见<a href="https://github.com/scunning1975/MixtapeTools/tree/main/presentations">幻灯片的修辞学</a>。该仓库含一篇完整长文、带专业配色的示例 Beamer 讲义、一个 <code>theme_rhetoric()</code> ggplot2 主题，以及一份已测过的 Claude Code 幻灯片生成提示词。</p>
 </div>
@@ -6901,21 +6875,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ul>
 <p><strong>何时参考它：</strong> 你想在投稿前做一遍结构化的论文审读，或者正在回复审稿意见、需要系统追踪哪些关切已经处理。</p>
 </section>
-<section id="anthropic-在-2026-年-4-月前后发布的实用命令" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="anthropic-在-2026-年-4-月前后发布的实用命令"><span class="header-section-number">6.9</span> Anthropic 在 2026 年 4 月前后发布的实用命令</h2>
-<p>这些是一方（first-party）Claude Code 命令，不用 fork 任何东西就能直接调。值得知道，是因为它们补上了本模板<strong>有意</strong>不去填的那些空档：</p>
-<p><strong>先注意载体：</strong>这一节列的是上游 Claude Code 的<strong>命令行</strong>能力。本平台的桌面客户端没有命令行，所以这些命令在这里不能直接敲——列出来是因为它们的设计思路值得借鉴，其中一部分在本模板里已有技能形式的对应实现（会在条目里点明）。</p>
-<ul>
-<li><strong><code>/team-onboarding</code></strong>（第 15 周）— 把你本地的 Claude Code 配置（CODEBUDDY.md、技能、代理、钩子、设置）打包成一份可重放的指南。对实验室很实用：PI 配置一次工作流，实验室其他人跑 <code>/team-onboarding</code> 就继承一份可用的副本。它补充但不替代本模板的「fork + 自定义」模式。</li>
-<li><strong><code>/autofix-pr</code></strong>（第 15 周）— 在 GitHub PR 上跑 Claude Code，套用 CI 式的常规修法（lint、类型、简单的测试失败）。如果你推了 PR，想在审阅前再来一轮自动清理，它和我们的 <code>/commit</code> 流程配合得很好。</li>
-<li><strong><code>/powerup</code></strong>（2026 年 3、4 月第 14 周）— 互动式课程，用动画演示讲 Claude Code 的各项特性（钩子、技能、MCP、插件）。推荐给刚 fork 完、想弄懂模板定制<strong>底层原语</strong>的人。</li>
-<li><strong>Ultraplan</strong>（第 15 周）— 在 CLI 里起草计划并放到云端，在网页编辑器里审阅、批注，然后远程执行或拉回本地。适合需要干系人过目的计划（比如让合作者在真正开跑前认可某个分析方案）。</li>
-<li><strong><code>/loop</code> 自定节奏</strong>（2026 年 4 月第 15 周）— 按固定间隔重复跑一个提示词或斜杠命令；省略间隔则让模型自己定节奏，直到满足停止条件。适合状态轮询类任务（「每 5 分钟看一次部署」），与上面的 Monitor 工具配套。别名 <code>/proactive</code> 在第 16 周加入。</li>
-<li><strong><code>/goal &lt;可验证条件&gt;</code></strong>（2026 年 5 月第 20 周，v2.1.139）— 「一直干到 X 成立」的命令。WorkBuddy 会跨多轮持续工作，直到一个快模型确认条件满足。它区别于 <code>/loop</code>（按间隔跑），也区别于计划模式（计划模式批准的是策略，它强制的是结果）。与 <code>/commit</code> 的质量门禁天然配套：先 <code>/goal &quot;all sections pass /verify-claims with no HIGH-WARN findings&quot;</code>，再提交。可在交互模式、<code>claude -p</code> 与 Remote Control 中使用。</li>
-<li><strong><code>claude agents</code></strong>（2026 年 5 月第 20 周，v2.1.139）— 一屏看全部后台会话的仪表盘。并行审读工作从此不必再开一堆终端。它直接对应我们的 <code>/review-paper --peer</code> 与 <code>/seven-pass-review</code> 并行审阅者设置：你可以一次启动所有审稿人，在同一个视图里看它们的进度。</li>
-<li><strong><code>/fewer-permission-prompts</code></strong>（2026 年 4 月第 16 周）— 扫描近期会话记录里的只读 Bash 与 MCP 调用，提出一份项目本地白名单。它是我们 <code>/permission-check</code> 的姊妹：<code>/permission-check</code> <strong>诊断</strong>弹窗疲劳的来源，<code>/fewer-permission-prompts</code> 负责<strong>整治</strong>。</li>
-</ul>
-<p>这些都外在于本模板 — 直接调用即可，无需安装。当本模板的覆盖范围不适用时，可以把它们当作绕行通道推荐给读者。</p>
+<section id="上游-cli-命令在本平台不存在" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="上游-cli-命令在本平台不存在"><span class="header-section-number">6.9</span> 上游 CLI 命令在本平台不存在</h2>
+<p>上游 Claude Code 有一批一方（first-party）命令——<code>/team-onboarding</code>、<code>/autofix-pr</code>、<code>/powerup</code>、Ultraplan、<code>/loop</code>、<code>/goal</code>、<code>/fewer-permission-prompts</code>、<code>claude agents</code>。本平台的桌面客户端<strong>没有命令行</strong>，这些命令在这里不可用；它们对应的能力在本模板里以技能形式实现——例如 <code>/permission-check</code>（诊断权限弹窗疲劳）、<code>/commit</code>（提交前质量门禁）、fork + 自定义（团队 onboarding）。</p>
 </section>
 <section id="sec-community" class="level2" data-number="6.10">
 <h2 data-number="6.10" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">6.10</span> 社区采用情况</h2>
@@ -7329,7 +7291,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>用 <code>.codebuddy/settings.local.json</code> 放个人覆盖项。</strong> 这个文件已被 gitignore，并与 <code>.codebuddy/settings.json</code> 一起被读取。机器专属路径、个人偏好、本地工具版本都写这儿 — 它们不会污染共享仓库。（上游的习惯是 <code>CLAUDE.local.md</code>；本仓库没有 <code>CLAUDE.md</code>，那条路径在这里不存在。）</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-58-contents" aria-controls="callout-58" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-57-contents" aria-controls="callout-57" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -7338,7 +7300,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-58" class="callout-58-contents callout-collapse collapse">
+<div id="callout-57" class="callout-57-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>对于文件编辑与 shell 命令之外的能力 — 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）— WorkBuddy 支持 <a href="https://modelcontextprotocol.io">MCP 服务器</a>。入口是<strong>左侧「插件 → MCP 服务器 → 配置 MCP」</strong>，落盘在两个位置之一：</p>
 <ul>
