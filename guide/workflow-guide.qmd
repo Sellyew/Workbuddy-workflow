@@ -326,7 +326,7 @@ cd my-project
 **试一下：**
 
 ```bash
-# In Claude Code, type:
+# In WorkBuddy, type:
 /compile-latex MyFirstLecture
 /proofread Slides/MyFirstLecture.tex
 python scripts/quality_score.py Slides/MyFirstLecture.tex
@@ -358,7 +358,7 @@ python scripts/quality_score.py Slides/MyFirstLecture.tex
 ```
 你：「把我讲假设检验的那一讲改好」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 要改什么（清晰度、例子、节奏）？
 2. 有学生反馈要处理吗？
 3. 有哪些约束（时间、记号改动）？
@@ -373,7 +373,7 @@ Claude：「我先澄清几点：
 ```
 你：「分析这份调查数据」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 研究问题是什么？
 2. 期望的产出形式（表格、图、报告）？
 3. 有复现目标或基准吗？
@@ -384,7 +384,7 @@ Claude：「我先澄清几点：
 ```
 你：「把我这些分析脚本收拾干净」
 
-Claude：「我先澄清几点：
+WorkBuddy：「我先澄清几点：
 1. 痛点在哪儿（速度、可读性、bug）？
 2. 允许破坏性改动，还是要保持兼容？
 3. 有可用的测试设施吗？
@@ -742,7 +742,7 @@ AI 辅助实证工作最常出错的方式，不是一个数字算错。而是�
 其余一切搬进 `.codebuddy/rules/` 的文件（带上路径作用域，让它们只在相关时加载）。
 
 ```markdown
-# CLAUDE.MD --- My Course Development
+# CODEBUDDY.md --- My Course Development
 
 **Project:** Econ 730 --- Causal Panel Data
 **Institution:** Emory University
@@ -1099,7 +1099,7 @@ WorkBuddy 桌面客户端**不提供命令行入口**——它只有工作空间
 }
 ```
 
-在**默认权限**档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（`.git`、`.codebuddy` 等）照旧会问，`allow` 里写什么都不算数。切到**完全访问权限**时，询问与安全检查都被跳过，但 `deny` 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model) 里的 "Keep restricted data off the model"。
+在**默认权限**档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（`.git`、`.codebuddy` 等）照旧会问，`allow` 里写什么都不算数。切到**完全访问权限**时，询问与安全检查都被跳过，但 `deny` 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 `deny` 规则：见 [TROUBLESHOOTING.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#让受限数据不进入模型) 里的「让受限数据不进入模型」。
 
 **权限档位。** 桌面客户端把这件事收成**两档**：
 
@@ -1441,7 +1441,7 @@ Session running → context fills up → PreCompact fires
                                     post-compact-restore.py:
                                     • Reads saved state
                                     • Prints context summary
-                                    • Claude knows where it left off
+                                    • WorkBuddy knows where it left off
 ```
 
 #### 存了什么
@@ -1541,7 +1541,7 @@ AI 辅助开发里最常见的失效模式不是烂代码 --- 而是解错了问
 ```
 Non-trivial task arrives
   |
-  +-- Step 1: Claude enters plan mode (automatic, or say "plan this first")
+  +-- Step 1: WorkBuddy enters plan mode (automatic, or say "plan this first")
   +-- Step 2: Draft plan (approach, files, verification)
   +-- Step 3: Save to quality_reports/plans/YYYY-MM-DD_description.md
   +-- Step 4: Present plan to user
@@ -2151,7 +2151,7 @@ Git worktree 创建一个**独立的工作目录**，链接到同一个仓库。
 
 ```
 your-project/                     ← main branch (stays clean)
-.worktrees/lecture-06-quarto/     ← isolated branch (Claude works here)
+.worktrees/lecture-06-quarto/     ← isolated branch (WorkBuddy works here)
 ```
 
 #### 为什么用 worktree？
@@ -2445,7 +2445,7 @@ slide-auditor 检查*技术*质量（溢出、间距）。pedagogy-reviewer 检�
 
 ```
 You: "Run the seven-audit protocol on my paper"
-Claude: [Runs 7 parallel forked reviews, each blind to the others]
+WorkBuddy: [Runs 7 parallel forked reviews, each blind to the others]
        → Produces 7 independent reports
        → Synthesizes into prioritized revision checklist
 ```

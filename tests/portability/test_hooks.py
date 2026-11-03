@@ -861,11 +861,11 @@ class NotifyWithoutJqAndOnWindows(_Tmp):
 
     def test_git_bash_emits_an_osc9_sequence(self):
         out = self.notify(self.tools("MINGW64_NT-10.0-22631"),
-                          '{"message":"Claude needs your permission to use Bash"}')
+                          '{"message":"WorkBuddy needs your permission to use Bash"}')
         seq = json.loads(out)["terminalSequence"]
         self.assertTrue(seq.startswith("\x1b]9;"), seq)
         self.assertTrue(seq.endswith("\x07"), seq)
-        self.assertIn("Claude needs attention", seq)       # no jq: the default message
+        self.assertIn("WorkBuddy needs attention", seq)       # no jq: the default message
 
     @unittest.skipUnless(shutil.which("jq"), "jq not installed")
     def test_git_bash_escapes_the_message(self):
@@ -881,7 +881,7 @@ class NotifyWithoutJqAndOnWindows(_Tmp):
                 if os.path.exists(self.path("notifier.log")):
                     os.remove(self.path("notifier.log"))
                 self.notify(self.tools(uname), '{"message":"x"}')
-                self.assertIn("Claude needs attention", self.logged())
+                self.assertIn("WorkBuddy needs attention", self.logged())
 
 
 # ── statusline.sh ───────────────────────────────────────────────────────────

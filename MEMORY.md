@@ -33,7 +33,7 @@
 
 ## 技能创建
 
-[LEARN:skills] 有效的技能描述用用户真会说的触发短语（「check citations」、「format results」、「validate protocol」）→ Claude 才知道何时该加载技能。技能至少需要 3 节：Instructions（一步步的步骤）、Examples（具体场景）、Troubleshooting（常见错误）→ 用户可以自己调试。领域相关的示例胜过泛泛的示例（引用检查器——心理学；protocol 校验器——生物学；回归结果排版——经济学）——它们展示了适应性。*[2026-09-26：点名情境，不要点名同义词；写清结果、约束、检查。]*
+[LEARN:skills] 有效的技能描述用用户真会说的触发短语（「check citations」、「format results」、「validate protocol」）→ WorkBuddy 才知道何时该加载技能。技能至少需要 3 节：Instructions（一步步的步骤）、Examples（具体场景）、Troubleshooting（常见错误）→ 用户可以自己调试。领域相关的示例胜过泛泛的示例（引用检查器——心理学；protocol 校验器——生物学；回归结果排版——经济学）——它们展示了适应性。*[2026-09-26：点名情境，不要点名同义词；写清结果、约束、检查。]*
 
 ## 记忆系统
 
@@ -49,7 +49,7 @@
 
 [LEARN:drift] 对某一种说法做 `replace_all`（例如 `"26 skills"`）会漏掉同族的其他说法——`"26 skills, and 21 rules"`（多一个 "and"）、`"26 slash commands"`、`"template's 26"`、`"N skills on day one"`（散文里）。计数漂移在 v1.5.x 里击中过我们 3 次（PR #70、#76、#78）。解决办法：用 `scripts/check-surface-sync.py` 的复合正则模式作为 pre-commit 门禁。往文档里加一种新说法，就必须往脚本里加一条匹配的正则，否则抓不到。反过来，扫模板计数时要防误报：`"3 parallel agents"`、`"17 specialized agents"`（clo-author 的署名）、`"start with 2-3 skills"` 都是 `N + 类别` 短语的合法非模板用法。用要求同一行上出现多个模板特有 token 的复合模式。
 
-## Claude Code 钩子
+## WorkBuddy 钩子
 
 [LEARN:hooks] Stop 钩子的阻断协议有**两种**合法形式：(a) 旧式——`exit 2` + 把理由写到 stderr；(b) 现代式——`exit 0` + 往 stdout 写 JSON `{"decision":"block","reason":"..."}`。`log-reminder.py` 用的是现代式。不熟悉现代协议的审计代理会把它标成「应该 exit 2」——误报。已记录在 `/deep-audit` 技能的误报清单里。
 

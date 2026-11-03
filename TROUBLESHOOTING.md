@@ -53,7 +53,7 @@ Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp
 
 上游指南里的另外几档（自动、接受编辑、Plan、dontAsk）在本客户端没有暴露成可选档位；`Shift+Tab` 循环与 `--permission-mode` 标志也不存在 —— 哪份文档让你用它们，那份文档写的是命令行那条产品线。
 
-本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），`deny` 为空，所以在默认档位下多数常规工作都不询问就能跑。要在任何档位下都把受限数据挡在模型之外，就加上拒绝规则 —— 见下方[「让受限数据不进入模型」](#keep-restricted-data-off-the-model)。
+本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），`deny` 为空，所以在默认档位下多数常规工作都不询问就能跑。要在任何档位下都把受限数据挡在模型之外，就加上拒绝规则 —— 见下方[「让受限数据不进入模型」](#让受限数据不进入模型)。
 
 ## 模型与 API
 
@@ -182,7 +182,7 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 ### `/commit` 因 `quality_score.py` 低于阈值而失败
 
-脚本在改动的文件里检出了问题。要么修掉（推荐），要么重跑 `/commit` 并明确告诉 Claude **「commit anyway」** 或 **「skip quality gate」** 并给出理由——这次覆盖会记进提交信息里。（没有 `--skip-quality-gate` 这个 CLI 参数；覆盖是对技能发出的一句自然语言信号。）
+脚本在改动的文件里检出了问题。要么修掉（推荐），要么重跑 `/commit` 并明确告诉 WorkBuddy **「commit anyway」** 或 **「skip quality gate」** 并给出理由——这次覆盖会记进提交信息里。（没有 `--skip-quality-gate` 这个 CLI 参数；覆盖是对技能发出的一句自然语言信号。）
 
 ## 调色板 / 主题
 
@@ -215,7 +215,7 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 哪条守卫拦下的、还是被平台自己问的；并明确指出哪些照上游文档写进去的开关（`permissions.*`、
 `claudeCode.initialPermissionMode`）在本平台**根本不生效**——这类配置不会报错，只会静默地什么都不做。
 
-### Keep restricted data off the model
+### 让受限数据不进入模型
 
 WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidential-data.md`](.codebuddy/rules/confidential-data.md) 规定受限微观数据永不离开本机，而**拒绝规则在每一种权限模式下都生效，包括 bypass**。若你的项目有受限目录，就加拒绝规则——加在 `.codebuddy/settings.json` 里保护每一位合作者，或加在 `.codebuddy/settings.local.json` 里只保护你这台机器——并写清你的数据使用协议覆盖的路径：
 

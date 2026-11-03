@@ -27,7 +27,7 @@ drafts. **Read-only inputs, not working files.**
    repo — see [`.codebuddy/rules/confidential-data.md`](../.codebuddy/rules/confidential-data.md).
 5. **Refereed work stays out.** A manuscript you are refereeing, or a proposal on a review
    panel, is held in confidence. This folder is committed and forks are public, so it never goes
-   here. Check the journal's or funder's reviewer rules before it enters a Claude session at
+   here. Check the journal's or funder's reviewer rules before it enters a WorkBuddy session at
    all — NIH forbids it outright (NOT-OD-23-149).
 
 ## Why this README exists

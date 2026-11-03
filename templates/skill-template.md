@@ -7,7 +7,7 @@
 ## 什么时候该自建技能
 
 当你发现自己出现下面这些情况时，就该建一个技能：
-- 反复向 Claude 解释同一套 3 步以上的工作流
+- 反复向 WorkBuddy 解释同一套 3 步以上的工作流
 - 需要领域专用的质量检查（引用格式、记号一致性、实验室规程）
 - 要强制领域专用的输出格式（学位论文结构、期刊模板、实验记录本）
 - 要协调多工具工作流（Figma → R → LaTeX、数据 → 分析 → 稿件）
@@ -89,8 +89,8 @@ Step 3: [Final action and verification]
 | `agent` | 链接到 `.codebuddy/agents/` 里的代理定义 | `proofreader` |
 | `hooks` | 技能专属钩子（语法同 settings.json） | 自定义前置/后置动作 |
 | `model` | 强制指定某个模型档位 | `lite`（更便宜）、`reasoning`（更聪明） |
-| `disable-model-invocation` | 阻止 Claude 自动触发 | `true`（只能经 `/skill-name` 调用） |
-| `disallowed-tools` | 技能生效期间**移除** Claude 工具池里的工具——真正的限制机制（见下面的语义说明） | 只读审计用 `["Edit", "Write"]` |
+| `disable-model-invocation` | 阻止 WorkBuddy 自动触发 | `true`（只能经 `/skill-name` 调用） |
+| `disallowed-tools` | 技能生效期间**移除** WorkBuddy 工具池里的工具——真正的限制机制（见下面的语义说明） | 只读审计用 `["Edit", "Write"]` |
 | `paths` | glob 模式，划定技能何时自动激活——相当于路径作用域规则在技能层面的对应物 | `["scripts/**/*.R"]` |
 | `when_to_use` | 自动调用时额外的路由上下文，超出 description 之外 | `"after any merge conflict"` |
 | `arguments` | 供正文里 `$name` 替换的具名位置参数 | `[infile, outfile]` |
@@ -99,7 +99,7 @@ Step 3: [Final action and verification]
 
 **`allowed-tools` 是一份预先批准清单，不是沙箱。** 按官方文档的说法：它「在技能生效期间为所列工具授予权限，这样 Claude 使用它们时不必向你请求批准。**它不限制哪些工具可用：每个工具仍然可调用**」——没列出的工具只是走你正常的权限设置。把 `Bash` 从 `allowed-tools` 里省掉，**并不**会让技能变成只读。
 
-**要真正移除工具，用 `disallowed-tools`。** 列在那里的工具会在技能生效期间被从 Claude 的可用池里拿走（限制在你下一条消息时解除）。对必须永不写入——或者永不因为一个提问而卡住后台循环——的自主型或 fork 型审读技能，就显式禁用：
+**要真正移除工具，用 `disallowed-tools`。** 列在那里的工具会在技能生效期间被从 WorkBuddy 的可用池里拿走（限制在你下一条消息时解除）。对必须永不写入——或者永不因为一个提问而卡住后台循环——的自主型或 fork 型审读技能，就显式禁用：
 
 ```yaml
 allowed-tools: ["Read", "Grep", "Glob"]        # pre-approve the read path (no prompts)
@@ -117,7 +117,7 @@ disallowed-tools: ["Edit", "Write", "Bash"]    # actually remove the write path
 
 ### 什么时候该设 `disable-model-invocation: true` {#when-to-disable-model-invocation}
 
-凡是技能会写入**持久的、承重的文件**、而用户必须明确意图才能创建这类文件时，就设这个旗标。否则，Claude 可能在一条含糊匹配的提示词下自动触发该技能，产出一个不做手工清理就很难撤销的文件。
+凡是技能会写入**持久的、承重的文件**、而用户必须明确意图才能创建这类文件时，就设这个旗标。否则，WorkBuddy 可能在一条含糊匹配的提示词下自动触发该技能，产出一个不做手工清理就很难撤销的文件。
 
 **以下技能要设：**
 
@@ -153,7 +153,7 @@ See @README.md for project overview and @package.json for available commands.
 
 ## 写出有效的描述
 
-`description` 字段决定 Claude 何时加载你的技能。用这个结构：
+`description` 字段决定 WorkBuddy 何时加载你的技能。用这个结构：
 
 ```
 [What it does] + [When to use it] + [Key capabilities]

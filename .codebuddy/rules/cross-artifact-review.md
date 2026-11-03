@@ -1,5 +1,5 @@
 ---
-description: Paper ↔ code cross-artifact review — when /review-paper runs, auto-invoke /review-r on referenced scripts and /audit-reproducibility on the pair. Surface cross-artifact findings alongside the paper review.
+description: 论文 ↔ 代码的跨产物审查——当 /review-paper 运行时，自动调用 /review-r 审读被引用的脚本，并对这一对产物运行 /audit-reproducibility。跨产物审查发现随论文审查一起呈报。
 paths: ["master_supporting_docs/**/*.tex", "master_supporting_docs/**/*.qmd", "Slides/**/*.tex", "*.tex", "*.qmd"]
 ---
 

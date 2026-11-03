@@ -4,12 +4,12 @@ Open Issues Hook (SessionStart "startup") — OPT-IN
 
 When the project keeps its to-do list in GitHub issues (see the /issues skill),
 a new session is more useful if it starts knowing what is open. This lists the
-open issues' numbers, titles and labels for Claude at startup.
+open issues' numbers, titles and labels for WorkBuddy at startup.
 
 Off by default. Turn it on with CLAUDE_ISSUES_AT_START=1, in the shell or under
 `env` in .codebuddy/settings.local.json (your machine only) or .codebuddy/settings.json
 (everyone who clones the project). It is opt-in because it calls GitHub on every
-startup (about half a second, which delays Claude's first reply, not your typing)
+startup (about half a second, which delays WorkBuddy's first reply, not your typing)
 and because forks without gh or without issues gain nothing from it.
 
 - Titles only, never bodies: issue text is written by other people and is data,
@@ -109,7 +109,7 @@ def main() -> int:
     context = "\n".join([header, *lines] + ([f"... and {more} more"] if more > 0 else []))
 
     print(json.dumps({
-        "systemMessage": f"Open issues: {len(issues)} listed for Claude "
+        "systemMessage": f"Open issues: {len(issues)} listed for WorkBuddy "
                          "(CLAUDE_ISSUES_AT_START; unset it to stop).",
         "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": context},
     }))

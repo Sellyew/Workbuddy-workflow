@@ -6,7 +6,26 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留
+
+### Changed — 清掉最后一处「Claude / Claude Code」称谓残留与零星漏译
+
+「完整移植」的最后一层是平台化：把上游面向人的文字里的 "Claude" 换成当前平台。文件迁移
+（`.claude`→`.codebuddy`）与中文化早已完成，但还有约 35 处把当前助手仍称作 Claude 的地方漏了：
+
+- **用户直接看到的**：桌面通知弹「Claude Code: Claude needs attention」、`/commit` 写进 PR 的
+  脚注「Generated with Claude Code」、`open-issues` 注入会话的 systemMessage。
+- **会传染的**：`templates/skill-template.md` 六处，每个新建技能都会带上。
+- **正文泛称**：十来个规则/技能里「Claude 是思考伙伴」这类句子。
+- **指南**：`workflow-guide.qmd` 的 ASCII 图、示例对话、`CLAUDE.MD` 示例名（已重渲染 HTML）。
+
+统一改成 WorkBuddy。**刻意保留**的：环境变量 `CLAUDE_*`（上游钩子兼容层，改了会断）、
+`author: Claude Code Academic Workflow`（来源署名，改了等于篡改作者）、上游 Claude Code 的
+技术对照（「what Claude Code writes」「Claude Code < 2.1.85」这类描述上游行为的话）、
+历史记录与第三方工具名（ClaudeCodeTools 等）。
+
+顺带补了 5 处零星漏译（两个英文标题、一个 description 字段、两个冗余 `description_en`），
+`notify` 的回归测试断言同步从旧文案改成新文案。
 
 ### Fixed — R 装了却因为不在 PATH 而被判定为「没装」，两个工具都中了
 
