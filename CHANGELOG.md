@@ -6,7 +6,14 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节
+
+### Added — 指南新增「WorkBuddy 平台能力」速览章节
+
+`guide/workflow-guide.qmd` 新增 `# WorkBuddy 平台能力` 一章，补上此前完全没讲的平台原生能力
+（Claude Code 没有的）：定时任务与自动化、专家、连接器、资料库与云服务、微信小程序与发布。
+每节 2–4 段速览（是什么 / 入口 / 何时用），细节指向官方文档或既有 skill；自动化一节只写
+platform-facts 实测背书的事实（真实工作树、无人值守问不到人、durable 落盘），不臆造参数。
 
 ### Changed — 指南结构性重写：把 Claude 特有章节改成 WorkBuddy 原生
 
