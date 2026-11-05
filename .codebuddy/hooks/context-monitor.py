@@ -17,9 +17,9 @@ carry literal ANSI escape codes as noise — so we emit clean structured JSON.
 See https://www.codebuddy.cn/docs/cli/hooks.
 
 Context %% is a COARSE PROXY. When the hook receives a `transcript_path`, we
-estimate tokens from the transcript size against CLAUDE_CONTEXT_WINDOW_TOKENS
-(default 1,000,000 — the 1M-context default on recent Opus/Sonnet tiers; see model-versions.md). Otherwise we
-fall back to a tool-call counter (CLAUDE_CONTEXT_MAX_TOOL_CALLS, default 400).
+estimate tokens from the transcript size against CODEBUDDY_CONTEXT_WINDOW_TOKENS
+(default 1,000,000 — the 1M-context default on recent tiers; see model-versions.md). Otherwise we
+fall back to a tool-call counter (CODEBUDDY_CONTEXT_MAX_TOOL_CALLS, default 400).
 Neither is exact; treat the percentage as a rough early-warning signal, not a
 precise gauge.
 """
@@ -46,10 +46,14 @@ DEFAULT_MAX_TOOL_CALLS = 400                 # fallback proxy when transcript si
 APPROX_BYTES_PER_TOKEN = 4.0
 
 
-def _env_int(name: str, default: int) -> int:
-    """Read a positive int from the environment, falling back to `default`."""
+def _env_int(name: str, default: int, legacy: str | None = None) -> int:
+    """Read a positive int from the environment, falling back to `default`.
+
+    `name` (CODEBUDDY_*) is preferred; `legacy` (CLAUDE_*) is a fallback for
+    pre-rename configs."""
     try:
-        value = int(os.environ.get(name, "") or default)
+        raw = os.environ.get(name, "") or (os.environ.get(legacy, "") if legacy else "") or default
+        value = int(raw)
         return value if value > 0 else default
     except ValueError:
         return default
@@ -93,10 +97,10 @@ def estimate_context_percentage(hook_input: dict) -> float:
     Estimate context usage as a percentage (0-100). COARSE PROXY.
 
     Preferred: a token estimate from the transcript file size against the model's
-    context window (CLAUDE_CONTEXT_WINDOW_TOKENS). Fallback when no transcript is
-    available: a tool-call counter (CLAUDE_CONTEXT_MAX_TOOL_CALLS). Neither is exact.
+    context window (CODEBUDDY_CONTEXT_WINDOW_TOKENS). Fallback when no transcript is
+    available: a tool-call counter (CODEBUDDY_CONTEXT_MAX_TOOL_CALLS). Neither is exact.
     """
-    window = _env_int("CLAUDE_CONTEXT_WINDOW_TOKENS", DEFAULT_CONTEXT_WINDOW_TOKENS)
+    window = _env_int("CODEBUDDY_CONTEXT_WINDOW_TOKENS", DEFAULT_CONTEXT_WINDOW_TOKENS, "CLAUDE_CONTEXT_WINDOW_TOKENS")
 
     transcript_path = hook_input.get("transcript_path", "")
     if transcript_path:
@@ -112,7 +116,7 @@ def estimate_context_percentage(hook_input: dict) -> float:
     tool_calls = cache.get("tool_calls", 0) + 1
     cache["tool_calls"] = tool_calls
     save_cache(cache)
-    max_calls = _env_int("CLAUDE_CONTEXT_MAX_TOOL_CALLS", DEFAULT_MAX_TOOL_CALLS)
+    max_calls = _env_int("CODEBUDDY_CONTEXT_MAX_TOOL_CALLS", DEFAULT_MAX_TOOL_CALLS, "CLAUDE_CONTEXT_MAX_TOOL_CALLS")
     return min((tool_calls / max_calls) * 100, 100)
 
 

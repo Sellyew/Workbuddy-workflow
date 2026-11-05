@@ -2584,7 +2584,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 4, 2026</p>
+      <p class="date-modified">November 5, 2026</p>
     </div>
   </div>
     
@@ -4286,7 +4286,7 @@ Warning
 <div class="callout-body-container callout-body">
 <p>WorkBuddy 桌面客户端<strong>不提供命令行入口</strong>——它只有工作空间与任务。要在脚本、cron 或例行任务里跑这套工作流，需要另装一条独立的产品线：CodeBuddy Code CLI（<code>npm i -g @tencent-ai/codebuddy-code</code>，命令 <code>codebuddy</code> 或 <code>cbc</code>，配置目录 <code>~/.codebuddy</code>，文档 <a href="https://www.workbuddy.cn/docs/cli/headless" class="uri">https://www.workbuddy.cn/docs/cli/headless</a>），非交互调用必须带 <code>-y</code>。两者共用引擎，所以 <code>-p</code>、<code>--output-format</code>、<code>--setting-sources</code>、<code>--disallowedTools</code> 这些标志都成立；但<strong>配置目录是分开的</strong>，装之前先读官方那句「与 WorkBuddy 共存时避免配置冲突」。</p>
 <p>本仓库里唯一依赖它的是 <code>scripts/run-skill-eval.sh</code>（技能 A/B 评测：同一个提示词跑两遍，带技能与不带技能，看技能到底有没有改变输出）。它按 <code>EVAL_CLI</code> → <code>codebuddy</code> → <code>cbc</code> → <code>claude</code> 的顺序探测，一个都找不到时以 <code>2</code> 退出并给出安装命令——<strong>它不参与任何门禁</strong>，没装 CLI 完全不影响这套模板的正常使用。</p>
-<p>无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端<strong>不设置</strong> <code>CLAUDE_CODE_ENTRYPOINT</code>（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 <code>CLAUDE_HANDOFF=off</code> 与 <code>CLAUDE_ISSUES_AT_START=off</code>——不要指望平台帮你判断。</p>
+<p>无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端<strong>不设置</strong> <code>CLAUDE_CODE_ENTRYPOINT</code>（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 <code>CODEBUDDY_HANDOFF=off</code> 与 <code>CODEBUDDY_ISSUES_AT_START=off</code>——不要指望平台帮你判断。</p>
 </div>
 </div>
 </section>
@@ -4566,7 +4566,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <p>计划<strong>固定落在全局目录</strong> <code>~/.workbuddy/plans/</code>，不在你的项目里。上游有一个 <code>plansDirectory</code> 设置可以把它们挪进仓库，本平台的引擎<strong>完全不认这个键</strong>（2026-10-30 核查：客户端引擎零命中），所以别去找它，也别往 <code>.codebuddy/settings.json</code> 里加 —— 加了不会有任何效果，只会让下一个读文件的人以为计划已经跟着仓库走了。需要把计划留在项目里，就在批准之后自己拷一份到 <code>quality_reports/plans/</code>（模板 gitignore 了这个目录 — 计划是本地的过程记录）。</p>
 </div>
 </div>
-<p><strong>Stop 钩子</strong>在每次回复后跑一个快速 Python 脚本（<code>.codebuddy/hooks/log-reminder.py</code>）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 <code>Slides/*.tex</code> 或 <code>Quarto/*.qmd</code>）；设 <code>CLAUDE_COMPILE_GATE=block</code> 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 <code>.codebuddy/rules/</code> 里自动加载的规则执行 — 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。</p>
+<p><strong>Stop 钩子</strong>在每次回复后跑一个快速 Python 脚本（<code>.codebuddy/hooks/log-reminder.py</code>）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 <code>Slides/*.tex</code> 或 <code>Quarto/*.qmd</code>）；设 <code>CODEBUDDY_COMPILE_GATE=block</code> 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 <code>.codebuddy/rules/</code> 里自动加载的规则执行 — 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。</p>
 </section>
 </section>
 <section id="sec-effort" class="level2" data-number="4.7">
@@ -4702,7 +4702,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </blockquote>
 <p><strong>技能。</strong> <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/issues/SKILL.md"><code>/issues</code></a> 让这个习惯变便宜。<code>/issues file &lt;report&gt;</code> 把一次审读确认的发现转成 issue（<code>/review-paper</code>、<code>/seven-pass-review</code> 与 <code>/adjudicate-review</code> 在结尾提供它）；<code>/issues list</code> 显示手头这项工作还开着什么，并建议下一条接什么；<code>/issues close 41</code> 从提到该 issue 的提交起草关闭评论。每一份草稿都给你看，没有你的同意什么都不发。</p>
 <p><strong>每次都查重，不靠良好意愿。</strong> 当同一个问题住在三个地方时，issue 追踪器就不再是记忆了。所以每个新 issue 都走 <code>scripts/file-issue.py</code>，它在创建任何东西之前用几种方式搜索未关闭<em>与</em>已关闭的 issue — 标题里最具辨识度的词放在一起搜一次、取前三个词单独搜一次、你补充的任何词、以及该 issue 点名的至多三条文件路径，最多八次搜索 — 并且在每个找到的候选都被审过之前拒绝创建。issue 正文记录这些搜索与判定。<code>issue-guard</code> 钩子拒绝 WorkBuddy 直接发起的裸 <code>gh issue create</code>，并指向那个脚本；它只为 <code>gh</code> 命令生成，所以会话其余部分不为它付任何成本。</p>
-<p><strong>从清单开始会话（可选）。</strong> 设 <code>CLAUDE_ISSUES_AT_START=1</code> — 放在 <code>.codebuddy/settings.local.json</code> 的 <code>env</code> 下，只对你本机开启 — 启动时 <code>open-issues</code> 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。</p>
+<p><strong>从清单开始会话（可选）。</strong> 设 <code>CODEBUDDY_ISSUES_AT_START=1</code> — 放在 <code>.codebuddy/settings.local.json</code> 的 <code>env</code> 下，只对你本机开启 — 启动时 <code>open-issues</code> 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。</p>
 <p><strong>两点告诫。</strong> 公开仓库上的 issue 就是公开的：把论文工作留在<strong>私有</strong>仓库里，否则未发表的结果与你正在修的弱点任何人都看得见。绝不要把受限数据放进 issue — 数据使用协议之下的数据，其数值、标识符、路径、截图都不行；抽象地描述问题，把证据留在数据所在之处。这一切背后的规则是 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/issue-ledger.md"><code>issue-ledger.md</code></a>：什么该开 issue、一份报告必须带什么、以及关闭评论必须说什么。</p>
 </section>
 <section id="一切如何咬合" class="level3" data-number="4.8.4">
@@ -4813,7 +4813,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>会话交接</td>
 <td><code>SessionStart[startup]</code> + <code>UserPromptSubmit</code></td>
-<td>把一个 7 天内写下的最新检查点交给全新会话；只有当你敲下提示词时才用掉它（<code>CLAUDE_HANDOFF=off</code> 可跳过）</td>
+<td>把一个 7 天内写下的最新检查点交给全新会话；只有当你敲下提示词时才用掉它（<code>CODEBUDDY_HANDOFF=off</code> 可跳过）</td>
 </tr>
 <tr class="even">
 <td>上下文监控</td>
@@ -4823,7 +4823,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>git 防线</td>
 <td><code>PreToolUse[Bash|Write|Edit|MultiEdit]</code></td>
-<td>拦住破坏性 git（<code>reset --hard</code>、<code>clean -f</code>、<code>push --force</code>、<code>add -A</code>），并在工作树脏时拒绝 merge、rebase 或 pull — 包括那些会先清干净树的链式命令；对代码文件（<code>.R</code>、<code>.Rmd</code>、<code>.qmd</code>、<code>.do</code>、<code>.py</code>）的 <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code>，对硬编码的机器路径（<code>/Users/…</code>、<code>/home/…</code>）告警，并在 <code>CLAUDE_STRICT_PATHS=1</code> 时拒绝</td>
+<td>拦住破坏性 git（<code>reset --hard</code>、<code>clean -f</code>、<code>push --force</code>、<code>add -A</code>），并在工作树脏时拒绝 merge、rebase 或 pull — 包括那些会先清干净树的链式命令；对代码文件（<code>.R</code>、<code>.Rmd</code>、<code>.qmd</code>、<code>.do</code>、<code>.py</code>）的 <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code>，对硬编码的机器路径（<code>/Users/…</code>、<code>/home/…</code>）告警，并在 <code>CODEBUDDY_STRICT_PATHS=1</code> 时拒绝</td>
 </tr>
 <tr class="even">
 <td>断言对账</td>
@@ -4838,7 +4838,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="even">
 <td>未关闭 issue（可选启用）</td>
 <td><code>SessionStart[startup]</code></td>
-<td>设 <code>CLAUDE_ISSUES_AT_START=1</code> 时，列出未关闭 issue 的编号与标题 — 只限 owner 与合作者的 — 好让会话一开始就知道待办清单；默认关闭</td>
+<td>设 <code>CODEBUDDY_ISSUES_AT_START=1</code> 时，列出未关闭 issue 的编号与标题 — 只限 owner 与合作者的 — 好让会话一开始就知道待办清单；默认关闭</td>
 </tr>
 <tr class="odd">
 <td>信任根防线</td>
@@ -8053,7 +8053,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td>上下文状态捕获</td>
 <td>PreCompact（command）</td>
-<td><code>.codebuddy/hooks/pre-compact.py</code> — 保存计划/任务/决策；DRAFT 块需显式开启（<code>CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1</code>）</td>
+<td><code>.codebuddy/hooks/pre-compact.py</code> — 保存计划/任务/决策；DRAFT 块需显式开启（<code>CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1</code>）</td>
 </tr>
 <tr class="even">
 <td>上下文恢复</td>
@@ -8063,7 +8063,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td>会话交接</td>
 <td>SessionStart[startup] + UserPromptSubmit（command）</td>
-<td><code>.codebuddy/hooks/session-handoff.py</code> — 把最近 7 天内写下的最新一份 <code>/checkpoint</code> 或 <code>/compress-session</code> 文件交给新会话；它算作在会话首个提示词时投递，无头运行里永不投递；<code>CLAUDE_HANDOFF=off</code> 可关闭</td>
+<td><code>.codebuddy/hooks/session-handoff.py</code> — 把最近 7 天内写下的最新一份 <code>/checkpoint</code> 或 <code>/compress-session</code> 文件交给新会话；它算作在会话首个提示词时投递，无头运行里永不投递；<code>CODEBUDDY_HANDOFF=off</code> 可关闭</td>
 </tr>
 <tr class="even">
 <td>上下文监控</td>
@@ -8088,7 +8088,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="even">
 <td>打开中的 issue（选用）</td>
 <td>SessionStart[startup]（command）</td>
-<td><code>.codebuddy/hooks/open-issues.py</code> — 设了 <code>CLAUDE_ISSUES_AT_START=1</code> 时，启动时列出打开中 issue 的编号与标题（仅所有者与协作者）；默认关闭</td>
+<td><code>.codebuddy/hooks/open-issues.py</code> — 设了 <code>CODEBUDDY_ISSUES_AT_START=1</code> 时，启动时列出打开中 issue 的编号与标题（仅所有者与协作者）；默认关闭</td>
 </tr>
 <tr class="odd">
 <td>信任根守卫</td>

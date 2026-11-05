@@ -6,7 +6,7 @@ When the project keeps its to-do list in GitHub issues (see the /issues skill),
 a new session is more useful if it starts knowing what is open. This lists the
 open issues' numbers, titles and labels for WorkBuddy at startup.
 
-Off by default. Turn it on with CLAUDE_ISSUES_AT_START=1, in the shell or under
+Off by default. Turn it on with CODEBUDDY_ISSUES_AT_START=1, in the shell or under
 `env` in .codebuddy/settings.local.json (your machine only) or .codebuddy/settings.json
 (everyone who clones the project). It is opt-in because it calls GitHub on every
 startup (about half a second, which delays WorkBuddy's first reply, not your typing)
@@ -57,7 +57,7 @@ def clean(text: str, limit: int) -> str:
 
 
 def main() -> int:
-    if os.environ.get("CLAUDE_ISSUES_AT_START", "").strip().lower() not in ("1", "on", "true", "yes"):
+    if (os.environ.get("CODEBUDDY_ISSUES_AT_START", "") or os.environ.get("CLAUDE_ISSUES_AT_START", "")).strip().lower() not in ("1", "on", "true", "yes"):
         return 0
     if os.environ.get("CLAUDE_CODE_ENTRYPOINT", "").startswith("sdk"):
         return 0
@@ -110,7 +110,7 @@ def main() -> int:
 
     print(json.dumps({
         "systemMessage": f"Open issues: {len(issues)} listed for WorkBuddy "
-                         "(CLAUDE_ISSUES_AT_START; unset it to stop).",
+                         "(CODEBUDDY_ISSUES_AT_START; unset it to stop).",
         "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": context},
     }))
     return 0

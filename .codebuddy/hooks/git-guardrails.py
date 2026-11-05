@@ -163,7 +163,7 @@ Two checks, by tool:
            question the `-C` branch was fixed for at r13. Only the benign cause
            (no `.git` at or above the directory, decided from the FILESYSTEM so
            a broken git cannot fake it) allows now; everything else denies, and
-           the timeout bound is configurable via CLAUDE_GIT_STATUS_TIMEOUT
+           the timeout bound is configurable via CODEBUDDY_GIT_STATUS_TIMEOUT
            (default 10s) so a genuinely slow worktree can be worked in.
 
            THE BUDGET MUST FIT INSIDE THE REGISTRATION (r16). That 10s bound
@@ -172,7 +172,7 @@ Two checks, by tool:
            it could write the deny — and a killed hook emits nothing, which is
            what an ALLOW looks like. The registration is 20s now, the internal
            bound is derived from it (`_HOOK_REGISTERED_TIMEOUT` minus margin),
-           and CLAUDE_GIT_STATUS_TIMEOUT is CLAMPED rather than honoured.
+           and CODEBUDDY_GIT_STATUS_TIMEOUT is CLAMPED rather than honoured.
 
            AN UNRESOLVED REPOSITORY SELECTOR NOW DENIES (r13). If the invocation
            names a `-C <path>` that cannot be read as a repository — it does not
@@ -245,7 +245,7 @@ Two checks, by tool:
     - absolute home paths (/Users/<u>, /home/<u>, C:\\Users\\<u> with either
       slash, single or doubled, any case) written into .R / .qmd / .do / .py /
       .Rmd files (extension in any case) break replication packages. Warn by
-      default; set CLAUDE_STRICT_PATHS=1 to hard-deny.
+      default; set CODEBUDDY_STRICT_PATHS=1 to hard-deny.
 
 LINE CONTINUATIONS ARE SPLICED (r12), for BOTH checks, before the command line
 is split into segments. A backslash-newline JOINS the line in POSIX shell; this
@@ -1292,7 +1292,8 @@ _HOOK_REGISTERED_TIMEOUT = 25.0   # MUST equal .codebuddy/settings.json's "timeo
 _STATUS_TIMEOUT_MARGIN = 5.0      # json parse, tokenise, write the decision
 _STATUS_TIMEOUT_CEILING = _HOOK_REGISTERED_TIMEOUT - _STATUS_TIMEOUT_MARGIN
 _STATUS_TIMEOUT_DEFAULT = 10.0
-_STATUS_TIMEOUT_ENV = "CLAUDE_GIT_STATUS_TIMEOUT"
+_STATUS_TIMEOUT_ENV = "CODEBUDDY_GIT_STATUS_TIMEOUT"
+_STATUS_TIMEOUT_ENV_LEGACY = "CLAUDE_GIT_STATUS_TIMEOUT"
 
 
 def _status_timeout() -> float:
@@ -1306,7 +1307,7 @@ def _status_timeout() -> float:
     honouring one would turn the escape hatch into a silent allow."""
     v = _STATUS_TIMEOUT_DEFAULT
     try:
-        env = float(os.environ.get(_STATUS_TIMEOUT_ENV, ""))
+        env = float(os.environ.get(_STATUS_TIMEOUT_ENV, "") or os.environ.get(_STATUS_TIMEOUT_ENV_LEGACY, ""))
         if env > 0:
             v = env
     except (TypeError, ValueError):
@@ -1770,8 +1771,8 @@ def main() -> int:
                 msg = (f"Hardcoded machine path '{m.group(0)}' in {Path(fp).name} "
                        f"breaks replication packages. Use here::here(), relative paths, "
                        f"or a config variable.")
-                if os.environ.get("CLAUDE_STRICT_PATHS", "") == "1":
-                    deny(f"Blocked (CLAUDE_STRICT_PATHS=1): {msg}")
+                if (os.environ.get("CODEBUDDY_STRICT_PATHS", "") or os.environ.get("CLAUDE_STRICT_PATHS", "")) == "1":
+                    deny(f"Blocked (CODEBUDDY_STRICT_PATHS=1): {msg}")
                 else:
                     sys.stderr.write(f"[git-guardrails] WARNING: {msg}\n")
                 break  # one finding per call is enough

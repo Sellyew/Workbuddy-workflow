@@ -38,10 +38,15 @@ BASH = shutil.which("bash") or "/bin/bash"
 
 # Everything a developer's own shell could set that would decide a case for it.
 _SCRUB = ("ALLOW_ROOT_OF_TRUST_WRITE", "ALLOW_DIRTY_MERGE", "CLAUDE_STRICT_PATHS",
-          # [WorkBuddy 适配] 本仓库的钩子先读 CODEBUDDY_PROJECT_DIR、再兜底
-          # CLAUDE_PROJECT_DIR（见 .codebuddy/hooks/lib/hook-runner.sh）。只 scrub
-          # 旧的会在宿主设置过新变量时把夹具路径悄悄替换掉，而失败点会是
-          # 某个不相干的断言——所以两个都进隔离名单。
+          "CODEBUDDY_STRICT_PATHS", "CODEBUDDY_GIT_STATUS_TIMEOUT",
+          "CLAUDE_GIT_STATUS_TIMEOUT", "CODEBUDDY_ISSUES_AT_START",
+          "CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT", "CODEBUDDY_COMPILE_GATE",
+          "CODEBUDDY_HANDOFF", "CODEBUDDY_HANDOFF_MAX_AGE_DAYS",
+          "CODEBUDDY_CONTEXT_WINDOW_TOKENS", "CODEBUDDY_CONTEXT_MAX_TOOL_CALLS",
+          # [WorkBuddy 适配] 本仓库的钩子先读 CODEBUDDY_*、再兜底 CLAUDE_*
+          # （见各 hook 的 os.environ.get 双读）。只 scrub 旧名会在宿主设置过
+          # 新变量时把夹具路径悄悄替换掉，而失败点会是某个不相干的断言——
+          # 所以两个都进隔离名单。
           "CODEBUDDY_PROJECT_DIR",
           "CLAUDE_PROJECT_DIR", "CLAUDE_HANDOFF", "CLAUDE_HANDOFF_MAX_AGE_DAYS",
           "CLAUDE_CODE_ENTRYPOINT", "CLAUDE_ISSUES_AT_START", "CLAUDE_COMPILE_GATE",

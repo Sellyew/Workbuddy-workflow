@@ -7,7 +7,7 @@ Fires before context compaction to:
    so post-compact-restore.py can surface it afterwards.
 2. OPTIONALLY block compaction once when an active plan is still DRAFT,
    to avoid losing mid-plan context before approval. **Opt-in** via
-   CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1 (default OFF — the v2.0 default-ON
+   CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1 (default OFF — the v2.0 default-ON
    flip was reverted: blocking the harness's *automatic* compaction can
    strand a user at the context ceiling, and post-compact-restore.py
    re-injects the plan afterward anyway). Blocks at most once per DRAFT
@@ -171,7 +171,7 @@ def should_block_draft(plan_info: dict | None) -> tuple[bool, str]:
     which would make this guard fire again on every subsequent
     compaction of the same DRAFT plan.
     """
-    if os.environ.get("CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT", "0") != "1":
+    if (os.environ.get("CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT", "") or os.environ.get("CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT", "")) != "1":
         return False, ""
     if not plan_info or plan_info.get("status") != "draft":
         return False, ""
@@ -212,7 +212,7 @@ def should_block_draft(plan_info: dict | None) -> tuple[bool, str]:
         f"Either approve the plan (change its status line to APPROVED) "
         f"or, if you want to proceed without approval, re-run compaction "
         f"— this hook blocks at most once per DRAFT plan. To disable the "
-        f"guard entirely, unset CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT (or set "
+        f"guard entirely, unset CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT (or set "
         f"it to 0)."
     )
     return True, reason
