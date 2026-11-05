@@ -16,7 +16,7 @@ it appends a structured entry to today's session log
   - active plan + status (most recent non-completed plan)
   - compile-completion note: any Slides/*.tex or Quarto/*.qmd newer than
     its compiled output (.pdf / .html). Non-blocking by default; set
-    CLAUDE_COMPILE_GATE=block to turn the note into a Stop-block that asks
+    CODEBUDDY_COMPILE_GATE=block to turn the note into a Stop-block that asks
     Claude to compile before stopping.
 
 Throttling: writes only when `git status --porcelain` changed since the
@@ -197,9 +197,9 @@ def main() -> int:
     sys.stderr.write(f"[session-log] appended {len(changed)} change(s) to {log_file.name}\n")
 
     # Opt-in compile gate: turn the uncompiled note into a Stop-block.
-    if flagged and os.environ.get("CLAUDE_COMPILE_GATE", "") == "block":
+    if flagged and (os.environ.get("CODEBUDDY_COMPILE_GATE", "") or os.environ.get("CLAUDE_COMPILE_GATE", "")) == "block":
         reason = ("Uncompiled artifacts before stop: " + "; ".join(flagged) +
-                  ". Run /compile-latex or /deploy, or set CLAUDE_COMPILE_GATE= to disable this gate.")
+                  ". Run /compile-latex or /deploy, or set CODEBUDDY_COMPILE_GATE= to disable this gate.")
         json.dump({"decision": "block", "reason": reason}, sys.stdout)
 
     return 0

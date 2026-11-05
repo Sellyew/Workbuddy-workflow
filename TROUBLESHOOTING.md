@@ -85,7 +85,7 @@ WorkBuddy 桌面客户端不提供命令行入口。要在脚本、cron 或例�
 
 本仓库里唯一依赖它的是 `scripts/run-skill-eval.sh`（技能 A/B 评测）。它按 `EVAL_CLI` → `codebuddy` → `cbc` → `claude` 探测，一个都找不到就以 `2` 退出并打印安装命令——**它不在任何门禁里**，没装 CLI 不影响模板正常使用。
 
-另有一处要留神：`session-handoff.py` 与 `open-issues.py` 里「无头时不递交接 / 不自动开 issue」的判定读的是 `CLAUDE_CODE_ENTRYPOINT`，而桌面端的引擎**不设置**这个变量。要在 cron 里稳定避开这两个行为，显式导出 `CLAUDE_HANDOFF=off` 与 `CLAUDE_ISSUES_AT_START=off`。
+另有一处要留神：`session-handoff.py` 与 `open-issues.py` 里「无头时不递交接 / 不自动开 issue」的判定读的是 `CLAUDE_CODE_ENTRYPOINT`，而桌面端的引擎**不设置**这个变量。要在 cron 里稳定避开这两个行为，显式导出 `CODEBUDDY_HANDOFF=off` 与 `CODEBUDDY_ISSUES_AT_START=off`。
 
 ## 编译 / 渲染
 
@@ -178,7 +178,7 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 ### 会话启动时冒出一份交接
 
-`session-handoff.py` 会把最近 7 天内写下的最新 `/checkpoint` 或 `/compress-session` 文件交给新会话，并标注为「待核验的笔记」。一旦你在该会话里敲了一条提示词，它就记为已用过，所以只会出现一次。想跳过它，设 `CLAUDE_HANDOFF=off`（shell 里，或 settings 的 `env` 下）；想改窗口，用 `CLAUDE_HANDOFF_MAX_AGE_DAYS`。无头运行（另装 CLI 后的 `-p` 调用）不会收到它——但那道判定依赖的 `CLAUDE_CODE_ENTRYPOINT` 在本平台不会被设置，所以在 cron 里请显式 `CLAUDE_HANDOFF=off`。如果另一个记忆工具也在启动时注入上下文，就关掉其中一个。
+`session-handoff.py` 会把最近 7 天内写下的最新 `/checkpoint` 或 `/compress-session` 文件交给新会话，并标注为「待核验的笔记」。一旦你在该会话里敲了一条提示词，它就记为已用过，所以只会出现一次。想跳过它，设 `CODEBUDDY_HANDOFF=off`（shell 里，或 settings 的 `env` 下）；想改窗口，用 `CODEBUDDY_HANDOFF_MAX_AGE_DAYS`。无头运行（另装 CLI 后的 `-p` 调用）不会收到它——但那道判定依赖的 `CLAUDE_CODE_ENTRYPOINT` 在本平台不会被设置，所以在 cron 里请显式 `CODEBUDDY_HANDOFF=off`。如果另一个记忆工具也在启动时注入上下文，就关掉其中一个。
 
 ### `/commit` 因 `quality_score.py` 低于阈值而失败
 
@@ -439,7 +439,7 @@ CONTROL 证明它不是「拒绝一切」。但如果一条用例你以为是 PI
 
 ### 我批准了计划，PreCompact 还是不停阻断
 
-你环境里大概设了 `CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1`。这个钩子对每一份 DRAFT 计划最多阻断**一次**——同一份计划的后续压缩正常进行。若它反复阻断，要么是计划的 status 行没从 DRAFT 更新为 APPROVED/IN_PROGRESS（看计划文件的头部），要么是你每次拿到的都是一份不同的 DRAFT 计划（钩子按计划路径跟踪）。想彻底关掉这道防线，就取消该环境变量：`unset CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT`。
+你环境里大概设了 `CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1`。这个钩子对每一份 DRAFT 计划最多阻断**一次**——同一份计划的后续压缩正常进行。若它反复阻断，要么是计划的 status 行没从 DRAFT 更新为 APPROVED/IN_PROGRESS（看计划文件的头部），要么是你每次拿到的都是一份不同的 DRAFT 计划（钩子按计划路径跟踪）。想彻底关掉这道防线，就取消该环境变量：`unset CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT`。
 
 ## 还是卡住？
 

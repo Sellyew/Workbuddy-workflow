@@ -8,7 +8,7 @@ so work resumes where it stopped instead of being re-derived.
 
 - Source: the newest of quality_reports/checkpoints/*.md and
   quality_reports/session_logs/*_compression_*.md, by modification time, if
-  written within CLAUDE_HANDOFF_MAX_AGE_DAYS (default 7). A file dated in the
+  written within CODEBUDDY_HANDOFF_MAX_AGE_DAYS (default 7). A file dated in the
   future (a copied file, clock skew) is ignored rather than trusted.
 - Delivered on use, not on start (ai-memory's deliver-before-acknowledge): the
   SessionStart event injects the file and records it as PENDING for that
@@ -21,7 +21,7 @@ so work resumes where it stopped instead of being re-derived.
 - Never in headless runs (`claude -p`, the SDK: CLAUDE_CODE_ENTRYPOINT=sdk-*),
   and never for another harness reading these hooks (Cursor sends no `source`,
   or a `cursor_version`).
-- Opt out with CLAUDE_HANDOFF=off (in the shell, or under `env` in settings).
+- Opt out with CODEBUDDY_HANDOFF=off (in the shell, or under `env` in settings).
 
 Resume and compaction are post-compact-restore.py's job; this hook ignores them.
 
@@ -75,7 +75,7 @@ def save_state(p: Path, st: dict) -> None:
 
 def max_age_days() -> float:
     try:
-        v = float(os.environ.get("CLAUDE_HANDOFF_MAX_AGE_DAYS", "") or DEFAULT_MAX_AGE_DAYS)
+        v = float(os.environ.get("CODEBUDDY_HANDOFF_MAX_AGE_DAYS", "") or os.environ.get("CLAUDE_HANDOFF_MAX_AGE_DAYS", "") or DEFAULT_MAX_AGE_DAYS)
         return v if v > 0 else DEFAULT_MAX_AGE_DAYS
     except ValueError:
         return DEFAULT_MAX_AGE_DAYS
@@ -157,7 +157,7 @@ def on_start(data: dict) -> int:
     save_state(p, st)
 
     print(json.dumps({
-        "systemMessage": f"Handoff loaded: {rel} ({age}). Set CLAUDE_HANDOFF=off to skip.",
+        "systemMessage": f"Handoff loaded: {rel} ({age}). Set CODEBUDDY_HANDOFF=off to skip.",
         "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": context},
     }))
     return 0
@@ -175,7 +175,7 @@ def main() -> int:
         return 0
     if not isinstance(data, dict):
         return 0
-    if os.environ.get("CLAUDE_HANDOFF", "").strip().lower() in ("off", "0", "false", "no"):
+    if (os.environ.get("CODEBUDDY_HANDOFF", "") or os.environ.get("CLAUDE_HANDOFF", "")).strip().lower() in ("off", "0", "false", "no"):
         return 0
     if os.environ.get("CLAUDE_CODE_ENTRYPOINT", "").startswith("sdk"):
         return 0                            # headless: never shown, so never delivered

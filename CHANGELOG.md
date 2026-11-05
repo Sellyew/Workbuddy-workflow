@@ -6,7 +6,17 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
-## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节
+## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
+
+### Changed — 9 个仓库私有开关改双读（CODEBUDDY_* 优先 + CLAUDE_* 兜底）
+
+仓库自有 hook 的 9 个私有开关沿用上游 `CLAUDE_*` 前缀，是最后一批命名残留。改为双读：新名
+`CODEBUDDY_*` 优先、旧名 `CLAUDE_*` 兜底（仿 `CLAUDE_PROJECT_DIR` 的既有模式），不破坏已设旧名
+的用户配置。涉及 `CLAUDE_STRICT_PATHS`、`CLAUDE_GIT_STATUS_TIMEOUT`、`CLAUDE_ISSUES_AT_START`、
+`CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT`、`CLAUDE_COMPILE_GATE`、`CLAUDE_HANDOFF`、
+`CLAUDE_HANDOFF_MAX_AGE_DAYS`、`CLAUDE_CONTEXT_WINDOW_TOKENS`、`CLAUDE_CONTEXT_MAX_TOOL_CALLS`。
+`CLAUDE_CODE_ENTRYPOINT` 是上游运行时变量（无头检测），保留不动。文档（指南 + TROUBLESHOOTING）
+改用新名；`port-from-claude.py` 迁移规则扩展覆盖 9 个开关。
 
 ### Added — 指南新增「WorkBuddy 平台能力」速览章节
 

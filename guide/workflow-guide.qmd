@@ -1051,7 +1051,7 @@ WorkBuddy 桌面客户端**不提供命令行入口**——它只有工作空间
 
 本仓库里唯一依赖它的是 `scripts/run-skill-eval.sh`（技能 A/B 评测：同一个提示词跑两遍，带技能与不带技能，看技能到底有没有改变输出）。它按 `EVAL_CLI` → `codebuddy` → `cbc` → `claude` 的顺序探测，一个都找不到时以 `2` 退出并给出安装命令——**它不参与任何门禁**，没装 CLI 完全不影响这套模板的正常使用。
 
-无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端**不设置** `CLAUDE_CODE_ENTRYPOINT`（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 `CLAUDE_HANDOFF=off` 与 `CLAUDE_ISSUES_AT_START=off`——不要指望平台帮你判断。
+无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端**不设置** `CLAUDE_CODE_ENTRYPOINT`（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 `CODEBUDDY_HANDOFF=off` 与 `CODEBUDDY_ISSUES_AT_START=off`——不要指望平台帮你判断。
 :::
 
 ## 设置 --- 权限与钩子 {#settings---permissions-and-hooks}
@@ -1202,7 +1202,7 @@ Orchestrator executes the plan end-to-end.
 计划**固定落在全局目录** `~/.workbuddy/plans/`，不在你的项目里。上游有一个 `plansDirectory` 设置可以把它们挪进仓库，本平台的引擎**完全不认这个键**（2026-10-30 核查：客户端引擎零命中），所以别去找它，也别往 `.codebuddy/settings.json` 里加 —— 加了不会有任何效果，只会让下一个读文件的人以为计划已经跟着仓库走了。需要把计划留在项目里，就在批准之后自己拷一份到 `quality_reports/plans/`（模板 gitignore 了这个目录 --- 计划是本地的过程记录）。
 :::
 
-**Stop 钩子**在每次回复后跑一个快速 Python 脚本（`.codebuddy/hooks/log-reminder.py`）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 `quality_reports/session_logs/YYYY-MM-DD_auto.md` 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 `Slides/*.tex` 或 `Quarto/*.qmd`）；设 `CLAUDE_COMPILE_GATE=block` 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 `.codebuddy/rules/` 里自动加载的规则执行 --- 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。
+**Stop 钩子**在每次回复后跑一个快速 Python 脚本（`.codebuddy/hooks/log-reminder.py`）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 `quality_reports/session_logs/YYYY-MM-DD_auto.md` 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 `Slides/*.tex` 或 `Quarto/*.qmd`）；设 `CODEBUDDY_COMPILE_GATE=block` 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 `.codebuddy/rules/` 里自动加载的规则执行 --- 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。
 
 ## 深度档位 --- 成本 vs 彻底程度 {#sec-effort}
 
@@ -1313,7 +1313,7 @@ git 提交记录改了什么，但不记录*为什么*。会话日志填这个�
 
 **每次都查重，不靠良好意愿。** 当同一个问题住在三个地方时，issue 追踪器就不再是记忆了。所以每个新 issue 都走 `scripts/file-issue.py`，它在创建任何东西之前用几种方式搜索未关闭*与*已关闭的 issue --- 标题里最具辨识度的词放在一起搜一次、取前三个词单独搜一次、你补充的任何词、以及该 issue 点名的至多三条文件路径，最多八次搜索 --- 并且在每个找到的候选都被审过之前拒绝创建。issue 正文记录这些搜索与判定。`issue-guard` 钩子拒绝 WorkBuddy 直接发起的裸 `gh issue create`，并指向那个脚本；它只为 `gh` 命令生成，所以会话其余部分不为它付任何成本。
 
-**从清单开始会话（可选）。** 设 `CLAUDE_ISSUES_AT_START=1` --- 放在 `.codebuddy/settings.local.json` 的 `env` 下，只对你本机开启 --- 启动时 `open-issues` 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。
+**从清单开始会话（可选）。** 设 `CODEBUDDY_ISSUES_AT_START=1` --- 放在 `.codebuddy/settings.local.json` 的 `env` 下，只对你本机开启 --- 启动时 `open-issues` 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。
 
 **两点告诫。** 公开仓库上的 issue 就是公开的：把论文工作留在**私有**仓库里，否则未发表的结果与你正在修的弱点任何人都看得见。绝不要把受限数据放进 issue --- 数据使用协议之下的数据，其数值、标识符、路径、截图都不行；抽象地描述问题，把证据留在数据所在之处。这一切背后的规则是 [`issue-ledger.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/issue-ledger.md)：什么该开 issue、一份报告必须带什么、以及关闭评论必须说什么。
 
@@ -1344,12 +1344,12 @@ git 提交记录改了什么，但不记录*为什么*。会话日志填这个�
 | 桌面通知 | `Notification` | WorkBuddy 需要你注意时给桌面提醒（macOS/Linux） |
 | 上下文状态捕获 | `PreCompact` | 自动压缩前保存计划状态 |
 | 上下文恢复 | `SessionStart[compact|resume]` | 压缩或续接后恢复上下文 |
-| 会话交接 | `SessionStart[startup]` + `UserPromptSubmit` | 把一个 7 天内写下的最新检查点交给全新会话；只有当你敲下提示词时才用掉它（`CLAUDE_HANDOFF=off` 可跳过） |
+| 会话交接 | `SessionStart[startup]` + `UserPromptSubmit` | 把一个 7 天内写下的最新检查点交给全新会话；只有当你敲下提示词时才用掉它（`CODEBUDDY_HANDOFF=off` 可跳过） |
 | 上下文监控 | `PostToolUse[Bash|Agent|Task]` | 在上下文 40%/55%/65%/80%/90% 处逐级告警 |
-| git 防线 | `PreToolUse[Bash|Write|Edit|MultiEdit]` | 拦住破坏性 git（`reset --hard`、`clean -f`、`push --force`、`add -A`），并在工作树脏时拒绝 merge、rebase 或 pull --- 包括那些会先清干净树的链式命令；对代码文件（`.R`、`.Rmd`、`.qmd`、`.do`、`.py`）的 `Write`/`Edit`/`MultiEdit`，对硬编码的机器路径（`/Users/…`、`/home/…`）告警，并在 `CLAUDE_STRICT_PATHS=1` 时拒绝 |
+| git 防线 | `PreToolUse[Bash|Write|Edit|MultiEdit]` | 拦住破坏性 git（`reset --hard`、`clean -f`、`push --force`、`add -A`），并在工作树脏时拒绝 merge、rebase 或 pull --- 包括那些会先清干净树的链式命令；对代码文件（`.R`、`.Rmd`、`.qmd`、`.do`、`.py`）的 `Write`/`Edit`/`MultiEdit`，对硬编码的机器路径（`/Users/…`、`/home/…`）告警，并在 `CODEBUDDY_STRICT_PATHS=1` 时拒绝 |
 | 断言对账 | `PostToolUse[Write|Edit|MultiEdit]` | 当分析脚本变动时，标出已过期的数值断言 |
 | issue 防线 | `PreToolUse[Bash]`，只为 `gh` 命令生成（`"if": "Bash(gh *)"`） | 拒绝未经查重就创建的新 GitHub issue（`gh issue create`/`new`，或 REST/GraphQL 创建），并指向 `scripts/file-issue.py`，后者先搜未关闭与已关闭的 issue |
-| 未关闭 issue（可选启用） | `SessionStart[startup]` | 设 `CLAUDE_ISSUES_AT_START=1` 时，列出未关闭 issue 的编号与标题 --- 只限 owner 与合作者的 --- 好让会话一开始就知道待办清单；默认关闭 |
+| 未关闭 issue（可选启用） | `SessionStart[startup]` | 设 `CODEBUDDY_ISSUES_AT_START=1` 时，列出未关闭 issue 的编号与标题 --- 只限 owner 与合作者的 --- 好让会话一开始就知道待办清单；默认关闭 |
 | 信任根防线 | `PreToolUse[Bash]` | 是一条绊线，不是一把锁：拒绝*静默 shell 写入* `.codebuddy/settings*.json`、`.codebuddy/hooks/` 与 `.githooks/` --- 那些定义其他每道门禁的文件 --- 并把破坏性 git 的拒绝清单套用到 `bash -c` / `env -S` 的载荷上。`Edit`/`Write`、一次分支切换，或钩子自身的 bug，仍可能替换它们 |
 
 其中有两条值得一注，因为它们编码的是教训而不是偏好。**git 防线**在工作树脏时拒绝 merge、rebase 或 pull：这种操作要么中途中止，要么把未提交的工作悄悄折进结果里，而两种结局都不会自己声明。先带标签 stash，或者如果你就是要这样，设 `ALLOW_DIRTY_MERGE=1`。`--abort` 与 `--continue` 被直接豁免 --- 那正是你*走出*一个脏的进行中操作的方式。`--autostash` 不在豁免之列：只有当 `git status --porcelain` 报告没有任何未跟踪条目时才允许，因为 `git stash` 不 stash 未跟踪文件，所以对着一条 `??` 行做 autostash，那一行会原地不动。
@@ -3295,14 +3295,14 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 |------|------|--------------|
 | 会话日志自动写入 | Stop（command） | `.codebuddy/hooks/log-reminder.py` --- 每有一组有意义的改动就自动写会话日志（不再只是提醒） |
 | 桌面通知 | Notification（command） | `.codebuddy/hooks/notify.sh` |
-| 上下文状态捕获 | PreCompact（command） | `.codebuddy/hooks/pre-compact.py` --- 保存计划/任务/决策；DRAFT 块需显式开启（`CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1`） |
+| 上下文状态捕获 | PreCompact（command） | `.codebuddy/hooks/pre-compact.py` --- 保存计划/任务/决策；DRAFT 块需显式开启（`CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1`） |
 | 上下文恢复 | SessionStart[compact\|resume]（command） | `.codebuddy/hooks/post-compact-restore.py` |
-| 会话交接 | SessionStart[startup] + UserPromptSubmit（command） | `.codebuddy/hooks/session-handoff.py` --- 把最近 7 天内写下的最新一份 `/checkpoint` 或 `/compress-session` 文件交给新会话；它算作在会话首个提示词时投递，无头运行里永不投递；`CLAUDE_HANDOFF=off` 可关闭 |
+| 会话交接 | SessionStart[startup] + UserPromptSubmit（command） | `.codebuddy/hooks/session-handoff.py` --- 把最近 7 天内写下的最新一份 `/checkpoint` 或 `/compress-session` 文件交给新会话；它算作在会话首个提示词时投递，无头运行里永不投递；`CODEBUDDY_HANDOFF=off` 可关闭 |
 | 上下文监控 | PostToolUse[Bash\|Agent\|Task]（command） | `.codebuddy/hooks/context-monitor.py` |
 | Git 护栏 | PreToolUse（command） | `.codebuddy/hooks/git-guardrails.py` --- 拦截 `reset --hard` / `clean -f` / `push --force` / `add -A`；工作区不干净时拒绝 merge / rebase / pull，也包括那些会先把工作区清干净的命令链（`ALLOW_DIRTY_MERGE=1`） |
 | 论断核对 | PostToolUse（command） | `.codebuddy/hooks/claim-reconcile.py` --- 脚本变动时标出过期的数值论断，包括对某个已声明的 `appears_in` 展示位的修改 |
 | issue 守卫 | PreToolUse[Bash]，仅针对 `gh` 命令（`if: Bash(gh *)`）（command） | `.codebuddy/hooks/issue-guard.py` --- 拒绝裸的 `gh issue create`/`new`，以及 REST/GraphQL 建 issue，并指向 `scripts/file-issue.py`（它会先查重） |
-| 打开中的 issue（选用） | SessionStart[startup]（command） | `.codebuddy/hooks/open-issues.py` --- 设了 `CLAUDE_ISSUES_AT_START=1` 时，启动时列出打开中 issue 的编号与标题（仅所有者与协作者）；默认关闭 |
+| 打开中的 issue（选用） | SessionStart[startup]（command） | `.codebuddy/hooks/open-issues.py` --- 设了 `CODEBUDDY_ISSUES_AT_START=1` 时，启动时列出打开中 issue 的编号与标题（仅所有者与协作者）；默认关闭 |
 | 信任根守卫 | PreToolUse（command） | `.codebuddy/hooks/root-of-trust-guard.py` --- 对**静默**写入 `.codebuddy/settings*.json`、`.codebuddy/hooks/`、`.githooks/` 的 shell 操作做尽力而为的绊线，并把破坏性 git 拒绝清单套到 `bash -c` / `env -S` 的载荷上；读操作与 `Edit`/`Write` 仍然放行，所以它换的是通道，而不是把文件锁死（`ALLOW_ROOT_OF_TRUST_WRITE=1`） |
 
 **WorkBuddy 里还有的钩子事件**（本模板未使用，但可用于自定义钩子）：

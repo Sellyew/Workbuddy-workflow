@@ -68,6 +68,15 @@ RULES: list[tuple[str, str, str]] = [
     (r"\.claude/", ".codebuddy/", "项目级目录"),
     (r"(?<![\w.])\.claude(?![\w])", ".codebuddy", "项目级目录（无斜杠写法）"),
     (r"CLAUDE_PROJECT_DIR", "CODEBUDDY_PROJECT_DIR", "环境变量"),
+    (r"CLAUDE_STRICT_PATHS", "CODEBUDDY_STRICT_PATHS", "环境变量"),
+    (r"CLAUDE_GIT_STATUS_TIMEOUT", "CODEBUDDY_GIT_STATUS_TIMEOUT", "环境变量"),
+    (r"CLAUDE_ISSUES_AT_START", "CODEBUDDY_ISSUES_AT_START", "环境变量"),
+    (r"CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT", "CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT", "环境变量"),
+    (r"CLAUDE_COMPILE_GATE", "CODEBUDDY_COMPILE_GATE", "环境变量"),
+    (r"CLAUDE_HANDOFF_MAX_AGE_DAYS", "CODEBUDDY_HANDOFF_MAX_AGE_DAYS", "环境变量"),
+    (r"CLAUDE_HANDOFF", "CODEBUDDY_HANDOFF", "环境变量"),
+    (r"CLAUDE_CONTEXT_WINDOW_TOKENS", "CODEBUDDY_CONTEXT_WINDOW_TOKENS", "环境变量"),
+    (r"CLAUDE_CONTEXT_MAX_TOOL_CALLS", "CODEBUDDY_CONTEXT_MAX_TOOL_CALLS", "环境变量"),
     (r"CLAUDE\.md", "CODEBUDDY.md", "项目指令文件名"),
 ]
 
