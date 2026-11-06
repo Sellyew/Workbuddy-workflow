@@ -69,6 +69,19 @@ cd my-project
 
 ---
 
+## 技能：导入与使用
+
+本模板的技能住在 `.codebuddy/skills/<name>/SKILL.md`，fork 即得全套。四件事：
+
+- **怎么用**：敲 `/name` 显式触发（如 `/compile-latex HelloWorld`），或直接描述需求让 WorkBuddy 自动匹配调用。
+- **有哪些**：见下方「技能」总表，逐个说明。
+- **怎么新建**：跑 `/new-skill`（访谈式、一次过门禁），或复制 `templates/skill-template.md` 到 `.codebuddy/skills/<name>/SKILL.md`。
+- **怎么导入第三方**：需要本模板之外的技能时，可在 WorkBuddy 里搜索并安装；装好后同样进 `.codebuddy/skills/`。
+
+字段怎么写，见单一真源 [`.codebuddy/references/skill-fields.md`](.codebuddy/references/skill-fields.md)。
+
+---
+
 ## 工作原理
 
 ### 目标优先、门禁兜底（v2.0 的转向）
