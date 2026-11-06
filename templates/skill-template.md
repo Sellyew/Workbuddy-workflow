@@ -85,36 +85,15 @@ Step 3: [Final action and verification]
 
 ---
 
-## WorkBuddy 会读的字段
+## 字段参考（单一真源）
 
-这些字段在 WorkBuddy 里**生效**，可放心用：
+技能 frontmatter 的字段语义——会读 / 写了不生效 / 被读但有害——完整清单在
+[`.codebuddy/references/skill-fields.md`](../.codebuddy/references/skill-fields.md)，
+由门禁 `check-field-docs.py` 校验、与本模板保持一致。写新技能前先看那一份；这里只列最易记错的：
 
-| 字段 | 用途 | 示例 |
-|---|---|---|
-| `name` | 技能名，小写连字符，须与目录名一致（必填） | `validate-citations` |
-| `description` | 决定何时加载技能（必填，≤1024 字符） | 见下方「写出有效的描述」 |
-| `description_zh` / `description_en` | 中/英文描述，与 `description` 同义 | `中文描述…` |
-| `argument-hint` | 给用户的简短参数提示 | `"[file or 'all']"` |
-| `allowed-tools` | 预先批准清单（见下方语义说明） | `["Read", "Grep", "Glob"]` |
-| `model` | 指定模型档位：`default` / `lite` / `reasoning` | `reasoning`（高判断力审读） |
-| `agent` | 链接到 `.codebuddy/agents/` 里的代理定义 | `proofreader` |
-| `disable-model-invocation` | 阻止自动触发，只能 `/name` 调用 | `true` |
-| `user-invocable` | 是否允许用户用 `/name` 直接调用 | `true` |
-| `version` | 版本号（技能市场/版本管理） | `"0.1.0"` |
-| `category` | 所属类别（技能市场） | `meta` |
-| `tags` | 标签 | `[review, proofread]` |
-
-## WorkBuddy 不认的字段（写了不报错，但不会生效——别写）
-
-这些字段是上游 Claude Code 的，WorkBuddy 里**没有对应语义**：
-
-| 字段 | 为什么别写 | 替代 |
-|---|---|---|
-| `disallowed-tools` | WorkBuddy 没有技能级工具黑名单 | 见下方「只读约束」 |
-| `context: fork` | 会让技能失去 `Agent`（多透镜扇出退化成串行） | 需要扇出就别写它 |
-| `paths` | 技能级不生效（路径作用域是 rules 的） | 用 `.codebuddy/rules/*.md` 的 `paths:` |
-| `hooks` | 技能级不生效（钩子只有 settings 级） | 用 `.codebuddy/settings.json` |
-| `when_to_use` / `arguments` / `effort` / `background` / `shell` | Claude Code 专用 | — |
+- **必填**：`name`（小写连字符、与目录名一致）、`description`（≤1024 字符，决定何时自动加载）。
+- **会读**：`allowed-tools`、`argument-hint`、`model`（`default`/`lite`/`reasoning`）、`agent`、`disable-model-invocation`、`user-invocable`、`description_zh`/`description_en`、`category`、`tags`、`version`。
+- **别写**（写了不生效）：`disallowed-tools`、`paths`、`hooks`、`when_to_use`、`arguments`、`effort`、`background`、`shell`；`context: fork` 有害（失去 `Agent`）。
 
 ### `allowed-tools` 是预先批准，不是沙箱 {#allowed-tools}
 

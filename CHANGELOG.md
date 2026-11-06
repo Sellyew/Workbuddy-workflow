@@ -8,6 +8,16 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Fixed — 字段语义单一真源 + 一致性门禁，消除 guide/README 与引擎的致命矛盾
+
+技能 frontmatter 的字段语义此前被复制三份（skill-template.md / guide / README），且 guide/README
+仍教「`disallowed-tools` 是真正的限制机制」等旧 Claude Code 语义，与引擎真实行为（无对应语义）矛盾。
+修法：新建 `.codebuddy/references/skill-fields.md` 作字段语义人类真源（会读 / 写了不生效 / 被读但
+有害三类，标记表格）；新建 `scripts/check-field-docs.py` 门禁，机械校验 skill-fields.md、guide、
+README 与机器真源 `check-spec-conformance.py` 的 `WB_FIELDS`/`INERT_FIELDS` 一致，挂进 gate 5
+（spec-conformance）的 `also`；guide/README 的字段表与 callout 对齐真源，删掉
+`${CLAUDE_SKILL_DIR}`/`${CLAUDE_SESSION_ID}`/`$0`/`$1`/`$N` 等死替换项。
+
 ### Fixed — 冒烟测试收尾：执行位、必装/可选、hello 死取值、R 不在 PATH
 
 全新克隆冒烟测试（照指南从零跑通）暴露 4 处收尾问题并修复：`scripts/compile-beamer.sh`

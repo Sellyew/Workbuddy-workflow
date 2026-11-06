@@ -2947,30 +2947,23 @@ YAML frontmatter 决定技能的行为。最常用的字段：
 | `description` | **最重要的一项。** 决定 WorkBuddy 何时自动加载该技能 | `Compile Beamer slides...` |
 | `argument-hint` | `/skill-name` 之后显示的占位符 | `<filename>` |
 | `allowed-tools` | **预先批准**工具（跳过权限弹窗）。它**不是**限制 --- 未列出的工具仍可按常规权限调用 | `["Read", "Bash", "Glob"]` |
-| `disallowed-tools` | 技能生效期间从 WorkBuddy 的工具池里**移除**工具 --- 这才是真正的限制机制 | `["Edit", "Write"]` |
-| `paths` | 限定技能自动激活范围的 glob 模式（技能层面的「按路径生效规则」） | `["scripts/**/*.R"]` |
-| `when_to_use` | 供自动调用判断的额外路由上下文 | `after a merge conflict` |
-| `arguments` | 供 `$name` 替换的具名位置参数 | `[infile, outfile]` |
-| `effort`（代理读、技能不读） | 代理 frontmatter 的 `effort:` 调同一档内的思考预算，不改模型档位；技能里写它无效 | 见 `.codebuddy/rules/model-routing.md` |
-| `context` | 设为 `fork` 则在隔离子代理里运行 | `fork` |
 | `agent` | 关联 `.codebuddy/agents/` 里的某个代理定义 | `proofreader` |
-| `hooks` | 技能专属钩子（语法同 settings.json） | `{PreToolUse: [...]}` |
 | `model` | 强制指定模型档位 | `lite` |
 | `disable-model-invocation` | 阻止 WorkBuddy 自动触发 | `true` |
 | `user-invocable` | 是否出现在 `/` 菜单里 | `true`（默认） |
 
+完整字段清单（会读 / 写了不生效 / 被读但有害三类）见单一真源 [`.codebuddy/references/skill-fields.md`](../.codebuddy/references/skill-fields.md)。
+
 ::: {.callout-warning}
 ## `allowed-tools` 并不做沙箱隔离
 
-一个常见（且关乎安全）的误读：把 `Bash` 从 `allowed-tools` 里省掉，**并不会**让技能变成只读 --- `allowed-tools` 只是**预先批准**列出的工具、让它们跳过权限弹窗；其余工具在你的常规权限设置下照旧可调。要在技能运行期间真正拿掉工具，请用 `disallowed-tools`（例如给只读审计技能写 `["Edit", "Write", "Bash"]`，并对任何无人值守运行的东西加上 `AskUserQuestion`）。完整范式见 `templates/skill-template.md`。
+一个常见（且关乎安全）的误读：把 `Bash` 从 `allowed-tools` 里省掉，**并不会**让技能变成只读 --- `allowed-tools` 只是**预先批准**列出的工具、让它们跳过权限弹窗；其余工具在你的常规权限设置下照旧可调。WorkBuddy **没有技能级工具黑名单**：要让技能只读，只有软约束（`allowed-tools` 只列只读工具 + 正文声明「不修改被审文件」），硬保护靠项目级 `permissions.deny` 规则或 PreToolUse 钩子。完整说明见 `templates/skill-template.md`。
 :::
 
 ::: {.callout-note}
 ## 关键设计取舍
 
 - **`model: reasoning`** 适合需要深度推理的审读类技能（如论文批评）。简单的格式化技能用 `model: lite` 省 token。
-- **`context: fork`** 让技能在全新的子代理上下文里跑，把大段输出挡在主对话之外。适合会产出冗长报告的技能。
-- **`disallowed-tools`** 才是在技能运行期间真正移除工具的机制 --- 用它把审读技能做成只读。（单靠 `allowed-tools` **不**提供沙箱；见上方提示框。）
 :::
 
 ### 技能里的动态内容 {#skill-dynamic-content}
@@ -2982,9 +2975,6 @@ YAML frontmatter 决定技能的行为。最常用的字段：
 | 语法 | 展开为 | 用例 |
 |--------|-----------|-------------|
 | `$ARGUMENTS` | `/skill-name` 之后的完整参数字符串 | `/compile-latex Lecture01` → `$ARGUMENTS` = `Lecture01` |
-| `$0`、`$1`、`$N` | 位置参数（从 0 起，按空格分隔） | `/deploy Lecture01 draft` → `$0` = `Lecture01`、`$1` = `draft` |
-| `${CLAUDE_SESSION_ID}` | 当前会话标识符 | 生成唯一的日志文件名 |
-| `${CLAUDE_SKILL_DIR}` | 技能目录的路径 | 引用随技能打包的辅助文件 |
 
 **动态上下文注入**，语法为 `` !`command` ``：
 

@@ -102,6 +102,7 @@ output as unverified.
 | `.claude/hooks/post-compact-restore.py` | passive (SessionStart) — re-injects context after compaction |
 | `.claude/hooks/log-reminder.py` | passive (Stop) — session-log reminder |
 | `.githooks/pre-commit` | entry point that delegates to the gate suite; the delegation is exercised on every commit, its own logic (bypass envs, exit-code roll-up) is unmeasured |
+| `check-field-docs.py` | 新增：校验字段文档（skill-fields.md / guide / README）与机器真源一致——防「文档把无对应语义字段当有效字段教」的漂移 |
 
 The five hooks above are **passive**: they emit a nudge and never make a decision, so a dead one
 costs a reminder rather than a wrong green light. That is why they are debt and not a blocker —
