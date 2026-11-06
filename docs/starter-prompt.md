@@ -9,7 +9,7 @@
 ## 一、首次使用（初始化）
 
 ```
-我要把这个模板初始化成我的科研项目。请先读 CODEBUDDY.md 和 UPSTREAM.md，
+我要把这个模板初始化成我的科研项目。请先读 CODEBUDDY.md，
 然后执行 /init-research-project。
 
 我的项目信息：

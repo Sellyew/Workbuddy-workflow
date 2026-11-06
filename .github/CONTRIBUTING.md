@@ -8,7 +8,7 @@ This repository is a **template** designed for academic researchers to fork and 
 - **New skills/agents/rules** that generalize across academic domains (economics, biology, physics, CS, etc.).
 - **Documentation improvements** — guide, README, examples, troubleshooting.
 - **Pedagogical improvements** — clearer onboarding, better Day 1 experience.
-- **2026+ Claude Code feature integration** — when new hooks, frontmatter fields, or capabilities ship.
+- **2026+ platform feature integration** — when new hooks, frontmatter fields, or capabilities ship.
 
 ## What belongs in your fork (not here)
 
@@ -37,7 +37,7 @@ This repository is a **template** designed for academic researchers to fork and 
 
 - **Branch naming**: `feat/short-name`, `fix/short-name`, `chore/short-name`, `docs/short-name`.
 - **Commit messages**: imperative mood ("add", "fix", "refactor"), explain *why* in the body.
-- **Co-author Claude** if Claude Code helped: `Co-Authored-By: Claude <noreply@anthropic.com>` (version-free — model names drift).
+- **Note the assistant** if WorkBuddy helped — mention it in the PR description.
 - **Use the PR template** (auto-loaded when you open a PR).
 - **Squash before merging** if your branch has many WIP commits.
 

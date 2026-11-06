@@ -8,6 +8,13 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 清掉用户入口的迁移残余
+
+新手路径上最后一批「从 Claude Code 迁来」的痕迹：starter-prompt 第一步不再让新手读
+UPSTREAM.md；指南起始提示词去掉 fork 来源；指南示例 `model: opus/sonnet` 改三档；
+MEMORY.md 层名改 `default`/`reasoning`（保留上游括号说明）；CONTRIBUTING/SECURITY 去
+Claude/Anthropic 化；README「由来」压缩为一句署名。
+
 ### Added — README 新增「技能：导入与使用」引导
 
 新用户进来第一眼就该懂的四链路，此前散落四处、且「导入」从未被写下来：技能住

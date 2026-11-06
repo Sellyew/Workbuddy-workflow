@@ -129,7 +129,7 @@
 
 [LEARN:pattern] **溯源是一个 YAML 产物，不是一个文件夹。** `templates/passport-template.yaml`：逐论文的数值断言，带源行号、输出字段、容差、状态；`/audit-reproducibility` 原地重写它。可查询胜过文件夹式报告。（范围从 Imbad0202/ARS 的「Material Passport」缩到只剩数值断言。）
 
-[LEARN:pattern] **同行评审要报方差，而不是点估计。** 约 37% 的判定纯粹因审稿取向抽样而变动（AgentReview，arXiv:2406.12708），所以 `--variance N` 返回一个判定分布 + K-of-N 关切表，而不是一个判定。双峰分布与微弱多数都是信息。审稿人路由到 Sonnet；硬上限 N=5。*[2026-09-26 更正：审稿人留在 Opus（不得降级）。]*
+[LEARN:pattern] **同行评审要报方差，而不是点估计。** 约 37% 的判定纯粹因审稿取向抽样而变动（AgentReview，arXiv:2406.12708），所以 `--variance N` 返回一个判定分布 + K-of-N 关切表，而不是一个判定。双峰分布与微弱多数都是信息。审稿人路由到 `default`（上游 Sonnet）；硬上限 N=5。*[2026-09-26 更正：审稿人留在 `reasoning`（上游 Opus，不得降级）。]*
 
 [LEARN:pattern] **伪造引用必须 HIGH-WARN 必修。** `/verify-claims` 分级：HIGH-WARN（伪造文献 / 数值或方向性矛盾）是提交前必修；MED-WARN 是临时的；LOW-WARN 是来源取不到。打 HIGH-WARN 要保守——误报会侵蚀这道门禁。CoVe 的 fork 核验者（永远看不到草稿）是架构；必修政策让它有后果。*[2026-09-26：没有任何 /commit 门禁读它；核验者 = 全新的 Agent 调用，不是 fork。]*
 
