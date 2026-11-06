@@ -285,7 +285,7 @@ cd my-project
 
 我希望我们的协作是有结构、精确、严谨的 --- 哪怕多花点时间。做视觉材料时，一切都要打磨到位、可直接发表。我不想反复重复自己，所以我们的工作流应当善于记住决定、并从纠正中学习。
 
-我已经装好了这套 WorkBuddy 学术工作流（fork 自 `pedrohcgs/claude-code-my-workflow`）。配置文件都在这个仓库里（`.codebuddy/`、`CODEBUDDY.md`、templates、scripts）。请读一遍，理解这套工作流，然后**把所有配置文件改成适合我这个项目的样子** --- 填上 `CODEBUDDY.md` 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。
+我已经装好了这套 WorkBuddy 学术工作流。配置文件都在这个仓库里（`.codebuddy/`、`CODEBUDDY.md`、templates、scripts）。请读一遍，理解这套工作流，然后**把所有配置文件改成适合我这个项目的样子** --- 填上 `CODEBUDDY.md` 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。
 
 之后，对所有非琐碎任务都走计划先行的工作流。一旦我批准计划，就切到包工头模式 --- 自主协调一切，只在有歧义或需要决策时才回来找我。最初几次会话，多跟我确认一下，好让我学会这套工作流怎么跑。
 
@@ -977,12 +977,12 @@ Save findings to: quality_reports/[FILENAME]_report.md
 
 **原则：** 需要同时在脑子里握住两份大文档的任务（对抗式比较、审稿）用 `reasoning`。范围清晰、有界的任务（修这 12 个问题、查这个 R 脚本）用 `default`。机械性工作交给 `lite`。在 v2.0 里每个代理都是显式钉住的，而不是继承 --- 完整名单与档位见 `agent-fleet.md`。
 
-要改某个代理的模型档位，编辑它的 YAML frontmatter（示例块里的 `opus` 是上游层名；本平台写 `lite` / `default` / `reasoning`）：
+要改某个代理的模型档位，编辑它的 YAML frontmatter：
 
 ```yaml
 ---
 name: quarto-critic
-model: opus   # pinned per agent-fleet.md (v2.0: no agent inherits)
+model: reasoning   # pinned per agent-fleet.md (v2.0: no agent inherits)
 ---
 ```
 
@@ -1013,7 +1013,7 @@ model: opus   # pinned per agent-fleet.md (v2.0: no agent inherits)
 ```yaml
 ---
 name: proofreader
-model: sonnet
+model: default
 maxTurns: 15
 tools: ["Read", "Grep", "Glob"]
 ---

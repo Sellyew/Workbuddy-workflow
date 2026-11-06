@@ -20,5 +20,5 @@ Solo-maintained academic project: acknowledgement within a week is the goal, a f
 
 ## Not in scope
 
-- Vulnerabilities in Claude Code itself → report to [Anthropic](https://www.anthropic.com/responsible-disclosure-policy).
+- Vulnerabilities in the WorkBuddy platform itself → report through WorkBuddy's official channel.
 - Vulnerabilities in third-party R/Stata/Python packages the skills orchestrate → report upstream.
