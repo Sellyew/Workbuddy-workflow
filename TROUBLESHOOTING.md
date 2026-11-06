@@ -192,6 +192,10 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 ## R / 数据分析
 
+### R 装了但不在 PATH
+
+`./scripts/validate-setup.sh` 会打印 `R found ... but NOT on PATH` 并给出应追加进 PATH 的目录（Windows 下通常是 `C:\Program Files\R\R-<版本>\bin`）。技能体以裸名 `Rscript` 调用 R，所以不把它加进 PATH，`/data-analysis`、`/review-r`、`/audit-reproducibility` 等会在 `Rscript: command not found` 上失败。Windows 安装器默认不勾选「加入 PATH」，需手动追加后重启 WorkBuddy / 新开终端。
+
 ### `here::here()` 解析到了错误的目录
 
 `here` 需要一个项目根标记（`.here`、`.git`、`DESCRIPTION` 或 `.Rproj`）。若你看到错误路径，就在仓库根目录建一个空的 `.here` 文件。
