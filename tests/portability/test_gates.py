@@ -692,6 +692,15 @@ class ValidateSetup(Tmp):
         os.chmod(os.path.join(self.repo, ".codebuddy", "hooks", "notify.sh"), 0o644)
         self.assertIn("1 hook script(s) not executable", self.setup_out(self.repo))
 
+    @POSIX_HOST
+    def test_scripts_exec_bit_is_checked(self):
+        # validate-setup-scripts-exec-bit: a directly-invoked scripts/*.sh without +x
+        # (git index 100644) must warn, so it can't silently regress on POSIX forks.
+        out = self.setup_out(self.repo)
+        self.assertIn("All scripts are executable", out)
+        os.chmod(os.path.join(self.repo, "scripts", "validate-setup.sh"), 0o644)
+        self.assertIn("script(s) not executable (scripts/*.sh)", self.setup_out(self.repo))
+
 
 # ── sync_to_docs.sh ───────────────────────────────────────────────────────────
 

@@ -8,6 +8,15 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Fixed — 冒烟测试收尾：执行位、必装/可选、hello 死取值、R 不在 PATH
+
+全新克隆冒烟测试（照指南从零跑通）暴露 4 处收尾问题并修复：`scripts/compile-beamer.sh`
+缺执行位（POSIX fork 会 Permission denied），补 `git update-index --chmod=+x` 并在
+`validate-setup.sh` 加「scripts 执行位」防回归；`validate-setup.sh` 把 XeLaTeX/Quarto 当必装
+（与 README/指南的「可选」矛盾），降为 optional 并按 `has_xelatex`/`has_quarto` 门控
+Next steps；`hello/SKILL.md` 删除死取值 `disable-model-invocation: false` 与指向不存在的
+`.workbuddy/skills/hello/` 的回退路径；`TROUBLESHOOTING.md` 补「R 装了但不在 PATH」指引。
+
 ### Changed — 9 个仓库私有开关改双读（CODEBUDDY_* 优先 + CLAUDE_* 兜底）
 
 仓库自有 hook 的 9 个私有开关沿用上游 `CLAUDE_*` 前缀，是最后一批命名残留。改为双读：新名

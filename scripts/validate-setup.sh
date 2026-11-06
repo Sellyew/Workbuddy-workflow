@@ -104,13 +104,15 @@ echo -e "${BOLD}Required tools:${RESET}"
 # WorkBuddy 是桌面客户端，shell 里没有可探测的命令，所以这一项不计入通过数：
 # 以前这里是 `check_required "Claude Code" "claude"`，会让用户以为要先装 Claude Code。
 echo -e "  ${BOLD}·${RESET} WorkBuddy (desktop app) — open this folder as the task workspace"
-check_required "XeLaTeX"      "xelatex"  "https://tug.org/texlive/ (or MacTeX: https://tug.org/mactex/)"
-check_required "Quarto"       "quarto"   "https://quarto.org/docs/get-started/"
 check_required "git"          "git"      "https://git-scm.com/downloads"
 check_required "Python 3"     "python3"  "https://python.org (needed for hooks)"
 echo ""
 
 echo -e "${BOLD}Recommended tools:${RESET}"
+# XeLaTeX / Quarto 只在幻灯片/部署线需要（/compile-latex、/deploy、HelloWorld 演示）；
+# 纯文本/代码/R 工作流不需要它们（见 README「前置条件」）。
+check_optional "XeLaTeX"      "xelatex"  "https://tug.org/texlive/ (or MacTeX: https://tug.org/mactex/)"
+check_optional "Quarto"       "quarto"   "https://quarto.org/docs/get-started/"
 # R 对幻灯片线确实可选，但对数据线是必需的：/data-analysis、/review-r、
 # /simulation-study、/audit-reproducibility 的核心操作都是 Rscript，另有 12 条规则
 # 以 .R 文件为注入条件。所以它缺失时不并入「optional」那堆警告，末尾单独说一句。
@@ -212,6 +214,25 @@ else
 fi
 echo ""
 
+echo ""
+echo -e "${BOLD}Scripts (scripts/*.sh) exec bit:${RESET}"
+# Directly-invoked scripts (./scripts/foo.sh, per CODEBUDDY.md and the skills that call
+# them) need +x on POSIX. scripts/lib/py.sh is sourced, not executed, and sits one level
+# deeper than this maxdepth-1 glob, so it is naturally excluded.
+scripts_dir="$(dirname "$0")"
+if [ -d "$scripts_dir" ]; then
+    non_exec=$(find "$scripts_dir" -maxdepth 1 -name "*.sh" ! -perm -u+x 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$non_exec" -eq 0 ]; then
+        echo -e "  ${GREEN}✓${RESET} All scripts are executable"
+        pass=$((pass + 1))
+    else
+        echo -e "  ${YELLOW}⚠${RESET} $non_exec script(s) not executable (scripts/*.sh)"
+        echo -e "    Fix: git update-index --chmod=+x scripts/<file>"
+        warn=$((warn + 1))
+    fi
+fi
+echo ""
+
 echo -e "${BOLD}Palette sync (LaTeX ↔ SCSS):${RESET}"
 palette_script="$(dirname "$0")/check-palette-sync.sh"
 if [ -x "$palette_script" ]; then
@@ -250,6 +271,17 @@ if [ "$has_r" != "true" ]; then
     echo ""
 fi
 
+# XeLaTeX / Quarto 同 R：缺了也不计入 fail（纯文本/代码/R 工作流不需要它们），但
+# 幻灯片/部署线需要。只在这两者缺一个时提示，免得「一切就绪」的绿灯误导想跑
+# HelloWorld 演示的人。
+if [ "$has_xelatex" != "true" ] || [ "$has_quarto" != "true" ]; then
+    echo -e "${BOLD}Note on XeLaTeX/Quarto:${RESET} the slide line needs them:"
+    echo "    /compile-latex (Beamer, needs XeLaTeX)   /deploy (Quarto, needs Quarto)"
+    echo "  Text/code/R-only workflows don't need either."
+    echo "    XeLaTeX: https://tug.org/texlive/   Quarto: https://quarto.org/docs/get-started/"
+    echo ""
+fi
+
 if [ "$fail" -gt 0 ]; then
     echo -e "${RED}Some required tools are missing.${RESET}"
     echo ""
@@ -281,7 +313,11 @@ fi
 
 echo -e "${GREEN}Setup looks good!${RESET} Next steps:"
 echo "  1. In WorkBuddy: new task → 选择工作空间 → pick this directory"
-echo "  2. Compile the sample deck:              /compile-latex HelloWorld"
-echo "  3. Deploy the Quarto sample:             /deploy HelloWorld"
+if [ "$has_xelatex" = "true" ]; then
+    echo "  2. Compile the sample deck:              /compile-latex HelloWorld"
+fi
+if [ "$has_quarto" = "true" ]; then
+    echo "  3. Deploy the Quarto sample:             /deploy HelloWorld"
+fi
 echo ""
 exit 0

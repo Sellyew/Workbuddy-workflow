@@ -6,7 +6,6 @@ description_zh: 冒烟测试技能。用于验证 `.codebuddy/skills` 能被发�
 allowed-tools: ["Read", "Write", "Bash"]
 argument-hint: "[任意标记文本]"
 user-invocable: true
-disable-model-invocation: false
 category: meta
 tags: [smoke-test, migration-verification]
 ---
@@ -36,10 +35,7 @@ tags: [smoke-test, migration-verification]
    file: quality_reports/checkpoints/_SMOKE_HELLO.md
    ```
 
-   `src: codebuddy` 是**路径判别标记**：`.workbuddy/skills/hello/SKILL.md` 副本输出 `src: workbuddy`。
-   两者内容故意不同，用于判定平台实际从哪个目录加载项目技能。
-
 ## 判定
 
 - 若回复中出现 `SKILL-SMOKE-OK` 且文件被真实创建 → **T4 通过（技能发现与调用：原生支持）**
-- 若 `/hello` 未被识别 → 记录失败，回退测试 `.workbuddy/skills/hello/SKILL.md` 路径
+- 若 `/hello` 未被识别 → 记录失败（技能未被发现或不可调用）
