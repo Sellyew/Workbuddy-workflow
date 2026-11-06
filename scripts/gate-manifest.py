@@ -75,9 +75,10 @@ GATES = [
     {
         "num": 5,
         "name": "spec-conformance",
-        "desc": "Agent Skills 规范",
-        "scripts": ["check-spec-conformance.py"],
+        "desc": "Agent Skills 规范 + 字段文档一致性",
+        "scripts": ["check-spec-conformance.py", "check-field-docs.py"],
         "run": ["{PY}", "{SCRIPTS}/check-spec-conformance.py"],
+        "also": ["{PY}", "{SCRIPTS}/check-field-docs.py"],
     },
     {
         "num": 6,

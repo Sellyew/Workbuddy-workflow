@@ -156,7 +156,7 @@ cd my-project
 - **`/goal <可核验条件>`**（v1.9.0；Anthropic 2026 年 5 月）——跨多轮持续工作，直到一个快模型确认条件成立。与 `/commit` 的质量门禁搭配，用于「核验过终态」的运行。
 - **并行任务视图**——并行审读工作（`/review-paper --peer`、`/slide-excellence`）在侧边栏的任务列表里看。上游 CLI 有一个 `claude agents` 单屏仪表盘，本平台桌面端没有这条命令，也不需要它。
 - **成本自觉的编排**——提示词缓存 TTL、70/20/10 模型路由（`lite` / `default` / `reasoning`）、`/cost` + `/usage` 监控。（上游订阅的额度池与缓存时长规则不适用于本平台，本仓库也不代为说明。）
-- **技能 frontmatter**——`context: fork`、`agent`、`model`、`hooks`、`disable-model-invocation`（v1.8.0+）、`disallowed-tools`（*真正的*工具限制——`allowed-tools` 只是预先批准）、`paths`（glob 作用域的自动激活）以及动态内容（`$ARGUMENTS`、`!command` 语法）。**`effort` 不在其中**——技能加载器不读它（代理读，见上一条）。
+- **技能 frontmatter**——会读的字段（`model`、`agent`、`disable-model-invocation`、`allowed-tools` 等）及完整清单（含「写了不生效」的那批），见单一真源 [`.codebuddy/references/skill-fields.md`](.codebuddy/references/skill-fields.md)。
 - **权限档位**——桌面端只有两档：**默认权限**（`sandbox.defaultPermission`，越界就问）与**完全访问权限**（`sandbox.fullAccessPermission`，不问）。上游那五档（手动 / 接受编辑 / 计划 / 自动 / Bypass）在本平台没有暴露成可选档位，`--permission-mode` 与 `Shift+Tab` 也不存在。
 - **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件（引擎实际认 28 个，本仓库注册 7 个）。**钩子载荷里没有 `effort.level`**——那个字段属于会话状态（`statusline` 读的是它），不是钩子输入。
 - **高级代理配置**——`model`、`effort`、`maxTurns`、`isolation: worktree`、`tools` / `disallowedTools`、`memory`、`background`，全部写在 `.codebuddy/agents/*.md` 的 frontmatter 里；`model-routing.md` 规则把逐代理的档位写成成文规定（v1.9.0）
