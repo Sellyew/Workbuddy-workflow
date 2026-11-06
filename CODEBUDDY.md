@@ -119,7 +119,7 @@ python scripts/backtest.py
 
 ## 技能速查
 
-全部技能的总表在 [README.md](README.md#技能codebuddyskills)。按工作流分，最常用的：
+全部技能的总表在 [README.md](README.md#技能codebuddyskills)。**技能怎么导入/新建/使用，见 [README.md](README.md#技能导入与使用)。** 按工作流分，最常用的：
 
 - **幻灯片 / 教学：** `/create-lecture` `/compile-latex` `/deploy` `/qa-quarto` `/slide-excellence` `/syllabus` `/teach-from-paper` `/scaffold-exercises`
 - **论文 / 审稿：** `/review-paper`（`--peer`）`/seven-pass-review` `/respond-to-referees` `/verify-claims` `/proofread` `/humanize` `/submission-disclosures`

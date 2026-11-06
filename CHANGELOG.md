@@ -8,6 +8,13 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Added — README 新增「技能：导入与使用」引导
+
+新用户进来第一眼就该懂的四链路，此前散落四处、且「导入」从未被写下来：技能住
+`.codebuddy/skills/`、敲 `/name` 触发或描述需求自动匹配、`/new-skill` 或复制
+`skill-template.md` 新建、需要第三方技能时在 WorkBuddy 里搜索安装。README 单列一节，
+CODEBUDDY.md 技能速查加指针，guide 技能节补「导入」一句。
+
 ### Fixed — 字段语义单一真源 + 一致性门禁，消除 guide/README 与引擎的致命矛盾
 
 技能 frontmatter 的字段语义此前被复制三份（skill-template.md / guide / README），且 guide/README

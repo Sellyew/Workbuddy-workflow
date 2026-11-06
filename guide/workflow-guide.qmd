@@ -884,6 +884,8 @@ argument-hint: "[filename without .tex extension]"
 除了本模板的 63 个技能之外，上游 Claude Code 还自带一些内置技能（`/batch`、`/simplify`、`/debug` 等），本平台没有这些；它们对应的能力在本模板里以技能或子代理形式实现。
 :::
 
+需要本模板之外的技能？在 WorkBuddy 里搜索并安装即可，装好后与模板技能一样进 `.codebuddy/skills/`。新建技能的方法见下文「第 4 步：创建自定义技能」。
+
 ## 代理 --- 专职审阅者 {#agents---specialized-reviewers}
 
 代理是这套系统真正的力量。每个代理是某一个质量维度的专家：
