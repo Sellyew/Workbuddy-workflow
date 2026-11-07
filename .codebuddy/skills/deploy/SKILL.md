@@ -8,37 +8,37 @@ allowed-tools: ["Read", "Bash"]
 
 # 把幻灯片部署到 GitHub Pages
 
-渲染 Quarto 幻灯片，并把所有文件同步到 `docs/`，供 GitHub Pages 部署。
+先渲染 Quarto 幻灯片，再把所需文件同步到 `docs/`，交由 GitHub Pages 发布。
 
 ## 步骤
 
-1. **跑同步脚本：**
-   - 若提供了 `$ARGUMENTS`（如 "Lecture4"）：`./scripts/sync_to_docs.sh $ARGUMENTS`
-   - 若没有参数：`./scripts/sync_to_docs.sh`（同步全部讲次）
+1. **运行同步脚本：**
+   - 如果提供了 `$ARGUMENTS`（如 "Lecture4"），运行 `./scripts/sync_to_docs.sh $ARGUMENTS`。
+   - 如果没有参数，运行 `./scripts/sync_to_docs.sh`，同步全部讲次。
 
-2. **核验部署：**
-   - 检查 `docs/slides/` 里有 HTML 文件
-   - 检查 `_files/` 目录被拷过去了（RevealJS 资源）
-   - 检查 `docs/Figures/` 是从 `Figures/` 同步来的
-   - 检查 `docs/files/code/` 里有 R 脚本（若 `scripts/R/` 里有的话）
+2. **检查部署文件：**
+   - 确认 `docs/slides/` 中已生成 HTML 文件。
+   - 确认 `_files/` 目录已复制，其中包含 RevealJS 资源。
+   - 确认 `docs/Figures/` 已与 `Figures/` 同步。
+   - 如果 `scripts/R/` 中有 R 脚本，确认它们已复制到 `docs/files/code/`。
 
-3. **核验交互图表**（如适用）：
-   - 在渲染后的 HTML 里 grep 交互式组件的数量
-   - 确认数量与预期一致
+3. **检查交互图表**（如适用）：
+   - 在渲染后的 HTML 中用 grep 统计交互式组件。
+   - 确认实际数量符合预期。
 
-4. **核验 TikZ SVG**（如适用）：
-   - 检查所有被引用的 SVG 文件都存在于 `docs/Figures/LectureN/`
+4. **检查 TikZ SVG**（如适用）：
+   - 确认所有被引用的 SVG 文件都存在于 `docs/Figures/LectureN/`。
 
-5. **在浏览器里打开**做目视核验：
+5. **在浏览器中打开并检查：**
    - `open docs/slides/LectureX_Name.html`          # macOS
    - `# xdg-open docs/slides/LectureX_Name.html`    # Linux
-   - 确认幻灯片能渲染、图片能显示、导航可用
+   - 确认幻灯片正常渲染、图片正常显示、导航可以使用。
 
 6. **向用户报告结果**
 
 ## 同步脚本做什么：
-- 渲染 `Quarto/` 里的所有 `.qmd` 文件（跳过 `*_backup*` 文件）
-- 把 HTML 与 `_files/` 目录拷到 `docs/slides/`
-- 把 `Slides/` 里的 Beamer PDF 拷到 `docs/slides/`
-- 用 rsync 把 `Figures/` 同步到 `docs/Figures/`
-- 把每个 `scripts/R/*.R` 拷进 `docs/files/code/`（与幻灯片一并发布）
+- 渲染 `Quarto/` 中的所有 `.qmd` 文件，但跳过 `*_backup*` 文件。
+- 将 HTML 与 `_files/` 目录复制到 `docs/slides/`。
+- 将 `Slides/` 中的 Beamer PDF 复制到 `docs/slides/`。
+- 用 rsync 将 `Figures/` 同步到 `docs/Figures/`。
+- 将每个 `scripts/R/*.R` 复制到 `docs/files/code/`，随幻灯片一起发布。

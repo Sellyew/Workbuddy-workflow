@@ -8,6 +8,13 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 全部技能按中文表达重写并修复 WorkBuddy 执行契约
+
+63 个技能按中文理解顺序重写，同步中文触发描述，保留字段、代码和实质限制。多轮独立复核
+清除了 `$0/$1` 与 Monitor 依赖，改为 `$ARGUMENTS`、后台 Bash + TaskOutput；同时修复 PDF 读取、
+跨轮发现身份、工具白名单、CoVe 输入、检查点状态、环境采集接口、核验失败闭锁、资格认定隔离、
+估计目标分区与预算、邮件人工确认及 owner 方法边界等存量问题。
+
 ### Changed — 全部规则按中文表达重写
 
 37 条规则按中文理解顺序重写，保留 frontmatter、代码、数字、模型档位和实质限制。多轮独立

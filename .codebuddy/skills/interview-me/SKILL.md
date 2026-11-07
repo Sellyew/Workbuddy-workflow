@@ -1,24 +1,24 @@
 ---
 name: interview-me
-description: 互动式访谈，把模糊的研究想法固化成结构化规格（研究问题、假设、识别、数据需求、实证策略）。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study" 时使用。多轮问答；规格落盘保存。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
-description_zh: 互动式访谈，把模糊的研究想法固化成结构化规格（研究问题、假设、识别、数据需求、实证策略）。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study" 时使用。多轮问答；规格落盘保存。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
+description: 通过互动访谈，把模糊的研究想法整理成结构化规格，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把规格保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
+description_zh: 通过互动访谈，把模糊的研究想法整理成结构化规格，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把规格保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
 argument-hint: "[brief topic or 'start fresh'] [--no-verify]"
 allowed-tools: ["Read", "Write", "Agent", "Task"]
 ---
 
 # 研究访谈
 
-主持一场结构化访谈，帮研究者把一个研究想法固化成具体规格。
+本技能通过结构化访谈，帮助研究者把研究想法转化为具体规格。
 
-**输入：** `$ARGUMENTS` —— 一段简短的主题描述，或 "start fresh" 表示开放式探索。
+**输入：** `$ARGUMENTS` 可以是一段简短的主题描述，也可以是 "start fresh"，表示开放式探索。
 
 ---
 
 ## 它如何运作
 
-这是一个**对话式**技能。它不立刻产出报告，而是通过一次问一两个问题、根据回答往深处追问，逐步搭出一份结构化研究规格。
+这是一项**对话式**技能，不会立刻生成报告。它每次问一两个问题，再根据回答追问，逐步形成结构化研究规格。
 
-**不要用 AskUserQuestion。** 直接在文字回复里提问，一次一两个。等用户回答之后再继续。
+**不要用 AskUserQuestion。**直接在文字回复中提问，每次一两个，等用户回答后再继续。
 
 ---
 
@@ -27,7 +27,7 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 ### Phase 1: 全局图景（1-2 个问题）
 - "你想理解的是什么现象或谜题？"
 - "这件事为什么重要？谁应当关心答案？"
-- 用户回答之后，可再问："你对这篇论文*属于哪一类*有想法吗 —— reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment / unsure？"（类型定义见 `.codebuddy/agents/methods-referee.md`，领域默认频率见 `.codebuddy/references/discipline-cards.md`。）把答案记进保存的规格里 `**Paper type:**` 表头字段；"unsure" 完全可以，记为 `**Paper type:** unsure`。
+- 用户回答后，可以追问："你对这篇论文*属于哪一类*有想法吗：reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment / unsure？"类型定义见 `.codebuddy/agents/methods-referee.md`，领域默认频率见 `.codebuddy/references/discipline-cards.md`。把答案写入规格的 `**Paper type:**` 表头字段。"unsure" 也是有效答案，记为 `**Paper type:** unsure`。
 
 ### Phase 2: 理论动机（1-2 个问题）
 - "对 X 为什么会发生 / 是什么驱动了 Y，你的直觉是什么？"
@@ -52,7 +52,7 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 
 ## 访谈之后
 
-一旦信息足够（通常是 5-8 轮往复），产出一份**研究规格文档**：
+信息足够时，通常是 5-8 轮往复，生成一份**研究规格文档**：
 
 ```markdown
 # Research Specification: [Title]
@@ -100,40 +100,39 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 [Issues raised during the interview that need further thought]
 ```
 
-**保存到：** `quality_reports/specs/research_spec_[sanitized_topic].md` —— `/grant-proposal`、`/data-management-plan`、`/power-analysis` 与 `/preregister` 读取的那个目录。
+**保存到：** `quality_reports/specs/research_spec_[sanitized_topic].md`。`/grant-proposal`、`/data-management-plan`、`/power-analysis` 与 `/preregister` 都从这个目录读取规格。
 
 ---
 
-## 落地后核验（Post-Flight，强制，CoVe —— 规格引用既有工作时适用）
+## 落地后核验（Post-Flight，强制，CoVe —— 规格含可独立核验的事实断言时适用）
 
-研究规格的**动机**与**贡献**两节通常会按作者 + 年份引用既有论文。这些引文容易产生幻觉。保存规格之前，若规格含任何引文，就跑 [`.codebuddy/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) 里的落地后核验协议。
+研究规格可能包含论文引文、数据集结构、命名实体、数值或否定性文献论断，这些都容易编造。只要规格含有任何可依据来源独立核验的事实断言，保存前就必须执行 [`.codebuddy/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) 的落地后核验协议；没有论文引文并不等于没有待核验断言。
 
-### 步骤（规格零引文时跳过）
+### 步骤（仅规格不含任何可独立核验的事实断言时默认跳过）
 
-1. **抽取断言：** 动机 / 贡献一节里的每一条论文引文（"Smith 2019 shows X"）、任何数据集结构断言（"the CPS has field `educ_attain`"）、任何否定性文献断言（"nobody has studied Y"）。
-2. **生成核验问题：** 每条断言一组具体、可回答的问题。"Does Smith (2019, *JEL*) Section 3 report finding X? Is the venue correct?"
-3. **生成 `claim-verifier`**：用 `Agent` 工具，`subagent_type=claim-verifier`，在独立上下文中 —— 一次具名的 `Agent` 调用，不是对话分叉（分叉会继承草稿）。交给它断言 + 问题 + 来源指针（DOI、arXiv 链接，以及访谈中用户提供的 `master_supporting_docs/` PDF）。不要包含已起草的规格。
-4. **对账：** PASS → 把绿色块附到规格上。PARTIAL → 给无法核验的引文打上不确定标记。FAIL → 在保存规格之前，用核验者给的证据重写受影响的段落。
+1. **抽取断言：**检查整份规格，找出每条论文引文（"Smith 2019 shows X"）、每项数据集结构断言（"the CPS has field `educ_attain`"）、每项否定性文献断言（"nobody has studied Y"），以及其他可独立核验的数值事实和命名实体；不能只扫描动机／贡献中的引文。
+2. **生成核验问题：**为每条断言写出具体、可回答的问题，例如 "Does Smith (2019, *JEL*) Section 3 report finding X? Is the venue correct?"
+3. **生成 `claim-verifier`**：用 `Agent` 工具设置 `subagent_type=claim-verifier`，发起一次使用独立上下文的具名调用，不能使用会继承草稿的对话分叉。只提供断言 + 问题 + 来源指针，包括 DOI、arXiv 链接和访谈中用户提供的 `master_supporting_docs/` PDF，不要提供已起草的规格。
+4. **对账：**PASS 时，把绿色块附到规格上；PARTIAL 时，给无法核验的断言标出不确定性；FAIL 时，先根据核验者提供的证据重写受影响段落，再保存规格。
 
 ### 跳过条件
 
-- 规格零论文引文（纯方法学规格，没有文献引用）。
-- `--no-verify` 参数。
-- 用户在访谈中明确说过 "I'll verify the literature myself."
+- **默认跳过：**仅当整份规格不含任何可独立核验的事实断言。
+- **单独例外：**用户显式使用 `--no-verify` 参数；即使规格含有事实断言，也可按该旗标跳过，但必须说明未经独立核验。
 
 ---
 
 ## 决策记录（权衡浮现时）
 
-若访谈中研究者明确在备选方案间做了选择 —— 识别策略（DiD vs IV vs RDD）、数据来源（行政 vs 调查）、结果度量、样本范围等 —— 就为每个选择再写一份 ADR 风格的**决策记录**。用 [`templates/decision-record.md`](../../../templates/decision-record.md)，存到 `quality_reports/decisions/YYYY-MM-DD_[short-topic].md`。必填字段：Status / Problem / Options considered / Decision + rationale / Consequences / Rejected alternatives。
+研究者在访谈中明确选择某个备选方案时，例如识别策略（DiD vs IV vs RDD）、数据来源（行政 vs 调查）、结果度量或样本范围，就为每个选择另写一份 ADR 风格的**决策记录**。使用 [`templates/decision-record.md`](../../../templates/decision-record.md)，保存到 `quality_reports/decisions/YYYY-MM-DD_[short-topic].md`。必填字段为 Status / Problem / Options considered / Decision + rationale / Consequences / Rejected alternatives。
 
-若访谈只产出一个无人反对的方向，就跳过 ADR —— ADR 用于*有活备选方案的决策*，不用于宣告默认路径。
+如果访谈只形成一个无人反对的方向，就跳过 ADR。ADR 记录的是*存在实际备选方案的选择*，不是用来宣告默认路径。
 
 ---
 
 ## 访谈风格
 
-- **好奇，不说教。** 你的活是把研究者的思考引出来，不是把自己的想法塞进去。
-- **温和地探薄弱处。** 若识别策略听起来脆弱，问「怀疑论者会怎么说……？」，而不是「这行不通，因为……？」。
-- **顺着回答搭。** 每个问题都应当从上一次回答里长出来。
-- **知道何时停。** 若研究者在 4-5 轮之后已有清晰构想，就进入规格。不要过度访谈。
+- **好奇，不说教。**你的任务是引出研究者的思考，不是把自己的想法塞给对方。
+- **温和地探查薄弱处。**识别策略看似脆弱时，问「怀疑论者会怎么说……？」，不要直接断言「这行不通，因为……？」。
+- **顺着回答追问。**每个问题都应承接上一次回答。
+- **知道何时停。**研究者在 4-5 轮后已有清晰构想，就转入规格，不要过度访谈。
