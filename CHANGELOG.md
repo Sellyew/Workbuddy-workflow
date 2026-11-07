@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 全部规则按中文表达重写
+
+37 条规则按中文理解顺序重写，保留 frontmatter、代码、数字、模型档位和实质限制。多轮独立
+复核同时修正了摘要一致性、Holm–Bonferroni 退路、独立 Agent 术语，以及既有的 TikZ 贝塞尔
+测量、Stata 聚类 bootstrap/命名日志/扩展缺失值、R 分位数函数概率截断和脏工作树版本标识问题。
+
 ### Changed — 其余模板按中文表达重写
 
 需求规格、预注册、审稿回复、治理、来源、执行契约、筛选和记录等 14 份模板改为按中文

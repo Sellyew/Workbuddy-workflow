@@ -7,7 +7,7 @@ paths:
 
 # 研究项目编排器（简化版）
 
-**用于 R 脚本、模拟和数据分析** -- 用这个简化循环，而不是完整的多代理编排器。
+**R 脚本、模拟和数据分析使用这个简化循环，不启用完整的多代理编排器。**
 
 ## 简化循环
 
@@ -29,7 +29,7 @@ R / analysis task (user-requested)
         NO  → Fix blocking issues, re-verify, re-score
 ```
 
-**一个代理，不做审读扇出：** 写、跑、核验、评分。只有当某个技能调用它时（例如 `/review-r`、`/simulation-study`），才去用 `orchestrator-protocol.md` 里的扇出运行时。
+**由一个代理完成写作、运行、核验和评分，不做审读扇出。**只有某个技能明确要求时，例如 `/review-r`、`/simulation-study`，才使用 `orchestrator-protocol.md` 中的扇出运行时。
 
 ## 核验清单
 
