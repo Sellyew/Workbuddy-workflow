@@ -63,6 +63,6 @@ alwaysApply: false
 
 ## 交叉引用
 
-- `MEMORY.md`：关于摘要与正文反复漂移的 `[LEARN:audit]`。最初事故是 Copilot 连续三次对 v1.6.1 CHANGELOG 开篇段落提出发现，PR #88–#90。
+- `MEMORY.md`：关于摘要与正文反复漂移的 `[LEARN:audit]`，保留逐断言核对与结构性重写原则。
 - `.codebuddy/skills/commit/SKILL.md`：为文档为主的 PR 写提交信息时，在推送前把本规则应用于 `## Summary` 部分。
 - `.codebuddy/skills/audit-reproducibility/SKILL.md`："Repeated EXPLAINED is a signal (two-strikes)" 把这一模式用于有争议的数值断言。

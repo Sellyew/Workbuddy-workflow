@@ -3,11 +3,8 @@
 工作流中「循环优先」的那一半：那些应当*按计划*运行、并且只在找到东西时才现身的反复性学术
 杂务——而不是在你想起来去跑它们的时候才现身。
 
-**本文在 2026-10-30 按实测重写过。** 上一版整篇讲 `/schedule`、Routines、`CronCreate` 与
-claude.ai 连接器，其中前两项与连接器在本平台不存在；而它把 `CronCreate` 说成「会话一关就死」
-的那个判断，只对默认参数成立。原文的**结论（失败时推送、成功时沉默；无人值守要留人的关卡）
-一条没变**，变的是下面这张机制表——机制错了，照着做就会失败。事实的出处是
-[`platform-facts.md`](platform-facts.md) 的「调度」节。
+**核心原则：失败时推送、成功时沉默；无人值守任务只提出动作，不替人执行不可逆操作。**
+机制断言及其证据级别见 [`platform-facts.md`](platform-facts.md) 的「调度」节。
 
 ## 三种原语，先分清再选
 
@@ -18,7 +15,7 @@ claude.ai 连接器，其中前两项与连接器在本平台不存在；而它�
 | 挺过会话结束 | **否**（默认不落盘） | **是**——落 `.codebuddy/scheduled_tasks.json` | 是（平台侧持久） |
 | 挺过客户端重启 | 否 | 是 | 是 |
 | 到期后 | 随会话消失 | 循环任务 3 天后自动过期；一次性任务触发即删 | 按 `validUntil` / 手动暂停 |
-| 谁能看见它 | 你，在会话里 | 你，在会话里；文件也在仓库里 | 界面里的自动化列表 |
+| 谁能看见它 | 你，在会话里 | 你，在会话里；任务文件位于工作目录且默认被忽略 | 界面里的自动化列表 |
 | 观测级别 | L2 | L2 | **L3**（实测见下） |
 
 三条选择规则：
@@ -32,44 +29,36 @@ claude.ai 连接器，其中前两项与连接器在本平台不存在；而它�
 
 ### 实测：automation 跑在真实工作树上
 
-这是重写本文前唯一的未知项，也是上一版最核心的那句论断所悬的地方。测法：在工作区放一个
-**未被 git 跟踪、也未被 gitignore** 的探针文件，建一条一次性 automation 让它在指定目录里
-`pwd`、读那个文件、跑 `git status`，把原始输出写回来。结果（2026-10-30 05:44）：
+可重跑探针：在 `<repo>` 中创建一个**未被 git 跟踪、也未被 gitignore** 的临时文件，建一条
+一次性 automation，让它在指定工作目录执行 `pwd`、读取该文件、运行 `git status --short`、
+`git rev-parse HEAD` 与 `git rev-parse --is-shallow-repository`，把输出写入本机记录。运行后删除
+临时文件。脱敏结果摘要：
 
+```text
+pwd                                      → <repo>
+Read(<probe-file>)                        → 成功，读到完整内容
+git status --short                       → 可见未跟踪文件与未提交修改
+git rev-parse HEAD                       → <commit>（与本地一致）
+git rev-parse --is-shallow-repository    → false
 ```
-pwd                     → /f/论文/workbuddy test
-git rev-parse --show-toplevel → F:/论文/workbuddy test
-Read(probe/automation-visible.txt) → 成功，读到完整内容
-git status --porcelain  →  M .codebuddy/references/scheduled-routines.md
-                          ?? probe/
-git log -1 --format=%H  → b68584f59ef4aded673daac0f4b5470d09e8cc3b（与本地一致）
-rev-parse --is-shallow-repository → false
-```
 
-它读到了未跟踪文件，也看到了我**当时正在改、还没提交**的那个 `.md`。所以：**不是全新克隆，
-不是隔离沙箱，就是你此刻的这个工作树。** 也就是说，无人值守的作业能读到你 `data/` 下
-任何没有提交的东西——这句话是本文后半段所有护栏的理由。
+这证明 automation **不是全新克隆，不是隔离沙箱，而是当前真实工作树**。无人值守作业能读到
+`data/` 下未提交的内容，也能看到工作树中的未提交修改——这是后文数据护栏的依据。
 
-## 「本地 cron 会死」这句话，在这里只对一半
+## 持久化与本地可见性
 
-上一版的论断是：本地 cron 随 REPL 一起死，所以过夜的东西要交给云端 Routines。本平台没有云端
-Routines，但也不需要它——`durable` 模式把作业落盘、由一个专用任务会话执行，这正是上游靠
-Routines 拿到的那个性质。
+`CronCreate` 默认随会话结束；`durable: true` 则把作业落盘，由专用任务会话执行并挺过重启。
+三种原语都运行在本机，选择时必须考虑以下后果：
 
-于是三段推论要重写：
-
-1. **「云端例程够不到你的数据目录」不再成立。** 这里没有云端：三种原语都跑在你的机器上、
-   看得见你未提交的文件。原文用这句话把受限数据挡在云端之外，本平台上这道挡板不存在。
-2. **代价从「够不到」换成「机器得开着」。** 上游用失去本地可见性换来了「笔记本合上也能跑」。
-   在这里你要反过来选：要本地可见性，就得接受客户端得开着。
-3. **受限数据因此更需要护栏，而不是更少。** 既然无人值守的作业能读到 `data/` 下的微观数据，
-   [`confidential-data.md`](../rules/confidential-data.md) 里那条「无人值守不碰受限数据、
-   除非有人把关」在这台机器上是**唯一的**挡板。
+1. **任务能访问本地工作树。** 它们看得见未提交文件，不能把「任务够不到数据目录」当作数据防线。
+2. **本地可见性要求机器与客户端保持运行。** 需要持久执行时必须启用相应的 durable 或 automation
+   机制，并接受其运行环境要求。
+3. **受限数据需要显式护栏。** 无人值守作业能读到 `data/` 下的微观数据，因此必须遵守
+   [`confidential-data.md`](../rules/confidential-data.md)：无人值守不碰受限数据，除非有人把关。
 
 ## 无人值守时人不在场——这是本平台最要紧的一条
 
-上游文档靠「保留人的关卡」这句话带过了关卡怎么实现。本平台上关卡是**被平台强制**的，而且
-强制的方式和你想的不一样：
+无人值守关卡由平台强制执行，其实现方式与会话内交互不同：
 
 - **Automation 会话里问不到人。** 引擎对 `CODEBUDDY_SESSION_TYPE=automation` 的会话直接把
   双通道交互判为 `automation session synthesises an instant deny`——不是「等人二十分钟」，
@@ -134,7 +123,7 @@ CronCreate(cron: "*/5 * * * *", prompt: "查一次构建状态，只在失败时
 什么都不说；**没跑 → 这是失败，不是沉默**。一个静默死掉的调度器，与一个报告干净的调度器
 无法区分，所以心跳缺失要像红灯门禁一样大声告警。
 
-本平台的推送通道与上游不同，这一点必须说清：
+推送通道需要显式配置：
 
 - 引擎里有 `automation.run.failure_detail` 遥测事件，以及两个**企业微信 webhook** 设置键
   （`automation.wecomWebhookUrl`、`automation.wecomPushConfig.webhookUrl`）。

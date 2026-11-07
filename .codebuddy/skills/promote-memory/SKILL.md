@@ -19,7 +19,7 @@ metadata:
 
 本模板的 [`meta-governance.md`](../../rules/meta-governance.md) 把记忆分为三层：
 
-- **`MEMORY.md`**（根目录，人工筛选并提交，≤ 200 行且 ≤ 25KB）：保存对所有 fork 本模板的人都有帮助的通用经验。
+- **`MEMORY.md`**（根目录，人工筛选并提交，≤ 200 行且严格 < 25KB）：保存对所有 fork 本模板的人都有帮助的通用经验。
 - **原生自动记忆**（`~/.workbuddy/projects/<project>/memory/`，机器本地，类型为 `user`/`feedback`/`project`/`reference`，主题文件无体积上限）：保存与机器和用户有关的经验。
 - **项目层 `.workbuddy/memory/`**（已 gitignore）：保存这个工作副本的按日工作日志与本机状态，不随 fork 或普通 `git clone` 复制。
 
@@ -56,11 +56,11 @@ metadata:
 
 ### 4. 证据评审员
 
-> 「这条条目是否引用催生它的事故、文件路径或具体案例？若条目只写 `[LEARN:foo] always do X`，却没有说明*为什么*的锚点，投 NO。没有理由，未来会话就无法判断边界情形。」
+> 「这条条目是否说明*为什么*、何时适用、何时不适用，并给出当前可复核的证据，例如现存文件、可运行命令或当前行为？若它只写 `[LEARN:foo] always do X`，或只能依赖无法公开复核的单次事故，投 NO。事故指针可作补充，但不是晋升硬条件；私有或本机证据留在原处。」
 
 ### 5. 格式评审员
 
-> 「这条条目是否符合目标层的格式？MEMORY.md 条目采用 `[LEARN:category] wrong → right`（见 [`MEMORY.md`](../../../MEMORY.md)）。来自原生自动记忆的 feedback/project 候选，应保留自动记忆写入的 `**Why:**` + `**How to apply:**` 行，让理由随条目一起迁移。若它只是自由格式笔记，投 NO；先修格式，再重新提交。」
+> 「五票阶段审查原始候选的现有结构，不要求它已有 `[LEARN:category]`。候选是否遵循原生自动记忆的结构（见 [`meta-governance.md`](../../rules/meta-governance.md)）？来自原生自动记忆的 feedback/project 候选，应保留自动记忆写入的 `**Why:**` + `**How to apply:**` 行，让理由随条目一起迁移。若候选只是缺少主题或正文的碎片，或 feedback/project 候选缺少上述原生结构，投 NO；原始候选没有 `[LEARN:category]` 标签不是 NO 的理由。第 4 步形成拟提升文本后，再检查它是否以 `[LEARN:category] <原则/总结>` 开头、类别是否与 MEMORY.md 邻近条目一致，以及是否说明通用理由、适用边界和当前可复核证据（见 [`MEMORY.md`](../../../MEMORY.md)）；证据可以是现存文件、可运行命令或当前行为，不强制采用 wrong → right。不要把后一阶段的目标格式检查记成对原始候选的否决票。」
 
 ### 评议会裁定
 
@@ -84,7 +84,7 @@ metadata:
 - **通用性评审员**：提供候选条目和本模板受众说明，即跨学科学术研究者。
 - **时效性评审员**：提供候选条目，并允许它对代码库执行 `Read` / `Grep`。它必须显式检查条目提到的任何文件路径／函数名／设置。
 - **冗余性评审员**：提供候选条目、当前 `MEMORY.md`、`CODEBUDDY.md` 和相关规则文件。
-- **证据评审员**：只提供候选条目，根据条目自身是否说明动机来投票。
+- **证据评审员**：提供候选条目，并允许它对条目点名的当前文件、命令或行为做只读复核。通用理由、适用边界和当前可复核证据是评审对象；单次事故引用不是硬条件。
 - **格式评审员**：提供候选条目和 [`.codebuddy/rules/meta-governance.md`](../../rules/meta-governance.md) 作为 schema 参照。
 
 五位评审员默认使用 **`lite` 档**，因为 [`.codebuddy/rules/model-routing.md`](../../rules/model-routing.md) 将这类工作归为偏机械的审读。用户若希望用 `default` 档处理更复杂的判断，可以通过代理的 `model:` 字段覆盖。
@@ -98,7 +98,7 @@ metadata:
 对每个条目：
 
 ```markdown
-## `[LEARN:foo] <summary>`
+## `[LEARN:foo] <原则/总结>`
 
 **Vote:** 4-of-5 YES (promote with note)
 
@@ -107,18 +107,21 @@ metadata:
 | Generality | YES | ... |
 | Staleness | YES | ... |
 | Redundancy | YES | ... |
-| Evidence | NO  | Entry doesn't cite the originating incident. Add a one-line "Incident:" pointer before promoting. |
+| Evidence | NO  | Entry lacks a reusable rationale, applicability boundary, or currently checkable evidence. Add those before promoting; an incident citation is optional. |
 | Format | YES | ... |
 
 **Recommendation:** Address Evidence critic, then promote.
 
 **Proposed MEMORY.md addition:**
 ```text
-[LEARN:foo] <full proposed text>
+[LEARN:foo] <原则/总结>
+**Why:** <通用理由>
+**How to apply:** <适用边界>
+**Evidence:** <现存文件、可运行命令或当前行为>
 ```
 ```
 
-**接近上限时，增加条目就必须考虑删除。**MEMORY.md 的上限是 200 行**且** 25KB，通常先达到字节上限。若现有文件加上拟增条目后会超过约 190 行或约 24KB（`wc -c MEMORY.md`），报告还要指出**当前最弱的条目**作为降级候选，并附证据。降级理由可以是条目过期，例如点名的文件、开关或模型已不存在；被更新规则推翻；或只适用于本机而非通用场景。随后询问用户，是把它移入自动记忆还是删除。判断条目是否值得保留时，问：*删掉它会在很多任务上导致出错吗？*
+**接近上限时，增加条目就必须考虑删除。**MEMORY.md 不超过 200 行**且**严格小于 25KB，通常先达到字节上限。若现有文件加上拟增条目后会超过约 190 行或约 24KB（`wc -c MEMORY.md`），报告还要指出**当前最弱的条目**作为降级候选，并附证据。降级理由可以是条目过期，例如点名的文件、开关或模型已不存在；被更新规则推翻；或只适用于本机而非通用场景。随后询问用户，是把它移入自动记忆还是删除。判断条目是否值得保留时，问：*删掉它会在很多任务上导致出错吗？*
 
 ### 第 5 步：用户批准提升
 

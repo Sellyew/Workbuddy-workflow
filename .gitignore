@@ -87,6 +87,11 @@ quality_reports/checkpoints/*
 quality_reports/preregistrations/*
 quality_reports/audits/*
 quality_reports/diagnoses/*
+# 本机原始记录默认不入库；目录结构通过 .gitkeep 保留。
+quality_reports/oracle_audits/*
+!quality_reports/oracle_audits/.gitkeep
+quality_reports/qualification/evals/*
+!quality_reports/qualification/evals/.gitkeep
 # /triage-inbox digests: email subjects, senders, referee manuscript IDs — never committed.
 quality_reports/inbox/*
 !quality_reports/plans/.gitkeep

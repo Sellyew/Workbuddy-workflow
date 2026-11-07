@@ -28,8 +28,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPSTREAM_REF = "upstream/main"
 
-# --- 分类表：与 UPSTREAM.md §4 必须保持一致 -----------------------------------
-# （改这里就要改那里；两份不一致时，以 UPSTREAM.md 为准，因为那是给人读的契约。）
+# --- 分类表：与 docs/maintenance/UPSTREAM.md §4 必须保持一致 -------------------
+# （改这里就要改那里；两份不一致时，以维护手册为准，因为那是给人读的契约。）
 
 # 4.2 本仓库有实质改动，覆盖会丢东西
 MUST_MERGE = {
@@ -39,7 +39,7 @@ MUST_MERGE = {
     "scripts/check-spec-conformance.py": "WB_FIELDS / INERT_FIELDS",
     "scripts/check-staleness.py":        "去掉 date 依赖 + 中文允许标记 + 分隔符规范化",
     "scripts/check-model-versions.sh":   "SURFACES 里的 CODEBUDDY.md",
-    "scripts/check-repo-hygiene.py":     "ROOT_ALLOW 增加 CODEBUDDY.md / UPSTREAM.md",
+    "scripts/check-repo-hygiene.py":     "ROOT_ALLOW 使用 CODEBUDDY.md；维护附录在 docs/maintenance/",
     "scripts/check-links.py":            "本仓库无（占位：上游改动需人工确认）",
     "scripts/check-ledger-coverage.py":  "runner 间接调用 + 旧路径别名",
     ".codebuddy/hooks/root-of-trust-guard.py": "信任根扩到 .codebuddy（安全机制）",
@@ -69,7 +69,7 @@ GENERATED = {
 
 # 4.3 本仓库独有（上游没有）
 LOCAL_ONLY = {
-    "CODEBUDDY.md", "UPSTREAM.md",
+    "CODEBUDDY.md", "docs/maintenance/UPSTREAM.md",
     "docs/translation-conventions.md", "docs/starter-prompt.md",
     "scripts/backtest.py", "scripts/check-hooks.py", "scripts/normalize-model-tiers.py",
     "scripts/verify-count-gates.py", "scripts/sync-check.py", "scripts/port-from-claude.py",

@@ -343,7 +343,10 @@ re-qualified with a seeded defect AND a clean control (an unqualified check is n
 ## Skill eval results (2026-08-22, final harness: sandboxed, behavioral manipulation check, N=3)
 
 Every run passed the behavioral manipulation check (with-arm retrieved the skill-only marker;
-without-arm demonstrably could not). Raw jsonl committed under `evals/<skill>/`.
+without-arm demonstrably could not). Raw JSONL records are persistently archived under
+`evals/<skill>/` and remain local by default. Run disclosure checks before publication. Public
+claims that depend on a run must provide sanitized, reopenable evidence; explicitly commit raw
+records only when necessary and cleared for disclosure.
 
 | Skill | Cases | With | Without | Delta | Verdict |
 |---|---|---|---|---|---|
