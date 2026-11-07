@@ -1,27 +1,27 @@
 ---
 name: data-analysis
-description: 端到端 R 数据分析流水线——探索 → 清洗 → 回归 → 可发表的表格与图形。当用户说 "analyze this dataset"、"run a regression on X"、"explore this CSV"、"full analysis workflow"、"get me summary stats and a regression"，或指向某个 `.csv`/`.rds`/`.dta` 并索要实证结果时使用。在 `scripts/R/` 下生成带编号的 R 脚本，输出写入 `output/`。
-description_zh: 端到端 R 数据分析流水线——探索 → 清洗 → 回归 → 可发表的表格与图形。当用户说 "analyze this dataset"、"run a regression on X"、"explore this CSV"、"full analysis workflow"、"get me summary stats and a regression"，或指向某个 `.csv`/`.rds`/`.dta` 并索要实证结果时使用。在 `scripts/R/` 下生成带编号的 R 脚本，输出写入 `output/`。
+description: 运行端到端 R 数据分析：探索、清洗、回归，并生成可用于发表的表格和图形。用户说 "analyze this dataset"、"run a regression on X"、"explore this CSV"、"full analysis workflow"、"get me summary stats and a regression"、"分析这个数据集"、"跑一个回归" 或 "探索这个 CSV"，或指向 `.csv`/`.rds`/`.dta` 文件并索要实证结果时使用。在 `scripts/R/` 下生成带编号的 R 脚本，输出写入 `output/`。
+description_zh: 运行端到端 R 数据分析：探索、清洗、回归，并生成可用于发表的表格和图形。用户说 "analyze this dataset"、"run a regression on X"、"explore this CSV"、"full analysis workflow"、"get me summary stats and a regression"、"分析这个数据集"、"跑一个回归" 或 "探索这个 CSV"，或指向 `.csv`/`.rds`/`.dta` 文件并索要实证结果时使用。在 `scripts/R/` 下生成带编号的 R 脚本，输出写入 `output/`。
 argument-hint: "[dataset path or description of analysis goal]"
-allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task", "Monitor"]
+allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task", "TaskOutput"]
 ---
 
 # 数据分析工作流
 
-在 R 中跑完端到端的数据分析：加载、探索、分析，并产出可发表的输出。
+用 R 完成从加载、探索到分析的完整流程，并生成可用于发表的输出。
 
-**输入：** `$ARGUMENTS` —— 一个数据集路径（例如 `data/county_panel.csv`），或对分析目标的描述（例如 "regress wages on education with state fixed effects using CPS data"）。
+**输入：** `$ARGUMENTS`，可以是数据集路径（例如 `data/county_panel.csv`），也可以是分析目标（例如 "regress wages on education with state fixed effects using CPS data"）。
 
 ---
 
 ## 约束
 
 - **遵循 R 代码约定**，见 `.codebuddy/rules/r-code-conventions.md`
-- **把所有脚本保存到** `scripts/R/`，文件名要有描述性
+- **把所有脚本保存到** `scripts/R/`，文件名要能说明用途
 - **把所有输出**（图、表、RDS）保存到 `output/`
-- **每个计算出的对象都用 `saveRDS()` 保存** —— Quarto 幻灯片可能会用到它们
-- **所有图都用项目主题**（在 `.codebuddy/rules/` 里查自定义主题）
-- **在报出结果之前，对生成的脚本跑 r-reviewer**
+- **用 `saveRDS()` 保存每个计算对象**，供 Quarto 幻灯片后续使用
+- **所有图都使用项目主题**，自定义主题见 `.codebuddy/rules/`
+- **报告结果前，先让 r-reviewer 审查生成的脚本**
 
 ---
 
@@ -29,9 +29,9 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"
 
 ### Phase 0：起飞前检查报告
 
-**在写任何分析代码之前，先产出一份起飞前检查报告（Pre-Flight Report），表明你读过输入。** 这能避免常见的失败模式：代理编造变量名，或跳过项目约定。
+**编写任何分析代码前，先输出起飞前检查报告（Pre-Flight Report），证明你已经读取输入。** 这一步可以避免代理编造变量名或忽略项目约定。
 
-输出块（写在给用户的回复里，位于 Phase 1 之前）：
+在给用户的回复中输出以下块，位置必须在 Phase 1 之前：
 
 ```markdown
 ## Pre-Flight Report
@@ -51,42 +51,41 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"
 **Plan:** [3-5 bullet outline of the R script structure]
 ```
 
-如果任一输入读不出来（文件缺失、格式不可读），先停下问用户，再继续。
+如果任何输入无法读取，例如文件缺失或格式不可读，先停下来询问用户，不要继续。
 
 ### Phase 1：环境与数据加载
 
-1. 创建 R 脚本，写好头部（标题、作者、用途、输入、输出）
-2. 在顶部加载所需包（用 `library()`，绝不用 `require()`）
-3. 在顶部一次性设定种子，用 YYYYMMDD 格式（按 `r-code-conventions.md`），例如 `set.seed(20260415)`（INV-9）
+1. 创建 R 脚本，在头部写明标题、作者、用途、输入和输出
+2. 在顶部加载所需包，使用 `library()`，绝不用 `require()`
+3. 按 `r-code-conventions.md` 在顶部设置一次种子，日期采用 YYYYMMDD 格式，例如 `set.seed(20260415)`（INV-9）
 4. 加载并检查数据集
 
 ### Phase 2：探索性数据分析
 
-生成诊断输出：
+生成以下诊断输出：
+
 - **汇总统计：** `summary()`、缺失率、变量类型
 - **分布：** 关键连续变量的直方图
 - **关系：** 散点图、相关矩阵
-- **时间模式：** 若为面板数据，画出随时间变化的趋势
-- **组间比较：** 若有处理组/对照组，比较处理前的均值
+- **时间模式：** 如果是面板数据，画出随时间变化的趋势
+- **组间比较：** 如果有处理组和对照组，比较处理前均值
 
 把所有诊断图保存到 `output/diagnostics/`。
 
 ### Phase 3：主分析
 
-根据研究问题：
-- **回归分析：** 面板数据用 `fixest`，横截面用 `lm`/`glm`
-- **标准误：** 在合适层级聚类（并记录为什么这样聚）
-- **多组设定：** 从简单开始，逐步加入控制变量
-- **效应量：** 除原始系数外，同时报告标准化效应
+主分析必须遵循研究设计、带日期的现行 owner 签核和已批准实现。估计器、标准误与聚类方式、控制变量集合与设定顺序、效应量及报告方式均来自这些材料，本技能不自行选择或推荐。
+
+开始每项估计前，记录研究设计出处、签核日期与已批准实现。任一依据缺失时，留下 `CLARIFY: [缺失的研究设计、现行签核或已批准实现]`，暂停相应估计并向用户澄清；不得用默认估计器、聚类方式或控制变量顺序补齐。其他不依赖该决定的已批准步骤仍可继续。
 
 #### 设定台账——每一次估计，无论保留与否
 
-本阶段估计的每一个设定，包括被弃用的和失败的，都在运行时向 `quality_reports/spec-ledger.md` 追加一行。这正是审稿人那句「你还试过什么？」所应得到的记录：它让搜索过程可见，而不是阻止搜索；它只记录设定，不建议该跑哪一个。
+本阶段每估计一个设定，无论后来保留、弃用还是失败，都要在运行时向 `quality_reports/spec-ledger.md` 追加一行。这样审稿人问「你还试过什么」时，就有完整记录可查。台账让搜索过程可见，但不阻止搜索，也不建议应该运行哪个设定。
 
-- **只追加。** 绝不编辑或删除已有行；更正就是新增一行。改动已提交行的提交会过不了仓库卫生门禁。
-- **Status** 取 `kept`、`dropped` 或 `failed`；**Why** 说明任何未保留项的原因。
-- **Estimate** 可留空。在受限数据上，先把该格留空，直到数字通过披露审查（[`confidential-data.md`](../../rules/confidential-data.md)）。
-- 公式里的 `|` 要转义成 `\|`，否则表格会断。含反引号的设定（例如 Stata 局部宏 `` `x' ``）要放进双反引号跨度里：``` `` reg y `controls' `` ```。
+- **只追加。** 绝不编辑或删除已有行；需要更正时新增一行。如果一次提交改动了已经提交的行，仓库卫生门禁会拒绝该提交。
+- **Status** 取 `kept`、`dropped` 或 `failed`；**Why** 说明未保留任何项的原因。
+- **Estimate** 可以留空。使用受限数据时，先留空这一格，直到数字通过披露审查（[`confidential-data.md`](../../rules/confidential-data.md)）。
+- 公式中的 `|` 要转义成 `\|`，否则表格会断。含反引号的设定（例如 Stata 局部宏 `` `x' ``）要放进双反引号跨度里：``` `` reg y `controls' `` ```。
 
 ```bash
 LEDGER=quality_reports/spec-ledger.md
@@ -101,42 +100,45 @@ else
 fi
 printf '| %s | %s ' "$(date +%F)" "$REV" >> "$LEDGER"          # one printf + one heredoc per specification
 cat >> "$LEDGER" <<'EOF'
-| scripts/R/03_analyze.R:42 | log_wage | `feols(log_wage ~ treat + age \| id + year, cluster = ~id)` | panel 2010-2019 | kept | main specification | 0.082 (0.021) |
+| scripts/R/03_analyze.R:42 | [outcome] | [approved specification] | [approved sample] | kept | [reason from research design] | [estimate after disclosure review] |
 EOF
 ```
 
 ### Phase 4：可发表的输出
 
 **表格：**
+
 - 回归表用 `modelsummary`（首选）或 `stargazer`
-- 包含全部标准要素：系数、标准误、显著性星号、N、R 方
+- 表格内容、效应量以及标准误、区间、显著性等报告方式，均由研究设计、带日期的现行 owner 签核和已批准实现决定；不得自行添加显著性星号
 - 导出 `.tex` 供 LaTeX 引用，同时导出 `.html` 便于快速查看
 
 **图形：**
+
 - 用 `ggplot2` 加项目主题
 - 为兼容 Beamer，设 `bg = "transparent"`
-- 坐标轴标签要规范（句首大写、带单位）
+- 坐标轴标签要规范，句首大写并带单位
 - 导出时写明尺寸：`ggsave(width = X, height = Y)`
 - 同时保存 `.pdf` 和 `.png`
 
-### Phase 5：保存与复核
+### Phase 5：实际运行、保存与复核
 
-1. 对所有关键对象用 `saveRDS()`（回归结果、汇总表、处理后的数据）
-2. 按需用 `dir.create(..., recursive = TRUE)` 创建 `output/` 子目录
-3. 对生成的脚本跑 r-reviewer 代理：
+1. 脚本必须对所有关键对象使用 `saveRDS()`，包括回归结果、汇总表和处理后的数据，并按需用 `dir.create(..., recursive = TRUE)` 创建 `output/` 子目录。
+2. **保存结果与委派复核之前，必须通过 Bash 实际运行** `Rscript scripts/R/[script_name].R` 并记录完整日志和退出码。不得只读代码、做语法检查或声称已经运行。
+3. **失败即停止：** 只有退出码为 0 才继续。逐个检查脚本声明的预期输出文件存在且非空（例如 `test -s output/analysis/[file]`）；再用实际 `Rscript -e` 调用 `readRDS()` 读取每个关键 RDS，并检查预期类型/维度。任一运行、文件或读取检查失败，都停止后续复核与结果报告，向用户给出日志和失败检查，不得把产物当作有效结果。
+4. 上述检查全部通过后，才让 r-reviewer 代理审查生成的脚本：
 
 ```
 Delegate to the r-reviewer agent:
 "Review the script at scripts/R/[script_name].R"
 ```
 
-4. 处理复核中任何 Critical 或 High 级别的问题。
+5. 处理复核中任何 Critical 或 High 级别的问题。每次修改脚本后，都必须重新执行第 2–3 步的实际 `Rscript` 运行与产物检查，再重新复核。
 
 ---
 
 ## 脚本结构
 
-按这个模板来：
+按这个模板编写：
 
 ```r
 # ============================================================
@@ -149,8 +151,8 @@ Delegate to the r-reviewer agent:
 
 # 0. Setup ----
 library(tidyverse)
-library(fixest)
 library(modelsummary)
+# [仅加载研究设计、现行签核和已批准实现要求的其他包]
 
 set.seed(20260415)  # YYYYMMDD per r-code-conventions.md (INV-9)
 
@@ -176,18 +178,18 @@ dir.create("output/analysis", recursive = TRUE, showWarnings = FALSE)
 
 ## 要点
 
-- **复现，不要猜。** 用户指定了某个回归，就原样跑那个回归。
-- **把过程摊开。** 在跳到回归之前先打印汇总统计。
-- **检查问题。** 留意多重共线性、离群值、完全预测。
-- **用相对路径。** 所有路径相对于仓库根目录。
-- **不写硬编码值。** 样本限制、日期范围等都用变量表示。
+- **复现，不要猜。** 用户指定了某个回归，就原样运行那个回归。
+- **展示分析过程。** 进入回归前，先打印汇总统计。
+- **检查问题。** 留意多重共线性、离群值和完全预测。
+- **使用相对路径。** 所有路径都相对于仓库根目录。
+- **不要硬编码。** 样本限制、日期范围等都用变量表示。
 
-## 长时间拟合：使用 Monitor 工具（2026-04）
+## 长时间拟合：后台 Bash + TaskOutput
 
-对于要跑几分钟以上的回归、模拟或自助法循环，用 Bash 以 `run_in_background: true` 启动，然后用 Anthropic 的 **Monitor 工具**把 R 的 stdout 实时流进对话。套路如下：
+回归、模拟或自助法循环如果需要运行几分钟以上，用 Bash 以 `run_in_background: true` 启动，再用 **TaskOutput** 获取状态和输出。操作如下：
 
-1. 用 Bash 的 `run_in_background: true` 后台启动，把所有输出送进日志：`mkdir -p output && Rscript scripts/R/03_analyze.R > output/03_analyze.log 2>&1`。进程退出时后台任务会自行通知你。
-2. 启动 Monitor，命令跟踪该日志并过滤里程碑与失败，例如 `tail -f output/03_analyze.log | grep --line-buffered -E "Coefficients table written|Error|Execution halted"`。Monitor 没有 job-id 参数：它自己 `command` 的 stdout 就是事件流。`tail -f` 永不退出，所以把 `timeout_ms` 设得高于预期运行时长（或用 `persistent: true`），并在任务结束后用 TaskStop 停掉监视。
-3. 依据流里露出的信息决定继续还是纠正方向。
+1. 用 Bash 的 `run_in_background: true` 在后台启动，并把全部输出写入日志：`mkdir -p output && Rscript scripts/R/03_analyze.R > output/03_analyze.log 2>&1`。记录 Bash 返回的 `task_id`；进程退出时，后台任务会自动通知你。
+2. 用该 `task_id` 调用 TaskOutput。需要等待完成时使用 `block: true`；只需查看当前状态时使用 `block: false`。完成后读取完整日志，并仍按 Phase 5 检查退出码、预期文件非空和关键对象可读。
+3. 根据实际任务输出决定继续运行还是调整方向；不要用 `sleep` 轮询循环，也不要另设日志监视进程。
 
-这样既避免了轮询循环这一反模式（`sleep 30; check; sleep 30; check`），也避免把缓存耗在空等上。与指南的 [Cost-Conscious Parallelism](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#cost-conscious-parallelism) 一节配合使用时尤其有用。
+这样既不需要反复空等，也不会丢失最终退出状态。它与指南的 [Cost-Conscious Parallelism](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#cost-conscious-parallelism) 一节配合使用时尤其有用。
