@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 指南定制、附录与致谢按中文表达重写
+
+领域定制、技能创建、MCP/插件扩展、附录和致谢改为按中文理解顺序成文。独立复核按实现
+修正了项目级 MCP 配置的忽略规则、无人值守 handoff、issue 守卫注册方式，并统一独立上下文
+子代理与敏感性统计量的术语；附录计数、技能字段和平台边界保持受门禁约束。
+
 ### Changed — 指南平台与生态章节按中文表达重写
 
 WorkBuddy 平台能力、生态项目与社区采用情况改为按中文理解顺序成文，保留平台边界、

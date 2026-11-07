@@ -2444,7 +2444,7 @@ slide-auditor 检查*技术*质量，例如溢出和间距；pedagogy-reviewer �
 
 **原则：** 运行 N 遍彼此独立的审计，每遍只检查一个维度。每位审计者只能看到产物，不能读取先前的审计报告，以避免群体思维和锚定偏误。
 
-本模式与 [Pattern 6](#pattern-6-multi-agent-review) 的差别在于独立性的实现方式：每遍审计都是一次**分叉出去的单一透镜审读，审阅者看不到其他人的报告**。模板提供的 `/seven-pass-review` 将七个透镜作为并行的分叉审阅者运行，通过隔离而非顺序执行，避免引文审计者受到散文审计者影响。如果你需要先读完一份报告再委派下一份，仍可以手工逐个运行。
+本模式与 [Pattern 6](#pattern-6-multi-agent-review) 的差别在于独立性的实现方式：每遍审计都是一次**独立上下文的单一透镜审读，审阅者看不到其他人的报告**。模板提供的 `/seven-pass-review` 将七个透镜分派给并行的独立上下文审阅者，通过隔离而非顺序执行，避免引文审计者受到散文审计者影响。如果你需要先读完一份报告再委派下一份，仍可以手工逐个运行。
 
 #### 七遍审计协议（面向论文）
 
@@ -2464,7 +2464,7 @@ slide-auditor 检查*技术*质量，例如溢出和间距；pedagogy-reviewer �
 
 ```
 You: "Run the seven-audit protocol on my paper"
-WorkBuddy: [Runs 7 parallel forked reviews, each blind to the others]
+WorkBuddy: [运行 7 项并行独立审读，每项均看不到其他审读]
        → Produces 7 independent reports
        → Synthesizes into prioritized revision checklist
 ```
@@ -2587,7 +2587,7 @@ research_spec_<topic>.md  ──────→  YYYY-MM-DD_<slug>.md
 
 ### Pattern 18 — 外部裁判 {#pattern-18-external-oracle}
 
-**问题。** 你的审阅者与你的模型可能有相同盲点。分叉出去的子代理只在*上下文*上独立，在*训练*上并不独立，因此可能以与你相同的方式出错。
+**问题。** 你的审阅者与你的模型可能有相同盲点。独立上下文子代理只在*上下文*上独立，在*训练*上并不独立，因此可能以与你相同的方式出错。
 
 **模式。** 请另一家厂商的前沿模型担任审稿人，把它返回的内容视为**候选意见**，不能直接当作判定。
 
@@ -2618,7 +2618,7 @@ research_spec_<topic>.md  ──────→  YYYY-MM-DD_<slug>.md
 - **给每个分叉标上 `estimand` 或 `estimate`。** 有些选择会改变*被估计的对象*，而不只是估计值，对这些分叉求平均没有意义。估计目标类分叉应单独记录，并在报告中说明。
 - **只有当你愿意在研讨会上为分叉的两个分支辩护时，才把它纳入网格。** 加入无法辩护的备选，只会稀释那些脆弱的格子。
 - **报告哪个分叉驱动了离散度。** 「除了美元成交量与份额成交量之间的选择之外都稳健」，比一整段笼统的稳健性说明更有信息量。
-- **然后检验识别假设**，使用明确点名且可计算的统计量：E-value、Cinelli–Hazlett RV、Oster δ。
+- **规格曲线用于描述结果分布；具名敏感性统计量用于评估结果对识别假设的敏感性并为其划界**，例如 E-value、Cinelli–Hazlett RV、Oster δ。
 - **预先承诺解读。** 在运行网格**之前**，写下什么结果会支持或削弱这条断言。
 
 **分布曲线较宽是一项发现，不是失败。** 应把它写进论文，并说明离散度由什么驱动。稳健性一节中最有价值的一句话，往往正是迫使你放弃偏好解读的那句话。
@@ -2877,19 +2877,19 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 ::: {.callout-tip}
 ## 哪些是预装的，哪些要你自己改
 
-本模板里已有两个学科落到具体：
+模板目前为两个学科提供了具体内容：
 
-- **经济学** --- Top-5 期刊画像（AER、QJE、JPE、ECMA、ReStud）、以 R 为中心的 `r-code-conventions.md`、domain-reviewer.md 里的计量经济学示例。
-- **政治学** --- APSR、AJPS、JOP 期刊画像（v1.8.0）、methods-referee 里的 `formal-theory` + `survey-experiment` 论文类型、domain-reviewer.md 里的政治学示例。
+- **经济学**：Top-5 期刊画像（AER、QJE、JPE、ECMA、ReStud）、以 R 为中心的 `r-code-conventions.md`，以及 domain-reviewer.md 中的计量经济学示例。
+- **政治学**：APSR、AJPS、JOP 期刊画像（v1.8.0）、methods-referee 中的 `formal-theory` + `survey-experiment` 论文类型，以及 domain-reviewer.md 中的政治学示例。
 
-两个领域都接进了 `.codebuddy/references/discipline-cards.md`：当你只给出学科、没给目标期刊时，`/research-ideation`、`/interview-me` 与 `/preregister` 会去读这个文件。学科卡记录了论文类型频次、主流期刊、预注册惯例（OSF / AsPredicted / AEA RCT Registry）、显著性星号惯例、标准误惯例，以及主流代码语言（R / Stata / Python）。
+这两个领域都已写入 `.codebuddy/references/discipline-cards.md`。你只提供学科而没有指定目标期刊时，`/research-ideation`、`/interview-me` 和 `/preregister` 会读取这个文件。学科卡列出了论文类型频次、主流期刊、预注册惯例（OSF / AsPredicted / AEA RCT Registry）、显著性星号和标准误的惯常写法，以及常用编程语言（R / Stata / Python）。
 
-**要 fork 去改心理学、社会学、公共卫生或其他领域：** 加约 3 份期刊画像、2–3 种论文类型、1 张学科卡。基础设施（编排器、钩子、质量门禁、同行评审流水线）与领域无关，可以不加修改地平移。v2.0 待办清单（`.codebuddy/references/v2.0-backlog.md`）里，心理学、社会学与公共卫生被记为无限期推迟（2026-06-10 由仓库所有者划定范围：经济学及密切相关的领域），所以补上它们属于 fork 侧的自定义，而不是计划中的模板发布。
+**如果你要 fork 模板，用于心理学、社会学、公共卫生或其他领域**，请添加约 3 份期刊画像、2–3 种论文类型和 1 张学科卡。编排器、钩子、质量门禁和同行评审流水线不依赖具体学科，可以直接沿用。v2.0 待办清单 `.codebuddy/references/v2.0-backlog.md` 已把心理学、社会学和公共卫生无限期推迟。仓库所有者于 2026-06-10 将模板范围划定为经济学及密切相关的领域，因此，这些学科需要由 fork 自行补充，不在模板的发布计划中。
 :::
 
 ## 第 1 步：搭建你的知识库
 
-知识库（`.codebuddy/rules/knowledge-base-template.md`）是与领域关系最紧的部件 --- 它是一条[按路径生效的规则](#rules---domain-knowledge-that-auto-loads)，当 WorkBuddy 处理你的内容文件时会自动加载。它提供了若干骨架表：记号约定、讲义推进路线、应用案例、设计原则、反模式，以及 R 代码易踩的坑。边做项目边填即可 --- 不必一开始就填满。
+知识库 `.codebuddy/rules/knowledge-base-template.md` 最需要按领域调整。它是一条[按路径生效的规则](#rules---domain-knowledge-that-auto-loads)，WorkBuddy 处理你的内容文件时会自动加载。文件中的骨架表涵盖记号约定、讲义推进路线、应用案例、设计原则、反模式和 R 代码的常见问题。你可以随项目进展逐步填写，不必一开始填满。
 
 ### 记号登记表与符号速查
 
@@ -2922,41 +2922,41 @@ RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 
 ## 第 2 步：造你的领域审阅者
 
-复制 `.codebuddy/agents/domain-reviewer.md`，把[五透镜框架](#sec-domain-reviewer)按你的领域改一遍。模板给的是骨架，领域专属的检查项由你来填。
+复制 `.codebuddy/agents/domain-reviewer.md`，再按你的领域改写[五透镜框架](#sec-domain-reviewer)。模板只提供骨架，具体检查项需要由你补充。
 
 ## 第 3 步：适配你的主题
 
-模板自带互相配套的 LaTeX 与 Quarto 配色。要定制的话：
+模板提供相互配套的 LaTeX 与 Quarto 配色。定制时请按以下顺序操作：
 
-1. 同时改 `Preambles/header.tex`（Beamer/TikZ）**和** `Quarto/theme-template.scss`（Quarto）--- 颜色名要一致，HEX 值要对应。
-2. 跑 `./scripts/check-palette-sync.sh` 确认两边对得上。`./scripts/validate-setup.sh` 也会（以非阻断方式）顺带跑它；但没有任何钩子或 CI 门禁会替你跑，所以每次改完配色请自己重跑一遍。
-3. 必要时更新 SCSS 里的 CSS 类名。
-4. 调整 `beamer-translator` 的环境映射，与新类名对应。
+1. 同时修改 `Preambles/header.tex`（Beamer/TikZ）**和** `Quarto/theme-template.scss`（Quarto），确保颜色名一致、HEX 值对应。
+2. 运行 `./scripts/check-palette-sync.sh`，检查两边是否一致。`./scripts/validate-setup.sh` 也会顺带运行这项检查，但不会因检查失败而阻断。没有钩子或 CI 门禁会自动代跑，所以每次修改配色后都要自行重跑。
+3. 如有需要，更新 SCSS 中的 CSS 类名。
+4. 调整 `beamer-translator` 的环境映射，使其对应新类名。
 
-**配色契约。** 核心配色名（`primary-blue`、`primary-gold`、`highlight-yellow`、`light-bg`、`jet`）必须两边都存在。`templates/tikz-snippets/` 里的片段目前把颜色内联写死，以便独立编译；但真正 `\input{header}` 的讲义会自动继承配色。完整契约与 TikZ 样式库见 [`Preambles/README.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/Preambles/README.md)。
+**配色契约。** 两边都必须定义核心配色名 `primary-blue`、`primary-gold`、`highlight-yellow`、`light-bg` 和 `jet`。`templates/tikz-snippets/` 中的片段目前直接写入颜色值，以便独立编译；真正使用 `\input{header}` 的讲义会自动继承配色。完整契约与 TikZ 样式库见 [`Preambles/README.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/Preambles/README.md)。
 
 ## 第 4 步：创建自定义技能 {#sec-create-skills}
 
-本指南为常见学术任务提供了 63 个[技能](#skills---reusable-slash-commands)。但如果你有自己领域特有的重复性流程，可以自己造。
+本指南用 63 个[技能](#skills---reusable-slash-commands)覆盖常见学术任务。如果你的领域还有重复执行的特定流程，可以自行创建技能。
 
 ### 什么时候该造技能
 
-以下情况值得造：
+遇到以下情况时，可以把流程固化为技能：
 
-- 你反复向 WorkBuddy 解释同一个 3 步以上的流程
-- 你需要领域专属的质量检查（引文格式、记号一致性、实验室规程）
-- 你要强制某种领域特有的输出格式（学位论文结构、期刊模板）
-- 你要串起多工具流程（数据 → 分析 → 稿件）
+- 你反复向 WorkBuddy 解释同一个包含 3 步以上的流程
+- 你需要检查领域专属的质量要求，例如引文格式、记号一致性或实验室规程
+- 你必须采用领域特有的输出格式，例如学位论文结构或期刊模板
+- 你需要串联多个工具，完成数据 → 分析 → 稿件的流程
 
-**以下情况不必造技能：**
+**以下情况不必创建技能：**
 
-- 一次性任务
-- 频繁变动的流程
-- 简单一两步的操作
+- 只执行一次的任务
+- 经常变化的流程
+- 只有一两步的简单操作
 
 ### 技能的结构
 
-每个技能是 `.codebuddy/skills/` 下的一个目录，内含一个 `SKILL.md`：
+用户技能库用于跨项目复用，存放位置由通用创建器管理。每个项目技能在 `.codebuddy/skills/` 下占一个目录，目录中包含一个 `SKILL.md`：
 
 ```markdown
 ---
@@ -2984,44 +2984,44 @@ Solution: [How to fix]
 
 ### Frontmatter 完整参考 {#skill-frontmatter}
 
-YAML frontmatter 决定技能的行为。最常用的字段：
+技能的 YAML frontmatter 控制其行为。常用字段如下：
 
 | 字段 | 作用 | 示例 |
 |------|---------|---------|
-| `name` | `/` 菜单里显示的名字 | `compile-latex` |
-| `description` | **最重要的一项。** 作为匹配元数据，帮助决定何时触发；触发后才加载正文 | `Compile Beamer slides...` |
-| `argument-hint` | `/skill-name` 之后显示的占位符 | `<filename>` |
-| `allowed-tools` | **工具白名单**，限制技能可用工具；只列实际需要的工具。不是绝对安全边界，模型行为、权限规则与钩子仍须核验 | `["Read", "Bash", "Glob"]` |
-| `agent` | 关联 `.codebuddy/agents/` 里的某个代理定义 | `proofreader` |
-| `model` | 强制指定模型档位 | `lite` |
-| `disable-model-invocation` | 阻止 WorkBuddy 自动触发 | `true` |
-| `user-invocable` | 是否出现在 `/` 菜单里；菜单不可见不等于引擎未发现或 `/name` 不可调用 | `true`（默认） |
+| `name` | `/` 菜单显示的名称 | `compile-latex` |
+| `description` | **最重要的字段。** 提供匹配元数据，帮助系统判断何时触发；技能触发后才加载正文 | `Compile Beamer slides...` |
+| `argument-hint` | `/skill-name` 后显示的参数占位符 | `<filename>` |
+| `allowed-tools` | **工具白名单**，限定技能可以使用的工具，只应列出实际需要的工具。它不是绝对安全边界，仍须核验模型行为、权限规则和钩子 | `["Read", "Bash", "Glob"]` |
+| `agent` | 指定 `.codebuddy/agents/` 中关联的代理定义 | `proofreader` |
+| `model` | 强制使用指定的模型档位 | `lite` |
+| `disable-model-invocation` | 禁止 WorkBuddy 自动触发技能 | `true` |
+| `user-invocable` | 控制技能是否出现在 `/` 菜单中；菜单不可见不代表引擎没有发现技能，也不代表无法通过 `/name` 调用 | `true`（默认） |
 
-完整字段清单（会读 / 写了不生效 / 被读但有害三类）见单一真源 [`.codebuddy/references/skill-fields.md`](../.codebuddy/references/skill-fields.md)。
+单一真源 [`.codebuddy/references/skill-fields.md`](../.codebuddy/references/skill-fields.md) 列出了全部字段，并将它们分为三类：系统会读取、写了也不生效、会被读取但有害。
 
 ::: {.callout-warning}
 ## `allowed-tools` 白名单不是绝对安全边界
 
-[WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)把 `allowed-tools` 定义为「工具白名单（逗号分隔）」，[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)写明 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。只列技能允许使用的工具；未列出的工具不在白名单内。要让技能只读，用 `allowed-tools` 只列只读工具来排除写入工具，并在正文声明「不修改被审文件」。白名单与正文约束能降低误写风险，但不是绝对安全保证：仍须核验模型实际调用、项目 `permissions.deny` 规则与 PreToolUse 钩子。当前没有桌面端相反行为的 L3 证据；若某版本实测不同，必须单列客户端版本、最小探针与实际输出。完整说明见 `templates/skill-template.md`。
+[WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)将 `allowed-tools` 定义为「工具白名单（逗号分隔）」。[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)则写明 “Allowlist of permitted tools” 和 “Restrict which tools a Skill can use”。因此，这里只列技能允许使用的工具，未列出的工具不在白名单内。若要让技能保持只读，应在 `allowed-tools` 中只列只读工具，排除写入工具，同时在正文中声明「不修改被审文件」。白名单和正文约束可以降低误写风险，却不能提供绝对安全保证。你仍须核验模型实际调用了哪些工具，并检查项目的 `permissions.deny` 规则与 PreToolUse 钩子。目前没有 L3 证据表明桌面端存在相反行为。如果某个版本的实测结果不同，必须单独列出客户端版本、最小探针和实际输出。完整说明见 `templates/skill-template.md`。
 :::
 
 ::: {.callout-note}
 ## 关键设计取舍
 
-- **`model: reasoning`** 适合需要深度推理的审读类技能（如论文批评）。简单的格式化技能用 `model: lite` 省 token。
+- 论文批评等需要深入推理的审读技能适合使用 **`model: reasoning`**；简单的格式化技能可以使用 `model: lite`，减少 token 消耗。
 :::
 
 ### 技能里的动态内容 {#skill-dynamic-content}
 
-`$ARGUMENTS` 字符串替换已经实测；命令输出注入尚未实测，两者不能写成同等确定的事实：
+`$ARGUMENTS` 的字符串替换已经过实测，命令输出注入则尚未实测，不能把两者写成同样确定的结论。
 
 **字符串替换：**
 
 | 语法 | 展开为 | 用例 |
 |--------|-----------|-------------|
-| `$ARGUMENTS` | `/skill-name` 之后的完整参数字符串 | `/compile-latex Lecture01` → `$ARGUMENTS` = `Lecture01` |
+| `$ARGUMENTS` | `/skill-name` 后的完整参数字符串 | `/compile-latex Lecture01` → `$ARGUMENTS` = `Lecture01` |
 
-**动态上下文注入**，语法为 `` !`command` ``：
+**动态上下文注入**使用 `` !`command` `` 语法：
 
 ```markdown
 ## Context
@@ -3030,26 +3030,26 @@ Recent changes: !`git log --oneline -5`
 Available lectures: !`ls Slides/*.tex`
 ```
 
-上述 `` !`command` `` 语法是否会在加载时执行并注入输出，**尚未实测**。不要据此断言命令必然运行；确需使用时，先用无副作用命令做探针，记录客户端与技能版本，再依据实测结果决定是否采用。
+目前**尚未实测**上述 `` !`command` `` 语法是否会在加载时执行命令并注入输出，因此不能断言命令必然运行。确需使用时，先用无副作用的命令做探针，记录客户端与技能版本，再根据实测结果决定是否采用。
 
 ### 写出有效的触发描述
 
-`description` 是你创建技能时写下的重要元数据。WorkBuddy 用元数据匹配技能；触发时才加载正文，附属材料再按需读取。描述含糊，自动匹配就会失去依据，技能可能只剩你记得名字时的显式调用。
+`description` 是技能的重要元数据。WorkBuddy 根据元数据匹配技能，只有触发后才加载正文，再按需读取附属材料。描述含糊会让自动匹配失去依据，结果可能只有在你记得技能名称并显式调用时，它才会运行。
 
-**推荐结构由三部分组成：**
+**推荐分三部分撰写：**
 
-1. **动词 + 对象** --- 用一句话说清技能**做什么**。以动作动词开头（Compile、Review、Generate、Translate）。
-2. **「Use when:」适用情境** --- 用户需要这个技能时身处的 2--4 种情境，每种配一句用户**真会**说出口的话。中文描述要包含真实中文触发语，例如「检查一下错别字」「看看有没有溢出」，不要只堆英文或逐字硬译的近义词。
-3. **与同族技能划清界限** --- 如果你的技能与同领域其他技能挨着（例如 `proofread`、`visual-audit`、`pedagogy-review` 都作用在幻灯片上），就明确写出它**不**适用于什么，或指向替代品。这能防止路由错乱。
+1. **动词 + 对象**：开头直接用 Compile、Review、Generate、Translate 等动作动词，说清技能**处理什么、做什么**。
+2. **「Use when:」适用情境**：列出用户需要该技能的 2–4 种情境，每种都配一句用户**实际会说**的话。中文描述要包含真实的中文触发语，例如「检查一下错别字」「看看有没有溢出」，不要只罗列英文或生硬直译的近义词。
+3. **说明与同族技能的边界**：如果同领域的其他技能也可能匹配，例如 `proofread`、`visual-audit`、`pedagogy-review` 都处理幻灯片，就明确写出它**不**适用于哪些任务，或指出应该改用哪个技能，避免系统选错。
 
-**示例：把一段含糊描述改写得更具体。**
+**示例：把含糊的描述改具体。**
 
-改写前（弱 --- 技能存在，但 WorkBuddy 不会自动挑它）：
+改写前，描述太弱时，WorkBuddy 可能无法自动选中技能：
 ```yaml
 description: Run the proofreading protocol on lecture files. Checks grammar, typos, overflow, consistency.
 ```
 
-改写后（强 --- 冷启动的提示词也能匹配上）：
+改写后，即使用户没有提供技能名称，提示词也能与描述匹配：
 ```yaml
 description: Read-only proofreading pass over lecture .tex or .qmd files.
   Checks grammar, typos, overflow, terminology consistency, and academic
@@ -3058,9 +3058,9 @@ description: Read-only proofreading pass over lecture .tex or .qmd files.
   this", "any writing errors?", or before a lecture release.
 ```
 
-**检验方法：** 设想一位从没见过你技能清单的同事敲下 `"can you look for writing errors in Lecture 3?"`。你的描述里词汇重合度够不够，让 WorkBuddy 能把它从竞争技能里挑出来？不够，就多加几句触发语。
+**检验方法：** 设想一位从未见过技能清单的同事输入 `"can you look for writing errors in Lecture 3?"`。描述中的用词是否足以让 WorkBuddy 从其他候选技能中选中它？如果不够，就补充真实的触发语。
 
-**另一个好例子（划清界限）：**
+**另一个例子展示了如何划清边界：**
 ```yaml
 description: Interactive interview that formalizes a fuzzy research idea into
   a structured spec (RQ, hypotheses, identification, data needs, empirical
@@ -3069,20 +3069,20 @@ description: Interactive interview that formalizes a fuzzy research idea into
   NOT for lit review (/lit-review) or ideation from scratch (/research-ideation).
 ```
 
-最后那句 --- 「NOT for X, use /Y instead」--- 就是划界从句。两个描述重叠的技能会分掉 WorkBuddy 的路由概率；一句明确的「不适用于」能把这一票定下来。
+最后的「NOT for X, use /Y instead」明确排除了相似任务。两个技能的描述重叠时，WorkBuddy 可能选错；清楚写出「不适用于」可以帮助它作出正确选择。
 
-**差（太含糊 --- 永远不会被自动调用）：**
+**下面的描述过于含糊，难以支持可靠的自动调用：**
 ```yaml
 description: Helps with citations
 ```
 
-**发布新技能前的清单：**
+**发布新技能前，请逐项检查：**
 
 - [ ] 以动词 + 对象开头。
-- [ ] 有「Use when:」从句，列出 2--4 种情境。
-- [ ] 至少含一句用户真会照打的原话；中文描述包含真实中文触发语。
-- [ ] 与同领域的同族技能划清了界限。
-- [ ] 把最关键的用途放在前面，长度遵守本仓库的 1024 字符上限。
+- [ ] 用「Use when:」从句列出 2–4 种情境。
+- [ ] 至少写一句用户实际会输入的原话；中文描述要包含真实的中文触发语。
+- [ ] 说明它与同领域同族技能的边界。
+- [ ] 把最关键的用途放在前面，并遵守本仓库的 1024 字符上限。
 
 ### 领域专属示例
 
@@ -3092,19 +3092,19 @@ description: Helps with citations
 
 **回归输出格式化器**
 
-把 R 的回归输出转成可直接发表的 LaTeX 表格，格式规范到位（标准误加括号、显著性星号、固定效应行）。
+将 R 的回归输出转换为可直接发表的 LaTeX 表格，并按要求为标准误加括号、标注显著性星号、列出固定效应行。
 
-**触发：** 用户跑完回归后说「make a table」「format results」「export to LaTeX」
+**触发：** 用户跑完回归后说「整理成表格」（“make a table”）、「格式化结果」（“format results”）或「导出为 LaTeX」（“export to LaTeX”）
 
-**工具：** `Read`、`Write`、`Bash`（用于跑 R 脚本）
+**工具：** `Read`、`Write`、`Bash`（用于运行 R 脚本）
 
 #### 实验科学
 
 **实验方案校验器**
 
-按安全与可复现标准校验实验室方案。检查：必需章节（材料、步骤、安全）、定量规格、对照组、复现细节。
+根据安全与可复现标准检查实验室方案，确认材料、步骤和安全等必需章节是否齐全，并检查定量规格、对照组和复现细节。
 
-**触发：** 用户提供方案文档，说「check protocol」「validate procedure」
+**触发：** 用户提供方案文档，并说「检查方案」（“check protocol”）或「验证流程」（“validate procedure”）
 
 **工具：** `Read`、`Write`
 
@@ -3112,9 +3112,9 @@ description: Helps with citations
 
 **引文交叉核对器**
 
-把正文引文与参考文献条目逐条交叉核对。找出缺失条目、未被引用的文献、格式不一致。
+逐条核对正文引文与参考文献条目，找出缺失条目、未被引用的文献和不一致的格式。
 
-**触发：** 用户说「check citations」「validate references」，或正在处理稿件时
+**触发：** 用户说「检查引文」（“check citations”）或「核对参考文献」（“validate references”），或正在处理稿件
 
 **工具：** `Read`、`Grep`、`Glob`、`Write`
 
@@ -3122,7 +3122,7 @@ description: Helps with citations
 
 ### 快速上手
 
-1. **从模板起步** --- 或跑本仓库的 `/new-skill`，它会访谈你并按本仓库约定写出项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器，不要混淆两者：
+1. **从模板起步。** 你可以手动复制模板，也可以运行本仓库的 `/new-skill`。后者会先访谈你，再按本仓库约定在 `.codebuddy/skills/` 中生成项目技能。WorkBuddy 内置的 `/skill-creator` 则是通用创建器，生成的技能默认进入用户技能库，供跨项目复用，不会自动进入当前项目。若要让技能随仓库共享，必须显式将它放进项目的 `.codebuddy/skills/`。不要混淆这两种创建方式：
    ```bash
    mkdir -p .codebuddy/skills/your-skill-name
    # then paste ONLY the fenced markdown block under "Template Structure" in
@@ -3131,55 +3131,61 @@ description: Helps with citations
    ```
 
 2. **按你的领域定制：**
-   - 把触发语换成你领域的术语
-   - 加上领域专属的文件类型与工具
-   - 写进本领域的惯例与常见错误
+   - 把触发语换成你所在领域的术语
+   - 添加该领域特有的文件类型与工具
+   - 写入本领域的惯例与常见错误
 
 3. **测试技能：**
-   - 修改后的热重载尚未证实，不要假定无需重启；若未按新正文运行，记录客户端与技能版本，新开会话复测
-   - 分别用一句真实触发语和 `/name` 测试自动与显式调用；UI/菜单不显示本身不算失败证据
-   - 确认正文被加载、输出正确，附属材料只在需要时读取
+   - 修改后是否会热重载尚未得到证实，不要假定无需重启。如果技能没有按新正文运行，记录客户端与技能版本，并在新会话中复测
+   - 分别用一句真实触发语和 `/name` 测试自动调用与显式调用。UI 或菜单没有显示技能，本身不能作为调用失败的证据
+   - 确认系统加载了正文、输出正确，而且只在需要时读取附属材料
 
-4. **迭代：**
-   - 技能不触发：把描述改得更具体
-   - 指令不清楚：多加示例
-   - 输出不对：补上校验步骤
+4. **根据测试结果迭代：**
+   - 技能不触发时，把描述写得更具体
+   - 指令不清楚时，补充示例
+   - 输出不正确时，增加校验步骤
 
-**完整模板：** 见 `templates/skill-template.md`，里面有三个成例（引文检查器、经济学、生物学）。
+**完整模板：** `templates/skill-template.md` 提供三个成例，分别是引文检查器、经济学示例和生物学示例。
 
 ::: {.callout-tip}
 ## 真实案例：/deep-audit 就是用 /learn 造出来的
 
-`/deep-audit` 这个技能本身就是用 `/learn` 从一段重复性工作中提炼出来的。手工跑完 7 轮一致性审计之后 --- 每轮都并行启动 4 个代理，分别检查指南准确性、钩子代码质量、技能/规则一致性与跨文档计数 --- 这套做法被固化成技能。那次仓库清扫如今作为 `/deep-audit` 的仓库基础设施应用存续下来（`.codebuddy/skills/deep-audit/references/repo-infrastructure-audit.md`）：它启动同样那 4 个代理，分诊审查发现，施加修复，循环到干净为止（loop-until-dry：连续 2 轮空轮即收敛，另设兜底上限），并把历次审计得来的已知 bug 模式整理成表，让后续轮次更快抓到回归。这个技能此后已泛化为逐部件的对抗式审计 --- 拆解产物、每个部件配一名独立巡查者、每条审查发现配一名独立裁判，然后修、再核 --- 适用于论文、证明、代码库与一组组论断。
+`/deep-audit` 本身就是 `/learn` 从重复工作中提炼出的技能。最初，这套流程靠手工执行了 7 轮一致性审计，每轮并行启动 4 个代理，分别检查指南准确性、钩子代码质量、技能与规则的一致性，以及跨文档计数，随后把这套做法固化为技能。
 
-这就是 `/learn` 生命周期在运转：发现重复性工作 → 把它提炼出来 → 再也不手工重做。
+最初的仓库清理流程现在保留为 `/deep-audit` 的仓库基础设施应用，见 `.codebuddy/skills/deep-audit/references/repo-infrastructure-audit.md`。它仍然启动同样的 4 个代理，随后分诊审查发现、实施修复，并循环到干净为止。空轮收敛（loop-until-dry）规则是连续 2 轮空轮即收敛，同时另设兜底上限。历次审计发现的已知 bug 模式也已整理成表，帮助后续轮次更快发现回归。
+
+这个技能后来扩展为逐部件的对抗式审计：先拆解产物，为每个部件安排一名独立巡查者，为每条审查发现安排一名独立裁判，再修复并复核。它适用于论文、证明、代码库和一组组论断。
+
+`/learn` 的生命周期因此形成闭环：发现重复性工作 → 提炼为技能 → 不再手工重复。
 :::
 
 ## 迭代 6+ 个会话之后的经验
 
-1. **CODEBUDDY.md 控制在 150 行以内。** WorkBuddy 能可靠遵循约 150 条指令。400 行的 CODEBUDDY.md 意味着有些规则会被悄悄忽略。详细标准放进按路径生效的规则里。
-2. **规则增量添加。** 别想着一次把所有规则写完。发现模式时再加。用 `paths:` frontmatter 让它们只在相关时才加载。
-3. **用 [LEARN] 格式。** 每次纠正都打标签并落进 MEMORY.md。这样跨会话不会重复同样的错。
-4. **相信对抗式模式。** 批评者-修复者回路能抓到你看不到的东西。让它跑。
-5. **什么都核一遍。** 核验规则的存在有它的道理。绝不跳过编译或渲染检查。
-6. **会话日志很重要。** 记录设计决策，而不只是「改了什么」。将来的你会感谢现在的你。
-7. **魔鬼代言人要早做。** 在地基不稳时先别盖 50 张幻灯片，先挑战结构。
-8. **渐进式披露。** 从 CODEBUDDY.md + 2--3 条规则起步。工作流成熟了再加。新人第一天不该面对全部 37 条规则。
-9. **用 `.codebuddy/settings.local.json` 放个人覆盖项。** 这个文件已被 gitignore，并与 `.codebuddy/settings.json` 一起被读取。机器专属路径、个人偏好、本地工具版本都写这儿 --- 它们不会污染共享仓库。（上游的习惯是 `CLAUDE.local.md`；本仓库没有 `CLAUDE.md`，那条路径在这里不存在。）
+1. **把 CODEBUDDY.md 控制在 150 行以内。** WorkBuddy 能可靠遵循约 150 条指令；达到 400 行时，一些规则会被悄悄忽略。详细标准应放进按路径生效的规则。
+2. **逐步添加规则。** 不要试图一次写完所有规则，发现重复模式时再补充。使用 `paths:` frontmatter，让规则只在处理相关文件时加载。
+3. **使用 [LEARN] 格式。** 每次纠正都加上标签并写入 MEMORY.md，避免后续会话重复同样的错误。
+4. **运行批评者—修复者回路。** 对抗式模式能发现你自己看不到的问题。
+5. **逐项核验。** 不要跳过核验规则，尤其不能省略编译或渲染检查。
+6. **记录会话日志。** 除了「改了什么」，还要记录设计决策及其原因，供以后追查。
+7. **尽早挑战结构。** 如果基础结构尚不稳固，不要先做 50 张幻灯片，应先让魔鬼代言人检查整体思路。
+8. **逐步披露信息。** 从 CODEBUDDY.md + 2–3 条规则起步，等工作流成熟后再增加。新人第一天不必面对全部 37 条规则。
+9. **把个人覆盖项写入 `.codebuddy/settings.local.json`。** 系统会同时读取这个文件与 `.codebuddy/settings.json`，但前者已被 gitignore。机器专属路径、个人偏好和本地工具版本都应写在这里，避免进入共享仓库。上游通常使用 `CLAUDE.local.md`，但本仓库没有 `CLAUDE.md`，因此那条路径在这里不存在。
 
 ::: {.callout-note collapse="true"}
 ## 扩展：接入 MCP 服务器
 
-对于文件编辑与 shell 命令之外的能力 --- 文献综述时的网络搜索、复现时的数据库查询、参考文献管理器集成（Zotero、Mendeley）--- WorkBuddy 支持 [MCP 服务器](https://modelcontextprotocol.io)。入口是**左侧「插件 → MCP 服务器 → 配置 MCP」**，落盘在两个位置之一：
+如果需要文件编辑和 shell 命令之外的能力，可以使用 WorkBuddy 支持的 [MCP 服务器](https://modelcontextprotocol.io)，例如在文献综述时搜索网络、复现时查询数据库，或集成 Zotero、Mendeley 等参考文献管理器。桌面端入口是**左侧「插件 → MCP 服务器 → 配置 MCP」**。配置会写入以下两个位置之一：
 
-- `~/.workbuddy/mcp.json` —— 用户级，所有项目都能用；
-- `<项目>/.workbuddy/mcp.json` —— 项目级，可以提交进仓库让协作者共享。
+- `~/.workbuddy/mcp.json`：用户级配置，所有项目都可以使用；
+- `<项目>/.workbuddy/mcp.json`：项目级配置；本模板 `.gitignore` 默认忽略整个 `.workbuddy/`。确需与协作者共享时，须在 fork 中调整忽略规则或显式纳入版本控制，并先检查配置中是否含凭据。
 
-两处都是标准的 `{"mcpServers": {...}}` 结构，存盘后在 MCP 列表里看状态：绿色是连上了，红色是配置有错。先技能与代理，真需要外部集成时再上 MCP。（上游用 `claude mcp add` 加 `--scope` 参数区分作用域，本平台没有这条命令，作用域由你写入哪个文件决定。）
+两个文件都采用标准的 `{"mcpServers": {...}}` 结构。保存后，可以在 MCP 列表中查看状态：绿色表示已连接，红色表示配置有误。应先用好技能与代理，确需外部集成时再配置 MCP。WorkBuddy 桌面端不使用上游 `claude mcp add`/`--scope`；上述 GUI 与 `.workbuddy` 配置路径属于桌面端，独立 CLI 的配置不要与桌面端混用。
 
 ## 扩展：插件 {#extending-with-plugins}
 
-WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP 服务器集合，可从 git 仓库安装。用 `/plugin` 浏览与管理插件（其中有一个 Discover 页签用于发现新插件）。插件是较新的扩展点；先把手里的技能与规则（这些你完全掌控）用起来，再考虑引入第三方插件。**装之前先读：** 来自别的仓库的技能、代理、钩子或插件，就是你的会话将要执行的指令。在本模板宽泛的允许规则（`Bash(*)`、`WebFetch(*)`）之下，它可以在不弹窗的情况下碰到你的文件或网络，而钩子甚至不需要被调用就会运行。每一个文件都先读，涉密数据项目里不要加入任何没读过的文件。
+WorkBuddy 的**插件**可以把技能、代理、钩子和 MCP 服务器打包，并从 git 仓库安装。你可以用 `/plugin` 浏览和管理插件，也可以在 Discover 页签中发现新插件。插件仍是较新的扩展方式，建议先使用自己能够完全掌控的技能与规则，再考虑第三方插件。
+
+**安装前必须阅读文件。** 其他仓库提供的技能、代理、钩子或插件，都会成为会话要执行的指令。本模板允许 `Bash(*)` 和 `WebFetch(*)`，范围很宽，因此这些指令可能在不弹窗的情况下访问你的文件或网络；钩子甚至无需被调用就会运行。安装前请读完每一个文件，涉密数据项目不要加入任何未读过的文件。
 :::
 
 ---
@@ -3188,111 +3194,111 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 
 ## 全部代理
 
-本附录与 README 使用同一计数口径：18 个科研/审读代理 + 1 个 Harness 自检代理 `ping`，共 19 个。`ping` 是自检子代理，后面的 `/hello` 是自检技能；二者只提供发现、派发与调用证据，不承担科研或审读职责。
+本附录与 README 采用相同的计数口径：18 个科研/审读代理 + 1 个 Harness 自检代理 `ping`，共 19 个。`ping` 是自检子代理，后文列出的 `/hello` 是自检技能。二者只用于证明系统能够发现、派发和调用相应组件，不承担科研或审读职责。
 
 | 代理 | 文件 | 用途 |
 |-------|------|---------|
-| Proofreader | `.codebuddy/agents/proofreader.md` | 语法、错别字、一致性 |
-| Slide Auditor | `.codebuddy/agents/slide-auditor.md` | 视觉版式、溢出、间距 |
-| Pedagogy Reviewer | `.codebuddy/agents/pedagogy-reviewer.md` | 叙事弧线、记号清晰度 |
-| R Reviewer | `.codebuddy/agents/r-reviewer.md` | R 代码质量、可复现性 |
-| TikZ Reviewer | `.codebuddy/agents/tikz-reviewer.md` | 图形视觉质量 |
-| Beamer Translator | `.codebuddy/agents/beamer-translator.md` | LaTeX 译 Quarto |
-| Quarto Critic | `.codebuddy/agents/quarto-critic.md` | 对抗式 Quarto 质检 |
-| Quarto Fixer | `.codebuddy/agents/quarto-fixer.md` | 执行批评者的修复 |
-| Verifier | `.codebuddy/agents/verifier.md` | 任务完成度核验 |
-| Domain Reviewer | `.codebuddy/agents/domain-reviewer.md` | 你的领域专属审读 |
+| Proofreader | `.codebuddy/agents/proofreader.md` | 检查语法、错别字和一致性 |
+| Slide Auditor | `.codebuddy/agents/slide-auditor.md` | 检查视觉版式、溢出和间距 |
+| Pedagogy Reviewer | `.codebuddy/agents/pedagogy-reviewer.md` | 审读叙事弧线和记号清晰度 |
+| R Reviewer | `.codebuddy/agents/r-reviewer.md` | 检查 R 代码质量与可复现性 |
+| TikZ Reviewer | `.codebuddy/agents/tikz-reviewer.md` | 审读图形的视觉质量 |
+| Beamer Translator | `.codebuddy/agents/beamer-translator.md` | 将 LaTeX 译为 Quarto |
+| Quarto Critic | `.codebuddy/agents/quarto-critic.md` | 对抗式检查 Quarto 质量 |
+| Quarto Fixer | `.codebuddy/agents/quarto-fixer.md` | 执行批评者提出的修复 |
+| Verifier | `.codebuddy/agents/verifier.md` | 核验任务是否完成 |
+| Domain Reviewer | `.codebuddy/agents/domain-reviewer.md` | 审读你的领域专属内容 |
 | Claim Verifier | `.codebuddy/agents/claim-verifier.md` | 验证链（独立上下文）事实核查器（v1.7.0） |
-| Editor | `.codebuddy/agents/editor.md` | 供 `/review-paper --peer` 用的期刊编辑（编辑初筛 + 选审稿人 + 编辑综合意见，v1.5.0） |
-| Domain Referee | `.codebuddy/agents/domain-referee.md` | 供 `/review-paper --peer` 用的、经倾向性预置的实质审稿人（v1.5.0） |
-| Methods Referee | `.codebuddy/agents/methods-referee.md` | 供 `/review-paper --peer` 用的、感知论文类型的方法审稿人（v1.5.0；v1.8.0 加入 formal-theory 与 survey-experiment） |
-| Humanize Auditor | `.codebuddy/agents/humanize-auditor.md` | 只读审计学术行文中的 AI 腔；由 `/humanize` 调用（v1.9.0） |
-| Promote-Memory Council | `.codebuddy/agents/promote-memory-council.md` | 五批评者议会（通用性 / 陈旧度 / 冗余 / 证据 / 格式），把关 `[LEARN]` 从原生自动记忆晋升到 MEMORY.md；由 `/promote-memory` 调用（v1.9.0） |
-| Sim Reviewer | `.codebuddy/agents/sim-reviewer.md` | 蒙特卡洛审读 --- DGP/估计量匹配、蒙特卡洛标准误、覆盖率与真值对比、论断与表格一致性（v1.10.0） |
-| R Package Reviewer | `.codebuddy/agents/r-package-reviewer.md` | R 包源码审读 --- DESCRIPTION/NAMESPACE 卫生、roxygen、testthat、CRAN 政策红线（v1.10.0） |
-| Ping | `.codebuddy/agents/ping.md` | **Harness 自检**子代理：回传固定标记，验证 `.codebuddy/agents/` 的发现与派发；不承担科研或审查职责 |
+| Editor | `.codebuddy/agents/editor.md` | 为 `/review-paper --peer` 扮演期刊编辑，负责编辑初筛、选择审稿人和综合编辑意见（v1.5.0） |
+| Domain Referee | `.codebuddy/agents/domain-referee.md` | 为 `/review-paper --peer` 按预设审稿取向进行实质审稿（v1.5.0） |
+| Methods Referee | `.codebuddy/agents/methods-referee.md` | 为 `/review-paper --peer` 按论文类型进行方法审稿（v1.5.0；v1.8.0 加入 formal-theory 与 survey-experiment） |
+| Humanize Auditor | `.codebuddy/agents/humanize-auditor.md` | 由 `/humanize` 调用，只读审计学术行文中的 AI 腔（v1.9.0） |
+| Promote-Memory Council | `.codebuddy/agents/promote-memory-council.md` | 五位批评者组成议会，从通用性、陈旧度、冗余、证据和格式五个方面把关，决定是否将 `[LEARN]` 从原生自动记忆晋升到 MEMORY.md；由 `/promote-memory` 调用（v1.9.0） |
+| Sim Reviewer | `.codebuddy/agents/sim-reviewer.md` | 审读蒙特卡洛研究：检查 DGP/估计量匹配、蒙特卡洛标准误、覆盖率与真值对比，以及论断与表格的一致性（v1.10.0） |
+| R Package Reviewer | `.codebuddy/agents/r-package-reviewer.md` | 审读 R 包源码：检查 DESCRIPTION/NAMESPACE 卫生、roxygen、testthat 和 CRAN 政策红线（v1.10.0） |
+| Ping | `.codebuddy/agents/ping.md` | **Harness 自检**子代理：回传固定标记，验证系统能否发现并派发 `.codebuddy/agents/` 中的代理；不承担科研或审查职责 |
 
 ## 全部技能 {#all-skills}
 
 | 技能 | 目录 | 用途 |
 |-------|-----------|---------|
-| `/init-research-project` | `.codebuddy/skills/init-research-project/` | 把 fork 的模板初始化成真实项目：收齐信息、替换占位符、按学科裁剪、跑环境自检并交出起步计划 |
-| `/compile-latex` | `.codebuddy/skills/compile-latex/` | XeLaTeX 三遍编译 |
-| `/deploy` | `.codebuddy/skills/deploy/` | Quarto 渲染 + GitHub Pages 同步 |
-| `/extract-tikz` | `.codebuddy/skills/extract-tikz/` | TikZ 转 SVG |
-| `/new-diagram` | `.codebuddy/skills/new-diagram/` | 从画廊起手搭一张 TikZ 图 |
-| `/proofread` | `.codebuddy/skills/proofread/` | 运行校对代理 |
-| `/visual-audit` | `.codebuddy/skills/visual-audit/` | 视觉版式审计，就地执行（即 `slide-auditor` 的检查） |
-| `/pedagogy-review` | `.codebuddy/skills/pedagogy-review/` | 运行教学法审读代理 |
-| `/review-r` | `.codebuddy/skills/review-r/` | 运行 R 代码审读代理 |
-| `/qa-quarto` | `.codebuddy/skills/qa-quarto/` | 批评者-修复者对抗回路 |
-| `/slide-excellence` | `.codebuddy/skills/slide-excellence/` | 多代理联合审读 |
-| `/translate-to-quarto` | `.codebuddy/skills/translate-to-quarto/` | Beamer 译 Quarto |
-| `/vaccinate` | `.codebuddy/skills/vaccinate/` | 给评分者打分：埋入已知缺陷 + 一个干净对照，把**召回率**与**假阳性率**报进 `quality_reports/qualification/LEDGER.md` |
-| `/adjudicate-review` | `.codebuddy/skills/adjudicate-review/` | 把进来的审查发现 --- AI 审读、审稿报告、linter、第二个模型 --- 变成经过核实的修复。每一条发现在与原始材料核对之前都只是候选 |
-| `/blast-radius` | `.codebuddy/skills/blast-radius/` | 改动任何共享之物（返回值、模式、默认值、单位）之前与之后，逐一列出所有下游使用者并真的把它们跑一遍 |
-| `/credible-claims` | `.codebuddy/skills/credible-claims/` | 委派前写研究简报，完成后记录论断。防止把「跑得更快」误当成「证据可信」 |
-| `/differential-audit` | `.codebuddy/skills/differential-audit/` | 比对两份实现 --- 一次移植、一次复现、一次重构、一次版本升级 --- 让「两边一致」真正有意义 |
-| `/oracle-review` | `.codebuddy/skills/oracle-review/` | 调用外部前沿模型做裁判（WorkBuddy → 经 Oracle CLI 调用另一家的前沿模型），并对返回结果做裁定 |
-| `/verify-artifact` | `.codebuddy/skills/verify-artifact/` | 证明你即将发出的文件**就是**你要发的那份东西 --- 重建、校验完整性、与源文件对比 |
-| `/voice-profile` | `.codebuddy/skills/voice-profile/` | 从你自己此前的论文里提取一份行文风格画像，再拿草稿去对照 --- 它是 `/humanize` 的正向对应物，后者只检测 AI 腔 |
-| `/validate-bib` | `.codebuddy/skills/validate-bib/` | 参考文献校验 |
-| `/devils-advocate` | `.codebuddy/skills/devils-advocate/` | 设计挑战问题 |
-| `/create-lecture` | `.codebuddy/skills/create-lecture/` | 完整讲义创建 |
-| `/commit` | `.codebuddy/skills/commit/` | 跑门禁并提交；`--pr` 会推送并开一个 pull request；绝不合并 |
-| `/lit-review` | `.codebuddy/skills/lit-review/` | 文献检索与综述 |
-| `/research-ideation` | `.codebuddy/skills/research-ideation/` | 研究问题与策略 |
-| `/interview-me` | `.codebuddy/skills/interview-me/` | 互动式研究访谈 |
-| `/review-paper` | `.codebuddy/skills/review-paper/` | 稿件审读 |
-| `/respond-to-referees` | `.codebuddy/skills/respond-to-referees/` | R&R 逐条交叉核对与回复草稿 |
-| `/data-analysis` | `.codebuddy/skills/data-analysis/` | 端到端 R 分析 |
-| `/audit-reproducibility` | `.codebuddy/skills/audit-reproducibility/` | 在论文 ↔ 代码之间强制复现容差阈值 |
-| `/learn` | `.codebuddy/skills/learn/` | 把发现提炼成持久技能 |
-| `/context-status` | `.codebuddy/skills/context-status/` | 显示会话健康度与上下文用量 |
-| `/deep-audit` | `.codebuddy/skills/deep-audit/` | 对理论、证明、论文、代码库或一组论断做对抗式审计（拆解、独立怀疑者、每条发现配独立裁判、修、再核）；仓库一致性审计只是其中一个应用，见 `references/repo-infrastructure-audit.md` |
-| `/seven-pass-review` | `.codebuddy/skills/seven-pass-review/` | 七遍对抗式稿件审读（并行 fork 的子代理） |
-| `/permission-check` | `.codebuddy/skills/permission-check/` | 诊断权限规则、钩子与档位哪个在拦 |
-| `/verify-claims` | `.codebuddy/skills/verify-claims/` | 对任何草稿做验证链式事实核查（v1.7.0） |
-| `/checkpoint` | `.codebuddy/skills/checkpoint/` | 结构化会话交接快照 --- 叙事型会话日志的配套（v1.8.0） |
-| `/preregister` | `.codebuddy/skills/preregister/` | 从研究规格生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0） |
-| `/humanize` | `.codebuddy/skills/humanize/` | 检测学术行文中的 AI 腔（只读审计，不改写）（v1.9.0） |
-| `/compress-session` | `.codebuddy/skills/compress-session/` | 在自动压缩前把当前会话蒸馏成一份结构化笔记（决策、文件、未决问题、下一步、已判为噪声而丢弃的内容）（v1.9.0） |
-| `/promote-memory` | `.codebuddy/skills/promote-memory/` | 五批评者议会对候选 `[LEARN]` 条目投票，决定是否从原生自动记忆晋升到 MEMORY.md（v1.9.0） |
-| `/stata-replication` | `.codebuddy/skills/stata-replication/` | 端到端 Stata 流水线脚手架 + 经 `stata-mcp` MCP 服务器执行（对应 R 优先项目里的 `/data-analysis`；v1.9.0） |
-| `/simulation-study` | `.codebuddy/skills/simulation-study/` | 可复现的蒙特卡洛研究 --- DGP、估计量网格、带种子的重复、偏差/RMSE/覆盖率/检验水平/功效，并附蒙特卡洛标准误（v1.10.0） |
-| `/r-package-check` | `.codebuddy/skills/r-package-check/` | R 包发布门禁 --- `devtools::document()` + 测试 + `R CMD check --as-cran` + CRAN 政策分诊（v1.10.0） |
-| `/replication-package` | `.codebuddy/skills/replication-package/` | 组装可直接投稿的 DCAS / openICPSR 复现包；调用 `/audit-reproducibility`，一旦 FAIL 即阻断（v2.0） |
-| `/challenge` | `.codebuddy/skills/challenge/` | 拿你没做过的那些选择来压测一个发现 --- 在离散岔路上做规格曲线，再用具名敏感性统计量（E-value、Cinelli–Hazlett RV、Oster δ）对着识别假设做检验 |
-| `/capture-environment` | `.codebuddy/skills/capture-environment/` | 为计算环境做快照（renv.lock / sessionInfo / requirements.txt / uv.lock + 可选 Dockerfile + 种子）（v2.0） |
-| `/power-analysis` | `.codebuddy/skills/power-analysis/` | 为研究设计算功效 / 所需样本量 / 最小可检测效应（RCT、聚类/ICC、多臂，或基于模拟）+ 一段给 `/preregister` 用的方法说明（v2.0） |
-| `/disclosure-check` | `.codebuddy/skills/disclosure-check/` | 对受限数据产出做 SDL 违规预筛（小格子、dominance、PII）；出现任何 CRITICAL 即阻断（v2.0） |
-| `/grant-proposal` | `.codebuddy/skills/grant-proposal/` | 从 `/interview-me` 的规格搭一份基金申请书（NSF/NIH/ERC/基金会）；把 DMP 与设施部分委派出去；做目标↔方法↔预算的一致性过检（v2.0） |
+| `/init-research-project` | `.codebuddy/skills/init-research-project/` | 将 fork 的模板初始化为真实项目：收齐信息、替换占位符、按学科裁剪、运行环境自检并给出起步计划 |
+| `/compile-latex` | `.codebuddy/skills/compile-latex/` | 用 XeLaTeX 编译三遍 |
+| `/deploy` | `.codebuddy/skills/deploy/` | 渲染 Quarto 并同步到 GitHub Pages |
+| `/extract-tikz` | `.codebuddy/skills/extract-tikz/` | 将 TikZ 转换为 SVG |
+| `/new-diagram` | `.codebuddy/skills/new-diagram/` | 从画廊起步搭建 TikZ 图 |
+| `/proofread` | `.codebuddy/skills/proofread/` | 调用校对代理 |
+| `/visual-audit` | `.codebuddy/skills/visual-audit/` | 就地审计视觉版式，即执行 `slide-auditor` 的检查 |
+| `/pedagogy-review` | `.codebuddy/skills/pedagogy-review/` | 调用教学法审读代理 |
+| `/review-r` | `.codebuddy/skills/review-r/` | 调用 R 代码审读代理 |
+| `/qa-quarto` | `.codebuddy/skills/qa-quarto/` | 运行批评者—修复者对抗回路 |
+| `/slide-excellence` | `.codebuddy/skills/slide-excellence/` | 组织多个代理联合审读 |
+| `/translate-to-quarto` | `.codebuddy/skills/translate-to-quarto/` | 将 Beamer 译为 Quarto |
+| `/vaccinate` | `.codebuddy/skills/vaccinate/` | 给评分者打分：埋入已知缺陷和一个干净对照，并将**召回率**与**假阳性率**写入 `quality_reports/qualification/LEDGER.md` |
+| `/adjudicate-review` | `.codebuddy/skills/adjudicate-review/` | 将来自 AI 审读、审稿报告、linter 或第二个模型的审查发现转化为经过核实的修复；与原始材料核对前，每条发现都只是候选 |
+| `/blast-radius` | `.codebuddy/skills/blast-radius/` | 修改共享的返回值、模式、默认值或单位前后，逐一列出所有下游使用者并实际运行 |
+| `/credible-claims` | `.codebuddy/skills/credible-claims/` | 委派前撰写研究简报，完成后记录论断，避免把「跑得更快」误当作「证据可信」 |
+| `/differential-audit` | `.codebuddy/skills/differential-audit/` | 比对移植、复现、重构或版本升级形成的两份实现，检验「两边一致」是否确有依据 |
+| `/oracle-review` | `.codebuddy/skills/oracle-review/` | 通过 Oracle CLI 从 WorkBuddy 调用另一家的前沿模型担任外部裁判，并裁定返回结果 |
+| `/verify-artifact` | `.codebuddy/skills/verify-artifact/` | 通过重建、完整性校验和源文件对比，证明即将发出的文件**就是**要交付的那份 |
+| `/voice-profile` | `.codebuddy/skills/voice-profile/` | 从你此前的论文中提取行文风格画像，用它对照草稿；它与只检测 AI 腔的 `/humanize` 互为正反向工具 |
+| `/validate-bib` | `.codebuddy/skills/validate-bib/` | 校验参考文献 |
+| `/devils-advocate` | `.codebuddy/skills/devils-advocate/` | 设计具有挑战性的问题 |
+| `/create-lecture` | `.codebuddy/skills/create-lecture/` | 创建完整讲义 |
+| `/commit` | `.codebuddy/skills/commit/` | 运行门禁并提交；`--pr` 会推送并创建 pull request；绝不合并 |
+| `/lit-review` | `.codebuddy/skills/lit-review/` | 检索并综述文献 |
+| `/research-ideation` | `.codebuddy/skills/research-ideation/` | 形成研究问题与策略 |
+| `/interview-me` | `.codebuddy/skills/interview-me/` | 通过互动访谈梳理研究 |
+| `/review-paper` | `.codebuddy/skills/review-paper/` | 审读稿件 |
+| `/respond-to-referees` | `.codebuddy/skills/respond-to-referees/` | 逐条交叉核对 R&R 意见并起草回复 |
+| `/data-analysis` | `.codebuddy/skills/data-analysis/` | 执行端到端 R 分析 |
+| `/audit-reproducibility` | `.codebuddy/skills/audit-reproducibility/` | 按复现协议的容差阈值，逐条核对论文中的数值论断与代码实际产出，并报告 PASS/FAIL |
+| `/learn` | `.codebuddy/skills/learn/` | 将发现提炼为持久技能 |
+| `/context-status` | `.codebuddy/skills/context-status/` | 显示会话健康状况与上下文用量 |
+| `/deep-audit` | `.codebuddy/skills/deep-audit/` | 对理论、证明、论文、代码库或一组论断进行对抗式审计：拆解产物、安排独立怀疑者、为每条发现安排独立裁判，再修复并复核；仓库一致性审计只是其中一个应用，见 `references/repo-infrastructure-audit.md` |
+| `/seven-pass-review` | `.codebuddy/skills/seven-pass-review/` | 并行派发 7 个具有独立上下文的子代理，完成七遍对抗式稿件审读 |
+| `/permission-check` | `.codebuddy/skills/permission-check/` | 诊断权限规则、钩子或档位中哪一项正在阻止操作 |
+| `/verify-claims` | `.codebuddy/skills/verify-claims/` | 对任意草稿进行验证链式事实核查（v1.7.0） |
+| `/checkpoint` | `.codebuddy/skills/checkpoint/` | 生成结构化会话交接快照，与叙事型会话日志配套使用（v1.8.0） |
+| `/preregister` | `.codebuddy/skills/preregister/` | 根据研究规格生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0） |
+| `/humanize` | `.codebuddy/skills/humanize/` | 只读检测学术行文中的 AI 腔，不改写文本（v1.9.0） |
+| `/compress-session` | `.codebuddy/skills/compress-session/` | 在自动压缩前将当前会话提炼为结构化笔记，记录决策、文件、未决问题、下一步，以及因判为噪声而丢弃的内容（v1.9.0） |
+| `/promote-memory` | `.codebuddy/skills/promote-memory/` | 由五位批评者组成的议会对候选 `[LEARN]` 条目投票，决定是否将其从原生自动记忆晋升到 MEMORY.md（v1.9.0） |
+| `/stata-replication` | `.codebuddy/skills/stata-replication/` | 搭建端到端 Stata 流水线，并通过 `stata-mcp` MCP 服务器执行；对应 R 优先项目中的 `/data-analysis`（v1.9.0） |
+| `/simulation-study` | `.codebuddy/skills/simulation-study/` | 开展可复现的蒙特卡洛研究：设置 DGP、估计量网格和带种子的重复，计算偏差/RMSE/覆盖率/检验水平/功效，并附上蒙特卡洛标准误（v1.10.0） |
+| `/r-package-check` | `.codebuddy/skills/r-package-check/` | 执行 R 包发布门禁：`devtools::document()` + 测试 + `R CMD check --as-cran` + CRAN 政策分诊（v1.10.0） |
+| `/replication-package` | `.codebuddy/skills/replication-package/` | 组装可直接投稿的 DCAS / openICPSR 复现包；调用 `/audit-reproducibility`，一旦 FAIL 就阻断（v2.0） |
+| `/challenge` | `.codebuddy/skills/challenge/` | 用尚未采用的选择压测一个发现：沿各项离散分析选择绘制规格曲线以描述结果分布，再用 E-value、Cinelli–Hazlett RV、Oster δ 等具名敏感性统计量评估结果对识别假设的敏感性并为其划界 |
+| `/capture-environment` | `.codebuddy/skills/capture-environment/` | 为计算环境创建快照，包括 renv.lock / sessionInfo / requirements.txt / uv.lock、可选 Dockerfile 和种子（v2.0） |
+| `/power-analysis` | `.codebuddy/skills/power-analysis/` | 为研究设计计算功效、所需样本量或最小可检测效应，支持 RCT、聚类/ICC、多臂或基于模拟的设计，并生成一段供 `/preregister` 使用的方法说明（v2.0） |
+| `/disclosure-check` | `.codebuddy/skills/disclosure-check/` | 对受限数据产出预筛 SDL 违规，包括小格子、dominance 和 PII；出现任何 CRITICAL 即阻断（v2.0） |
+| `/grant-proposal` | `.codebuddy/skills/grant-proposal/` | 根据 `/interview-me` 的规格撰写基金申请书（NSF/NIH/ERC/基金会），委派 DMP 与设施部分，并检查目标↔方法↔预算是否一致（v2.0） |
 | `/data-management-plan` | `.codebuddy/skills/data-management-plan/` | 起草符合资助方要求的数据管理计划（NSF/NIH 2023/ERC/Horizon）（v2.0） |
-| `/coauthor-brief` | `.codebuddy/skills/coauthor-brief/` | 生成给合作者的交接简报：git 差异、逐产物状态、未决问题、本地复现 + 受限数据步骤（v2.0） |
-| `/triage-inbox` | `.codebuddy/skills/triage-inbox/` | 分诊学术邮件与日程（Gmail/Calendar MCP），产出按优先级排序的摘要 + 审稿义务追踪；只做人工确认后才执行的动作（v2.0） |
-| `/issues` | `.codebuddy/skills/issues/` | 把审查发现登记为 GitHub issue（与开启和已关闭的做去重）、列出还开着哪些、并附上「试过什么、怎么修的」评论关闭 issue；没有你的同意就不发任何东西（v2.6） |
-| `/syllabus` | `.codebuddy/skills/syllabus/` | 从主题/阅读清单建课程大纲（周次安排、目标、考核 + 评分细则、逐周 `/create-lecture` 工作清单）（v2.0） |
-| `/teach-from-paper` | `.codebuddy/skills/teach-from-paper/` | 把一篇论文变成讲义提纲、可讲授的结果、幻灯片骨架（→ `/create-lecture`）、讨论题与习题要点（v2.0） |
-| `/respond-to-eval` | `.codebuddy/skills/respond-to-eval/` | 把学生课程评教变成分类的教学改进方案（保留/改变/调查/超范围）（v2.0） |
-| `/scaffold-exercises` | `.codebuddy/skills/scaffold-exercises/` | 搭一份分级习题集（分析题/实证题/编程题）并附详解；学生版干净，答案另存（v2.0） |
-| `/new-skill` | `.codebuddy/skills/new-skill/` | 搭一个符合规范的技能（访谈 → 写出 `SKILL.md` → 运行完整性检查）；README 行、计数、指南与最终门禁另行验收（v2.0） |
-| `/diagnose` | `.codebuddy/skills/diagnose/` | 为错误或失败的实证结果定位根因 --- 复现 → 最小化 → 提出假设 → 插桩（二分）→ 修复；`--no-fix` 只定位不改动（v2.0） |
-| `/submission-disclosures` | `.codebuddy/skills/submission-disclosures/` | 投稿时的声明块：与期刊政策匹配的 AI 使用声明、CRediT 角色、利益冲突、数据可得性声明（v2.1） |
+| `/coauthor-brief` | `.codebuddy/skills/coauthor-brief/` | 为合作者生成交接简报，包括 git 差异、逐产物状态、未决问题、本地复现和受限数据步骤（v2.0） |
+| `/triage-inbox` | `.codebuddy/skills/triage-inbox/` | 通过 Gmail/Calendar MCP 分诊学术邮件与日程，生成按优先级排序的摘要并追踪审稿义务；只执行经人工确认的动作（v2.0） |
+| `/issues` | `.codebuddy/skills/issues/` | 将审查发现登记为 GitHub issue，与开启和已关闭的 issue 去重；列出仍开启的 issue，关闭时附上「试过什么、怎么修的」评论；未经你同意不发布任何内容（v2.6） |
+| `/syllabus` | `.codebuddy/skills/syllabus/` | 根据主题和阅读清单创建课程大纲，包括周次安排、目标、考核与评分细则，以及逐周 `/create-lecture` 工作清单（v2.0） |
+| `/teach-from-paper` | `.codebuddy/skills/teach-from-paper/` | 将论文转化为讲义提纲、可讲授的结果、幻灯片骨架（→ `/create-lecture`）、讨论题和习题要点（v2.0） |
+| `/respond-to-eval` | `.codebuddy/skills/respond-to-eval/` | 将学生课程评教转化为分类的教学改进方案：保留、改变、调查或超范围（v2.0） |
+| `/scaffold-exercises` | `.codebuddy/skills/scaffold-exercises/` | 搭建分级习题集，涵盖分析题、实证题和编程题并附详解；学生版不含答案，答案另行保存（v2.0） |
+| `/new-skill` | `.codebuddy/skills/new-skill/` | 按访谈 → 写出 `SKILL.md` → 运行完整性检查的顺序创建合规技能；README 行、计数、指南和最终门禁另行验收（v2.0） |
+| `/diagnose` | `.codebuddy/skills/diagnose/` | 定位错误或失败实证结果的根因：复现 → 最小化 → 提出假设 → 插桩（二分）→ 修复；`--no-fix` 只定位，不作修改（v2.0） |
+| `/submission-disclosures` | `.codebuddy/skills/submission-disclosures/` | 生成投稿声明块，包括符合期刊政策的 AI 使用声明、CRediT 角色、利益冲突和数据可得性声明（v2.1） |
 | `/hello` | `.codebuddy/skills/hello/` | **Harness 自检**技能：写出固定标记文件，由调用方核验技能发现、显式调用、参数与工作目录；不承担科研职责 |
 
 ## 全部规则
 
-**常驻**（每个会话都加载）：
+**常驻规则**会在每个会话中加载：
 
 | 规则 | 文件 | 用途 |
 |------|------|---------|
-| Plan-First Workflow | `plan-first-workflow.md` | 计划模式 + 上下文保全 |
-| Session Logging | `session-logging.md` | 三个记日志的触发点 |
-| Prompt Shaping | `prompt-shaping.md` | 随时的提示词塑形习惯（取代已退役的 `/prompt` 与 `/prompt-only` 技能） |
-| Progress Reports | `progress-reports.md` | 以 GitHub 为记忆 --- issue 记缺陷、`quality_reports/` 记工作、`MEMORY.md` 记教训 |
-| Repo Hygiene | `repo-hygiene.md` | 草稿不得变成主干 --- 每次提交由 `check-repo-hygiene.py` 强制 |
+| Plan-First Workflow | `plan-first-workflow.md` | 使用计划模式并保全上下文 |
+| Session Logging | `session-logging.md` | 规定三个记录日志的触发点 |
+| Prompt Shaping | `prompt-shaping.md` | 规范日常提示词的写法，取代已退役的 `/prompt` 与 `/prompt-only` 技能 |
+| Progress Reports | `progress-reports.md` | 分层保存记忆：GitHub issue 记录缺陷，本地 `quality_reports/` 记录工作，已提交的 `MEMORY.md` 记录经筛选的教训；需要共享的报告须显式纳入版本控制 |
+| Repo Hygiene | `repo-hygiene.md` | 防止草稿进入主干；每次提交都由 `check-repo-hygiene.py` 强制检查 |
 
-**按路径生效**（只在处理匹配文件时加载）：
+**按路径生效的规则**只在处理匹配文件时加载：
 
 | 规则 | 文件 | 触发于 |
 |------|------|------------|
@@ -3322,155 +3328,155 @@ WorkBuddy 支持**插件** --- 可打包安装的技能、代理、钩子与 MCP
 | Cross-Artifact Review | `cross-artifact-review.md` | `master_supporting_docs/`、`.tex`、`.qmd` |
 | Summary–Body Parity | `summary-parity.md` | `CHANGELOG.md`、`README.md`、`.qmd`、技能/规则/代理的 `.md` |
 | Post-Flight Verification | `post-flight-verification.md` | 会产出事实性论断的技能（`/lit-review`、`/research-ideation`、`/respond-to-referees`、`/review-paper`、`/interview-me`） |
-| Model Routing | `model-routing.md` | `.codebuddy/agents/**/*.md`、`.codebuddy/skills/**/SKILL.md` --- 70/20/10 的架构师/编辑分工，逐代理 `model:` 字段的写法（v1.9.0） |
-| Review Fencing | `review-fencing.md` | `*.tex`、`*.qmd`、`master_supporting_docs/**`、`quality_reports/` 审计目录、`claim-verifier.md` --- 把审阅者独立性当作**环境**的属性：在检出目录之外给中性副本、隐去既有结论、先自读再看先前发现、把阳性对照与已提交的答案分开围栏（v2.5.1） |
-| Stata Code Conventions | `stata-code-conventions.md` | `**/*.do`、`scripts/stata/**` --- 文件头脚手架、带编号的流水线、esttab 表格、聚类纪律、AEA 合规（v1.9.0） |
-| Simulation Conventions | `simulation-conventions.md` | `**/*simulation*.R`、`**/*_sim.R`、`**/*_mc.R`、`scripts/**/simulations/**`、`explorations/**/*.R` --- 蒙特卡洛纪律：DGP/估计量、L'Ecuyer 播种、蒙特卡洛标准误、覆盖率与真值对比、原始结果留存（v1.10.0）；**假设体制纪律** --- 每个脚本的文件头写明估计量、维持的假设、本次放宽的那一条、以及如何核验设定正确，另有假设内/假设外防火墙，并在严重性网格上「只放宽一条」（v2.5.1） |
-| R Package Conventions | `r-package-conventions.md` | `R/**`、`tests/**`、`DESCRIPTION`、`NAMESPACE`、`man/**` --- 包源码标准：`R/` 里不写 `library()`、roxygen 管理 NAMESPACE、Imports/Suggests、testthat 3e、CRAN 政策（v1.10.0） |
-| Confidential Data | `confidential-data.md` | 受限/涉密数据路径 --- 涉密原始数据不得进 git、避免披露的纪律，供 `/disclosure-check` / `/replication-package` / `/data-management-plan` 使用（v2.0） |
+| Model Routing | `model-routing.md` | `.codebuddy/agents/**/*.md`、`.codebuddy/skills/**/SKILL.md`；规定 70/20/10 的架构师/编辑分工，以及逐代理 `model:` 字段的写法（v1.9.0） |
+| Review Fencing | `review-fencing.md` | `*.tex`、`*.qmd`、`master_supporting_docs/**`、`quality_reports/` 审计目录、`claim-verifier.md`；将审阅者独立性视为**环境**的属性：在检出目录之外提供中性副本、隐去既有结论、先自行审读再看先前发现，并将阳性对照与已提交的答案隔离（v2.5.1） |
+| Stata Code Conventions | `stata-code-conventions.md` | `**/*.do`、`scripts/stata/**`；规范文件头脚手架、带编号的流水线、esttab 表格、聚类纪律和 AEA 合规（v1.9.0） |
+| Simulation Conventions | `simulation-conventions.md` | `**/*simulation*.R`、`**/*_sim.R`、`**/*_mc.R`、`scripts/**/simulations/**`、`explorations/**/*.R`；规定蒙特卡洛纪律：DGP/估计量、L'Ecuyer 播种、蒙特卡洛标准误、覆盖率与真值对比、原始结果留存（v1.10.0）；同时规定**假设体制纪律**：每个脚本的文件头写明估计量、维持的假设、本次放宽的那一条，以及如何核验设定正确，另设假设内/假设外防火墙，并在严重性网格上「只放宽一条」（v2.5.1） |
+| R Package Conventions | `r-package-conventions.md` | `R/**`、`tests/**`、`DESCRIPTION`、`NAMESPACE`、`man/**`；规定包源码标准：`R/` 中不写 `library()`、由 roxygen 管理 NAMESPACE，并规范 Imports/Suggests、testthat 3e 和 CRAN 政策（v1.10.0） |
+| Confidential Data | `confidential-data.md` | 受限/涉密数据路径；规定涉密原始数据不得进入 git，并说明避免披露的纪律，供 `/disclosure-check` / `/replication-package` / `/data-management-plan` 使用（v2.0） |
 
 ## 钩子
 
 | 钩子 | 类型 | 配置 |
 |------|------|--------------|
-| 会话日志自动写入 | Stop（command） | `.codebuddy/hooks/log-reminder.py` --- 每有一组有意义的改动就自动写会话日志（不再只是提醒） |
+| 会话日志自动写入 | Stop（command） | `.codebuddy/hooks/log-reminder.py`：每出现一组有意义的改动，就自动写入会话日志，不再只是提醒 |
 | 桌面通知 | Notification（command） | `.codebuddy/hooks/notify.sh` |
-| 上下文状态捕获 | PreCompact（command） | `.codebuddy/hooks/pre-compact.py` --- 保存计划/任务/决策；DRAFT 块需显式开启（`CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1`） |
+| 上下文状态捕获 | PreCompact（command） | `.codebuddy/hooks/pre-compact.py`：保存计划、任务和决策；DRAFT 块需要通过 `CODEBUDDY_PRECOMPACT_BLOCK_ON_DRAFT=1` 显式开启 |
 | 上下文恢复 | SessionStart[compact\|resume]（command） | `.codebuddy/hooks/post-compact-restore.py` |
-| 会话交接 | SessionStart[startup] + UserPromptSubmit（command） | `.codebuddy/hooks/session-handoff.py` --- 把最近 7 天内写下的最新一份 `/checkpoint` 或 `/compress-session` 文件交给新会话；它算作在会话首个提示词时投递，无头运行里永不投递；`CODEBUDDY_HANDOFF=off` 可关闭 |
+| 会话交接 | SessionStart[startup] + UserPromptSubmit（command） | `.codebuddy/hooks/session-handoff.py`：将最近 7 天内写入的最新一份 `/checkpoint` 或 `/compress-session` 文件交给新会话；SessionStart 注入并记为待投递，会话首个提示词将其标记为已投递；SDK 入口跳过；本平台 cron/无人值守运行须显式设置 `CODEBUDDY_HANDOFF=off`，不能依赖自动识别 |
 | 上下文监控 | PostToolUse[Bash\|Agent\|Task]（command） | `.codebuddy/hooks/context-monitor.py` |
-| Git 护栏 | PreToolUse（command） | `.codebuddy/hooks/git-guardrails.py` --- 拦截 `reset --hard` / `clean -f` / `push --force` / `add -A`；工作区不干净时拒绝 merge / rebase / pull，也包括那些会先把工作区清干净的命令链（`ALLOW_DIRTY_MERGE=1`） |
-| 论断核对 | PostToolUse（command） | `.codebuddy/hooks/claim-reconcile.py` --- 脚本变动时标出过期的数值论断，包括对某个已声明的 `appears_in` 展示位的修改 |
-| issue 守卫 | PreToolUse[Bash]，仅针对 `gh` 命令（`if: Bash(gh *)`）（command） | `.codebuddy/hooks/issue-guard.py` --- 拒绝裸的 `gh issue create`/`new`，以及 REST/GraphQL 建 issue，并指向 `scripts/file-issue.py`（它会先查重） |
-| 打开中的 issue（选用） | SessionStart[startup]（command） | `.codebuddy/hooks/open-issues.py` --- 设了 `CODEBUDDY_ISSUES_AT_START=1` 时，启动时列出打开中 issue 的编号与标题（仅所有者与协作者）；默认关闭 |
-| 信任根守卫 | PreToolUse（command） | `.codebuddy/hooks/root-of-trust-guard.py` --- 对**静默**写入 `.codebuddy/settings*.json`、`.codebuddy/hooks/`、`.githooks/` 的 shell 操作做尽力而为的绊线，并把破坏性 git 拒绝清单套到 `bash -c` / `env -S` 的载荷上；读操作与 `Edit`/`Write` 仍然放行，所以它换的是通道，而不是把文件锁死（`ALLOW_ROOT_OF_TRUST_WRITE=1`） |
+| Git 护栏 | PreToolUse（command） | `.codebuddy/hooks/git-guardrails.py`：拦截 `reset --hard` / `clean -f` / `push --force` / `add -A`；工作区不干净时拒绝 merge / rebase / pull，包括会先清理工作区的命令链；可用 `ALLOW_DIRTY_MERGE=1` 覆盖 |
+| 论断核对 | PostToolUse（command） | `.codebuddy/hooks/claim-reconcile.py`：脚本变动时标出过期的数值论断，包括对某个已声明 `appears_in` 展示位的修改 |
+| issue 守卫 | PreToolUse[Bash]（command） | `.codebuddy/hooks/issue-guard.py`：注册接收所有 Bash 调用，脚本对非 `gh` 命令快速放行；拒绝裸的 `gh issue create`/`new`，以及通过 REST/GraphQL 创建 issue，并指向会先查重的 `scripts/file-issue.py` |
+| 打开中的 issue（选用） | SessionStart[startup]（command） | `.codebuddy/hooks/open-issues.py`：设置 `CODEBUDDY_ISSUES_AT_START=1` 后，启动时仅列出由仓库所有者、成员或协作者创建的 issue 标题；陌生作者的标题不会进入会话；默认关闭 |
+| 信任根守卫 | PreToolUse（command） | `.codebuddy/hooks/root-of-trust-guard.py`：对**静默**写入 `.codebuddy/settings*.json`、`.codebuddy/hooks/`、`.githooks/` 的 shell 操作设置尽力而为的绊线，并将破坏性 git 拒绝清单应用于 `bash -c` / `env -S` 的载荷；读操作与 `Edit`/`Write` 仍然放行，因此它限制的是写入通道，而不是锁死文件；可用 `ALLOW_ROOT_OF_TRUST_WRITE=1` 覆盖 |
 
-**WorkBuddy 里还有的钩子事件**（本模板未使用，但可用于自定义钩子）：
+**WorkBuddy 还提供以下钩子事件**。本模板尚未使用它们，但你可以用来自定义钩子：
 
 | 事件 | 何时触发 | 用途 |
 |-------|--------------|----------|
 | `PermissionRequest` | 权限对话框出现时 | 自动批准特定模式、记录日志 |
-| `PostToolUseFailure` | 工具调用失败时 | 错误追踪、重试逻辑 |
-| `SubagentStart` | 子代理派生时 | 资源追踪 |
-| `SubagentStop` | 子代理结束时 | 结果汇总 |
-| `PostCompact` | 上下文压缩之后 | 压缩后清理 |
+| `PostToolUseFailure` | 工具调用失败时 | 追踪错误、执行重试逻辑 |
+| `SubagentStart` | 子代理派生时 | 追踪资源 |
+| `SubagentStop` | 子代理结束时 | 汇总结果 |
+| `PostCompact` | 上下文压缩之后 | 在压缩后清理 |
 | `SessionEnd` | 会话关闭时 | 保存最终状态、清理 |
-| `WorktreeCreate` | 创建 git worktree 时 | 分支追踪 |
-| `WorktreeRemove` | 移除 git worktree 时 | 清理核验 |
-| `TaskCompleted` | 后台任务完成时 | 进度通知 |
-| `ConfigChange` | 设置被修改时 | 审计日志 |
+| `WorktreeCreate` | 创建 git worktree 时 | 追踪分支 |
+| `WorktreeRemove` | 移除 git worktree 时 | 核验清理结果 |
+| `TaskCompleted` | 后台任务完成时 | 通知进度 |
+| `ConfigChange` | 设置被修改时 | 记录审计日志 |
 
 ## 故障排查 {#troubleshooting}
 
 ### LaTeX 编译不过
 
-**症状：** `xelatex` 报错或宏包缺失。
+**症状：** `xelatex` 报错，或找不到宏包。
 
-**修法：**
-1. 确认装了 XeLaTeX：`which xelatex`
-2. 用 `/compile-latex`（或直接 `scripts/compile-beamer.sh <名字>`）编译——它负责 `TEXINPUTS` 与 `BIBINPUTS`，**包括平台分隔符**
-3. 缺宏包？用 TeX Live 装：`tlmgr install [package]`
+**处理方法：**
+1. 用 `which xelatex` 确认已经安装 XeLaTeX
+2. 用 `/compile-latex` 编译，也可以直接运行 `scripts/compile-beamer.sh <名字>`；脚本会处理 `TEXINPUTS` 与 `BIBINPUTS`，**包括不同平台使用的分隔符**
+3. 如果缺少宏包，用 TeX Live 安装：`tlmgr install [package]`
 
-**另一个症状，特别容易查错方向：`! I can't find file 'Lecture1.tex'`，但那个文件就在 `Slides/` 里。**
+**另一个容易误判的症状是：系统报告 `! I can't find file 'Lecture1.tex'`，但该文件明明位于 `Slides/`。**
 
-这是手写 `TEXINPUTS=../Preambles:$TEXINPUTS` 的典型后果。`kpathsea` 的语义是「你给的值**替换**默认搜索路径，**除非它以路径分隔符结尾**」；少了结尾那个分隔符，当前目录 `.` 就一起从搜索路径里消失，于是连主文件都找不到。而分隔符本身是平台相关的——POSIX 是 `:`，**Windows 版 TeX Live 是 `;`**——所以在 Windows 上写 `:` 等于没写结尾分隔符。报错说的是「文件不存在」，照它去查文件会一无所获。用 `scripts/compile-beamer.sh` 就绕开了这个问题。
+手写 `TEXINPUTS=../Preambles:$TEXINPUTS` 经常导致这个问题。`kpathsea` 会用你提供的值**替换**默认搜索路径，**除非该值以路径分隔符结尾**。如果末尾缺少分隔符，当前目录 `.` 也会从搜索路径中消失，系统因此连主文件都找不到。分隔符因平台而异：POSIX 使用 `:`，**Windows 版 TeX Live 使用 `;`**。因此，在 Windows 上写 `:` 并不等于添加了末尾分隔符。不要只根据「文件不存在」的报错去查找文件；使用 `scripts/compile-beamer.sh` 可以避开这个问题。
 
 ### Quarto 渲染不出来
 
-**症状：** `quarto render` 失败，或产出坏掉的 HTML。
+**症状：** `quarto render` 失败，或生成的 HTML 有问题。
 
-**修法：**
-1. 查 Quarto 版本：`quarto --version`（需 1.3+）
-2. 检查 YAML frontmatter 里有没有语法错误
-3. 缺 TikZ 生成的 SVG？先跑 `/extract-tikz`
+**处理方法：**
+1. 运行 `quarto --version` 检查 Quarto 版本，需为 1.3+
+2. 检查 YAML frontmatter 是否有语法错误
+3. 如果缺少 TikZ 生成的 SVG，先运行 `/extract-tikz`
 
 ### 钩子不触发
 
-**症状：** 没有上下文告警、没有自动写会话日志、git 护栏不生效。
+**症状：** 没有上下文告警或自动会话日志，git 护栏也没有生效。
 
-**修法：**
-1. 检查钩子是否配置好：`cat .codebuddy/settings.json | grep hooks`
-2. 确认有 Python 3：`which python3`
-3. 检查钩子文件权限：`ls -la .codebuddy/hooks/`
+**处理方法：**
+1. 用 `cat .codebuddy/settings.json | grep hooks` 检查钩子配置
+2. 用 `which python3` 确认 Python 3 可用
+3. 用 `ls -la .codebuddy/hooks/` 检查钩子文件权限
 
 ### WorkBuddy 不理规则
 
-**症状：** WorkBuddy 不遵守 `.codebuddy/rules/` 里的约定。
+**症状：** WorkBuddy 没有遵守 `.codebuddy/rules/` 中的约定。
 
-**修法：**
-1. 规则用的是 `paths:` frontmatter --- 检查路径是否匹配你的文件
-2. 规则太多？WorkBuddy 能可靠遵循约 150 条指令。合并精简。
-3. 试试：*「读 `.codebuddy/rules/[rule].md`，这次任务按它做」*
+**处理方法：**
+1. 如果规则使用 `paths:` frontmatter，检查你的文件是否匹配这些路径
+2. 检查规则是否过多。WorkBuddy 能可靠遵循约 150 条指令，超过后应合并精简
+3. 明确要求：*「读 `.codebuddy/rules/[rule].md`，这次任务按它做」*
 
 ### 压缩之后上下文丢了
 
-**症状：** WorkBuddy 忘了你们在做的事。
+**症状：** WorkBuddy 忘记了当前任务。
 
-**修法：**
-1. 让 WorkBuddy 去读计划：*「读 `quality_reports/plans/[latest].md`」*
-2. 查会话日志：*「读 `quality_reports/session_logs/[latest].md`」*
-3. `post-compact-restore.py` 钩子本应自动打印恢复信息
+**处理方法：**
+1. 要求 WorkBuddy 读取计划：*「读 `quality_reports/plans/[latest].md`」*
+2. 要求它读取会话日志：*「读 `quality_reports/session_logs/[latest].md`」*
+3. 检查 `post-compact-restore.py` 钩子；它本应自动打印恢复信息
 
 ### 质量分太低
 
-**症状：** 分数卡在 80 以下，提交不了。
+**症状：** 分数低于 80，无法提交。
 
-**修法：**
-1. 跑 `/slide-excellence`，拿到逐项问题清单
-2. 先修关键问题（每条要扣 10 到 20 分）
-3. 问 WorkBuddy：*「还剩哪些关键问题？」*
+**处理方法：**
+1. 运行 `/slide-excellence`，取得逐项问题清单
+2. 优先修复关键问题，每条会扣 10 到 20 分
+3. 询问 WorkBuddy：*「还剩哪些关键问题？」*
 
 ### 技能没被自动调用
 
-**症状：** 你描述任务时 WorkBuddy 不用技能。
+**症状：** 你描述任务后，WorkBuddy 没有使用相应技能。
 
-**修法：**
-1. 请求写明确些：*「帮我看看幻灯片有没有语法和版式问题」*
-2. 检查技能是否开启了自动调用（没有 `disable-model-invocation: true`）
-3. 技能元数据决定 WorkBuddy 知不知道何时该用 --- 检查描述是否清楚，正文只会在触发后加载
-4. 用 `/name` 做显式调用对照，把引擎发现、自动调用、显式调用与 UI 可见性分开判断；菜单没显示不等于未发现或不可调用
-5. 若刚改过技能，热重载尚未证实：记录客户端与技能版本，新开会话复测，不要断言无需重启
+**处理方法：**
+1. 把请求写得更明确：*「帮我看看幻灯片有没有语法和版式问题」*
+2. 检查技能是否允许自动调用，确认没有设置 `disable-model-invocation: true`
+3. 检查描述是否清楚。WorkBuddy 根据技能元数据判断何时使用，正文只有在触发后才加载
+4. 用 `/name` 进行显式调用对照，分别判断引擎发现、自动调用、显式调用和 UI 可见性；菜单未显示不代表引擎没有发现技能，也不代表无法调用
+5. 如果刚修改过技能，注意热重载尚未得到证实。记录客户端与技能版本，在新会话中复测，不要断言无需重启
 
 ### 计划存到了全局目录，不在项目里
 
-**症状：** 计划出现在 `~/.workbuddy/plans/`，而不是 `quality_reports/plans/`。
+**症状：** 计划写入 `~/.workbuddy/plans/`，而不是 `quality_reports/plans/`。
 
-**这不是故障，是本平台的固定行为。** 引擎不认 `plansDirectory`（2026-10-30 核查：客户端引擎零命中），项目里写这个键不会有任何效果，计划总是落在全局目录。要把某份计划留在仓库里，就自己拷过去：
+**这不是故障，而是本平台的固定行为。** 引擎不识别 `plansDirectory`。2026-10-30 核查时，客户端引擎中该键的命中数为零，因此在项目中设置它不会产生任何效果，计划总会写入全局目录。若要把某份计划保存到仓库，请手动复制：
 
 ```bash
 cp ~/.workbuddy/plans/<name>.md quality_reports/plans/
 ```
 
-拷过去之后**不会**被提交：模板的 `.gitignore` 排除了 `quality_reports/plans/*`，因为计划是本地工作记录。要让某份计划进版本控制，用 `git add -f`，或从你 fork 的 `.gitignore` 里删掉那一行。
+复制后的文件**不会**被提交，因为计划属于本地工作记录，模板的 `.gitignore` 已排除 `quality_reports/plans/*`。如果需要将某份计划纳入版本控制，请使用 `git add -f`，或从你 fork 的 `.gitignore` 中删除对应行。
 
 ---
 
 # 站在巨人的肩上 {#sec-acknowledgments}
 
-本指南建立在许多人的工作之上。感谢以下项目与它们的作者。
+本指南借鉴了许多人的工作，在此感谢以下项目及其作者。
 
 **核心基础设施：**
 
-- [Claude Code](https://code.claude.com/docs/en/overview)，Anthropic 出品 --- 让这一切成为可能的 CLI 工具、VS Code 扩展与桌面应用
+- Anthropic 的 [Claude Code](https://code.claude.com/docs/en/overview)：提供 CLI 工具、VS Code 扩展和桌面应用，为这套工作流奠定基础。
 
 **研究工作流：**
 
-- [clo-author](https://github.com/hugosantanna/clo-author)，Hugo Sant'Anna（UAB）--- 以论文为中心的研究工作流，含对抗式代理配对、模拟同行评审、完整研究生命周期管理
-- [claudeblattman](https://github.com/chrisblattman/claudeblattman)，Chris Blattman（芝加哥大学）--- 面向非技术学者的完整工作流：行政助理、标书写作、项目管理，以及独立上下文批评模式
+- Hugo Sant'Anna（UAB）的 [clo-author](https://github.com/hugosantanna/clo-author)：以论文为中心的研究工作流，包含对抗式代理配对、模拟同行评审和完整研究生命周期管理。
+- Chris Blattman（芝加哥大学）的 [claudeblattman](https://github.com/chrisblattman/claudeblattman)：面向非技术学者的完整工作流，涵盖行政助理、标书写作、项目管理和独立上下文批评模式。
 
 **可复现性与数据管理：**
 
-- Yiqing Xu（斯坦福）与 Leo Yang Yang（HKBU），"[Scaling Reproducibility: An AI-Assisted Workflow for Large-Scale Reanalysis](https://yiqingxu.org/papers/2026_ai/AI_reproducibility.pdf)"，2026 --- 模板-执行器架构与可复现 AI 辅助研究的原则
-- [Template README for Social Science Replication Packages](https://social-science-data-editors.github.io/template_README/)，Lars Vilhuber 等（康奈尔）--- 被主要经济学期刊采用的 AEA Data Editor 合规标准
+- Yiqing Xu（斯坦福）与 Leo Yang Yang（HKBU）的 "[Scaling Reproducibility: An AI-Assisted Workflow for Large-Scale Reanalysis](https://yiqingxu.org/papers/2026_ai/AI_reproducibility.pdf)"，2026：提出模板—执行器架构和可复现 AI 辅助研究的原则。
+- Lars Vilhuber 等（康奈尔）的 [Template README for Social Science Replication Packages](https://social-science-data-editors.github.io/template_README/)：提供主要经济学期刊采用的 AEA Data Editor 合规标准。
 
 **演示设计与工具：**
 
-- [MixtapeTools / The Rhetoric of Decks](https://github.com/scunning1975/MixtapeTools/tree/main/presentations)，Scott Cunningham（贝勒大学）--- 让学术演示既漂亮又修辞有力的哲学与实践框架
-- Scott Cunningham，*[Causal Inference: The Mixtape](https://mixtape.scunning.com)* --- 上面那套演示框架的作者所写的教科书
-- [autoresearch](https://github.com/karpathy/autoresearch)，Andrej Karpathy --- 以 `program.md` 为宪法性文件的基于约束的自主研究
-- [ClaudeCodeTools](https://github.com/aspi6246/ClaudeCodeTools) --- 「The Editor」人格，用于七轮顺序论文审读
+- Scott Cunningham（贝勒大学）的 [MixtapeTools / The Rhetoric of Decks](https://github.com/scunning1975/MixtapeTools/tree/main/presentations)：提供兼顾视觉质量与修辞效果的学术演示理念和实践框架。
+- Scott Cunningham 的教科书 *[Causal Inference: The Mixtape](https://mixtape.scunning.com)*，作者也是上述演示框架的开发者。
+- Andrej Karpathy 的 [autoresearch](https://github.com/karpathy/autoresearch)：以 `program.md` 为宪法性文件，开展基于约束的自主研究。
+- [ClaudeCodeTools](https://github.com/aspi6246/ClaudeCodeTools)：提供「The Editor」人格，用于七轮顺序论文审读。
 
 **源起：**
 
-- 这套工作流提炼自 Emory 大学的 **Econ 730: Causal Panel Data** 课程，由 Pedro Sant'Anna 开发。计量经济学的出身只是其中一个应用 --- 这些模式与领域无关，此后已被他人在多个领域扩展。
-- 本页是它的**中文移植版**：同一套基础设施改用 WorkBuddy 平台，并按平台能力逐节校订（凡是本平台没有的机制，这里会明说，而不是留一条照抄就失败的命令）。作者署名保留给原作者；本页作为个人学习用途维护，引用请引用[原始仓库](https://github.com/pedrohcgs/claude-code-my-workflow)。
+- Pedro Sant'Anna 在 Emory 大学开设的 **Econ 730: Causal Panel Data** 课程催生了这套工作流。计量经济学只是其中一个应用领域，这些模式不依赖具体学科，后来已被他人扩展到多个领域。
+- 本页是原指南的**中文移植版**，将同一套基础设施迁移到 WorkBuddy 平台，并根据平台能力逐节校订。本平台没有的机制都会明确说明，不会留下照抄后必然失败的命令。作者署名仍归原作者；本页仅为个人学习而维护，引用时请使用[原始仓库](https://github.com/pedrohcgs/claude-code-my-workflow)。
