@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 入口文档按中文表达重写
+
+README、CODEBUDDY、起始提示词和落地页不再逐句翻译：长 bullet 拆成有层次的段落，减少破折号、
+括号嵌套和内部黑话；同时修正 PARTIAL 的处置、独立子代理、`.R` 运行验证、台账适用范围、上游
+统计数字归属等改写中暴露的事实问题。机器计数、链接、命令与限制条件保持受门禁约束。
+
 ### Fixed — 技能机制与中文写作契约按 WorkBuddy 事实重校
 
 区分项目技能、用户技能库和内置技能：`/new-skill` 只负责本仓库约定的项目技能，通用创建入口是

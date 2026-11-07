@@ -14,45 +14,45 @@
 
 ## 范围纪律
 
-**只做被要求的那件事，一件都不多做。** 不要附带 README、构建脚本、`.gitignore` 改动、辅助工具，或任何没被要求的额外脚手架。如果某个补充确实有价值，**把它作为建议列在最后**，由用户决定。
+**只做用户要求的事，不要扩大范围。** 不要附带修改 README、构建脚本或 `.gitignore`，也不要添加辅助工具和其他未要求的脚手架。如果某个补充确有价值，**把它作为建议列在最后**，由用户决定是否采用。
 
-要一份 codebook 就是要一份 codebook。交付 codebook + README + 构建脚本 + gitignore 改动，意味着用户为了接受一件事要审四件事，而通常的结果是四件一起被扔掉。
+用户要求一份 codebook，就只交付 codebook。若同时交付 README、构建脚本和 .gitignore 改动，用户就要为了一项需求审查四项改动，往往会全部放弃。
 
-**要在请求之外加任何东西之前，先问。** 一句话的询问比一次回滚便宜。
+**添加任何超出请求的内容之前，先询问用户。** 先问一句，比事后回滚更省事。
 
 ---
 
 ## 核心原则
 
-- **先计划后执行** —— 非平凡任务先进入计划模式；计划存到 `quality_reports/plans/`
-- **改完要验** —— 任务改动了 `.tex`、`.qmd` 或 `.R` 文件时，必须实际编译或渲染，确认输出后才可报完成
-- **单一真源** —— Beamer `.tex` 是权威源，Quarto `.qmd` 由它派生
-- **质量门禁** —— 低于 80/100 不许出库
-- **[LEARN] 标签** —— 被纠正时记录 `[LEARN:category] 错 → 对`；对所有 forker 通用的经验经人工筛选后写进根 [MEMORY.md](MEMORY.md)
+- **先计划后执行**：非平凡任务先进入计划模式，计划存到 `quality_reports/plans/`
+- **改完要验**：改动 `.tex` 后必须实际编译，改动 `.qmd` 后必须实际渲染，改动 `.R` 后必须实际运行；都要核对输出，确认结果正确才可报告完成
+- **单一真源**：Beamer `.tex` 是权威源，Quarto `.qmd` 由它派生
+- **质量门禁**：低于 80/100 不得交付
+- **[LEARN] 标签**：被纠正时记录 `[LEARN:category] 错 → 对`；适用于所有模板使用者的通用经验，经人工筛选后写入根 [MEMORY.md](MEMORY.md)
 
-跨会话上下文分三层：根 [MEMORY.md](MEMORY.md) 存人工筛选、可提交的通用经验；原生自动记忆存于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/` 存本仓库按日工作日志与本机状态（已 gitignore，保留但不提交）。历史计划、规格与其他会话日志在 [quality_reports/](quality_reports/)。
+跨会话上下文分三层。根 [MEMORY.md](MEMORY.md) 保存人工筛选、可提交的通用经验；原生自动记忆位于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/` 保存本仓库的按日工作日志与本机状态。最后一层已被 gitignore 排除，应保留在本机但不提交。历史计划、规格与其他会话日志位于 [quality_reports/](quality_reports/)。
 
-**我们如何验证** —— 承载验证纪律的参考文件与规则：
+**我们如何验证**：以下参考文件与规则规定了验证要求：
 
-- [`verification-ladder.md`](.codebuddy/references/verification-ladder.md) —— 7 级阶梯，从*资格化检查器*到外部裁判，以及审读回路如何收敛。
-- [`external-oracle-process.md`](.codebuddy/references/external-oracle-process.md) —— 如何跑一个独立的前沿模型裁判（通过 Oracle CLI 换一家厂商的模型；当前目标见其 §2），以及如何裁决它返回的东西。
-- [`provenance-and-ground-truth.md`](.codebuddy/references/provenance-and-ground-truth.md) —— 给你的裁判命名与钉版、给分歧分类，以及净室边界。
-- [`review-fencing.md`](.codebuddy/rules/review-fencing.md) —— 审阅独立性是环境的属性，不是一句嘱咐：检出目录之外的干净副本、扣留此前的裁决、把仓库里已提交的答案键隔离在外。
-- [`release-engineering.md`](.codebuddy/references/release-engineering.md) —— 发布研究软件：消息与静默解决的普查、移植用的冻结特性矩阵、以哈希声明继承的测试、下游消费者按 commit SHA 钉版。
+- [`verification-ladder.md`](.codebuddy/references/verification-ladder.md)：7 级阶梯说明如何验证检查器、引入外部裁判，以及让审读循环收敛。
+- [`external-oracle-process.md`](.codebuddy/references/external-oracle-process.md)：说明如何通过 Oracle CLI 调用另一家厂商的前沿模型作为独立裁判，以及如何裁决它返回的结果。当前目标见其 §2。
+- [`provenance-and-ground-truth.md`](.codebuddy/references/provenance-and-ground-truth.md)：说明如何命名裁判并固定版本、如何给分歧分类，以及净室边界。
+- [`review-fencing.md`](.codebuddy/rules/review-fencing.md)：通过环境保证审阅独立，而不是只提醒审阅者保持独立。具体做法包括在检出目录之外保存未受审读影响的副本、不提供此前的裁决，并隔离仓库中已提交的标准答案文件。
+- [`release-engineering.md`](.codebuddy/references/release-engineering.md)：研究软件的发布要求，包括普查用户消息和静默决策、为移植冻结特性矩阵、按名称和哈希声明继承的测试，以及让下游消费者按 commit SHA 固定版本。
 
-**我们如何写作** —— [`writing-with-ai.md`](.codebuddy/rules/writing-with-ai.md)：内部文档与对外文档的分野、为什么模型无法让自己的产出不再读起来像模型产出，以及任何署你名字的东西的可读标准。
+**我们如何写作**：[`writing-with-ai.md`](.codebuddy/rules/writing-with-ai.md) 区分内部文档与对外文档，解释为什么模型无法让自己的产出不再像模型产出，并规定任何署你名字的文档应达到的可读性标准。
 
-**理论工作** —— [`theory-proving.md`](.codebuddy/references/theory-proving.md)：证明契约、用隔离探索者做组合搜索、给自己的引理找反例、对抗式审计，以及「AI 生成的证明是一个断言，不是一条定理」这条铁律。
+**理论工作**：[`theory-proving.md`](.codebuddy/references/theory-proving.md) 规定证明契约，说明如何用隔离的探索者做组合搜索、为自己的引理寻找反例，以及开展对抗式审计。AI 生成的证明只是一个断言，不能直接当作定理。
 
-**法则** —— [`research-agent-laws.md`](.codebuddy/references/research-agent-laws.md)：用代理跑科研基础设施的 21 条法则，每一条都由一次真实事故换来。
+**法则**：[`research-agent-laws.md`](.codebuddy/references/research-agent-laws.md) 总结了用代理运行科研基础设施的 21 条法则，每条都来自真实事故。
 
-**我们如何记忆** —— 记录落在磁盘上，不只落在对话里；通用经验与本机日志分层存放：
+**我们如何记忆**：记录应写入磁盘，不能只留在对话里。通用经验与本机日志分层存放：
 
-- [`progress-reports.md`](.codebuddy/rules/progress-reports.md) —— GitHub issue 作缺陷记忆，`quality_reports/` 作工作记忆，`MEMORY.md` 作教训记忆。
-- [`issue-ledger.md`](.codebuddy/rules/issue-ledger.md) —— 每一个已出库的 bug、被推迟的改进、卡住的所有者决策都开一个 GitHub issue，修好落地时手工关闭；取证标准与关闭评论的写法。
-- [`repo-hygiene.md`](.codebuddy/rules/repo-hygiene.md) —— **草稿不许变成主干。** 每次提交由 `check-repo-hygiene.py` 强制。
+- [`progress-reports.md`](.codebuddy/rules/progress-reports.md)：GitHub issue 记录缺陷，`quality_reports/` 记录工作过程，`MEMORY.md` 记录经验教训。
+- [`issue-ledger.md`](.codebuddy/rules/issue-ledger.md)：每个已发布的 bug、推迟的改进和因等待负责人决定而受阻的事项都要创建 GitHub issue，修复完成后手工关闭。文件还规定取证标准与关闭评论的写法。
+- [`repo-hygiene.md`](.codebuddy/rules/repo-hygiene.md)：**草稿不得进入主干。** 每次提交由 `check-repo-hygiene.py` 强制检查。
 
-任何工作要在 [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md) 里有了一行才算清账 —— 跑 [`/vaccinate`](.codebuddy/skills/vaccinate/SKILL.md) 给它补一行。
+任何被用于放行工作的检查器、门禁或审读代理，都必须在 [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md) 中有台账行。缺少记录时，运行 [`/vaccinate`](.codebuddy/skills/vaccinate/SKILL.md) 补充。
 
 ---
 
@@ -93,10 +93,11 @@ python scripts/quality_score.py Quarto/file.qmd
 # 调色板同步（LaTeX ↔ SCSS）
 ./scripts/check-palette-sync.sh
 
-# 门禁总检：这个仓库内部自洽、并且当下为真吗？
+# 门禁总检：检查仓库内部是否自洽、各项描述当前是否仍然成立
 # （surface-sync + skill-integrity + model-versions + links + spec-conformance
-#   + staleness + repo-hygiene + derived-counts + ledger-coverage + hook-battery）
-# 任何改动之后都跑一次。Python 版可跨平台，bash 版是上游原件。
+#   + staleness + repo-hygiene + derived-counts + ledger-coverage + hook-battery
+#   + portability + slide-content）
+# 任何改动之后都跑一次。Python 与 Bash 是同一实现的两个入口。
 python scripts/backtest.py
 ./scripts/backtest.sh
 ```
@@ -113,13 +114,13 @@ python scripts/backtest.py
 | 90 | PR | 可以部署 |
 | 95 | 卓越 | 追求目标 |
 
-由 `/commit` 强制（不达标即停并要求显式覆盖）**并且** —— 在你跑过 `./scripts/install-hooks.sh` 之后 —— 由真实的 git pre-commit 钩子（`.githooks/pre-commit`）强制：它在每次提交时跑 12 个门禁（仅当暂存区里有钩子、其 settings 或钩子回归集本身时才跑钩子回归集；CI 永远全跑）外加质量门禁（≥80）。要绕过请谨慎：`SKIP_QUALITY_GATE=1` 或 `--no-verify`。
+`/commit` 会强制执行质量阈值，不达标就停止，只有显式豁免才能继续。运行 `./scripts/install-hooks.sh` 后，git pre-commit 钩子 `.githooks/pre-commit` 也会在每次提交时检查 12 个门禁和质量分数，质量分数须 ≥80。只有暂存区包含钩子、对应 settings 或钩子回归集本身时，才运行钩子回归集；CI 始终全部运行。请谨慎使用 `SKIP_QUALITY_GATE=1` 或 `--no-verify` 绕过检查。
 
 ---
 
 ## 技能速查
 
-全部技能的总表在 [README.md](README.md#技能codebuddyskills)。**技能怎么导入/新建/使用，见 [README.md](README.md#技能导入与使用)。** 按工作流分，最常用的：
+全部技能见 [README.md](README.md#技能codebuddyskills) 的总表。**技能如何导入、新建和使用，见 [README.md](README.md#技能导入与使用)。** 以下按工作流列出最常用的技能：
 
 - **幻灯片 / 教学：** `/create-lecture` `/compile-latex` `/deploy` `/qa-quarto` `/slide-excellence` `/syllabus` `/teach-from-paper` `/scaffold-exercises`
 - **论文 / 审稿：** `/review-paper`（`--peer`）`/seven-pass-review` `/respond-to-referees` `/verify-claims` `/proofread` `/humanize` `/submission-disclosures`
@@ -128,23 +129,23 @@ python scripts/backtest.py
 - **验证 / 严谨性：** `/vaccinate` `/challenge` `/oracle-review` `/adjudicate-review` `/differential-audit` `/blast-radius` `/verify-artifact` `/credible-claims` `/deep-audit`
 - **元 / 工作流：** `/commit` `/learn` `/new-skill` `/checkpoint` `/context-status` `/deep-audit` `/coauthor-brief` `/triage-inbox` `/issues`
 
-Stata（`/stata-replication`）、R 包（`/r-package-check`）、TikZ（`/extract-tikz`、`/new-diagram`）等 —— 完整索引见 README。
+Stata 使用 `/stata-replication`，R 包使用 `/r-package-check`，TikZ 使用 `/extract-tikz`、`/new-diagram`。完整索引见 README。
 
 ---
 
 ## 平台约定（WorkBuddy 原生）
 
-- **项目配置根是 `.codebuddy/`**：`rules/` `agents/` `skills/` `hooks/` `references/` `output-styles/`。
-- **项目技能官方支持**：`.codebuddy/skills/` 随仓库共享，项目级优先于用户级；用户技能库跨项目。市场安装、上传与通用创建默认进用户技能库，随仓库共享须显式放进项目目录。
-- **两个创建入口分工不同**：`/new-skill` 是本仓库项目技能，按本仓库约定生成项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器（GUI：技能 → 添加技能 → 创建技能）。
-- **技能按需加载**：元数据用于匹配，正文在触发时加载，附属材料按需读取。UI/菜单不显示不等于不能发现或用 `/name` 调用。
-- **热重载未证实**：不要写「无需重启」；若未按新正文运行，记录客户端与技能版本，新开会话复测。
-- **`allowed-tools` 是工具白名单**：限制技能可用工具，只列实际需要的工具。它不是绝对安全边界，模型行为、权限规则与钩子仍须核验；桌面端相反行为目前无 L3 证据。
-- **子代理模型只有三档**：`default` / `lite` / `reasoning`，另有 `effort:`（`minimal`–`max`）调同一档内的思考预算——代理可设、技能不可设。把认知需求映射到这两根轴，别再照搬 opus / sonnet / haiku 的说法。
-- **规则按 `paths:` 实时生效**：改文件时匹配的规则即刻注入，不必重开会话。
-- **计划文件落在用户级** `~/.workbuddy/plans/`；项目内留档用 `quality_reports/plans/`。
-- **记忆分三层**：根 `MEMORY.md` 存人工筛选、可提交的通用经验；原生自动记忆在用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/YYYY-MM-DD.md` 等文件存本仓库按日工作日志与本机状态，已 gitignore，保留但不提交。
-- **钩子协议与上游一致**：`PreToolUse` / `PostToolUse` / `UserPromptSubmit` / `SessionStart` / `PreCompact` / `Stop` / `Notification`，统一经 `.codebuddy/hooks/lib/hook-runner.sh` 入口调用。
+- **项目配置根是 `.codebuddy/`**：其中包括 `rules/` `agents/` `skills/` `hooks/` `references/` `output-styles/`。
+- **官方支持项目技能**：`.codebuddy/skills/` 随仓库共享，项目级技能优先于用户级技能，用户技能库可跨项目使用。从市场安装、上传或用通用创建器创建的技能，默认进入用户技能库；若要随仓库共享，必须显式放进项目目录。
+- **两个创建入口分工不同**：`/new-skill` 是本仓库的项目技能，按本仓库约定生成项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器，GUI 入口为技能 → 添加技能 → 创建技能。
+- **技能按需加载**：元数据用于匹配，正文在触发时加载，附属材料按需读取。UI 或菜单不显示某项技能，不代表它无法被发现或通过 `/name` 调用。
+- **热重载未证实**：不要写「无需重启」。若实际运行没有采用新正文，记录客户端与技能版本，再新开会话复测。
+- **`allowed-tools` 是工具白名单**：它限制技能可以调用的工具，只应列出实际需要的工具。它不是绝对安全边界，模型行为、权限规则与钩子仍须核验；目前没有 L3 证据表明桌面端存在相反行为。
+- **子代理模型只有三档**：`default` / `lite` / `reasoning`。`effort:` 可取 `minimal`–`max`，用于调整同一档内的思考预算；代理可以设置，技能不能设置。应根据任务的认知需求选择模型档位与 effort，不要照搬 opus / sonnet / haiku 的说法。
+- **规则按 `paths:` 实时生效**：修改文件时，匹配的规则会立即注入，不必重开会话。
+- **计划文件保存在用户级** `~/.workbuddy/plans/`；项目内留档使用 `quality_reports/plans/`。
+- **记忆分三层**：根 `MEMORY.md` 保存人工筛选、可提交的通用经验；原生自动记忆位于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/YYYY-MM-DD.md` 等文件保存本仓库的按日工作日志与本机状态。最后一层已被 gitignore 排除，应保留在本机但不提交。
+- **钩子协议与上游一致**：`PreToolUse` / `PostToolUse` / `UserPromptSubmit` / `SessionStart` / `PreCompact` / `Stop` / `Notification` 都统一通过 `.codebuddy/hooks/lib/hook-runner.sh` 入口调用。
 
 ---
 
