@@ -1,6 +1,6 @@
 # 期刊画像模板
 
-把下面这一块复制进 `.codebuddy/references/journal-profiles.md`（放在相应的地区/领域小节下），并填满每个字段。6 种审稿取向的权重必须加起来等于 1.0。
+把下面这一块复制到 `.codebuddy/references/journal-profiles.md`，放在相应的地区或领域小节下，并填写每个字段。6 种审稿取向的权重总和必须等于 1.0。
 
 ```markdown
 ### Journal Full Name (SHORT)
@@ -42,7 +42,7 @@
 
 ## 审稿取向参考
 
-`--peer` 流水线里用到的 6 种审稿取向：
+`--peer` 流水线使用以下 6 种审稿取向：
 
 | 审稿取向 | 口头禅 |
 |---|---|
@@ -53,20 +53,20 @@
 | THEORY | 「理论预测了什么？」 |
 | SKEPTIC | 「什么能让这个结论消失？」 |
 
-这些取向刻意做到跨领域通用。对非经济学领域，它们仍然适用——调整权重，别改标签。
+这些取向有意保持跨领域通用。用于非经济学领域时，应调整权重，不要更改标签。
 
 ## 领域特有的论文类型
 
-`methods-referee` 代理按论文类型分支。默认类型（以经济学为中心）是：
+`methods-referee` 代理会按论文类型采用不同分支。默认类型主要来自经济学：
 
-- `reduced-form`——DiD、IV、RD、事件研究等。
-- `structural`——结构估计、DSGE、一般均衡校准等。
-- `theory+empirics`——理论模型，配对其预测的实证检验。
-- `descriptive`——度量、数据构建、模式记录。
-- `formal-theory`——博弈论 / 公理化模型，无实证（v1.8.0）。
-- `survey-experiment`——带随机化操纵的调查或框定实验（v1.8.0）。
+- `reduced-form`：DiD、IV、RD、事件研究等。
+- `structural`：结构估计、DSGE、一般均衡校准等。
+- `theory+empirics`：理论模型，以及对其预测的实证检验。
+- `descriptive`：度量、数据构建、模式记录。
+- `formal-theory`：博弈论 / 公理化模型，无实证（v1.8.0）。
+- `survey-experiment`：带随机化操纵的调查或框定实验（v1.8.0）。
 
-对非经济学领域，把你自己领域的类型加进 `.codebuddy/agents/methods-referee.md`：复制那份评分细则块，改各维度权重。例子：
+对于非经济学领域，在 `.codebuddy/agents/methods-referee.md` 中加入本领域的论文类型：复制评分细则块，再调整各维度的权重。例如：
 
 - **生物学：** `observational / experimental / computational / review`。
 - **政治学：** `case-study / comparative`（注意：`formal-theory` 与 `survey-experiment` 已自带，v1.8.0）。
@@ -74,6 +74,6 @@
 
 ## 交叉引用
 
-- `.codebuddy/references/journal-profiles.md`——在用的校准文件。
-- `.codebuddy/agents/editor.md`——读画像，抽取审稿取向。
-- `.codebuddy/skills/review-paper/SKILL.md`——`--peer [SHORT]` 的入口。
+- `.codebuddy/references/journal-profiles.md`：当前使用的校准文件。
+- `.codebuddy/agents/editor.md`：读取画像并提取审稿取向。
+- `.codebuddy/skills/review-paper/SKILL.md`：`--peer [SHORT]` 的入口。

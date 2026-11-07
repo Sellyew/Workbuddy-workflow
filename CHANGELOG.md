@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 其余模板按中文表达重写
+
+需求规格、预注册、审稿回复、治理、来源、执行契约、筛选和记录等 14 份模板改为按中文
+理解顺序成文，保留占位符、表格、字段和科研含义。独立复核修正了 copyleft 限定、提交与
+推送授权、TikZ P1/P3 规则及筛选示例的对象。
+
 ### Changed — 排障文档与技能模板按中文表达重写
 
 TROUBLESHOOTING 与技能模板改为按中文理解顺序成文，保留命令、路径、字段和平台限制。

@@ -23,7 +23,7 @@
 
 ## 经验与更正
 
-- [LEARN:category] 你为将来记下的经验
+- [LEARN:category] 记录供以后使用的经验
 
 ## 核验结果
 
