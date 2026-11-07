@@ -1,6 +1,6 @@
-<!-- 探索放弃日志 —— 把一个研究沙箱封存起来时，复制进 explorations/<name>/README.md
+<!-- 探索放弃日志：停止一项探索并封存其沙箱时，把本文件复制到 explorations/<name>/README.md
      （见 .codebuddy/rules/exploration-folder-protocol.md）。
-     这**不是**复现包的 README —— 那种存缴请用 /replication-package。 -->
+     这**不是**复现包的 README；复现包存缴请使用 /replication-package。 -->
 
 # 已放弃：[项目名]（[日期区间]）
 

@@ -1,22 +1,22 @@
 # 预注册模板
 
-本模板由 `.codebuddy/skills/preregister/SKILL.md` 消费。它含三套风格的段落（OSF、AsPredicted、AEA RCT 登记处）。技能依据 `--style` 或该领域的默认值选一套。
+本模板供 `.codebuddy/skills/preregister/SKILL.md` 读取，包含 OSF、AsPredicted、AEA RCT 登记处三套风格。技能根据 `--style` 或该领域的默认值选择其中一套。
 
-**输出约定。** 技能把所选风格填好的表单写到 `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`（已 gitignore）。由用户自己上传到登记处；本模板*不是*一个登记处提交工具。
+**输出约定。** 技能按所选风格填写表单，并写入 `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`，该路径已加入 gitignore。用户负责把表单上传到登记处；本模板*不会*代为提交。
 
 **标注图例。** 每个字段都带一个标记：
 
-- **MUST** —— 登记处强制要求；没有它文档无法提交。
-- **SHOULD** —— 强烈建议；审阅者期待它有。
-- **MAY** —— 可选；相关才写。
+- **MUST**：登记处强制要求，缺少该字段就无法提交文档。
+- **SHOULD**：强烈建议填写，审阅者通常会期待这项信息。
+- **MAY**：可选，只在相关时填写。
 
-对任何**输入描述没有提供**的 **MUST** 字段，写 `[CLARIFY: <具体问题>]`。不要编造。
+如果**输入描述没有提供**某个 **MUST** 字段，就写 `[CLARIFY: <具体问题>]`，不要编造。
 
 ---
 
 ## 风格 1 —— OSF（Open Science Framework）
 
-OSF 的「Preregistration」模板。政治学、心理学与广义社会科学研究的默认选择。在 `osf.io/registries` 上传。
+这是 OSF 的「Preregistration」模板，默认用于政治学、心理学和广义社会科学研究。填写后上传到 `osf.io/registries`。
 
 ```markdown
 ---
@@ -98,7 +98,7 @@ source-spec: <path to quality_reports/specs/... if applicable>
 
 ## 风格 2 —— AsPredicted
 
-AsPredicted 的 9 问表单（aspredicted.org）。为实验室心理学与短周期实验研究而设。在 `aspredicted.org/create.php` 上传。
+这是 AsPredicted 的 9 问表单（aspredicted.org），适用于实验室心理学和短周期实验研究。填写后上传到 `aspredicted.org/create.php`。
 
 ```markdown
 ---
@@ -142,7 +142,7 @@ source-spec: <path>
 
 ## 风格 3 —— AEA RCT 登记处
 
-美国经济学会的 RCT 登记处（socialscienceregistry.org）。自 2018 年起，向 AEA 系列期刊投任何随机干预研究都**必须**登记。在 `socialscienceregistry.org/trials/create` 上传。
+这是美国经济学会的 RCT 登记处（socialscienceregistry.org）。自 2018 年起，向 AEA 系列期刊投稿任何随机干预研究，都**必须**登记。填写后上传到 `socialscienceregistry.org/trials/create`。
 
 ```markdown
 ---
@@ -212,7 +212,7 @@ source-spec: <path>
 
 ## 风格映射（跨登记处）
 
-对需要在某个登记处发布、却要按另一家的惯例报告结果的用户，大致映射是：
+如果用户需要在某个登记处发布，却要按另一家登记处的惯例报告结果，可以参考下面的近似映射：
 
 | OSF 小节 | AsPredicted 问题 | AEA RCT 字段 |
 |---|---|---|
@@ -224,7 +224,7 @@ source-spec: <path>
 | 7 数据排除 | Q6 | （在 PAP 附件里） |
 | 6 推断判据 | （隐含在 Q5 中） | （在 PAP 附件里） |
 
-这张映射是近似的——各登记处的粒度不同。拿不准时，直接用该登记处自己的原生模板。
+各登记处要求的信息粒度不同，所以这张表只能提供近似对应。拿不准时，直接使用目标登记处自己的模板。
 
 ---
 
@@ -232,5 +232,5 @@ source-spec: <path>
 
 - **文件：** `templates/preregistration-template.md`
 - **消费者：** `.codebuddy/skills/preregister/SKILL.md`
-- **输出：** `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`（已 gitignore）
+- **输出：** `quality_reports/preregistrations/YYYY-MM-DD_<slug>.md`，该路径已加入 gitignore
 - **登记处网址：** OSF（osf.io/registries）、AsPredicted（aspredicted.org）、AEA RCT（socialscienceregistry.org）
