@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 排障文档与技能模板按中文表达重写
+
+TROUBLESHOOTING 与技能模板改为按中文理解顺序成文，保留命令、路径、字段和平台限制。
+独立复核修正了只读白名单与写报告的矛盾、`disable-model-invocation` 的调用范围、PARTIAL
+口径及技能触发率的可复核验收标准。
+
 ### Changed — 指南定制、附录与致谢按中文表达重写
 
 领域定制、技能创建、MCP/插件扩展、附录和致谢改为按中文理解顺序成文。独立复核按实现
