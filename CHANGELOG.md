@@ -8,6 +8,14 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Fixed — 技能机制与中文写作契约按 WorkBuddy 事实重校
+
+区分项目技能、用户技能库和内置技能：`/new-skill` 只负责本仓库约定的项目技能，通用创建入口是
+`/skill-creator`；市场安装、上传和创建默认进入用户技能库，不再误写进项目 `.codebuddy/skills/`。
+补齐元数据匹配与正文触发加载、权限两档与 CLI 边界、三层记忆路径；撤回热重载、动态注入等未证实
+断言。`new-skill` 改用 `$ARGUMENTS`，`hello` 改由调用方外部裁判。`allowed-tools` 按官方文档统一为
+工具白名单。`translation-conventions.md` 改为保留信息点、按中文习惯重组，不再逐句翻译。
+
 ### Changed — 清掉用户入口的迁移残余
 
 新手路径上最后一批「从 Claude Code 迁来」的痕迹：starter-prompt 第一步不再让新手读

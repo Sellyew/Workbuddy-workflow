@@ -5,8 +5,8 @@
 它存在的理由是一次事故。v3.0.0 依据 `P1_migration_verification.md` 的 T13 一行
 （「`plansDirectory` / `statusLine` 暂不支持」）删掉了 `.codebuddy/settings.json` 的
 `permissions` 块，然后仓库里写了四份文档解释它为什么该被删。复测结果：`permissions`
-引擎读、`statusLine` 引擎也读（渲染层不消费），只有 `plansDirectory` 是真的零命中。
-**错误起点不是判断失误，是没有出处的判断被当成事实继承了四次。**
+引擎读；`statusLine` 只核实了桌面渲染层不消费，引擎是否读取该设置键未证实；只有
+`plansDirectory` 是真的零命中。**错误起点不是判断失误，是没有出处的判断被当成事实继承了四次。**
 
 ## 使用规约
 
@@ -25,15 +25,23 @@
 | **L3 运行时** | 本机真实触发过，留下可引用的输出 | 「生效」 |
 | **⏳** | 只到 L2，没有运行时观测 | 「实现存在，未观测到」 |
 
-**L1 与 L2 的区别是这道台账的核心。** `statusLine` 在引擎字符串里出现 8 次（L1 充分），
-但没有一处消费它（L2 不成立）。反过来，`effort` 在代理**列表** schema 里没有位置，
-却在加载器、`--effort` 旗标与 `/effort` 命令里各有一条消费路径——**只看命中数、
-或者只查一个 schema，都会得出与事实相反的结论**，两种错法这道台账都犯过。
+**L1 与 L2 的区别是这道台账的核心。** `statusLine` 的 8 次命中全是 HTTP 头，
+既不能支撑 L1，也不能支撑 L2；已核实的只是桌面渲染层不消费，引擎读取设置键未证实。
+反过来，`effort` 在代理**列表** schema 里没有位置，却在加载器、`--effort` 旗标与
+`/effort` 命令里各有一条消费路径——**只看命中数、或者只查一个 schema，都会得出与事实相反的结论**，
+两种错法这道台账都犯过。
 
 ## 环境
 
-本机 `WB=/d/workbuddy/resources`，客户端版本 `37.10.3-42`（2026-10-27 构建）。
-事实分居三个包，**搜错包会得到假的零命中**：
+复核者先按自己的安装位置设置变量，不要把某台机器的绝对路径当成公共命令：
+
+```bash
+export WB="<你的 WorkBuddy resources 目录>"
+export H="$WB/app.asar.unpacked/node_modules/@genie/agent-harness"
+export S="$H/cli/dist-server/shared.cjs"
+```
+
+本文历史观测来自客户端版本 `37.10.3-42`（2026-10-27 构建）；换版本后必须重新核查。事实分居三个包，**搜错包会得到假的零命中**：
 
 | 问题类型 | 该去哪个文件找 |
 |---|---|
@@ -49,7 +57,7 @@
 | 事实 | 观测级别 | 证据 | 日期 |
 |---|---|---|---|
 | kpathsea 的路径分隔符**平台相关**：POSIX `:`，**Windows 版 TeX Live `;`**。且 `TEXINPUTS` / `BIBINPUTS` **必须以分隔符结尾**——否则默认搜索路径（含 `.`）被整个替换掉 | L3 | Windows 上 `TEXINPUTS="../Preambles:"` → `! I can't find file 'HelloWorld.tex'`（文件就在）；`TEXINPUTS="../Preambles;"` → 4 页；`TEXINPUTS="../Preambles"` 同样失败；`TEXINPUTS=""` → 4 页 | 2026-10-31 |
-| 本机 `xelatex` = TeX Live 2026（Windows 构建），`quarto`、`pdftotext`（poppler）在 PATH；**没有 R / Rscript** | L3 | `xelatex --version`；`which Rscript R` → not found | 2026-10-31 |
+| **本机历史记录，不是公共机制结论**：当时 `xelatex` = TeX Live 2026（Windows 构建），`quarto`、`pdftotext`（poppler）在 PATH；当时**没有 R / Rscript**。其他机器须重新检查，不能继承这项安装状态 | L3（仅该本机、该日期） | `xelatex --version`；`which Rscript R` → not found | 2026-10-31 |
 | `quarto render` 会去取 Google Fonts。代理不通时它打印 `ProxyConnectException … 502`，但**仍然产出 HTML** | L3 | 本次渲染：`(ProxyConnectException "fonts.googleapis.com" 443 … 502)` 之后紧接 `Output created: workflow-guide.html` | 2026-10-31 |
 
 ## 事实表
@@ -61,8 +69,8 @@
 | `permissions` | 顶层键被读；`deny` 经 `extractWholeToolRules` 过滤工具调用 | L2 | `grep -a -o permissions "$WB/app.asar" \| wc -l` → 695 | 2026-10-30 |
 | `permissions.allow` | 生效（放行清单） | L2 | 同上；`settingsManager.get("permissions")` | 2026-10-30 |
 | `plansDirectory` | **不支持**。计划固定落 `~/.workbuddy/plans/`，没有可配置项 | L0 | `grep -a -o plansDirectory "$WB/app.asar" \| wc -l` → 0 | 2026-10-30 |
-| `statusLine` | 引擎认这个键，**桌面渲染层不消费**。8 次命中全是 `statusLine: 'HTTP/1.1 204 No Content'`（CORS 头） | L1 | `grep -a -o '.\{60\}statusLine.\{60\}' "$WB/app.asar"` | 2026-10-30 |
-| 权限档位 | 界面只有两档：`sandbox.defaultPermission`（默认权限）/ `sandbox.fullAccessPermission`（完全访问权限）。`Shift+Tab` 与 `--permission-mode` 不存在 | L3 | 模式选择器可见；命令在包内零命中 | 2026-10-30 |
+| `statusLine` | **桌面渲染层不消费已核实；引擎读取设置键未证实**。8 次命中全是 `statusLine: 'HTTP/1.1 204 No Content'`（CORS 头），这些无关命中不能支撑 L1 / L2 | 桌面已核实；引擎未证实 | `grep -a -o '.\{60\}statusLine.\{60\}' "$WB/app.asar"`；命中仅为 HTTP 头 | 2026-10-30 |
+| 权限档位 | 桌面选择器只有两档：`sandbox.defaultPermission`（默认权限）/ `sandbox.fullAccessPermission`（完全访问权限）。桌面选择器不提供 `Shift+Tab` 与 `--permission-mode`；后两者属于 CodeBuddy Code CLI | 桌面 L3；CLI 官方文档 | 模式选择器可见；[CLI Permission Modes](https://www.workbuddy.ai/docs/cli/permission-modes) 的 “Switch During a Session: Shift+Tab” 与 “Specify at Startup: --permission-mode” | 2026-10-30（桌面）/ 2026-11-07（CLI） |
 
 ### 钩子
 
@@ -88,7 +96,12 @@
 
 | 项 | 事实 | 级别 | 证据 | 核查 |
 |---|---|---|---|---|
-| `.codebuddy/skills/` | 原生发现，`/name` 可调 | L3 | `P1` T4；本会话技能列表来源即此目录 | 2026-10-29 |
+| 项目与用户技能库 | `.codebuddy/skills/` 是官方支持的项目技能目录，随仓库共享；项目级优先于用户级，用户技能库跨项目。市场安装、上传与通用创建默认进入用户技能库，随仓库共享须显式放进项目目录 | L2（目录契约）＋L3（项目目录发现） | 官方目录约定；`P1` T4 只作项目目录发现的运行时证据 | 2026-11-07 |
+| 技能发现与显式调用 | 项目技能可被引擎发现，显式 `/name` 可调。**这项证据不自动覆盖自动调用或 UI 可见性** | L3（仅限发现与显式调用） | `P1` T4；本会话技能列表来源即此目录 | 2026-10-29 |
+| 技能加载 | 元数据用于匹配，正文在触发时加载，附属材料按需读取；不能改写为「每轮从磁盘读取所有描述」 | L2 | `$S` 中的技能元数据解析与触发加载路径；复核时分别记录匹配、正文加载、附属读取 | 2026-11-07 |
+| 技能热重载 | **未证实**，不得写「无需重启」。若未按新正文运行，记录客户端与技能版本，新开会话复测 | 未验证 | 没有足以支撑热重载的运行时证据 | 2026-11-07 |
+| 动态命令注入 `` !`command` `` | 该语法是否在技能加载时执行并注入输出**尚未实测**，不得断言命令必然运行；确需使用时先用无副作用命令探针，记录客户端与技能版本及实际结果 | 未验证 | 没有运行时探针结果；`$ARGUMENTS` 的实测不能外推到命令注入 | 2026-11-07 |
+| 技能 `allowed-tools` | **官方语义是工具白名单 / 限制**：只列技能允许使用的工具，未列出的工具不在白名单内。不是绝对安全边界，模型行为、权限规则与钩子仍须核验；当前没有桌面端相反行为的 L3 证据。若某版本实测不同，须单列客户端版本、最小探针与实际输出 | 官方文档 | [WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)：「工具白名单（逗号分隔）」；[CodeBuddy Code CLI](https://www.workbuddy.ai/docs/cli/skills)：“Allowlist of permitted tools” / “Restrict which tools a Skill can use”；`check-skill-integrity.py` 只检查文档对齐 | 2026-11-07 |
 | `$ARGUMENTS` | 原样带入技能正文 | L3 | `P1` T5 | 2026-10-29 |
 | `.codebuddy/agents/` | 目录**实时加载**，会话内新建即可派发 | L3 | `P1` T6（`ping` 新建即通） | 2026-10-29 |
 | `rules` 的 `paths:` | 按路径条件注入；只碰 `*.md` 时不注入 | L3 | `P1` T2 | 2026-10-29 |
@@ -103,6 +116,8 @@
 | 技能 frontmatter 的 `model:` | **被读，并对模型目录校验**（先按 id 匹配，再按 name 回查）。项目级与插件级两个加载器都携带它 | L2 | `grep -ao 'let eO=eI.model?.trim().\{0,200\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
 | 技能 frontmatter 的 `effort:` | **不被读**。`parseSkillFile` 返回 `context`/`agent`/`model` 等字段，其中没有 `effort` | L0 | `grep -ao 'async parseSkillFile(.\{0,2200\}' "$H/cli/dist-server/shared.cjs" \| grep -c effort` → 0 | 2026-10-30 |
 | 技能 frontmatter 的 `context: fork` | **被读，而且会让技能失去 `Agent`**。写了它，技能经 `executeSkillInForkContext` 变成 `subagent_type: general-purpose` 的 **detached 任务**；那个子会话的工具集里**没有 `Agent`**——`allowed-tools` 里写了也拿不到。后果：需要「多透镜并行独立审读」的技能退化成同一会话依次扮演每个透镜，报告仍会写「多角度审过」。**多透镜技能（`qa-quarto` / `slide-excellence` / `translate-to-quarto`）已因此删掉这个字段** | L3 | 探针技能实测（输出存 `quality_reports/audits/tool-probe-fork.txt`）：22 个直接工具含 `Skill`/`TaskCreate`/`TaskStop`，**无 `Agent`**；`/translate-to-quarto` 自报「`beamer-translator`、`slide-auditor`、`pedagogy-reviewer`、`proofreader`、`quarto-critic` 一个都没派发」。代码：`grep -ao '"fork"===e_.context.\{0,120\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-31 |
+
+**创建入口与界面证据也要分开。** 本仓库的 `/new-skill` 是项目技能，按本仓库约定生成项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器（GUI：技能 → 添加技能 → 创建技能）。UI/菜单不显示不等于引擎未发现或 `/name` 不可调用。自动调用要用匹配探针另测，显式调用要用 `/name` 另测，UI 可见性要查看界面；三者不能由一次 T4 互相推导。
 
 **`agentMetadataSchema` 是名录，不是定义。** 它只有
 `name`/`description`/`path`/`source`/`model`/`tools`/`color` 七个字段，因为它是
@@ -138,6 +153,7 @@
 | `worktree.baseRef` 控制新 worktree 用 `fresh`（远端默认分支）还是 `head`（本地 HEAD） | **没有这个设置键**。带引号的 `"worktree"` 零命中；`baseRef` 的 15 次命中全在 `addWorktree({repoCwd,worktreePath,newBranch,baseRef})` 一个函数里——那是 `git worktree add -b <branch> <path> <baseRef>` 的实参，不是可配置项。包内也没有 `fresh`/`head` 这对枚举 | L0 | `grep -ao '"worktree"' "$WB/app.asar" \| wc -l` → 0；`grep -ao baseRef "$WB/app.asar" \| wc -l` → 15；`grep -rao baseRef "$H/" \| wc -l` → 0 | 2026-10-30 |
 | 内置技能 `/fewer-permission-prompts` · `/team-onboarding` · `/autofix-pr` · `/powerup` · Ultraplan | **五个都不存在**。两个包、大小写两种写法，全部零命中 | L0 | 对六个串名逐个 `grep -aoF`，`app.asar` 与 `$H/` 均返回 0 | 2026-10-30 |
 | `/loop`（自我调速） | **没有命令实现**。38 次命中全在「预设任务卡」的 `command` 字段里（如「每日 AI 新闻推送」的示例写 `/loop 1d 关注…`），是给用户填空的文案。命令注册表里没有 `loop` | L0 | `grep -ao '"/loop"' "$H/cli/dist-server/shared.cjs" \| wc -l` → 0；`grep -ao 'name:"loop"' …` → 0 | 2026-10-30 |
+| `/goal` | **CodeBuddy Code CLI 有官方支持；WorkBuddy 桌面端未证实。** 官方 CLI 文档要求 `@tencent-ai/codebuddy-code` 含 `GoalService`，并描述 Web UI / ACP 面板；本机桌面共享引擎存在 `name:"/goal"` 命令注册与 `GoalService` 实现，但尚无桌面运行时观测，不能写成桌面可用 | CLI 官方文档；桌面共享引擎 L2 ⏳ | [官方 `/goal` 文档](https://www.workbuddy.cn/docs/cli/goal)；`grep -ao 'name:"/goal".\{0,180\}' "$S"`；`grep -ao 'Symbol("GoalService")' "$WB/app.asar.unpacked/cli/dist/codebuddy-lite-wb.mjs"`。2026-11-07 只读探针：`$S` 中 `/goal` 19 处、桌面 `codebuddy-lite-wb.mjs` 中 22 处 | 2026-11-07 |
 | 高级代理配置含 `maxTurns`、隔离、工具限制 | **成立，但都在 agent frontmatter 里**，不是设置键。逐条见「技能 / 规则 / 代理」表 | L2 | 同上表 | 2026-10-30 |
 
 ## 已知不一致
@@ -206,9 +222,10 @@
    返回 695。只测一种引号形态，就会把「支持」写成「不支持」。
 2. **在正确的包里找。** 在 harness 里搜 `permissions` 得 0，不能推出「不支持」——设置管理器
    在 `app.asar` 里。搜错包得到的零命中，和真的不存在长得一模一样。
-3. **键存在 ≠ 它被用。** `statusLine` 8 次命中，全是 HTTP 状态行；`agentMetadataSchema`
-   里有 `model` 而列表里没有 `effort`，但这只能说明「名录上不显示」，推不出「不被读」。
-   命中数是 L1 证据，不是 L2。
+3. **无关命中 ≠ 键存在，更 ≠ 它被用。** `statusLine` 8 次命中全是 HTTP 状态行，
+   既不能支撑 L1，也不能支撑 L2；`agentMetadataSchema` 里有 `model` 而列表里没有 `effort`，
+   但这只能说明「名录上不显示」，推不出「不被读」。只有白名单 / schema / 枚举里的键命中才能支撑 L1，
+   读取或发射路径才能支撑 L2。
 4. **收窄搜索范围会让零命中更像结论。** 「在 `$H/lib/` 里搜 `effort` 得 6，全在会话配置」
    这句话每个字都是真的，结论却是错的——因为加载器不在 `lib/`。第 2 条说的是别搜错包，
    这一条更隐蔽：**包对了，子目录错了**。判断某字段是否被消费，先定位**读写它的那个函数**

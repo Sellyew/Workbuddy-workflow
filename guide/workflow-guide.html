@@ -2427,7 +2427,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#settings---permissions-and-hooks" id="toc-settings---permissions-and-hooks" class="nav-link" data-scroll-target="#settings---permissions-and-hooks"><span class="header-section-number">4.6</span> 设置 — 权限与钩子</a>
   <ul class="collapse">
-  <li><a href="#六层权限栈上游对照表本平台只实现三层" id="toc-六层权限栈上游对照表本平台只实现三层" class="nav-link" data-scroll-target="#六层权限栈上游对照表本平台只实现三层"><span class="header-section-number">4.6.1</span> 六层权限栈（上游对照表；本平台只实现三层）</a></li>
+  <li><a href="#六层权限栈上游对照桌面端与-cli-分开看" id="toc-六层权限栈上游对照桌面端与-cli-分开看" class="nav-link" data-scroll-target="#六层权限栈上游对照桌面端与-cli-分开看"><span class="header-section-number">4.6.1</span> 六层权限栈（上游对照；桌面端与 CLI 分开看）</a></li>
   <li><a href="#故障排查切了完全访问权限却仍然弹提示" id="toc-故障排查切了完全访问权限却仍然弹提示" class="nav-link" data-scroll-target="#故障排查切了完全访问权限却仍然弹提示"><span class="header-section-number">4.6.2</span> 故障排查：切了「完全访问权限」却仍然弹提示</a></li>
   <li><a href="#计划-执行的交接推荐的日常驱动" id="toc-计划-执行的交接推荐的日常驱动" class="nav-link" data-scroll-target="#计划-执行的交接推荐的日常驱动"><span class="header-section-number">4.6.3</span> 计划 → 执行的交接（推荐的日常驱动）</a></li>
   <li><a href="#sec-session-management" id="toc-sec-session-management" class="nav-link" data-scroll-target="#sec-session-management"><span class="header-section-number">4.6.4</span> 会话管理</a></li>
@@ -2506,7 +2506,7 @@ window.Quarto = {
   <li><a href="#autoresearch基于约束的自主研究" id="toc-autoresearch基于约束的自主研究" class="nav-link" data-scroll-target="#autoresearch基于约束的自主研究"><span class="header-section-number">7.6</span> autoresearch：基于约束的自主研究</a></li>
   <li><a href="#stata-mcp执行-stata-的-mcp-服务器" id="toc-stata-mcp执行-stata-的-mcp-服务器" class="nav-link" data-scroll-target="#stata-mcp执行-stata-的-mcp-服务器"><span class="header-section-number">7.7</span> stata-mcp：执行 Stata 的 MCP 服务器</a></li>
   <li><a href="#claudecodetools编辑人格" id="toc-claudecodetools编辑人格" class="nav-link" data-scroll-target="#claudecodetools编辑人格"><span class="header-section-number">7.8</span> ClaudeCodeTools：编辑人格</a></li>
-  <li><a href="#上游-cli-命令在本平台不存在" id="toc-上游-cli-命令在本平台不存在" class="nav-link" data-scroll-target="#上游-cli-命令在本平台不存在"><span class="header-section-number">7.9</span> 上游 CLI 命令在本平台不存在</a></li>
+  <li><a href="#上游-cli-命令在桌面端不可用或未证实" id="toc-上游-cli-命令在桌面端不可用或未证实" class="nav-link" data-scroll-target="#上游-cli-命令在桌面端不可用或未证实"><span class="header-section-number">7.9</span> 上游 CLI 命令在桌面端不可用或未证实</a></li>
   <li><a href="#sec-community" id="toc-sec-community" class="nav-link" data-scroll-target="#sec-community"><span class="header-section-number">7.10</span> 社区采用情况</a></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">8</span> 为你的领域做定制</a>
@@ -2645,7 +2645,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>多代理工作流</td>
-<td>19 个专职代理，负责校对、版面、教学法、代码审查、事实核查、AI 腔调审计、模拟 + R 包审查</td>
+<td>18 个科研/审读代理 + 1 个 Harness 自检代理 <code>ping</code>，共 19 个；科研/审读代理负责校对、版面、教学法、代码审查、事实核查、AI 腔调审计、模拟 + R 包审查</td>
 </tr>
 <tr class="odd">
 <td>质量审读</td>
@@ -3915,7 +3915,8 @@ APPROVED   NEEDS WORK
 </section>
 <section id="skills---reusable-slash-commands" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="skills---reusable-slash-commands"><span class="header-section-number">4.4</span> 技能 — 可复用的斜杠命令</h2>
-<p>技能是用 <code>/command</code> 调用的多步工作流。每个技能住在 <code>.codebuddy/skills/[name]/SKILL.md</code>：</p>
+<p>技能是用 <code>/command</code> 显式调用、或由 WorkBuddy 按元数据匹配后自动调用的多步工作流。<code>.codebuddy/skills/</code> 是官方支持的项目技能目录，随仓库共享，项目级优先于用户级；用户技能库用于跨项目复用。界面或菜单没有列出某项，不等于引擎没有发现它，也不等于 <code>/name</code> 不能调用。元数据用于匹配，正文在触发时加载，附属材料按需读取。</p>
+<p>本模板的项目技能住在 <code>.codebuddy/skills/[name]/SKILL.md</code>：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> compile-latex</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Compile LaTeX with 3-pass XeLaTeX + bibtex</span></span>
@@ -3995,7 +3996,7 @@ APPROVED   NEEDS WORK
 <p>除了本模板的 63 个技能之外，上游 Claude Code 还自带一些内置技能（<code>/batch</code>、<code>/simplify</code>、<code>/debug</code> 等），本平台没有这些；它们对应的能力在本模板里以技能或子代理形式实现。</p>
 </div>
 </div>
-<p>需要本模板之外的技能？在 WorkBuddy 里搜索并安装即可，装好后与模板技能一样进 <code>.codebuddy/skills/</code>。新建技能的方法见下文「第 4 步：创建自定义技能」。</p>
+<p>需要本模板之外的技能？可以在 WorkBuddy 里搜索并安装，但市场安装、上传与通用创建默认进入用户技能库，不会自动进入当前项目的 <code>.codebuddy/skills/</code>。要随仓库共享，必须显式把技能放进项目目录。本仓库的 <code>/new-skill</code> 按本仓库约定生成项目技能；WorkBuddy 内置 <code>/skill-creator</code> 是通用创建器（GUI：<strong>技能 → 添加技能 → 创建技能</strong>）。新建技能的方法见下文「第 4 步：创建自定义技能」。</p>
 </section>
 <section id="agents---specialized-reviewers" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="agents---specialized-reviewers"><span class="header-section-number">4.5</span> 代理 — 专职审阅者</h2>
@@ -4352,10 +4353,11 @@ Warning
 </tr>
 </tbody>
 </table>
-<p>切换位置在输入框旁的权限选择。<strong>别再去找上游那六档</strong>（<code>default</code> / <code>acceptEdits</code> / <code>dontAsk</code> / <code>plan</code> / <code>auto</code> / <code>bypassPermissions</code>）：引擎内部认得这些名字，但本客户端没有把它们暴露成可选档位；<code>Shift+Tab</code> 循环与 <code>--permission-mode</code> 标志都不存在（后者是命令行那条产品线的）。桌面端以选择器当前的位置为准，写进配置文件的 <code>permissions.defaultMode</code> 不会有可观察的效果。</p>
-<section id="六层权限栈上游对照表本平台只实现三层" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="六层权限栈上游对照表本平台只实现三层"><span class="header-section-number">4.6.1</span> 六层权限栈（上游对照表；本平台只实现三层）</h3>
-<p>上游 Claude Code 把权限模式解析成<strong>六层</strong>，后面的层覆盖前面的层。<strong>本平台只实现其中三层</strong>：<code>.codebuddy/settings.json</code> 与 <code>settings.local.json</code> 里的 <code>hooks</code> 与 <code>permissions</code> 都生效，<code>~/.workbuddy/settings.json</code> 同样；<code>claudeCode.*</code> 那两层（第 1–2 层）在这里不存在，而档位不是从文件解析出来的 —— 它在界面里选。下面这张表照抄上游，用途是<strong>对照</strong>：它解释的是「照着上游文档改配置，为什么一点反应都没有」。要判断某个动作到底被谁拦下，跑 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md"><code>/permission-check</code></a>。</p>
+<p>切换位置在输入框旁的权限选择。<strong>别再去找上游那六档</strong>（<code>default</code> / <code>acceptEdits</code> / <code>dontAsk</code> / <code>plan</code> / <code>auto</code> / <code>bypassPermissions</code>）：引擎内部认得这些名字，但桌面端没有把它们暴露成可选档位；桌面选择器不提供 <code>Shift+Tab</code> 循环与 <code>--permission-mode</code> 启动标志，后两者属于 <a href="https://www.workbuddy.ai/docs/cli/permission-modes">CodeBuddy Code CLI</a>。桌面端以选择器当前的位置为准，写进配置文件的 <code>permissions.defaultMode</code> 不会有可观察的效果。</p>
+<p>CLI 不使用这个桌面选择器。其默认模式按官方优先级解析：<strong>当前会话值 → <code>--permission-mode</code> → <code>permissions.defaultMode</code> → <code>default</code></strong>。因此 <code>permissions.defaultMode</code> 不是只在无头路径中回退；没有当前会话值与 <code>--permission-mode</code> 时，它先于内置 <code>default</code> 生效。</p>
+<section id="六层权限栈上游对照桌面端与-cli-分开看" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="六层权限栈上游对照桌面端与-cli-分开看"><span class="header-section-number">4.6.1</span> 六层权限栈（上游对照；桌面端与 CLI 分开看）</h3>
+<p>上游 Claude Code 把权限模式解析成<strong>六层</strong>，后面的层覆盖前面的层。<code>.codebuddy/settings.json</code> 与 <code>settings.local.json</code> 里的 <code>hooks</code> 与 <code>permissions</code> 都生效，CLI 用户级配置位于 <code>~/.codebuddy/settings.json</code>；<code>claudeCode.*</code> 那两层（第 1–2 层）在这里不存在。<strong>桌面端的档位在界面里选，CLI 则按上面的优先级解析默认模式。</strong> 下面这张表用于对照上游与平台差异。要判断某个动作到底被谁拦下，跑 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md"><code>/permission-check</code></a>。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -4387,14 +4389,14 @@ Warning
 <tr class="odd">
 <td>3</td>
 <td>CLI 用户</td>
-<td><code>~/.workbuddy/settings.json</code>（旧版 <code>~/.codebuddy/settings.json</code>）</td>
-<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>本平台读</strong>；<code>defaultMode</code> 只在无头路径里作回退</td>
+<td><code>~/.codebuddy/settings.json</code></td>
+<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>CLI 读取</strong>；<code>permissions.defaultMode</code> 按上述优先级生效，并非只在无头路径回退</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>CLI 项目</td>
 <td><code>&lt;repo&gt;/.codebuddy/settings.json</code></td>
-<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>本平台读</strong>，本模板那七条通配 <code>allow</code> 就在这一层</td>
+<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>CLI 读取</strong>，本模板那七条通配 <code>allow</code> 就在这一层</td>
 </tr>
 <tr class="odd">
 <td>5</td>
@@ -4405,18 +4407,18 @@ Warning
 <tr class="even">
 <td>6</td>
 <td><strong>会话内档位</strong></td>
-<td>输入框旁的权限选择</td>
-<td>默认权限 / 完全访问权限 两档</td>
+<td>桌面端：输入框旁的权限选择；CLI：当前会话值</td>
+<td>桌面端为默认权限 / 完全访问权限两档；CLI 当前会话值优先于启动标志与配置文件</td>
 </tr>
 </tbody>
 </table>
-<p><strong>真正决定行为的是第 6 层</strong>，这一点最让人措手不及：档位由界面选择器决定，文件里写什么都压不过它。上游那两个「让人意外的例外」（项目级 <code>defaultMode</code> 不被承认、VS Code 扩展不读项目设置）在本平台表现为更简单的一条规则 — <strong>项目文件里的默认模式没有可观察的效果</strong>。默认档位是「默认权限」。</p>
+<p><strong>桌面端与 CLI 不要混套规则。</strong> 桌面端的档位由第 6 层的界面选择器决定，配置文件里的 <code>permissions.defaultMode</code> 不改变桌面选择器，默认档位是「默认权限」。CLI 不使用这个桌面选择器；其默认模式按上面的四级优先级解析，所以配置文件里的 <code>permissions.defaultMode</code> 会在没有当前会话值和 <code>--permission-mode</code> 时生效，未配置时才落到 <code>default</code>。</p>
 </section>
 <section id="故障排查切了完全访问权限却仍然弹提示" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="故障排查切了完全访问权限却仍然弹提示"><span class="header-section-number">4.6.2</span> 故障排查：切了「完全访问权限」却仍然弹提示</h3>
 <p>这是最常见的困惑来源。按顺序走这份清单：</p>
 <ol type="1">
-<li><strong>看模式选择器。</strong> 桌面端的权限只有两档：<strong>默认权限</strong> 与 <strong>完全访问权限</strong>（界面对应的键是 <code>sandbox.defaultPermission</code> / <code>sandbox.fullAccessPermission</code>）。上游那五档（Manual / Auto / Plan / Accept edits / Bypass）在本客户端不存在，所以「设了 <code>bypassPermissions</code> 却没生效」这个问法本身要换掉：先确认选择器停在哪一档。本仓库<strong>不配置状态行</strong> — 引擎实现了 <code>statusLine</code>，桌面渲染层却不消费它（2026-10-30 核查：本机客户端包里 <code>statusLine</code> 的 8 次命中全是 HTTP 状态行），所以别指望在状态栏看模式徽标。</li>
+<li><strong>看模式选择器。</strong> 桌面端的权限只有两档：<strong>默认权限</strong> 与 <strong>完全访问权限</strong>（界面对应的键是 <code>sandbox.defaultPermission</code> / <code>sandbox.fullAccessPermission</code>）。上游那五档（Manual / Auto / Plan / Accept edits / Bypass）在桌面端没有暴露成可选档位，所以「设了 <code>bypassPermissions</code> 却没生效」这个问法本身要换掉：先确认选择器停在哪一档。本仓库<strong>不配置状态行</strong> — 桌面渲染层不消费 <code>statusLine</code> 已核实；引擎读取设置键未证实（2026-10-30 核查：本机客户端包里 <code>statusLine</code> 的 8 次命中全是 HTTP 状态行，不能作为引擎读取证据），所以别指望在状态栏看模式徽标。</li>
 <li><strong>跑 <code>/permission-check</code></strong>，把三处来源摊开看：<code>permissions.allow</code> / <code>deny</code> 匹配到了哪几条、钩子链拒了哪条命令、选择器停在哪一档。它不会给你「解析出的模式」——本平台没有那个东西。</li>
 <li><strong>检查是否有过期会话。</strong> 如果设置最近改过，而会话早于那次改动，它仍在旧模式下运行。重载窗口（<code>Cmd+Shift+P</code> → “Developer: Reload Window”）并开一个新会话。</li>
 <li><strong>检查 <code>deny</code> 列表。</strong> 任何一层 <code>deny</code> 里的匹配都会拦住该工具，不管别处的 <code>allow</code> 怎么写。</li>
@@ -4471,11 +4473,6 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <h3 data-number="4.6.4" class="anchored" data-anchor-id="sec-session-management"><span class="header-section-number">4.6.4</span> 会话管理</h3>
 <p>有几条命令能削减实际编辑循环里的摩擦。在你慌慌张张去用它们之前，值得先知道：</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>命令 / 快捷键</th>
@@ -4520,9 +4517,9 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <td>停止或交接之前 — 与叙事式会话日志配套</td>
 </tr>
 <tr class="even">
-<td><code>/goal &lt;verifiable condition&gt;</code></td>
-<td>设定一个终态条件；WorkBuddy 跨轮持续工作，直到一个快模型确认它成立（2026 年 5 月第 20 周，v2.1.139）</td>
-<td>「所有 R 脚本无错通过」、「图 3 渲染成 PDF 不溢出」— 与 <code>/commit</code> 质量门禁配成「核验过终态」的运行</td>
+<td><code>/goal &lt;verifiable condition&gt;</code>（CLI / Web UI ACP；桌面端未证实）</td>
+<td><a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>描述了跨轮目标评估；本机桌面共享引擎有命令注册与 <code>GoalService</code>（L2），但无桌面运行时观测</td>
+<td>可在官方文档明确覆盖的产品线使用；桌面端不要当作已证实可用的步骤</td>
 </tr>
 <tr class="odd">
 <td><code>/fork</code></td>
@@ -4641,8 +4638,8 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </section>
 <section id="memory---cross-session-persistence" class="level2" data-number="4.8">
 <h2 data-number="4.8" class="anchored" data-anchor-id="memory---cross-session-persistence"><span class="header-section-number">4.8</span> 记忆 — 跨会话持久化</h2>
-<p>WorkBuddy 有一个自动记忆系统，位于 <code>~/.workbuddy/projects/[project]/memory/MEMORY.md</code>。这个文件跨会话持久，并被加载进每一次对话。</p>
-<p>用它来存： - 永不改变的关键项目事实 - 你不想重复的那些纠正（<code>[LEARN:tag]</code> 格式） - 当前的计划状态</p>
+<p>WorkBuddy 的原生自动记忆位于用户级 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>：其中的 <code>MEMORY.md</code> 索引跨会话持久，并被加载进每一次对话，细节放在同目录的主题文件里。</p>
+<p>用它来存： - 机器相关的关键项目事实与本地路径 - 你不想重复的用户专属纠正（<code>[LEARN:tag]</code> 格式） - 个人工具偏好与版本变通</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Auto Memory</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Facts</span></span>
@@ -4653,18 +4650,19 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:r-code</span><span class="co">]</span> Package X drops obs silently when covariate is missing</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:citation</span><span class="co">]</span> Post-LASSO is Belloni (2013), NOT Belloni (2014)</span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:workflow</span><span class="co">]</span> Every Beamer edit must auto-sync to Quarto</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="两层记忆架构memory.md-vs-原生自动记忆" class="level4" data-number="4.8.0.1">
-<h4 data-number="4.8.0.1" class="anchored" data-anchor-id="两层记忆架构memory.md-vs-原生自动记忆"><span class="header-section-number">4.8.0.1</span> 两层记忆架构（<code>MEMORY.md</code> vs 原生自动记忆）</h4>
-<p>模板把记忆分成两层（见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md"><code>meta-governance.md</code></a>）：</p>
+<section id="三层记忆架构通用经验-原生自动记忆-项目工作日志" class="level4" data-number="4.8.0.1">
+<h4 data-number="4.8.0.1" class="anchored" data-anchor-id="三层记忆架构通用经验-原生自动记忆-项目工作日志"><span class="header-section-number">4.8.0.1</span> 三层记忆架构（通用经验 / 原生自动记忆 / 项目工作日志）</h4>
+<p>模板把记忆分成三层（见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md"><code>meta-governance.md</code></a>）：</p>
 <ul>
-<li><strong><code>MEMORY.md</code></strong>（已提交，≤ 200 行）— 对所有 fork 者都有用的通用经验：工作流模式、设计原则、文档标准、跨领域通用的质量阈值。</li>
-<li><strong>原生自动记忆</strong>（<code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>，本机存放，永不提交）— 机器相关与用户相关的经验：TeX 安装怪癖、文件路径、个人档位偏好、工具版本变通。</li>
+<li><strong>根 <code>MEMORY.md</code></strong>（人工筛选、可提交，≤ 200 行）— 对所有 fork 者都有用的通用经验：工作流模式、设计原则、文档标准、跨领域通用的质量阈值。</li>
+<li><strong>原生自动记忆</strong>（用户级 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>，本机存放，永不提交）— 机器相关与用户相关的经验：TeX 安装怪癖、文件路径、个人档位偏好、工具版本变通。</li>
+<li><strong>项目内 <code>.workbuddy/memory/</code></strong>（已 gitignore）— 本仓库的按日工作日志与本机状态。这些日志保留在本机，不删除、不提交，也不等同于用户级原生自动记忆。</li>
 </ul>
-<p>fork 的用户 <code>git clone</code> 之后拿到的是通用的 <code>MEMORY.md</code>。他们自己的自动记忆在本地边干边长。</p>
+<p>fork 的用户 <code>git clone</code> 之后拿到的是通用的根 <code>MEMORY.md</code>；原生自动记忆与 <code>.workbuddy/memory/</code> 都留在各自本机，不随仓库克隆。</p>
 </section>
 <section id="promote-memory-让经验毕业v1.9.0" class="level4" data-number="4.8.0.2">
 <h4 data-number="4.8.0.2" class="anchored" data-anchor-id="promote-memory-让经验毕业v1.9.0"><span class="header-section-number">4.8.0.2</span> <code>/promote-memory</code> — 让经验毕业（v1.9.0）</h4>
-<p>两层的划分提出一个问题：<em>谁决定哪些 <code>[LEARN]</code> 条目从原生自动记忆毕业到 <code>MEMORY.md</code>？</em> 答案是一个<strong>五批评者议事会</strong>。</p>
+<p>原生自动记忆与根 <code>MEMORY.md</code> 之间有一个晋升问题：<em>谁决定哪些 <code>[LEARN]</code> 条目从本机经验变成可提交的通用经验？</em> 答案是一个<strong>五批评者议事会</strong>，最终仍由用户批准；项目按日工作日志不会被自动晋升。</p>
 <p><code>/promote-memory [filter]</code> 并行跑五个批评者，各审一个维度：</p>
 <ol type="1">
 <li><strong>通用性</strong> — 一个非经济学的 fork 者会受益吗？</li>
@@ -6925,9 +6923,10 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ul>
 <p><strong>何时参考它：</strong> 你想在投稿前做一遍结构化的论文审读，或者正在回复审稿意见、需要系统追踪哪些关切已经处理。</p>
 </section>
-<section id="上游-cli-命令在本平台不存在" class="level2" data-number="7.9">
-<h2 data-number="7.9" class="anchored" data-anchor-id="上游-cli-命令在本平台不存在"><span class="header-section-number">7.9</span> 上游 CLI 命令在本平台不存在</h2>
-<p>上游 Claude Code 有一批一方（first-party）命令——<code>/team-onboarding</code>、<code>/autofix-pr</code>、<code>/powerup</code>、Ultraplan、<code>/loop</code>、<code>/goal</code>、<code>/fewer-permission-prompts</code>、<code>claude agents</code>。本平台的桌面客户端<strong>没有命令行</strong>，这些命令在这里不可用；它们对应的能力在本模板里以技能形式实现——例如 <code>/permission-check</code>（诊断权限弹窗疲劳）、<code>/commit</code>（提交前质量门禁）、fork + 自定义（团队 onboarding）。</p>
+<section id="上游-cli-命令在桌面端不可用或未证实" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="上游-cli-命令在桌面端不可用或未证实"><span class="header-section-number">7.9</span> 上游 CLI 命令在桌面端不可用或未证实</h2>
+<p>上游 Claude Code 有一批一方（first-party）命令——<code>/team-onboarding</code>、<code>/autofix-pr</code>、<code>/powerup</code>、Ultraplan、<code>/loop</code>、<code>/fewer-permission-prompts</code>、<code>claude agents</code>。本平台的桌面客户端<strong>没有命令行</strong>，这些命令在这里不可用；它们对应的能力在本模板里以技能形式实现——例如 <code>/permission-check</code>（诊断权限弹窗疲劳）、<code>/commit</code>（提交前质量门禁）、fork + 自定义（团队 onboarding）。</p>
+<p><code>/goal</code> 单列，不与上面的确定不可用项混写：<a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>明确支持它，并描述 Web UI / ACP 面板；本机桌面共享引擎也有 <code>/goal</code> 命令注册和 <code>GoalService</code> 实现（L2）。但截至 2026-11-07 没有 WorkBuddy 桌面端运行时观测，所以桌面支持状态是<strong>未证实</strong>，本指南不提供「桌面可用」断言。证据与复核命令见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/platform-facts.md"><code>platform-facts.md</code></a>。</p>
 </section>
 <section id="sec-community" class="level2" data-number="7.10">
 <h2 data-number="7.10" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">7.10</span> 社区采用情况</h2>
@@ -7072,7 +7071,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </tr>
 <tr class="even">
 <td><code>description</code></td>
-<td><strong>最重要的一项。</strong> 决定 WorkBuddy 何时自动加载该技能</td>
+<td><strong>最重要的一项。</strong> 作为匹配元数据，帮助决定何时触发；触发后才加载正文</td>
 <td><code>Compile Beamer slides...</code></td>
 </tr>
 <tr class="odd">
@@ -7082,7 +7081,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </tr>
 <tr class="even">
 <td><code>allowed-tools</code></td>
-<td><strong>预先批准</strong>工具（跳过权限弹窗）。它<strong>不是</strong>限制 — 未列出的工具仍可按常规权限调用</td>
+<td><strong>工具白名单</strong>，限制技能可用工具；只列实际需要的工具。不是绝对安全边界，模型行为、权限规则与钩子仍须核验</td>
 <td><code>[&quot;Read&quot;, &quot;Bash&quot;, &quot;Glob&quot;]</code></td>
 </tr>
 <tr class="odd">
@@ -7102,7 +7101,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </tr>
 <tr class="even">
 <td><code>user-invocable</code></td>
-<td>是否出现在 <code>/</code> 菜单里</td>
+<td>是否出现在 <code>/</code> 菜单里；菜单不可见不等于引擎未发现或 <code>/name</code> 不可调用</td>
 <td><code>true</code>（默认）</td>
 </tr>
 </tbody>
@@ -7114,11 +7113,11 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span><code>allowed-tools</code> 并不做沙箱隔离
+<span class="screen-reader-only">Warning</span><code>allowed-tools</code> 白名单不是绝对安全边界
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>一个常见（且关乎安全）的误读：把 <code>Bash</code> 从 <code>allowed-tools</code> 里省掉，<strong>并不会</strong>让技能变成只读 — <code>allowed-tools</code> 只是<strong>预先批准</strong>列出的工具、让它们跳过权限弹窗；其余工具在你的常规权限设置下照旧可调。WorkBuddy <strong>没有技能级工具黑名单</strong>：要让技能只读，只有软约束（<code>allowed-tools</code> 只列只读工具 + 正文声明「不修改被审文件」），硬保护靠项目级 <code>permissions.deny</code> 规则或 PreToolUse 钩子。完整说明见 <code>templates/skill-template.md</code>。</p>
+<p><a href="https://open.workbuddy.cn/docs/skill">WorkBuddy 开放平台</a>把 <code>allowed-tools</code> 定义为「工具白名单（逗号分隔）」，<a href="https://www.workbuddy.ai/docs/cli/skills">CodeBuddy Code CLI 文档</a>写明 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。只列技能允许使用的工具；未列出的工具不在白名单内。要让技能只读，用 <code>allowed-tools</code> 只列只读工具来排除写入工具，并在正文声明「不修改被审文件」。白名单与正文约束能降低误写风险，但不是绝对安全保证：仍须核验模型实际调用、项目 <code>permissions.deny</code> 规则与 PreToolUse 钩子。当前没有桌面端相反行为的 L3 证据；若某版本实测不同，必须单列客户端版本、最小探针与实际输出。完整说明见 <code>templates/skill-template.md</code>。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -7139,7 +7138,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="skill-dynamic-content" class="level3" data-number="8.4.4">
 <h3 data-number="8.4.4" class="anchored" data-anchor-id="skill-dynamic-content"><span class="header-section-number">8.4.4</span> 技能里的动态内容</h3>
-<p>技能可以用字符串替换与实时命令输出来带入动态取值：</p>
+<p><code>$ARGUMENTS</code> 字符串替换已经实测；命令输出注入尚未实测，两者不能写成同等确定的事实：</p>
 <p><strong>字符串替换：</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -7167,18 +7166,18 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>Current git status: !<span class="in">`git status --short`</span></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>Recent changes: !<span class="in">`git log --oneline -5`</span></span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>Available lectures: !<span class="in">`ls Slides/*.tex`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>WorkBuddy 加载技能时会执行这些命令，并把实时输出注入技能文本。对于需要适配项目当前状态的技能，这非常有用。</p>
+<p>上述 <code>!`command`</code> 语法是否会在加载时执行并注入输出，<strong>尚未实测</strong>。不要据此断言命令必然运行；确需使用时，先用无副作用命令做探针，记录客户端与技能版本，再依据实测结果决定是否采用。</p>
 </section>
 <section id="写出有效的触发描述" class="level3" data-number="8.4.5">
 <h3 data-number="8.4.5" class="anchored" data-anchor-id="写出有效的触发描述"><span class="header-section-number">8.4.5</span> 写出有效的触发描述</h3>
-<p><code>description</code> 是你创建技能时写下的最重要的内容。WorkBuddy 每一轮都会读取所有可用技能的描述，并据此决定是否在你没敲斜杠命令时自动调用。描述含糊，技能就只在你记得它名字时才会跑 — 自动调用就失去意义了。</p>
-<p><strong>金牌范式由三部分组成：</strong></p>
+<p><code>description</code> 是你创建技能时写下的重要元数据。WorkBuddy 用元数据匹配技能；触发时才加载正文，附属材料再按需读取。描述含糊，自动匹配就会失去依据，技能可能只剩你记得名字时的显式调用。</p>
+<p><strong>推荐结构由三部分组成：</strong></p>
 <ol type="1">
 <li><strong>动词 + 对象</strong> — 用一句话说清技能<strong>做什么</strong>。以动作动词开头（Compile、Review、Generate、Translate）。</li>
-<li><strong>「Use when:」适用情境</strong> — 用户需要这个技能时身处的 2–4 种情境，每种配一句用户<strong>真会</strong>说出口的话（<code>&quot;proofread&quot;</code>、<code>&quot;does this overflow?&quot;</code>）。要写清情境，而不是堆近义词：每一份可被模型调用的描述每个会话都会被加载，而清单会被截断（见 <code>/new-skill</code>）。</li>
+<li><strong>「Use when:」适用情境</strong> — 用户需要这个技能时身处的 2–4 种情境，每种配一句用户<strong>真会</strong>说出口的话。中文描述要包含真实中文触发语，例如「检查一下错别字」「看看有没有溢出」，不要只堆英文或逐字硬译的近义词。</li>
 <li><strong>与同族技能划清界限</strong> — 如果你的技能与同领域其他技能挨着（例如 <code>proofread</code>、<code>visual-audit</code>、<code>pedagogy-review</code> 都作用在幻灯片上），就明确写出它<strong>不</strong>适用于什么，或指向替代品。这能防止路由错乱。</li>
 </ol>
-<p><strong>示例：把一段弱描述改写成 A 级描述。</strong></p>
+<p><strong>示例：把一段含糊描述改写得更具体。</strong></p>
 <p>改写前（弱 — 技能存在，但 WorkBuddy 不会自动挑它）：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Run the proofreading protocol on lecture files. Checks grammar, typos, overflow, consistency.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>改写后（强 — 冷启动的提示词也能匹配上）：</p>
@@ -7201,9 +7200,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <ul class="task-list">
 <li><label><input type="checkbox">以动词 + 对象开头。</label></li>
 <li><label><input type="checkbox">有「Use when:」从句，列出 2–4 种情境。</label></li>
-<li><label><input type="checkbox">至少含一句用户真会照打的原话。</label></li>
+<li><label><input type="checkbox">至少含一句用户真会照打的原话；中文描述包含真实中文触发语。</label></li>
 <li><label><input type="checkbox">与同领域的同族技能划清了界限。</label></li>
-<li><label><input type="checkbox">大致控制在 2–4 行内（过长的描述会在 WorkBuddy 的技能索引里被截断）。</label></li>
+<li><label><input type="checkbox">把最关键的用途放在前面，长度遵守本仓库的 1024 字符上限。</label></li>
 </ul>
 </section>
 <section id="领域专属示例" class="level3" data-number="8.4.6">
@@ -7235,7 +7234,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="快速上手" class="level3" data-number="8.4.7">
 <h3 data-number="8.4.7" class="anchored" data-anchor-id="快速上手"><span class="header-section-number">8.4.7</span> 快速上手</h3>
 <ol type="1">
-<li><p><strong>从模板起步</strong> — 或者跑 <code>/new-skill</code>，它会访谈你并写出能过门禁的 frontmatter：</p>
+<li><p><strong>从模板起步</strong> — 或跑本仓库的 <code>/new-skill</code>，它会访谈你并按本仓库约定写出项目技能；WorkBuddy 内置 <code>/skill-creator</code> 是通用创建器，不要混淆两者：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .codebuddy/skills/your-skill-name</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then paste ONLY the fenced markdown block under &quot;Template Structure&quot; in</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># templates/skill-template.md into .codebuddy/skills/your-skill-name/SKILL.md</span></span>
@@ -7248,9 +7247,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ul></li>
 <li><p><strong>测试技能：</strong></p>
 <ul>
-<li>技能会自动热重载 — 改动无需重启即可生效</li>
-<li>用一句你的触发语试试</li>
-<li>确认技能被加载，且输出正确</li>
+<li>修改后的热重载尚未证实，不要假定无需重启；若未按新正文运行，记录客户端与技能版本，新开会话复测</li>
+<li>分别用一句真实触发语和 <code>/name</code> 测试自动与显式调用；UI/菜单不显示本身不算失败证据</li>
+<li>确认正文被加载、输出正确，附属材料只在需要时读取</li>
 </ul></li>
 <li><p><strong>迭代：</strong></p>
 <ul>
@@ -7321,6 +7320,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <h1 data-number="9"><span class="header-section-number">9</span> 附录：文件参考</h1>
 <section id="全部代理" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="全部代理"><span class="header-section-number">9.1</span> 全部代理</h2>
+<p>本附录与 README 使用同一计数口径：18 个科研/审读代理 + 1 个 Harness 自检代理 <code>ping</code>，共 19 个。<code>ping</code> 是自检子代理，后面的 <code>/hello</code> 是自检技能；二者只提供发现、派发与调用证据，不承担科研或审读职责。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 31%">
@@ -7425,6 +7425,11 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <td><code>.codebuddy/agents/r-package-reviewer.md</code></td>
 <td>R 包源码审读 — DESCRIPTION/NAMESPACE 卫生、roxygen、testthat、CRAN 政策红线（v1.10.0）</td>
 </tr>
+<tr class="odd">
+<td>Ping</td>
+<td><code>.codebuddy/agents/ping.md</code></td>
+<td><strong>Harness 自检</strong>子代理：回传固定标记，验证 <code>.codebuddy/agents/</code> 的发现与派发；不承担科研或审查职责</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -7445,309 +7450,319 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </thead>
 <tbody>
 <tr class="odd">
+<td><code>/init-research-project</code></td>
+<td><code>.codebuddy/skills/init-research-project/</code></td>
+<td>把 fork 的模板初始化成真实项目：收齐信息、替换占位符、按学科裁剪、跑环境自检并交出起步计划</td>
+</tr>
+<tr class="even">
 <td><code>/compile-latex</code></td>
 <td><code>.codebuddy/skills/compile-latex/</code></td>
 <td>XeLaTeX 三遍编译</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/deploy</code></td>
 <td><code>.codebuddy/skills/deploy/</code></td>
 <td>Quarto 渲染 + GitHub Pages 同步</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/extract-tikz</code></td>
 <td><code>.codebuddy/skills/extract-tikz/</code></td>
 <td>TikZ 转 SVG</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/new-diagram</code></td>
 <td><code>.codebuddy/skills/new-diagram/</code></td>
 <td>从画廊起手搭一张 TikZ 图</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/proofread</code></td>
 <td><code>.codebuddy/skills/proofread/</code></td>
 <td>运行校对代理</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/visual-audit</code></td>
 <td><code>.codebuddy/skills/visual-audit/</code></td>
 <td>视觉版式审计，就地执行（即 <code>slide-auditor</code> 的检查）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/pedagogy-review</code></td>
 <td><code>.codebuddy/skills/pedagogy-review/</code></td>
 <td>运行教学法审读代理</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/review-r</code></td>
 <td><code>.codebuddy/skills/review-r/</code></td>
 <td>运行 R 代码审读代理</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/qa-quarto</code></td>
 <td><code>.codebuddy/skills/qa-quarto/</code></td>
 <td>批评者-修复者对抗回路</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/slide-excellence</code></td>
 <td><code>.codebuddy/skills/slide-excellence/</code></td>
 <td>多代理联合审读</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/translate-to-quarto</code></td>
 <td><code>.codebuddy/skills/translate-to-quarto/</code></td>
 <td>Beamer 译 Quarto</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/vaccinate</code></td>
 <td><code>.codebuddy/skills/vaccinate/</code></td>
 <td>给评分者打分：埋入已知缺陷 + 一个干净对照，把<strong>召回率</strong>与<strong>假阳性率</strong>报进 <code>quality_reports/qualification/LEDGER.md</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/adjudicate-review</code></td>
 <td><code>.codebuddy/skills/adjudicate-review/</code></td>
 <td>把进来的审查发现 — AI 审读、审稿报告、linter、第二个模型 — 变成经过核实的修复。每一条发现在与原始材料核对之前都只是候选</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/blast-radius</code></td>
 <td><code>.codebuddy/skills/blast-radius/</code></td>
 <td>改动任何共享之物（返回值、模式、默认值、单位）之前与之后，逐一列出所有下游使用者并真的把它们跑一遍</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/credible-claims</code></td>
 <td><code>.codebuddy/skills/credible-claims/</code></td>
 <td>委派前写研究简报，完成后记录论断。防止把「跑得更快」误当成「证据可信」</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/differential-audit</code></td>
 <td><code>.codebuddy/skills/differential-audit/</code></td>
 <td>比对两份实现 — 一次移植、一次复现、一次重构、一次版本升级 — 让「两边一致」真正有意义</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/oracle-review</code></td>
 <td><code>.codebuddy/skills/oracle-review/</code></td>
 <td>调用外部前沿模型做裁判（WorkBuddy → 经 Oracle CLI 调用另一家的前沿模型），并对返回结果做裁定</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/verify-artifact</code></td>
 <td><code>.codebuddy/skills/verify-artifact/</code></td>
 <td>证明你即将发出的文件<strong>就是</strong>你要发的那份东西 — 重建、校验完整性、与源文件对比</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/voice-profile</code></td>
 <td><code>.codebuddy/skills/voice-profile/</code></td>
 <td>从你自己此前的论文里提取一份行文风格画像，再拿草稿去对照 — 它是 <code>/humanize</code> 的正向对应物，后者只检测 AI 腔</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/validate-bib</code></td>
 <td><code>.codebuddy/skills/validate-bib/</code></td>
 <td>参考文献校验</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/devils-advocate</code></td>
 <td><code>.codebuddy/skills/devils-advocate/</code></td>
 <td>设计挑战问题</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/create-lecture</code></td>
 <td><code>.codebuddy/skills/create-lecture/</code></td>
 <td>完整讲义创建</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/commit</code></td>
 <td><code>.codebuddy/skills/commit/</code></td>
 <td>跑门禁并提交；<code>--pr</code> 会推送并开一个 pull request；绝不合并</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/lit-review</code></td>
 <td><code>.codebuddy/skills/lit-review/</code></td>
 <td>文献检索与综述</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/research-ideation</code></td>
 <td><code>.codebuddy/skills/research-ideation/</code></td>
 <td>研究问题与策略</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/interview-me</code></td>
 <td><code>.codebuddy/skills/interview-me/</code></td>
 <td>互动式研究访谈</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/review-paper</code></td>
 <td><code>.codebuddy/skills/review-paper/</code></td>
 <td>稿件审读</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/respond-to-referees</code></td>
 <td><code>.codebuddy/skills/respond-to-referees/</code></td>
 <td>R&amp;R 逐条交叉核对与回复草稿</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/data-analysis</code></td>
 <td><code>.codebuddy/skills/data-analysis/</code></td>
 <td>端到端 R 分析</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/audit-reproducibility</code></td>
 <td><code>.codebuddy/skills/audit-reproducibility/</code></td>
 <td>在论文 ↔︎ 代码之间强制复现容差阈值</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/learn</code></td>
 <td><code>.codebuddy/skills/learn/</code></td>
 <td>把发现提炼成持久技能</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/context-status</code></td>
 <td><code>.codebuddy/skills/context-status/</code></td>
 <td>显示会话健康度与上下文用量</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/deep-audit</code></td>
 <td><code>.codebuddy/skills/deep-audit/</code></td>
 <td>对理论、证明、论文、代码库或一组论断做对抗式审计（拆解、独立怀疑者、每条发现配独立裁判、修、再核）；仓库一致性审计只是其中一个应用，见 <code>references/repo-infrastructure-audit.md</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/seven-pass-review</code></td>
 <td><code>.codebuddy/skills/seven-pass-review/</code></td>
 <td>七遍对抗式稿件审读（并行 fork 的子代理）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/permission-check</code></td>
 <td><code>.codebuddy/skills/permission-check/</code></td>
 <td>诊断权限规则、钩子与档位哪个在拦</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/verify-claims</code></td>
 <td><code>.codebuddy/skills/verify-claims/</code></td>
 <td>对任何草稿做验证链式事实核查（v1.7.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/checkpoint</code></td>
 <td><code>.codebuddy/skills/checkpoint/</code></td>
 <td>结构化会话交接快照 — 叙事型会话日志的配套（v1.8.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/preregister</code></td>
 <td><code>.codebuddy/skills/preregister/</code></td>
 <td>从研究规格生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/humanize</code></td>
 <td><code>.codebuddy/skills/humanize/</code></td>
 <td>检测学术行文中的 AI 腔（只读审计，不改写）（v1.9.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/compress-session</code></td>
 <td><code>.codebuddy/skills/compress-session/</code></td>
 <td>在自动压缩前把当前会话蒸馏成一份结构化笔记（决策、文件、未决问题、下一步、已判为噪声而丢弃的内容）（v1.9.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/promote-memory</code></td>
 <td><code>.codebuddy/skills/promote-memory/</code></td>
 <td>五批评者议会对候选 <code>[LEARN]</code> 条目投票，决定是否从原生自动记忆晋升到 MEMORY.md（v1.9.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/stata-replication</code></td>
 <td><code>.codebuddy/skills/stata-replication/</code></td>
 <td>端到端 Stata 流水线脚手架 + 经 <code>stata-mcp</code> MCP 服务器执行（对应 R 优先项目里的 <code>/data-analysis</code>；v1.9.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/simulation-study</code></td>
 <td><code>.codebuddy/skills/simulation-study/</code></td>
 <td>可复现的蒙特卡洛研究 — DGP、估计量网格、带种子的重复、偏差/RMSE/覆盖率/检验水平/功效，并附蒙特卡洛标准误（v1.10.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/r-package-check</code></td>
 <td><code>.codebuddy/skills/r-package-check/</code></td>
 <td>R 包发布门禁 — <code>devtools::document()</code> + 测试 + <code>R CMD check --as-cran</code> + CRAN 政策分诊（v1.10.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/replication-package</code></td>
 <td><code>.codebuddy/skills/replication-package/</code></td>
 <td>组装可直接投稿的 DCAS / openICPSR 复现包；调用 <code>/audit-reproducibility</code>，一旦 FAIL 即阻断（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/challenge</code></td>
 <td><code>.codebuddy/skills/challenge/</code></td>
 <td>拿你没做过的那些选择来压测一个发现 — 在离散岔路上做规格曲线，再用具名敏感性统计量（E-value、Cinelli–Hazlett RV、Oster δ）对着识别假设做检验</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/capture-environment</code></td>
 <td><code>.codebuddy/skills/capture-environment/</code></td>
 <td>为计算环境做快照（renv.lock / sessionInfo / requirements.txt / uv.lock + 可选 Dockerfile + 种子）（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/power-analysis</code></td>
 <td><code>.codebuddy/skills/power-analysis/</code></td>
 <td>为研究设计算功效 / 所需样本量 / 最小可检测效应（RCT、聚类/ICC、多臂，或基于模拟）+ 一段给 <code>/preregister</code> 用的方法说明（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/disclosure-check</code></td>
 <td><code>.codebuddy/skills/disclosure-check/</code></td>
 <td>对受限数据产出做 SDL 违规预筛（小格子、dominance、PII）；出现任何 CRITICAL 即阻断（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/grant-proposal</code></td>
 <td><code>.codebuddy/skills/grant-proposal/</code></td>
 <td>从 <code>/interview-me</code> 的规格搭一份基金申请书（NSF/NIH/ERC/基金会）；把 DMP 与设施部分委派出去；做目标↔︎方法↔︎预算的一致性过检（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/data-management-plan</code></td>
 <td><code>.codebuddy/skills/data-management-plan/</code></td>
 <td>起草符合资助方要求的数据管理计划（NSF/NIH 2023/ERC/Horizon）（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/coauthor-brief</code></td>
 <td><code>.codebuddy/skills/coauthor-brief/</code></td>
 <td>生成给合作者的交接简报：git 差异、逐产物状态、未决问题、本地复现 + 受限数据步骤（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/triage-inbox</code></td>
 <td><code>.codebuddy/skills/triage-inbox/</code></td>
 <td>分诊学术邮件与日程（Gmail/Calendar MCP），产出按优先级排序的摘要 + 审稿义务追踪；只做人工确认后才执行的动作（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/issues</code></td>
 <td><code>.codebuddy/skills/issues/</code></td>
 <td>把审查发现登记为 GitHub issue（与开启和已关闭的做去重）、列出还开着哪些、并附上「试过什么、怎么修的」评论关闭 issue；没有你的同意就不发任何东西（v2.6）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/syllabus</code></td>
 <td><code>.codebuddy/skills/syllabus/</code></td>
 <td>从主题/阅读清单建课程大纲（周次安排、目标、考核 + 评分细则、逐周 <code>/create-lecture</code> 工作清单）（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/teach-from-paper</code></td>
 <td><code>.codebuddy/skills/teach-from-paper/</code></td>
 <td>把一篇论文变成讲义提纲、可讲授的结果、幻灯片骨架（→ <code>/create-lecture</code>）、讨论题与习题要点（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/respond-to-eval</code></td>
 <td><code>.codebuddy/skills/respond-to-eval/</code></td>
 <td>把学生课程评教变成分类的教学改进方案（保留/改变/调查/超范围）（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/scaffold-exercises</code></td>
 <td><code>.codebuddy/skills/scaffold-exercises/</code></td>
 <td>搭一份分级习题集（分析题/实证题/编程题）并附详解；学生版干净，答案另存（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/new-skill</code></td>
 <td><code>.codebuddy/skills/new-skill/</code></td>
-<td>搭一个符合规范的技能（访谈 → 写出能过门禁的 frontmatter 与 <code>SKILL.md</code>）（v2.0）</td>
+<td>搭一个符合规范的技能（访谈 → 写出 <code>SKILL.md</code> → 运行完整性检查）；README 行、计数、指南与最终门禁另行验收（v2.0）</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/diagnose</code></td>
 <td><code>.codebuddy/skills/diagnose/</code></td>
 <td>为错误或失败的实证结果定位根因 — 复现 → 最小化 → 提出假设 → 插桩（二分）→ 修复；<code>--no-fix</code> 只定位不改动（v2.0）</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/submission-disclosures</code></td>
 <td><code>.codebuddy/skills/submission-disclosures/</code></td>
 <td>投稿时的声明块：与期刊政策匹配的 AI 使用声明、CRediT 角色、利益冲突、数据可得性声明（v2.1）</td>
+</tr>
+<tr class="odd">
+<td><code>/hello</code></td>
+<td><code>.codebuddy/skills/hello/</code></td>
+<td><strong>Harness 自检</strong>技能：写出固定标记文件，由调用方核验技能发现、显式调用、参数与工作目录；不承担科研职责</td>
 </tr>
 </tbody>
 </table>
@@ -8147,7 +8162,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="技能没被自动调用" class="level3" data-number="9.5.7">
 <h3 data-number="9.5.7" class="anchored" data-anchor-id="技能没被自动调用"><span class="header-section-number">9.5.7</span> 技能没被自动调用</h3>
 <p><strong>症状：</strong> 你描述任务时 WorkBuddy 不用技能。</p>
-<p><strong>修法：</strong> 1. 请求写明确些：<em>「帮我看看幻灯片有没有语法和版式问题」</em> 2. 检查技能是否开启了自动调用（没有 <code>disable-model-invocation: true</code>） 3. 技能描述决定 WorkBuddy 知不知道何时该用 — 检查描述是否清楚</p>
+<p><strong>修法：</strong> 1. 请求写明确些：<em>「帮我看看幻灯片有没有语法和版式问题」</em> 2. 检查技能是否开启了自动调用（没有 <code>disable-model-invocation: true</code>） 3. 技能元数据决定 WorkBuddy 知不知道何时该用 — 检查描述是否清楚，正文只会在触发后加载 4. 用 <code>/name</code> 做显式调用对照，把引擎发现、自动调用、显式调用与 UI 可见性分开判断；菜单没显示不等于未发现或不可调用 5. 若刚改过技能，热重载尚未证实：记录客户端与技能版本，新开会话复测，不要断言无需重启</p>
 </section>
 <section id="计划存到了全局目录不在项目里" class="level3" data-number="9.5.8">
 <h3 data-number="9.5.8" class="anchored" data-anchor-id="计划存到了全局目录不在项目里"><span class="header-section-number">9.5.8</span> 计划存到了全局目录，不在项目里</h3>

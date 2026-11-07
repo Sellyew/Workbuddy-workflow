@@ -25,7 +25,7 @@ allowed-tools: ["Read", "Bash", "Glob"]
 3. **CLI 用户设置** —— `~/.workbuddy/settings.json`（旧版为 `~/.codebuddy/settings.json`）。本平台**读这个文件**：`hooks` 与 `permissions` 都生效；`permissions.defaultMode` 只在无头路径里作回退，桌面端以选择器为准。
 4. **CLI 项目设置** —— `<repo>/.codebuddy/settings.json`。胜过用户层。本平台**读 `hooks` 与 `permissions`** —— 本模板的七条通配 `allow` 就在这一层。
 5. **CLI 项目本地设置** —— `<repo>/.codebuddy/settings.local.json`（已 gitignore）。胜过项目层，同样读 `hooks` 与 `permissions`。
-6. **会话内档位** —— 上游是会话启动时由第 1–5 层设定，之后 `Shift+Tab` 循环切换。**本平台换成了界面里的选择器**，只有「默认权限」与「完全访问权限」两档，没有 `Shift+Tab`，也没有第三档。
+6. **会话内档位** —— 上游是会话启动时由第 1–5 层设定，之后 `Shift+Tab` 循环切换。**桌面端换成了界面里的选择器**，只有「默认权限」与「完全访问权限」两档；桌面选择器不提供 `Shift+Tab` 循环或 `--permission-mode` 启动标志，后两者属于 CodeBuddy Code CLI。
 
 **上游那两条覆盖整个层栈的规则**（Anthropic 的 permission-modes 文档，2026-09-26 复核）在本平台**都不适用**，因为它们约束的是本平台没有的那几层：
 
@@ -103,7 +103,7 @@ CLI_USER="${HOME}/.workbuddy/settings.json"
 
 ### 步骤 3 —— 报告运行时状态
 
-本平台没有状态行可看：引擎实现了 `statusLine`，桌面渲染层却不消费它（2026-10-30 核查：客户端包里 `statusLine` 的 8 次命中全是 HTTP 状态行）。所以不要用模式徽标做判据，也不要指向 `statusline.sh`。档位直接问用户，或者读选择器的位置：
+桌面端没有状态行可看：桌面渲染层不消费 `statusLine` 已核实；引擎是否读取该设置键未证实（2026-10-30 核查：客户端包里 `statusLine` 的 8 次命中全是 HTTP 状态行，不能作为引擎读取证据）。所以不要用模式徽标做判据，也不要指向 `statusline.sh`。档位直接问用户，或者读选择器的位置：
 
 > 「你的界面上只有两档：**默认权限** 与 **完全访问权限**。先告诉我停在哪一档。然后换成一个更硬的问题：这条命令是被**某个钩子**拒的，还是被**平台**问的？前者能在 `.codebuddy/settings.json` 里指到具体脚本与具体命令；后者不会在任何配置文件里留下痕迹 —— 重开一个新任务，看它还发不发生。」
 

@@ -18,7 +18,7 @@
 >
 > **只需要 Python/R/markdown？** 你不需要 XeLaTeX 或 Quarto。代理、规则、技能与编排模式对任何文本/代码产物都适用。跳过 `HelloWorld` 演示，直接去 `/data-analysis`、`/review-paper`、`/lit-review` 或 `/review-r`。
 >
-> **第二次会话起：** [MEMORY.md](MEMORY.md)（已提交）收集对所有 forker 都有帮助的通用 `[LEARN]` 条目；机器相关的笔记则累积在 WorkBuddy 的原生自动记忆里（`~/.workbuddy/projects/<project>/memory/`，本机存放，永不提交）。两者的区别见 [`.codebuddy/rules/meta-governance.md`](.codebuddy/rules/meta-governance.md)。
+> **第二次会话起：** 记忆分三层：根 [MEMORY.md](MEMORY.md) 是**人工筛选、可提交**的通用 `[LEARN]` 经验；WorkBuddy 原生自动记忆在用户级 `~/.workbuddy/projects/<project>/memory/`，保存机器与用户相关经验；项目内 `.workbuddy/memory/` 保留本仓库的按日工作日志与本机状态，已 gitignore、不要删除也不提交。三者的区别见 [`.codebuddy/rules/meta-governance.md`](.codebuddy/rules/meta-governance.md)。
 
 ### 1. Fork 并克隆
 
@@ -38,7 +38,7 @@ cd my-project
 
 **用 VS Code？** 改用 WorkBuddy 面板打开即可。一切行为相同——细节见[完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-setup)。
 
-> **避开提示词疲劳。** 新的交互式会话默认以**自动模式**启动（由分类器把关——多数操作直接执行，有风险的才询问）；自动模式不可用时，手动模式会对每个有风险的工具调用逐次询问。若你仍看到过多询问，切换到**自动接受编辑**模式（一个快捷键；见指南的[权限模式一节](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#settings---permissions-and-hooks)），或在 WorkBuddy 里把模式切到「接受编辑」。**Bypass** 模式跳过权限询问与安全检查（拒绝规则仍然生效），Anthropic 把它限定在隔离容器与虚拟机内；它从 CLI 参数、`--settings` 或用户/托管设置（`~/.workbuddy/settings.json`）生效——写在项目 `.codebuddy/settings.json` 里的 bypass 默认值不被承认（会话以手动模式启动）。本模板的 `.codebuddy/settings.json` 不设默认模式（终端会话拿到平台的自动模式）；本仓库不提供 `.vscode/settings.json`：那几个键属于上游 Claude Code 的 VS Code 扩展，本客户端不读，留着只是一个不会生效的开关——另外 `.codebuddy/settings.json` 附带宽泛的兜底放行（`Bash(*)`、`Edit(**)`、`Write(**)`——7 条通配符规则，不是一份精选清单），所以在手动模式下几乎什么都不询问；自动模式会撤掉这条一刀切的 `Bash(*)`，改为把 shell 命令送进它的分类器。在处理受限数据？加上拒绝规则——见 [TROUBLESHOOTING](TROUBLESHOOTING.md#让受限数据不进入模型)。
+> **避开提示词疲劳。** WorkBuddy 桌面端只有两档，在输入框旁的权限选择器切换：**默认权限**按 `.codebuddy/settings.json` 的 `permissions.allow` 放行常规操作，越界仍询问；**完全访问权限**跳过询问与安全检查，但 `deny` 规则与钩子仍然生效。只在可信仓库且清楚后果时使用后者。上游 Claude Code / CLI 文档里的「自动」「接受编辑」「Bypass」等属于另一产品线，不是桌面端的档位或操作步骤。本模板附带宽泛的兜底放行（`Bash(*)`、`Edit(**)`、`Write(**)` 等 7 条通配符规则），所以默认权限下多数常规工作也不会询问；在处理受限数据时另加拒绝规则——见 [TROUBLESHOOTING](TROUBLESHOOTING.md#让受限数据不进入模型)。
 
 然后从指南里粘贴[起始提示词](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-first-session)，填上你的项目细节：
 
@@ -71,14 +71,15 @@ cd my-project
 
 ## 技能：导入与使用
 
-本模板的技能住在 `.codebuddy/skills/<name>/SKILL.md`，fork 即得全套。四件事：
+`.codebuddy/skills/` 是 WorkBuddy 官方支持的**项目技能**目录，技能随仓库共享；项目级技能优先于用户级技能，用户技能库则跨项目复用。本模板的项目技能住在 `.codebuddy/skills/<name>/SKILL.md`，fork 即得全套。
 
-- **怎么用**：敲 `/name` 显式触发（如 `/compile-latex HelloWorld`），或直接描述需求让 WorkBuddy 自动匹配调用。
+- **怎么用**：敲 `/name` 显式触发（如 `/compile-latex HelloWorld`），或直接描述需求让 WorkBuddy 自动匹配调用。界面或菜单没有列出某项，不等于引擎没有发现它，也不等于 `/name` 不能调用。
 - **有哪些**：见下方「技能」总表，逐个说明。
-- **怎么新建**：跑 `/new-skill`（访谈式、一次过门禁），或复制 `templates/skill-template.md` 到 `.codebuddy/skills/<name>/SKILL.md`。
-- **怎么导入第三方**：需要本模板之外的技能时，可在 WorkBuddy 里搜索并安装；装好后同样进 `.codebuddy/skills/`。
+- **怎么新建**：本仓库的 `/new-skill` 是项目技能，负责按本仓库约定生成项目技能；WorkBuddy 内置的 `/skill-creator` 才是通用创建器（GUI：**技能 → 添加技能 → 创建技能**）。也可复制 `templates/skill-template.md` 到 `.codebuddy/skills/<name>/SKILL.md`。
+- **怎么导入第三方**：市场安装、上传，以及通用创建器创建的技能，默认进入用户技能库，不会自动进入当前项目的 `.codebuddy/skills/`。要随仓库共享，必须显式把技能放进项目目录。
+- **怎么加载**：技能元数据用于匹配，正文在触发时加载，附属材料按需读取；这不是「每轮从磁盘读取所有描述」。
 
-字段怎么写，见单一真源 [`.codebuddy/references/skill-fields.md`](.codebuddy/references/skill-fields.md)。
+`allowed-tools` 是官方定义的工具白名单，用于限制技能可用工具；只列实际需要的工具。它不是绝对安全边界，模型行为、权限规则与钩子仍须核验；当前没有桌面端相反行为的 L3 证据。技能修改后是否热重载尚未证实，不要假定无需重启。若运行行为没有反映新正文，记录客户端与技能版本，并新开会话复测。字段怎么写，见单一真源 [`.codebuddy/references/skill-fields.md`](.codebuddy/references/skill-fields.md)。
 
 ---
 
@@ -101,7 +102,7 @@ cd my-project
 
 ### 专职代理
 
-不是一个通用审阅者，而是 18 个专注的代理，各查一个维度。几个有代表性的：
+不是一个通用审阅者，而是 18 个科研/审读代理 + 1 个 Harness 自检代理 `ping`，共 19 个。科研/审读代理各查一个维度，`ping` 不承担科研或审读职责。几个有代表性的：
 
 - **proofreader**——语法/错字
 - **slide-auditor**——视觉布局
@@ -130,7 +131,7 @@ cd my-project
 
 计划、规格与会话日志能挺过自动压缩与会话边界。PreCompact 钩子在 WorkBuddy 的自动压缩触发之前存下一份上下文快照，确保关键决策永不丢失。MEMORY.md 跨会话累积经验，于是在一个会话里发现的模式会滋养后续工作。
 
-对*强制*压缩（长流水线、计划中途交接），`/compress-session`（v1.9.0）把对话蒸馏成一份结构化笔记——决策、下一步动作、以及**按噪声丢弃的东西**——而不是让自动压缩去截断。`/promote-memory`（v1.9.0）定期通过一个五评审议事会，把原生自动记忆里的通用经验收割进已提交的 MEMORY.md。
+对*强制*压缩（长流水线、计划中途交接），`/compress-session`（v1.9.0）把对话蒸馏成一份结构化笔记——决策、下一步动作、以及**按噪声丢弃的东西**——而不是让自动压缩去截断。`/promote-memory`（v1.9.0）定期通过一个五评审议事会筛选原生自动记忆里的候选，经用户批准后把通用经验收割进已提交的 MEMORY.md。
 
 ### 核验纪律（v1.7.0+）
 
@@ -166,11 +167,11 @@ cd my-project
 
 - **模型档位**——本平台只有**三档**：`default`（审读与批评的默认档）、`lite`（机械劳动）、`reasoning`（高判断力：期刊编辑、审稿人、事实核查、对抗式批评、TikZ 空间推理）。没有第四档，也没有按型号点版本的阵容、价格表与别名表。各档的职责、上游层级怎么映射过来、怎么改档位，都在单一真源 [`model-versions.md`](.codebuddy/references/model-versions.md) 里——这里的表述停留在档位抽象上，所以不会过时；而单一真源自身的有效期一过，陈旧度门禁就会让构建失败。
 - **effort 轴（分对象，结论相反）**——**代理**的 `effort:` 是真开关：取值 `minimal` / `low` / `medium` / `high` / `xhigh` / `max`，另有一条 `/effort` 命令；它调子会话的思考预算，与模型档位正交。**技能**里写它则不起作用——技能加载器不读这个字段。`maxEffortLevel` 这个天花板键不存在（见[模型单一真源](.codebuddy/references/model-versions.md)）。
-- **`/goal <可核验条件>`**（v1.9.0；Anthropic 2026 年 5 月）——跨多轮持续工作，直到一个快模型确认条件成立。与 `/commit` 的质量门禁搭配，用于「核验过终态」的运行。
+- **`/goal <可核验条件>`（CLI 有官方支持；桌面端未证实）**——[CodeBuddy Code CLI 官方文档](https://www.workbuddy.cn/docs/cli/goal)说明了跨轮目标评估与 Web UI / ACP 面板；本机桌面共享引擎也有命令注册和 `GoalService` 实现（L2），但没有桌面运行时观测，因此不把它写成桌面可用步骤。证据见 [`platform-facts.md`](.codebuddy/references/platform-facts.md)。
 - **并行任务视图**——并行审读工作（`/review-paper --peer`、`/slide-excellence`）在侧边栏的任务列表里看。上游 CLI 有一个 `claude agents` 单屏仪表盘，本平台桌面端没有这条命令，也不需要它。
 - **成本自觉的编排**——提示词缓存 TTL、70/20/10 模型路由（`lite` / `default` / `reasoning`）、`/cost` + `/usage` 监控。（上游订阅的额度池与缓存时长规则不适用于本平台，本仓库也不代为说明。）
 - **技能 frontmatter**——会读的字段（`model`、`agent`、`disable-model-invocation`、`allowed-tools` 等）及完整清单（含「写了不生效」的那批），见单一真源 [`.codebuddy/references/skill-fields.md`](.codebuddy/references/skill-fields.md)。
-- **权限档位**——桌面端只有两档：**默认权限**（`sandbox.defaultPermission`，越界就问）与**完全访问权限**（`sandbox.fullAccessPermission`，不问）。上游那五档（手动 / 接受编辑 / 计划 / 自动 / Bypass）在本平台没有暴露成可选档位，`--permission-mode` 与 `Shift+Tab` 也不存在。
+- **权限档位**——桌面端只有两档：**默认权限**（`sandbox.defaultPermission`，越界就问）与**完全访问权限**（`sandbox.fullAccessPermission`，不问）。上游那五档（手动 / 接受编辑 / 计划 / 自动 / Bypass）在桌面端没有暴露成可选档位；桌面选择器不提供 `--permission-mode` 与 `Shift+Tab`，后两者属于 [CodeBuddy Code CLI](https://www.workbuddy.ai/docs/cli/permission-modes)。
 - **钩子处理类型**——command、prompt 与 HTTP 处理类型，配 20+ 钩子事件（引擎实际认 28 个，本仓库注册 7 个）。**钩子载荷里没有 `effort.level`**——那个字段属于会话状态（`statusline` 读的是它），不是钩子输入。
 - **高级代理配置**——`model`、`effort`、`maxTurns`、`isolation: worktree`、`tools` / `disallowedTools`、`memory`、`background`，全部写在 `.codebuddy/agents/*.md` 的 frontmatter 里；`model-routing.md` 规则把逐代理的档位写成成文规定（v1.9.0）
 - **没有 `worktree.baseRef` 设置**——上游用这个键决定新 worktree 从远端默认分支（`fresh`）还是本地 HEAD（`head`）拉；本平台没有这个键，`baseRef` 只是内部 `git worktree add` 的一个实参
@@ -207,6 +208,8 @@ cd my-project
 
 <details>
 <summary><strong>本模板 19 个代理、63 个技能、37 条规则、11 个钩子</strong>（点击展开）</summary>
+
+代理由 18 个科研/审读代理 + 1 个 Harness 自检代理 `ping` 组成；`ping` 不承担科研或审读职责。
 
 ### 代理（`.codebuddy/agents/`）
 
@@ -298,9 +301,9 @@ cd my-project
 | `/teach-from-paper` (v2.0) | 端到端读一篇论文，并把它讲给指定受众层级——讲义大纲（动机 → 设定 → 关键结果 → 方法 → 要点）、值得讲的 3-5 个结果及直觉、给 `/create-lecture` 的幻灯片骨架、讨论问题，以及给 `/scaffold-exercises` 的习题集简报 |
 | `/respond-to-eval` (v2.0) | `/respond-to-referees` 的教学版——把课程评价意见聚类成主题，按频次加权（信号 vs 噪声），分为 Keep / Change / Investigate / Out-of-scope，并起草映射到大纲 + 讲义的具体改动；把方案存到 `quality_reports/teaching/` |
 | `/scaffold-exercises` (v2.0) | 跨解析/实证/编程三类题型搭一套计分习题集，带详解与「这为什么重要」的说明，输出到单独的答案册 |
-| `/new-skill` (v2.0) | 搭一个遵循本仓库约定的新技能——就用途、触发词与工具做访谈，按模板写出 `.codebuddy/skills/<name>/SKILL.md`，其 frontmatter/正文一次通过 `check-skill-integrity.py`，随后提醒你补上表面表格的行 |
+| `/new-skill` (v2.0) | 搭一个遵循本仓库约定的新技能——就用途、触发词与工具做访谈，按模板写出 `.codebuddy/skills/<name>/SKILL.md` 并运行 `check-skill-integrity.py`；README 行、计数与指南更新及复跑是独立的最终验收步骤 |
 | `/issues` (v2.6) | 把 GitHub issues 当作项目的待办清单与记忆——每条已确认的发现，先在开着的与已关闭的 issue 里查重，再各自立一条；列出当前手头工作的未决项；关闭一条 issue 时用评论记下哪里错了、试过什么、怎么修的；每个草稿都先给你看，没有你的「可以」就什么都不发；往公开仓库发之前会警告 |
-| `/hello` | **Harness 自检**技能：被调用时回传固定标记并写出 `quality_reports/checkpoints/_SMOKE_HELLO.md`，用于确认 `.codebuddy/skills/` 真的会被发现、`/name` 真的能触发 |
+| `/hello` | **Harness 自检**技能：被调用时回传固定标记并写出 `quality_reports/checkpoints/_SMOKE_HELLO.md`；由调用方用随机标记、调用前文件不存在检查与调用后内容/cwd/参数核验来判定发现和调用是否成功 |
 
 ### 研究工作流
 
@@ -424,7 +427,7 @@ cd my-project
 
 ## 更多资源
 
-- 如何写好 CODEBUDDY.md——指令文件的加载方式、体积上限与两层记忆的分工，见 [`.codebuddy/rules/meta-governance.md`](.codebuddy/rules/meta-governance.md)
+- 如何写好 CODEBUDDY.md——指令文件的加载方式、体积上限与三层记忆的分工，见 [`.codebuddy/rules/meta-governance.md`](.codebuddy/rules/meta-governance.md)
 
 ---
 
