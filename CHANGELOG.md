@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 指南前四部分按中文表达重写
+
+“为何存在 / 起步 / 系统实战 / 构成部件”改为按中文理解顺序成文；保留标题锚点、代码块、计数和
+限制条件。复核同时修正了失效的五分钟演示、门禁清单接入方式、权限 deny 语义、计划目录、钩子
+fail-open 等实现偏差。
+
 ### Changed — 入口文档按中文表达重写
 
 README、CODEBUDDY、起始提示词和落地页不再逐句翻译：长 bullet 拆成有层次的段落，减少破折号、

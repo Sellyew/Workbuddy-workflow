@@ -2599,18 +2599,18 @@ window.Quarto = {
 <h1 data-number="1"><span class="header-section-number">1</span> 这套工作流为何存在</h1>
 <section id="问题" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="问题"><span class="header-section-number">1.1</span> 问题</h2>
-<p>如果你做过正经的学术工作 — 做讲义幻灯片、起草研究论文、跑数据分析流水线 — 你就知道这些痛点：</p>
+<p>制作讲义、撰写论文或分析数据时，你很可能遇到过这些问题：</p>
 <ul>
-<li><strong>跨会话的上下文丢失。</strong> 你接着上次的地方继续，可 WorkBuddy 不记得你<em>为什么</em>选那个记号、<em>什么</em>是讲师批准过的、上次<em>哪些</em> bug 修过。</li>
-<li><strong>质量不稳定。</strong> 一页幻灯片间距完美，下一页就溢出。一张回归表格式规范，下一张漏了标准误。参考文献在 Overleaf 里能编译，本地就断。</li>
-<li><strong>审读纯靠手工，而且累人。</strong> 140 页幻灯片你逐页校。论文你第五遍重读，找的还是那几类错。公式里一个笔误你没看见，学生或审稿人看见了。</li>
-<li><strong>没人核对数学。</strong> 语法检查器能抓 “teh”，抓不到分解定理里一个翻了的符号、一个设错的回归、一次跑不通的复现。</li>
+<li><strong>上下文无法跨会话保留。</strong> 你可以从上次中断的地方继续，但 WorkBuddy 不记得当初<em>为什么</em>采用某个记号、讲师批准过<em>什么</em>，也不记得上次修复了<em>哪些</em> bug。</li>
+<li><strong>质量不稳定。</strong> 一页幻灯片间距合适，下一页却内容溢出；一张回归表格式规范，下一张却漏了标准误；参考文献能在 Overleaf 中编译，换到本地就出错。</li>
+<li><strong>人工审读费时费力。</strong> 你要逐页检查 140 页幻灯片，也可能把论文读到第五遍，却仍在寻找同样几类错误。你漏掉公式中的一个笔误，学生或审稿人却可能发现它。</li>
+<li><strong>数学内容缺少核对。</strong> 语法检查器能发现 “teh”，却看不出分解定理中的符号写反、回归设定有误，也判断不了复现能否跑通。</li>
 </ul>
-<p>这套工作流把这些问题全解决。你说出你想要什么 — 「把 Lecture 5 译成 Quarto」、「投稿前审一遍我的论文」，或者「分析这份数据集并产出可直接发表的数据表」— WorkBuddy 接下剩下的活：规划路径、动手实现、调用<a href="#sec-system">专职审阅者</a>、修掉问题、核验质量、汇报结果。就像一个管整个工程的包工头。</p>
+<p>这套工作流针对这些问题组织任务。你只需说明目标，例如「把 Lecture 5 译成 Quarto」「投稿前审一遍我的论文」，或「分析这份数据集并产出可直接发表的数据表」。随后，WorkBuddy 规划步骤并执行，调用<a href="#sec-system">专职审阅者</a>检查，修复发现的问题，核验质量并汇报结果。</p>
 </section>
 <section id="workbuddy-的不同之处" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="workbuddy-的不同之处"><span class="header-section-number">1.2</span> WorkBuddy 的不同之处</h2>
-<p>WorkBuddy 跑在你自己的电脑上，对文件系统、终端与 git 有完整访问权。本平台的本体是<strong>桌面客户端</strong>：新建任务、选中工作空间，剩下的都在对话里完成。同一引擎还有一条<strong>独立安装</strong>的命令行产品线（CodeBuddy Code CLI），用于无头与脚本化运行——它不是桌面端的一部分，见<a href="#sec-headless">「无头运行」</a>。以下是它带来的能力：</p>
+<p>WorkBuddy 在你的电脑上运行，可以访问文件系统、终端和 git。本平台的主体是<strong>桌面客户端</strong>：新建任务并选择工作空间后，即可在对话中完成工作。同一引擎另有需要<strong>独立安装</strong>的 CodeBuddy Code CLI，用于无头和脚本化运行。CLI 不是桌面端的一部分，详见<a href="#sec-headless">「无头运行」</a>。主要能力如下：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -2625,39 +2625,39 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>读取并编辑你的文件</td>
-<td>就地以外科手术式精度改 <code>.tex</code>、<code>.qmd</code>、<code>.R</code> 文件</td>
+<td>直接修改 <code>.tex</code>、<code>.qmd</code>、<code>.R</code> 文件中的目标内容</td>
 </tr>
 <tr class="even">
 <td>跑 shell 命令</td>
-<td>直接编译 LaTeX、跑 R 脚本、渲染 Quarto</td>
+<td>编译 LaTeX、运行 R 脚本、渲染 Quarto</td>
 </tr>
 <tr class="odd">
 <td>访问 git 历史</td>
-<td>提交、PR、分支 — 全在对话里完成</td>
+<td>在对话中处理提交、PR 和分支</td>
 </tr>
 <tr class="even">
 <td>持久记忆</td>
-<td>CODEBUDDY.md + MEMORY.md 跨会话存活</td>
+<td>通过 CODEBUDDY.md 和 MEMORY.md 跨会话保留信息</td>
 </tr>
 <tr class="odd">
 <td>编排器运行时</td>
-<td>特定技能（<code>/seven-pass-review</code>、<code>/deep-audit</code>、<code>/review-paper --peer</code> 等）在内部跑真正的扇出 → 归并 → 裁判运行时；<code>/qa-quarto</code> 与 <code>/review-paper --adversarial</code> 跑它的批评者 → 修复 → 空轮收敛那一半</td>
+<td><code>/seven-pass-review</code>、<code>/deep-audit</code>、<code>/review-paper --peer</code> 等技能在内部执行扇出、归并和裁判；<code>/qa-quarto</code> 与 <code>/review-paper --adversarial</code> 执行批评、修复和空轮收敛</td>
 </tr>
 <tr class="even">
 <td>多代理工作流</td>
-<td>18 个科研/审读代理 + 1 个 Harness 自检代理 <code>ping</code>，共 19 个；科研/审读代理负责校对、版面、教学法、代码审查、事实核查、AI 腔调审计、模拟 + R 包审查</td>
+<td>18 个科研或审读代理，加上 1 个 Harness 自检代理 <code>ping</code>，共 19 个；科研或审读代理覆盖校对、版面、教学法、代码审查、事实核查、AI 文风审计、模拟和 R 包审查</td>
 </tr>
 <tr class="odd">
 <td>质量审读</td>
-<td><code>/commit</code> 内部给出建议性打分（越线即停并请示是否覆盖）；目标值：80 分提交、90 分 PR、95 分优秀</td>
+<td><code>/commit</code> 在内部给出建议性评分，未达到阈值时停止并询问是否覆盖；目标为提交 80 分、PR 90 分、优秀 95 分</td>
 </tr>
 <tr class="even">
 <td>无头 / 脚本化</td>
-<td>桌面端没有。需另装 CodeBuddy Code CLI，再 <code>codebuddy -p &quot;compile all lectures&quot; -y</code></td>
+<td>桌面端不提供此能力；需另装 CodeBuddy Code CLI，再运行 <code>codebuddy -p &quot;compile all lectures&quot; -y</code></td>
 </tr>
 <tr class="odd">
 <td>浏览器桥接</td>
-<td>用 <code>/remote-control</code> 在手机上续接会话</td>
+<td>用 <code>/remote-control</code> 在手机上继续会话</td>
 </tr>
 </tbody>
 </table>
@@ -2671,14 +2671,14 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>这套工作流是在 6 个多次会话里做出一门「因果面板数据」博士课的过程中长出来的。成果：6 讲完整讲义（每讲 140+ 页），各有 Beamer 与 Quarto 两个版本，交互式 Plotly 图、TikZ 图、R 复现脚本 — 全部由编排器管理，并由一套专职代理按 5 个质量维度审读。</p>
-<p>这个案例虽以幻灯片为中心，但每一个部件 — 代理、编排器、质量门禁 — 对研究论文、数据分析与项目申请书同样有效。</p>
+<p>这套工作流源于一门「因果面板数据」博士课的开发过程。课程经过 6 个多轮会话完成，共产出 6 讲完整讲义，每讲 140+ 页，均有 Beamer 和 Quarto 两个版本，并配有交互式 Plotly 图、TikZ 图和 R 复现脚本。编排器管理制作流程，专职代理从 5 个质量维度审读成果。</p>
+<p>这个案例以幻灯片为主，但代理、编排器和质量门禁同样适用于研究论文、数据分析与项目申请书。</p>
 </div>
 </div>
 </section>
 <section id="整套东西怎么咬合在一起" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="整套东西怎么咬合在一起"><span class="header-section-number">1.3</span> 整套东西怎么咬合在一起</h2>
-<p>在进入安装之前，先说关键洞见：<strong>技能把大部分机理藏了起来</strong>。你用大白话描述想要什么，WorkBuddy 判断哪个技能合适，技能再跑对的代理与检查。仓库里没有一个全局守护进程在等计划批准 — 活是在你调用的那个技能<em>内部</em>干的。</p>
+<p>安装前需要先理解一点：<strong>技能封装了大部分执行细节</strong>。你用日常语言说明目标，WorkBuddy 选择合适的技能，技能再调用相应的代理和检查。仓库中没有等待计划批准的全局守护进程，具体工作由你调用的技能在内部完成。</p>
 <section id="你做什么-vs-技能做什么" class="level3" data-number="1.3.1">
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="你做什么-vs-技能做什么"><span class="header-section-number">1.3.1</span> 你做什么 vs 技能做什么</h3>
 <table class="caption-top table">
@@ -2695,15 +2695,15 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>批准计划</td>
-<td>技能在内部跑编排器模式</td>
+<td>技能在内部运行编排器模式</td>
 </tr>
 <tr class="odd">
 <td>审读最终产出</td>
-<td>钩子按事件触发（编辑、保存、压缩）</td>
+<td>钩子在编辑、保存、压缩等事件发生时触发</td>
 </tr>
 <tr class="even">
 <td>准备好时说「提交」</td>
-<td>规则按你触碰的文件加载</td>
+<td>规则根据你处理的文件加载</td>
 </tr>
 </tbody>
 </table>
@@ -2725,7 +2725,7 @@ WorkBuddy 动手修（CRITICAL → MAJOR → MINOR），重新编译，
 你：「要」
      ↓
 WorkBuddy 跑 /commit（只因为你明确批准了）</code></pre>
-<p><em>一个技能（<code>/slide-excellence</code>）负责那轮审读扇出；修是在之后、在你的会话里发生的。没有一个仓库级编排器在按菜单点选子技能；编排活在被调用的技能内部。</em></p>
+<p><em><code>/slide-excellence</code> 负责这一轮并行审读，随后才在你的会话中修复问题。仓库级编排器不会从菜单中选择子技能，编排工作由被调用的技能完成。</em></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href>论文审读</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href>数据分析</a></li></ul>
 <div class="tab-content">
@@ -2758,19 +2758,19 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <section id="你从不直接碰的东西" class="level3" data-number="1.3.3">
 <h3 data-number="1.3.3" class="anchored" data-anchor-id="你从不直接碰的东西"><span class="header-section-number">1.3.3</span> 你从不直接碰的东西</h3>
 <ul>
-<li><strong>代理</strong> — 由技能调用的专职审阅者，不由你调用</li>
-<li><strong>钩子</strong> — 按事件自动触发（你从不手动运行）</li>
-<li><strong>规则</strong> — 按文件路径自动加载</li>
+<li><strong>代理</strong>：由技能调用的专职审阅者，不由你直接调用。</li>
+<li><strong>钩子</strong>：按事件自动触发，你无需手动运行。</li>
+<li><strong>规则</strong>：按文件路径自动加载。</li>
 </ul>
 </section>
 <section id="技能你唯一可能亲手敲的命令" class="level3" data-number="1.3.4">
 <h3 data-number="1.3.4" class="anchored" data-anchor-id="技能你唯一可能亲手敲的命令"><span class="header-section-number">1.3.4</span> 技能：你唯一可能亲手敲的命令</h3>
 <p><code>/proofread</code> 或 <code>/compile-latex</code> 这类技能有两种调用方式：</p>
 <ol type="1">
-<li><strong>显式调用</strong> — 你敲 <code>/proofread MySlides.tex</code></li>
-<li><strong>自动调用</strong> — WorkBuddy 在与你请求相关时自行调用</li>
+<li><strong>显式调用</strong>：你输入 <code>/proofread MySlides.tex</code>。</li>
+<li><strong>自动调用</strong>：WorkBuddy 判断技能与请求相关时自行调用。</li>
 </ol>
-<p>大多数时候，你只要描述想要什么，WorkBuddy 就接过去了。想要精确控制时，显式调用技能就在那儿。</p>
+<p>多数情况下，你只需描述目标，WorkBuddy 就会接手。需要精确控制时，也可以显式调用技能。</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2781,7 +2781,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>你说话，WorkBuddy 编排。</strong> 那 19 个代理、63 个技能、37 条规则的存在，是为了让你不必操心它们。说出你的目标，批准计划，让系统去干活。</p>
+<p><strong>你说明目标，WorkBuddy 负责协调。</strong> 19 个代理、63 个技能和 37 条规则由系统按需使用，你不必逐一管理。你要做的是说明目标、批准计划并检查结果。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2794,7 +2794,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>本指南描述的是完整系统 — 19 个代理、63 个技能、37 条规则。那是上限，不是起点。<strong>先只用 CODEBUDDY.md 加 2–3 个技能</strong>（<code>/compile-latex</code>、<code>/proofread</code>、<code>/commit</code>）。发现需要什么，再补规则与代理。这套模板是按渐进采用设计的：fork 下来，把占位符填上，就开始干活。其余的东西，等你需要时都在那儿。</p>
+<p>本指南介绍的完整系统包含 19 个代理、63 个技能和 37 条规则，但你不必一次全部采用。<strong>开始时只需 CODEBUDDY.md 加 2–3 个技能</strong>，例如 <code>/compile-latex</code>、<code>/proofread</code>、<code>/commit</code>，之后再按实际需要补充规则和代理。fork 模板并填写占位符后即可开始，其余部件可以逐步采用。</p>
 </div>
 </div>
 <hr>
@@ -2808,15 +2808,15 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>这里每一句陈述句的分量并不相同。共有五类，措辞本身就告诉你属于哪一类：</p>
+<p>本指南中的陈述分为五类，证据强度并不相同。措辞会标明它属于哪一类：</p>
 <ul>
-<li><strong>平台特性</strong> — WorkBuddy 的行为，已对照官方文档核验，可能在漂移处附上「截至某日」。</li>
-<li><strong>模板实现</strong> — 本仓库实际交付的代码做了什么（可以在点名的文件里查）。</li>
-<li><strong>本仓库实测</strong> — 带日期的数字，且在资格台账覆盖范围内时，有记录在案的行。</li>
-<li><strong>经验法则</strong> — 来自真实项目的我们的做法，如实标注（「在我们的用法里……」）；不是基准测试。</li>
-<li><strong>政策要求</strong> — 某期刊或资助方的规定，按其真实强度陈述（「要求」vs「强烈鼓励」）。</li>
+<li><strong>平台特性</strong>：WorkBuddy 的行为，已对照官方文档核验；对可能变化的内容会注明「截至某日」。</li>
+<li><strong>模板实现</strong>：本仓库实际交付的代码如何工作，可在点名文件中核查。</li>
+<li><strong>本仓库实测</strong>：带日期的数字；属于资格台账覆盖范围时，还会附上相应记录。</li>
+<li><strong>经验法则</strong>：我们在真实项目中的做法，会明确写成「在我们的用法里……」，不视为基准测试结果。</li>
+<li><strong>政策要求</strong>：期刊或资助方的规定，按原文强度区分「要求」与「强烈鼓励」。</li>
 </ul>
-<p>当某条断言对你重要时，标签告诉你该怎么查它 — 而如果你发现某条在漂移，那就是 bug：开个 issue。</p>
+<p>如果某条断言会影响你的决定，可以根据类别选择核查方式。发现内容已经变化时，请开 issue 报告这个 bug。</p>
 </div>
 </div>
 </section>
@@ -2824,7 +2824,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </section>
 <section id="sec-setup" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> 起步</h1>
-<p>你需要四样东西：装上 WorkBuddy、fork 仓库、跑一次 <code>./scripts/install-hooks.sh</code>（这一步才把真正的 pre-commit 门禁接上 — 在你跑它之前，钩子文件是躺着不动的），然后粘一段提示词。其余的全由 WorkBuddy 处理。（门禁脚本需要 Python 3，macOS 与多数 Linux 发行版自带。）</p>
+<p>开始时需要完成四件事：安装 WorkBuddy，fork 仓库，运行一次 <code>./scripts/install-hooks.sh</code> 以启用真正的 pre-commit 门禁，再粘贴一段提示词。其余配置交给 WorkBuddy 处理。运行安装脚本前，<code>.githooks/pre-commit</code> 不会生效。门禁脚本依赖 Python 3，macOS 和多数 Linux 发行版已经自带。</p>
 <section id="sec-prerequisites" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="sec-prerequisites"><span class="header-section-number">2.1</span> 前置条件</h2>
 <table class="caption-top table">
@@ -2838,12 +2838,12 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <tbody>
 <tr class="odd">
 <td><strong>WorkBuddy</strong></td>
-<td>支撑这套工作流的桌面客户端</td>
-<td>装好客户端（<a href="https://www.workbuddy.cn/">官网</a>）；本仓库不代管产品安装链接</td>
+<td>运行这套工作流的桌面客户端</td>
+<td>安装客户端（<a href="https://www.workbuddy.cn/">官网</a>）；本仓库不代管产品安装链接</td>
 </tr>
 <tr class="even">
 <td><strong>Python 3</strong></td>
-<td>门禁脚本、钩子与质量打分器都靠它</td>
+<td>运行门禁脚本、钩子和质量评分器</td>
 <td>macOS/Linux 一般自带；<a href="https://python.org">python.org</a></td>
 </tr>
 <tr class="odd">
@@ -2853,12 +2853,12 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </tr>
 <tr class="even">
 <td><strong>git</strong></td>
-<td>版本控制（用于 fork/clone）</td>
+<td>版本控制，用于 fork 和 clone</td>
 <td>Mac 自带；<code>brew install git</code> 或 <a href="https://git-scm.com">git-scm.com</a></td>
 </tr>
 </tbody>
 </table>
-<p><strong>可选</strong>（只装你项目用得上的）：</p>
+<p>以下工具<strong>可选</strong>，只安装项目需要的即可：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2870,28 +2870,28 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <tbody>
 <tr class="odd">
 <td>XeLaTeX</td>
-<td>LaTeX 幻灯片</td>
+<td>制作 LaTeX 幻灯片</td>
 <td><a href="https://tug.org/texlive/">TeX Live</a> 或 <a href="https://tug.org/mactex/">MacTeX</a></td>
 </tr>
 <tr class="even">
 <td><a href="https://quarto.org">Quarto</a></td>
-<td>网页幻灯片</td>
+<td>制作网页幻灯片</td>
 <td><a href="https://quarto.org/docs/get-started/">quarto.org/docs/get-started</a></td>
 </tr>
 <tr class="odd">
 <td>R</td>
-<td>图与数据分析</td>
+<td>绘图与数据分析</td>
 <td><a href="https://www.r-project.org/">r-project.org</a></td>
 </tr>
 <tr class="even">
 <td><a href="https://cli.github.com/">gh CLI</a></td>
-<td>PR 工作流</td>
+<td>处理 PR 工作流</td>
 <td><code>brew install gh</code>（macOS）</td>
 </tr>
 <tr class="odd">
 <td>Playwright for Python</td>
-<td>在真实浏览器里度量幻灯片溢出（<code>scripts/slide-qa.py</code>）</td>
-<td><code>python3 -m venv ~/.venvs/slide-qa &amp;&amp; ~/.venvs/slide-qa/bin/pip install playwright</code>，然后 <code>export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python</code>（用你已装的 Chrome）</td>
+<td>用 <code>scripts/slide-qa.py</code> 在真实浏览器中测量幻灯片溢出</td>
+<td><code>python3 -m venv ~/.venvs/slide-qa &amp;&amp; ~/.venvs/slide-qa/bin/pip install playwright</code>，然后 <code>export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python</code>，使用已安装的 Chrome</td>
 </tr>
 </tbody>
 </table>
@@ -2905,8 +2905,8 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>本平台是 WorkBuddy，费用与条款以<strong>客户端内和<a href="https://www.workbuddy.cn/">官网</a>的说明为准</strong>——上游 Claude Code 的订阅、API 计费与 Anthropic 条款在这里不适用，两者不是同一份合同。</p>
-<p>省钱的手段不靠订阅档位，靠<strong>用对档位</strong>：机械活走 <code>lite</code>、审读走 <code>default</code>、高判断力走 <code>reasoning</code>（见<a href="#multi-model-strategy-cost-vs-quality">多模型策略</a>与<a href="#sec-cost">成本意识</a>），以及把长流水线拆成更小的有界调用、用独立上下文的子代理只读必要材料来缩小上下文。</p>
+<p>你使用的是 WorkBuddy，费用和条款以<strong>客户端及<a href="https://www.workbuddy.cn/">官网</a>的说明为准</strong>。上游 Claude Code 的订阅、API 计费和 Anthropic 条款不适用于这里，因为两者不是同一份合同。</p>
+<p>控制成本主要靠<strong>选择合适的模型档位</strong>：机械任务用 <code>lite</code>，审读用 <code>default</code>，需要较强判断力的任务用 <code>reasoning</code>，详见<a href="#multi-model-strategy-cost-vs-quality">多模型策略</a>与<a href="#sec-cost">成本意识</a>。还可以把长流程拆成范围明确的小调用，让独立上下文子代理只读取必要材料，以减少上下文用量。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -2920,17 +2920,17 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 <div class="callout-body-container callout-body">
 <ul class="task-list">
-<li><label><input type="checkbox">装好 WorkBuddy 桌面客户端（<a href="https://www.workbuddy.cn/">官网</a>）</label></li>
+<li><label><input type="checkbox">安装 WorkBuddy 桌面客户端（<a href="https://www.workbuddy.cn/">官网</a>）</label></li>
 <li><label><input type="checkbox">fork 仓库并 clone 到本地</label></li>
-<li><label><input type="checkbox">跑一次 <code>./scripts/install-hooks.sh</code>（接上真正的 pre-commit 门禁 — 不跑它就一直空转）</label></li>
-<li><label><input type="checkbox">新建任务，点输入框左下角的<strong>选择工作空间</strong>，选中这个项目目录</label></li>
-<li><label><input type="checkbox">粘入起始提示词（填上你的项目细节）</label></li>
-<li><label><input type="checkbox">等 WorkBuddy 按你的项目改好 <code>CODEBUDDY.md</code></label></li>
+<li><label><input type="checkbox">运行一次 <code>./scripts/install-hooks.sh</code>，启用真正的 pre-commit 门禁</label></li>
+<li><label><input type="checkbox">新建任务，点击输入框左下角的<strong>选择工作空间</strong>，选中这个项目目录</label></li>
+<li><label><input type="checkbox">填入项目细节后粘贴起始提示词</label></li>
+<li><label><input type="checkbox">等 WorkBuddy 按项目情况修改 <code>CODEBUDDY.md</code></label></li>
 <li><label><input type="checkbox">批准配置计划</label></li>
-<li><label><input type="checkbox">让 WorkBuddy 干点事：<em>「审一遍我的幻灯片」</em> 或 <em>「做一讲讲 [topic]」</em></label></li>
-<li><label><input type="checkbox">批准任务计划，看它干活，审读产出</label></li>
+<li><label><input type="checkbox">让 WorkBuddy 完成一项任务，例如<em>「审一遍我的幻灯片」</em>或<em>「做一讲讲 [topic]」</em></label></li>
+<li><label><input type="checkbox">批准任务计划，观察执行过程并审读产出</label></li>
 </ul>
-<p>就这些。其余的东西 — 代理、钩子、规则 — 都在后台自动跑（提交门禁从你跑过 <code>install-hooks.sh</code> 那一刻起生效）。</p>
+<p>完成这些步骤即可。代理、钩子和规则会按各自机制运行；<code>install-hooks.sh</code> 运行成功后，提交门禁才会生效。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -2945,11 +2945,11 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>找不到「选择工作空间」：</strong>它在新建任务的输入框左下角。客户端没有命令行安装器，也没有 <code>claude</code> 这类命令 — 那是上游 Claude Code 的入口，不是本平台的。</p>
-<p><strong>WorkBuddy 似乎无视了配置文件：</strong>确认任务的工作空间选的是项目目录<strong>本身</strong>，而不是它的父目录。WorkBuddy 从工作空间的根目录读取 <code>.codebuddy/</code> 与 <code>CODEBUDDY.md</code>，在父目录里开会话等于一份都没读到。</p>
-<p><strong>钩子不触发（没有通知、没有提醒）：</strong>检查 Python 3 是否装上（<code>python3 --version</code>），以及钩子文件是否可执行（<code>chmod +x .codebuddy/hooks/*</code>）。</p>
-<p><strong>「批准计划长什么样？」</strong>WorkBuddy 会给出一个带编号的计划并征求你的意见。你说「批准」、「看着不错」，或者「第 3 步改一下」。就这样 — 不需要什么特殊命令。</p>
-<p>更多内容见附录里的<a href="#troubleshooting">故障排查</a>。</p>
+<p><strong>找不到「选择工作空间」：</strong>它位于新建任务的输入框左下角。客户端没有命令行安装器，也没有 <code>claude</code> 这类命令；那是上游 Claude Code 的入口，不是本平台的入口。</p>
+<p><strong>WorkBuddy 似乎没有读取配置文件：</strong>确认任务的工作空间是项目目录<strong>本身</strong>，不是它的父目录。WorkBuddy 从工作空间根目录读取 <code>.codebuddy/</code> 和 <code>CODEBUDDY.md</code>；如果把父目录设为工作空间，这两处配置都不会读到。</p>
+<p><strong>钩子不触发，也没有通知或提醒：</strong>用 <code>python3 --version</code> 检查 Python 3 是否已安装，再用 <code>chmod +x .codebuddy/hooks/*</code> 确认钩子文件可以执行。</p>
+<p><strong>不知道怎样批准计划：</strong>WorkBuddy 会给出带编号的计划并征求意见。你可以回答「批准」「看着不错」，或要求「第 3 步改一下」，不需要特殊命令。</p>
+<p>更多内容见附录中的<a href="#troubleshooting">故障排查</a>。</p>
 </div>
 </div>
 </div>
@@ -2965,13 +2965,13 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>要<em>相信</em>这套核验层，最快的办法是看着它抓你。从一个全新的 clone 开始：</p>
+<p>要判断核验层是否可信，可以直接观察它如何发现人为植入的错误。从一个全新的 clone 开始：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all twelve gates green on a clean tree</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="at">-E</span> <span class="st">&#39;s/[0-9]+ skills/99 skills/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i -E, no &#39;&#39;)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 skills, disk has fewer</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="at">-E</span> <span class="st">&#39;s/本模板 [0-9]+ 个代理/本模板 99 个代理/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i -E, no &#39;&#39;)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 agents, disk has fewer</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">--</span> README.md      <span class="co"># undo</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># green again</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>那个回路 — 绿、埋一个缺陷、红、还原、绿 — 四行命令就是整套哲学。本仓库每道门禁都走过这个回路；结果存在 <code>quality_reports/qualification/LEDGER.md</code>。</p>
+<p>这组命令展示了这一过程：通过、植入缺陷、失败、还原、再次通过。仓库中的每道门禁都做过这样的资格认定，结果记录在 <code>quality_reports/qualification/LEDGER.md</code>。</p>
 </div>
 </div>
 </div>
@@ -2985,7 +2985,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </section>
 <section id="sec-first-session" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-first-session"><span class="header-section-number">2.3</span> 第 2 步：启动 WorkBuddy 并粘入这段提示词</h2>
-<p>新建任务并把工作空间选成项目目录，然后把下面这段粘进输入框。把<strong>加粗的占位符</strong>换成本项目的细节：</p>
+<p>新建任务，将工作空间设为项目目录，再把下面的提示词粘贴到输入框。请把<strong>加粗的占位符</strong>替换为本项目的具体信息：</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2998,8 +2998,8 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>本指南讲的一切，在任何 WorkBuddy 界面里都一样。在 <strong>VS Code</strong> 里，打开 WorkBuddy 面板（点侧边栏的 WorkBuddy 图标，或按 Cmd+Shift+P → “WorkBuddy: Open”）。在<strong>桌面应用</strong>里，打开你的项目文件夹并开启一个本地会话。然后粘入下面的起始提示词。</p>
-<p>本指南用终端命令举例，因为这是最通用的讲解方式，但每一个技能、代理、钩子与规则，在你用哪个界面时表现都相同。</p>
+<p>本指南介绍的工作流适用于各个 WorkBuddy 界面。在 <strong>VS Code</strong> 中，点击侧边栏的 WorkBuddy 图标，或按 Cmd+Shift+P 并选择 “WorkBuddy: Open”，即可打开 WorkBuddy 面板。在<strong>桌面应用</strong>中，打开项目文件夹并开启本地会话。然后粘贴下面的起始提示词。</p>
+<p>本指南用终端命令举例，因为这种写法最通用。无论你使用哪个界面，技能、代理、钩子和规则的核心机制都相同，但具体行为取决于各界面加载的配置与运行环境。</p>
 </div>
 </div>
 </div>
@@ -3013,18 +3013,18 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>我正在这个仓库里开始做 <strong>[PROJECT NAME]</strong>。<strong>[用 2–3 句话描述你的项目 — 你在做什么、给谁用、用什么工具（例如 LaTeX/Beamer、R、Quarto）。]</strong></p>
-<p>我希望我们的协作是有结构、精确、严谨的 — 哪怕多花点时间。做视觉材料时，一切都要打磨到位、可直接发表。我不想反复重复自己，所以我们的工作流应当善于记住决定、并从纠正中学习。</p>
-<p>我已经装好了这套 WorkBuddy 学术工作流。配置文件都在这个仓库里（<code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、templates、scripts）。请读一遍，理解这套工作流，然后<strong>把所有配置文件改成适合我这个项目的样子</strong> — 填上 <code>CODEBUDDY.md</code> 里的占位符，必要时调整规则，并提出针对我这个用例的任何定制建议。</p>
-<p>之后，对所有非琐碎任务都走计划先行的工作流。一旦我批准计划，就切到包工头模式 — 自主协调一切，只在有歧义或需要决策时才回来找我。最初几次会话，多跟我确认一下，好让我学会这套工作流怎么跑。</p>
-<p>进入计划模式，从为本项目适配工作流配置开始。</p>
+<p>我正在这个仓库里开始做 <strong>[PROJECT NAME]</strong>。<strong>[用 2–3 句话描述你的项目：你在做什么、给谁用、用什么工具，例如 LaTeX/Beamer、R、Quarto。]</strong></p>
+<p>我希望我们的协作有清晰结构，并且准确、严谨，即使因此多花一些时间也可以。视觉材料必须打磨到可以直接发表。我不希望反复解释同一件事，因此工作流需要记住已经作出的决定，并从纠正中学习。</p>
+<p>我已经安装好这套 WorkBuddy 学术工作流。仓库中包含配置文件（<code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、templates、scripts）。请阅读并理解这些文件，然后<strong>根据我的项目调整所有配置文件</strong>：填写 <code>CODEBUDDY.md</code> 中的占位符，必要时调整规则，并针对我的用例提出定制建议。</p>
+<p>之后，所有非琐碎任务都先制定计划。我批准计划后，请你自主协调后续工作，只有遇到歧义或需要我决策时再来询问。最初几次会话请多与我确认，帮助我熟悉这套工作流。</p>
+<p>进入计划模式，先为本项目调整工作流配置。</p>
 </div>
 </div>
-<p><strong>这段提示词做了什么：</strong> WorkBuddy 会读 <code>CODEBUDDY.md</code> 与全部规则，填上你的项目名、机构、Beamer 环境、CSS 类与项目状态表，然后针对你的具体用例提出规则调整。你批准计划，WorkBuddy 处理其余一切。从那以后，你只管描述想做什么。</p>
+<p><strong>这段提示词会让 WorkBuddy 做什么：</strong>它会读取 <code>CODEBUDDY.md</code> 和全部规则，填写项目名、机构、Beamer 环境、CSS 类与项目状态表，再针对你的用例提出规则调整建议。你批准计划后，WorkBuddy 会完成其余配置。此后，你只需描述要完成的任务。</p>
 </section>
 <section id="可选手工配置" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="可选手工配置"><span class="header-section-number">2.4</span> 可选：手工配置</h2>
-<p>如果你更愿意自己配，而不是让 WorkBuddy 代劳：</p>
+<p>如果你希望自己配置，而不是交给 WorkBuddy，可以按下面步骤操作：</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -3037,21 +3037,21 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>定制 CODEBUDDY.md</strong> — 打开 <code>CODEBUDDY.md</code>，替换所有 <code>[BRACKETED PLACEHOLDERS]</code>：</p>
+<p><strong>定制 CODEBUDDY.md：</strong>打开 <code>CODEBUDDY.md</code>，替换所有 <code>[BRACKETED PLACEHOLDERS]</code>：</p>
 <ol type="1">
 <li><strong>项目名与机构</strong></li>
-<li><strong>文件夹结构</strong>（按你的布局调整）</li>
-<li><strong>当前项目状态</strong>（你的讲次/论文）</li>
-<li><strong>Beamer 环境</strong>（你的自定义 LaTeX 环境）</li>
-<li><strong>CSS 类</strong>（你的 Quarto 主题类）</li>
+<li><strong>文件夹结构</strong>，按你的布局调整</li>
+<li><strong>当前项目状态</strong>，包括你的讲次或论文</li>
+<li><strong>Beamer 环境</strong>，填写你的自定义 LaTeX 环境</li>
+<li><strong>CSS 类</strong>，填写你的 Quarto 主题类</li>
 </ol>
-<p><strong>建立你的知识库</strong> — 打开 <code>.codebuddy/rules/knowledge-base-template.md</code>，填上：</p>
+<p><strong>建立知识库：</strong>打开 <code>.codebuddy/rules/knowledge-base-template.md</code>，填写：</p>
 <ol type="1">
-<li><strong>记号登记表</strong> — 你用到的每个符号、它在哪儿引入、以及反模式</li>
-<li><strong>应用数据库</strong> — 你引用的数据集、论文与 R 包</li>
-<li><strong>设计原则</strong> — 哪些你批准过、哪些你否决过</li>
+<li><strong>记号登记表</strong>：记录每个符号、引入位置和反模式。</li>
+<li><strong>应用数据库</strong>：记录你引用的数据集、论文和 R 包。</li>
+<li><strong>设计原则</strong>：记录已经批准和否决的设计。</li>
 </ol>
-<p><strong>配置权限</strong> — 审一遍 <code>.codebuddy/settings.json</code>。模板自带七条兜底 allow 规则（<code>Bash(*)</code>、<code>Edit(**)</code>、<code>Write(**)</code>、<code>MultiEdit(**)</code>、<code>Read(**)</code>、<code>WebFetch(*)</code>、<code>WebSearch</code>）与一份空的 <code>deny</code> 列表，所以你不必再加工具。定制意味着收窄：砍掉你不想要的 allow，或加 <code>deny</code> 规则（例如让受限数据进不了模型；见 <code>TROUBLESHOOTING.md</code> 里的 “Keep restricted data off the model”）。</p>
+<p><strong>配置权限：</strong>检查 <code>.codebuddy/settings.json</code>。模板提供七条兜底 allow 规则：<code>Bash(*)</code>、<code>Edit(**)</code>、<code>Write(**)</code>、<code>MultiEdit(**)</code>、<code>Read(**)</code>、<code>WebFetch(*)</code>、<code>WebSearch</code>，同时提供空的 <code>deny</code> 列表，因此你不必再添加工具。定制时应按需收窄权限：删除不需要的 allow，或添加 <code>deny</code> 规则。例如，可以让受限数据无法进入模型，详见 <code>TROUBLESHOOTING.md</code> 中的 “Keep restricted data off the model”。</p>
 <p><strong>试一下：</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In WorkBuddy, type:</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/compile-latex</span> MyFirstLecture</span>
@@ -3060,24 +3060,24 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 </div>
-<p>你不需要一上来就填满一切。先写 5–10 条记号条目，做讲义的过程中再加。起始提示词会把要紧的搭好 — 之后随时可以细化。</p>
+<p>不必一开始就填满所有内容。可以先写 5–10 条记号条目，在制作讲义时继续补充。起始提示词会完成必要配置，之后随时可以细化。</p>
 </section>
 <section id="sec-adopt-existing" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="sec-adopt-existing"><span class="header-section-number">2.5</span> 在已有项目里采用这套模板</h2>
-<p>你不一定要从 fork 开始。要把这套工作流搬进手头已有的仓库：</p>
+<p>你也可以不从 fork 开始，而是把这套工作流加入现有仓库：</p>
 <ol type="1">
-<li><strong>拷进来</strong> <code>.codebuddy/</code>、<code>scripts/</code>、<code>templates/</code>、<code>.githooks/</code>、<code>Preambles/</code>、<code>CODEBUDDY.md</code>、<code>MEMORY.md</code>、<code>TROUBLESHOOTING.md</code> 与 <code>CHANGELOG.md</code>（模板里的文件会链接到后两个），再加上 <code>quality_reports/</code> — 只要它的文件夹骨架与 <code>qualification/LEDGER.md</code>，不要模板自己的计划与日志。把模板的 <code>.gitignore</code> 合并进你的。</li>
-<li><strong>为你的项目重写 <code>CODEBUDDY.md</code></strong> — 名字、文件夹树、当前状态。它是 WorkBuddy 读的第一个文件。它指向模板 README 技能表的那个链接（<code>README.md#skills-claudeskills</code>）在你的仓库里解析不了；改成指向你自己的索引，或者删掉。</li>
-<li><strong>把卫生门禁该知道的文件夹与根文件告诉它。</strong> 把你自己的每个顶层文件夹（<code>paper/</code>、<code>code/</code>……）加进 <code>scripts/check-repo-hygiene.py</code> 里的 <code>ROOT_ALLOW_DIRS</code>，把根目录里尚未被允许的每个文件（一个 <code>Makefile</code>、一个 <code>.Rproj</code>……）加进 <code>ROOT_ALLOW</code>，各带一行理由。布局类文件夹（<code>output/</code>、<code>data/</code>、<code>R/</code>、<code>tests/</code>）与常见的 R、Python 环境文件（<code>DESCRIPTION</code>、<code>renv.lock</code>、<code>requirements.txt</code>……）已经默认允许。</li>
-<li><strong>删掉那两项读模板自家文档的检查。</strong> 从 <code>scripts/backtest.sh</code> 里删掉 <code>run &quot;surface-sync&quot;</code> 与 <code>run &quot;derived-counts&quot;</code> 两行：它们数的是模板 README、指南与变更日志里的技能、门禁与用例数，你的项目没有这些。其余每项检查都照原样适用于你的工作。</li>
-<li><strong>按名字暂存拷进来的文件</strong> — <code>git add .codebuddy .githooks scripts templates Preambles CODEBUDDY.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>。台账检查要求钩子文件被跟踪，而模板自带的防线拒绝一刀切的 <code>git add -A</code>。</li>
-<li><strong>运行</strong> <code>./scripts/validate-setup.sh</code>，然后 <code>./scripts/install-hooks.sh</code>，然后 <code>./scripts/backtest.sh</code>。</li>
+<li><strong>复制所需文件。</strong>复制 <code>.codebuddy/</code>、<code>scripts/</code>、<code>templates/</code>、<code>.githooks/</code>、<code>Preambles/</code>、<code>CODEBUDDY.md</code>、<code>MEMORY.md</code>、<code>TROUBLESHOOTING.md</code> 和 <code>CHANGELOG.md</code>，模板中的文件会链接到后两个文件。还要复制 <code>quality_reports/</code>，但只保留目录骨架和 <code>qualification/LEDGER.md</code>，不要带入模板自己的计划与日志。最后，把模板的 <code>.gitignore</code> 合并到你的 <code>.gitignore</code>。</li>
+<li><strong>为你的项目重写 <code>CODEBUDDY.md</code>。</strong>填写项目名称、目录树和当前状态，因为这是 WorkBuddy 首先读取的文件。其中指向模板 README 技能表的链接 <code>README.md#skills-claudeskills</code> 无法在你的仓库中解析，请改为指向自己的索引，或删除该链接。</li>
+<li><strong>把项目目录和根文件告知仓库卫生门禁。</strong>将自己的每个顶层目录，例如 <code>paper/</code>、<code>code/</code>，加入 <code>scripts/check-repo-hygiene.py</code> 的 <code>ROOT_ALLOW_DIRS</code>；将根目录中尚未允许的文件，例如 <code>Makefile</code>、<code>.Rproj</code>，加入 <code>ROOT_ALLOW</code>，并分别写明理由。<code>output/</code>、<code>data/</code>、<code>R/</code>、<code>tests/</code> 等布局目录，以及 <code>DESCRIPTION</code>、<code>renv.lock</code>、<code>requirements.txt</code> 等常见 R、Python 环境文件，已经默认允许。</li>
+<li><strong>删除两项专门检查模板文档的检查。</strong>在 <code>scripts/gate-manifest.py</code> 的 <code>GATES</code> 清单中删除 <code>name</code> 为 <code>surface-sync</code> 和 <code>derived-counts</code> 的两个条目；不要从 <code>scripts/backtest.sh</code> 删除 <code>run</code> 行，该脚本只负责转发，不包含门禁清单。这两项检查核对的是模板 README、指南和变更日志中的技能、门禁及用例数量，你的项目没有这些文档。删除条目后，还要同步更新 <code>quality_reports/qualification/LEDGER.md</code> 中的对应台账行，以及文档中的门禁总数和编号引用。其余检查仍可按原样用于你的项目。</li>
+<li><strong>按名称暂存复制进来的文件：</strong><code>git add .codebuddy .githooks scripts templates Preambles CODEBUDDY.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>。台账检查要求 git 跟踪钩子文件，模板自带的防线也会拒绝不加区分的 <code>git add -A</code>。</li>
+<li><strong>依次运行</strong> <code>./scripts/validate-setup.sh</code>、<code>./scripts/install-hooks.sh</code> 和 <code>./scripts/backtest.sh</code>。</li>
 </ol>
-<p>我们在一个自带 README、<code>paper/</code> 与 <code>code/</code> 文件夹以及根目录 <code>Makefile</code> 的项目上测过这些步骤。照抄下来时，套件里有五项检查失败。做完第 1–5 步，全套通过，钩子用例集也在内。</p>
+<p>我们在一个已有 README、<code>paper/</code>、<code>code/</code> 和根目录 <code>Makefile</code> 的项目上测试过这些步骤。直接复制后有五项检查失败；完成第 1–5 步后，包括钩子用例集在内的全套检查均通过。</p>
 </section>
 <section id="sec-spec-then-plan" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="sec-spec-then-plan"><span class="header-section-number">2.6</span> 需求规格（针对复杂任务）</h2>
-<p>对复杂或有歧义的任务，WorkBuddy 可能先问 3-5 个澄清问题，形成一份需求规格，再去做计划。这样能早发现歧义，减少返工。</p>
+<p>对于复杂或有歧义的任务，WorkBuddy 可能先提出 3-5 个澄清问题，整理成需求规格后再制定计划。这样可以尽早发现歧义，减少返工。</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href>做幻灯片</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href>数据分析</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href>代码重构</a></li></ul>
 <div class="tab-content">
@@ -3114,20 +3114,20 @@ WorkBuddy：「我先澄清几点：
 </div>
 </div>
 </div>
-<p>问过 3-5 个问题后，WorkBuddy 在 <code>quality_reports/specs/</code> 生成一份需求规格文档，包含：</p>
+<p>提出 3-5 个问题后，WorkBuddy 会在 <code>quality_reports/specs/</code> 生成需求规格文档，内容包括：</p>
 <ul>
-<li><strong>MUST</strong> 必须有（不可谈判的要求）</li>
-<li><strong>SHOULD</strong> 应当有（偏好的特性）</li>
-<li><strong>MAY</strong> 可以有（可选增强）</li>
-<li><strong>清晰度状态</strong>（每个方面标 CLEAR/ASSUMED/BLOCKED）</li>
+<li><strong>MUST</strong>：必须满足的不可谈判要求。</li>
+<li><strong>SHOULD</strong>：应当具备的偏好特性。</li>
+<li><strong>MAY</strong>：可以选择的增强项。</li>
+<li><strong>清晰度状态</strong>：每个方面标为 CLEAR、ASSUMED 或 BLOCKED。</li>
 </ul>
-<p>你批准规格，WorkBuddy 再去规划实现。这能把计划中途的转向减少 30-50%。</p>
+<p>你批准规格后，WorkBuddy 才会规划实现。这能把执行计划期间的方向调整减少 30-50%。</p>
 <p><strong>模板：</strong> <code>templates/requirements-spec.md</code></p>
 <hr>
 </section>
 <section id="采用阶梯" class="level2" data-number="2.7">
 <h2 data-number="2.7" class="anchored" data-anchor-id="采用阶梯"><span class="header-section-number">2.7</span> 采用阶梯</h2>
-<p>你不需要第一天就把这些全上齐 — 一次性全采用，是典型的「试了就退」的路子。下面每一级都是可以长期待着的地方；<strong>「你可以停在这里」是有意写进每一级的</strong>。</p>
+<p>不必在第一天采用全部部件，一次引入过多反而容易放弃。每一级都可以作为长期使用的配置，因此每一级都明确说明<strong>「你可以停在这里」</strong>。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -3146,55 +3146,55 @@ WorkBuddy：「我先澄清几点：
 <tbody>
 <tr class="odd">
 <td><strong>0 — 一件安全的任务</strong></td>
-<td>朴素提示词；接受前先读 diff</td>
-<td>对 WorkBuddy 会怎么动<em>你的</em>文件有个感觉</td>
-<td>你主要只想要个偶尔帮手的助手</td>
+<td>简单提示词；接受前先读 diff</td>
+<td>了解 WorkBuddy 会如何修改<em>你的</em>文件</td>
+<td>你主要需要偶尔协助的助手</td>
 </tr>
 <tr class="even">
 <td><strong>1 — 可重复</strong></td>
 <td>定制过的 <code>CODEBUDDY.md</code> + 你真会反复用的 2–3 个技能</td>
-<td>每次都同样的质量，不必重新解释</td>
-<td>你的活主要是写作与幻灯片</td>
+<td>每次保持一致的质量，无需重新解释</td>
+<td>你的工作主要是写作与幻灯片</td>
 </tr>
 <tr class="odd">
 <td><strong>2 — 机械门禁</strong></td>
-<td><code>install-hooks.sh</code>、门禁总检套件、编译/渲染检查</td>
-<td>提交不会悄悄偏离现实</td>
-<td>你单干，且信得过自己的审读</td>
+<td><code>install-hooks.sh</code>、门禁总检套件、编译和渲染检查</td>
+<td>防止提交内容与仓库实际状态不一致</td>
+<td>你独立工作，并且信得过自己的审读</td>
 </tr>
 <tr class="even">
 <td><strong>3 — 对抗式审读</strong></td>
 <td>独立上下文审阅者、<code>/vaccinate</code>、审读回路</td>
-<td>来自从未见过你推理过程的读者的发现</td>
-<td>你的利害是内部的（教学、草稿）</td>
+<td>获得未接触过你推理过程的读者所提出的问题</td>
+<td>成果只用于内部教学或草稿</td>
 </tr>
 <tr class="odd">
 <td><strong>4 — 投稿可信度</strong></td>
 <td>数值断言护照、<code>/seven-pass-review</code>、外部裁判</td>
-<td>一条审稿人或复现者能走完的审计轨迹</td>
-<td>— 这是顶层</td>
+<td>审稿人或复现者可以跟随的审计轨迹</td>
+<td>这是最高一级</td>
 </tr>
 </tbody>
 </table>
-<p>当某一级的失效模式真的咬到你时再往上爬，不要提前。本指南余下部分会讲每一级；<a href="#sec-patterns">模式路径</a>给出哪些模式对应哪类工作的地图。</p>
+<p>只有当前级别的问题已经实际影响工作时，再进入下一级。本指南余下部分会介绍每一级；<a href="#sec-patterns">模式路径</a>列出了不同工作对应的模式。</p>
 </section>
 </section>
 <section id="sec-system" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> 系统实战</h1>
-<p>安装讲完了，接下来看这套系统实际<em>做</em>什么。本节走过三个核心机制：专职代理、对抗式 QA、自动质量打分。</p>
+<p>完成安装后，下面介绍系统实际执行的三项核心机制：专职代理、对抗式 QA 和自动质量评分。</p>
 <section id="专职代理为何胜过一刀切" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="专职代理为何胜过一刀切"><span class="header-section-number">3.1</span> 专职代理为何胜过一刀切</h2>
-<p>设想校对一份 140 页的讲义。你可以让 WorkBuddy：</p>
+<p>假设你要校对一份 140 页的讲义，可以这样要求 WorkBuddy：</p>
 <blockquote class="blockquote">
 <p>「审一遍这些幻灯片：语法、版面、数学正确性、代码质量、教学流线。」</p>
 </blockquote>
-<p>WorkBuddy 会通篇扫一遍，抓到一些问题。但它会漏掉：</p>
+<p>WorkBuddy 会通读全文并发现一些问题，但也可能漏掉：</p>
 <ul>
-<li>第 42 页那个公式，下标从 <span class="math inline">\(m_t^{d=0}\)</span> 变成了 <span class="math inline">\(m_t^0\)</span></li>
-<li>那张 TikZ 图，两个标签在放映分辨率下叠在一起</li>
-<li>那个 R 脚本用了 <code>k=10</code> 个协变量，而幻灯片上写的是 <code>k=5</code></li>
+<li>第 42 页公式的下标从 <span class="math inline">\(m_t^{d=0}\)</span> 变成 <span class="math inline">\(m_t^0\)</span>。</li>
+<li>一张 TikZ 图中的两个标签在放映分辨率下重叠。</li>
+<li>R 脚本使用 <code>k=10</code> 个协变量，幻灯片却写成 <code>k=5</code>。</li>
 </ul>
-<p>再跟专职代理比：</p>
+<p>专职代理则分别检查不同方面：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -3211,36 +3211,36 @@ WorkBuddy：「我先澄清几点：
 <tbody>
 <tr class="odd">
 <td><code>proofreader</code></td>
-<td>只管语法</td>
-<td>“principle” vs “principal”</td>
+<td>语法</td>
+<td>区分 “principle” 和 “principal”</td>
 </tr>
 <tr class="even">
 <td><code>slide-auditor</code></td>
-<td>只管版面</td>
+<td>版面</td>
 <td>第 37 页文字溢出</td>
 </tr>
 <tr class="odd">
 <td><code>pedagogy-reviewer</code></td>
-<td>只管流线</td>
-<td>定理 3.1 之前缺一句铺垫</td>
+<td>讲解顺序</td>
+<td>定理 3.1 之前缺少铺垫</td>
 </tr>
 <tr class="even">
 <td><code>r-reviewer</code></td>
-<td>只管代码</td>
+<td>代码</td>
 <td>漏了 <code>set.seed()</code></td>
 </tr>
 <tr class="odd">
 <td><code>domain-reviewer</code></td>
 <td>实质内容</td>
-<td>幻灯片说跑 10,000 次蒙特卡洛，代码跑的是 1,000 次</td>
+<td>幻灯片声称运行 10,000 次蒙特卡洛，代码实际运行 1,000 次</td>
 </tr>
 </tbody>
 </table>
-<p>每个代理读同一个文件，但用全部注意力看不同的维度。<code>/slide-excellence</code> 技能把它们并行跑起来。</p>
+<p>这些代理读取同一个文件，但各自只关注一个维度。<code>/slide-excellence</code> 会并行调用它们。</p>
 </section>
 <section id="the-adversarial-pattern-critic-fixer" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="the-adversarial-pattern-critic-fixer"><span class="header-section-number">3.2</span> 对抗式模式：批评者 + 修复者</h2>
-<p>这套系统里最强的一个模式，是<strong>对抗式 QA 回路</strong>：</p>
+<p><strong>对抗式 QA 回路</strong>把检查和修复分给不同角色：</p>
 <pre><code>+------------------+
 |  quarto-critic   |  &quot;I found 12 issues. 3 Critical.&quot;
 |  (READ-ONLY)     |
@@ -3263,7 +3263,7 @@ APPROVED   NEEDS WORK
           +----+----------+
                |
           ... (loop-until-dry: converge after 2 dry rounds; 5-round cap is a fallback)</code></pre>
-<p><strong>为什么这管用：</strong> 批评者改不了文件（只读），所以它没有动机把事情说轻。修复者没法自己批准自己（批评者会复审）。这就堵住了 WorkBuddy 对自家成果说「看着不错」这个常见的失效。</p>
+<p><strong>这种分工为什么有效：</strong>批评者只有读取权限，不能修改文件；修复者完成修改后，也不能自行批准结果，必须接受批评者复审。这样可以避免 WorkBuddy 未经验证就认定自己的成果「看着不错」。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3274,7 +3274,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>在 Econ 730 第 6 讲里，批评者抓到 Quarto 版用 <code>\cdots</code>（一个占位符）顶替了 Beamer 版里完整的 Hajek 权重公式。修复者换上了。复审时，批评者又发现 8 处结果模型漏了 <code>(X)</code> 参数。四轮之后，Quarto 幻灯片与 Beamer 源完全一致。</p>
+<p>在 Econ 730 第 6 讲中，批评者发现 Quarto 版用占位符 <code>\cdots</code> 代替了 Beamer 版完整的 Hajek 权重公式。修复者补回公式后，批评者又在复审中发现 8 处结果模型漏了 <code>(X)</code> 参数。经过四轮，Quarto 幻灯片与 Beamer 源完全一致。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -3287,19 +3287,19 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>上面那套批评者-修复者回路比较的是 LaTeX 源与 Quarto 源，而自 v2.6 起它也度量<em>渲染后</em>的成品：<code>scripts/slide-qa.py</code> 在无头 Chrome 里加载 HTML，逐页度量溢出（每个片段状态、每个标签页）并每页存一张截图，由批评者读取。这需要 Playwright（见前置条件）；没有它，回路退回到读源。对于度量判断不了的东西 — 一处 TikZ 渲染故障、一张图是否看得清 — 打开成品让用户亲眼确认（<code>open</code> 打开的窗口只有用户自己看得见）。</p>
+<p>上述批评者与修复者回路比较 LaTeX 源和 Quarto 源。自 v2.6 起，它还会测量<em>渲染后</em>的成品：<code>scripts/slide-qa.py</code> 在无头 Chrome 中加载 HTML，逐页测量溢出，覆盖每个片段状态和标签页，并为每页保存一张截图供批评者读取。此功能需要 Playwright，安装方法见前置条件；没有 Playwright 时，按编排器协议回退为读取源码。自动测量无法判断 TikZ 是否渲染正确、图是否清晰等问题，因此还要打开成品请用户亲眼确认。<code>open</code> 打开的窗口只有用户自己能看到。</p>
 </div>
 </div>
 </section>
 <section id="编排器是运行时不是守护进程" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="编排器是运行时不是守护进程"><span class="header-section-number">3.3</span> 编排器：是运行时，不是守护进程</h2>
-<p>单个代理各管一摊。<code>/slide-excellence</code>、<code>/qa-quarto</code> 这类技能为特定任务协调几个代理。日常干活时，你不必想该跑哪些代理 —— 对的技能会替你跑对的代理。</p>
-<p><strong>编排器协议</strong>（<code>.codebuddy/rules/orchestrator-protocol.md</code>）是一个<strong>真正的运行时</strong>，建立在每个 WorkBuddy 会话都有的 <code>Agent</code> 子代理原语之上：技能扇出到分叉出去的审阅者，把它们的结构化审查发现经一道确定性门禁归并，由带事后裁判幻觉防线的裁判裁定，并空轮收敛。<strong>不</strong>自动的是<em>触发</em>：没有任何东西会自己发起这个回路，也没有后台守护进程 — 批准计划<strong>不会</strong>自动触发它。你调用一个技能（例如 <code>/qa-quarto</code>、<code>/review-paper --adversarial</code>、<code>/seven-pass-review</code>），技能在它自己的范围内跑这个运行时。人是这个回路浮出的分歧的裁定者；这明确不是一个自主守护进程。</p>
-<p>今天已机械实现的有：<code>/commit</code>（核验器 + quality_score）、<code>/qa-quarto</code>（批评者-修复者回路）、<code>/review-paper --adversarial</code>（批评者-修复者回路）、<code>/slide-excellence</code>（多代理扇出）、<code>/review-paper --peer</code>（编辑 + 2 位审稿人 + 跨产物）、<code>/seven-pass-review</code>（7 个透镜扇出 + 幻觉门禁）、<code>/deep-audit</code>（扇出 → 裁判 → 修复，空轮收敛）。完整工作流见 <a href="#pattern-2-contractor-mode-orchestrator">Pattern 2</a>。</p>
+<p>每个代理负责一个方面，<code>/slide-excellence</code>、<code>/qa-quarto</code> 等技能则针对具体任务协调多个代理。日常使用时，你不必自己选择代理，合适的技能会完成调用。</p>
+<p><strong>编排器协议</strong>（<code>.codebuddy/rules/orchestrator-protocol.md</code>）是一个<strong>实际运行的协议</strong>，基于每个 WorkBuddy 会话都提供的 <code>Agent</code> 子代理机制。技能并行调用分叉出去的审阅者，通过确定性门禁归并结构化审查发现，再交给裁判裁定；裁判之后还有一道检查，用来发现裁判编造的结论。流程持续迭代，直到空轮收敛。<strong>触发过程并不自动</strong>：没有后台守护进程会自行启动这个回路，批准计划也<strong>不会</strong>自动触发它。你需要调用 <code>/qa-quarto</code>、<code>/review-paper --adversarial</code>、<code>/seven-pass-review</code> 等技能，由技能在自身范围内运行协议。回路出现分歧时由人裁定，它不会作为自主守护进程运行。</p>
+<p>目前已由代码实现的流程包括：<code>/commit</code>（核验器 + quality_score）、<code>/qa-quarto</code>（批评者与修复者回路）、<code>/review-paper --adversarial</code>（批评者与修复者回路）、<code>/slide-excellence</code>（多代理扇出）、<code>/review-paper --peer</code>（编辑 + 2 位审稿人 + 跨产物）、<code>/seven-pass-review</code>（7 个透镜扇出 + 幻觉门禁）、<code>/deep-audit</code>（扇出 → 裁判 → 修复，空轮收敛）。完整工作流见 <a href="#pattern-2-contractor-mode-orchestrator">Pattern 2</a>。</p>
 </section>
 <section id="sec-quality" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-quality"><span class="header-section-number">3.4</span> 质量审读：80/90/95 体系</h2>
-<p><a href="#sec-blocks">质量门禁规则</a>（<code>quality-gates.md</code>）定义了 <code>/commit</code> 与各审读技能所用的打分阈值。阈值是<strong>建议性</strong>的 — 它在特定技能内部执行，<strong>并且</strong>在你跑过 <code>./scripts/install-hooks.sh</code> 之后，由真正的 git pre-commit 钩子（<code>.githooks/pre-commit</code>）在每次提交时执行门禁总检套件（只有当钩子、其设置或用例集本身被暂存时才跑钩子用例集；CI 永远全跑）加上质量门禁（≥80）。要绕过就克制地用 <code>SKIP_QUALITY_GATE=1</code> 或 <code>--no-verify</code>。每件实质产物（<code>.tex</code>、<code>.qmd</code>、<code>.R</code>）都有一个 0 到 100 的质量分：</p>
+<p><a href="#sec-blocks">质量门禁规则</a>（<code>quality-gates.md</code>）定义了 <code>/commit</code> 和各审读技能使用的评分阈值。这些阈值在技能内部属于<strong>建议性标准</strong>。运行 <code>./scripts/install-hooks.sh</code> 后，真正的 git pre-commit 钩子 <code>.githooks/pre-commit</code> 还会在每次提交时执行门禁总检套件和质量门禁，要求分数 ≥80。只有暂存内容包含 <code>.codebuddy/hooks/</code>、<code>.githooks/</code>、钩子设置或用例集本身时，pre-commit 才运行钩子用例集；CI 则始终全部运行。确需绕过时，应谨慎使用 <code>SKIP_QUALITY_GATE=1</code> 或 <code>--no-verify</code>。每份实质产物，包括 <code>.tex</code>、<code>.qmd</code>、<code>.R</code>，都有 0 到 100 的质量分：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3313,13 +3313,13 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td><strong>80+</strong></td>
 <td>提交</td>
-<td>存进度是安全的</td>
+<td>可以安全保存进度</td>
 <td>允许 <code>git commit</code></td>
 </tr>
 <tr class="even">
 <td><strong>90+</strong></td>
 <td>PR</td>
-<td>可部署</td>
+<td>可以部署</td>
 <td>鼓励 <code>gh pr create</code></td>
 </tr>
 <tr class="odd">
@@ -3338,7 +3338,7 @@ APPROVED   NEEDS WORK
 </table>
 <section id="分数怎么算" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="分数怎么算"><span class="header-section-number">3.4.1</span> 分数怎么算</h3>
-<p>按问题扣分：</p>
+<p>评分器按问题扣分：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3351,39 +3351,40 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td>公式溢出</td>
 <td>-20</td>
-<td>数学被裁掉 = 不能用</td>
+<td>数学内容被裁切，无法使用</td>
 </tr>
 <tr class="even">
 <td>参考文献断裂</td>
 <td>-15</td>
-<td>学术诚信</td>
+<td>涉及学术诚信</td>
 </tr>
 <tr class="odd">
 <td>公式笔误</td>
 <td>-10</td>
-<td>教错内容</td>
+<td>会讲授错误内容</td>
 </tr>
 <tr class="even">
 <td>文字溢出</td>
 <td>-5</td>
-<td>内容被裁掉</td>
+<td>内容被裁切</td>
 </tr>
 <tr class="odd">
 <td>标签重叠</td>
 <td>-5</td>
-<td>图看不清</td>
+<td>图难以辨认</td>
 </tr>
 <tr class="even">
 <td>记号不一致</td>
 <td>-3</td>
-<td>学生困惑</td>
+<td>容易误导学生</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="强制核验" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored"><span class="header-section-number">3.4.2</span> 强制核验</h3>
-<p>核验协议（<code>.codebuddy/rules/verification-protocol.md</code>）要求 WorkBuddy 在报告任务完成之前，把每件产出编译、渲染或以其他方式核验过。实现编排器模式的技能把它作为第 2 步执行：VERIFY。这意味着在这些技能里，WorkBuddy <strong>不能</strong>不做实际检查就报「完成」。一句诚实的提醒：<em>机械</em>质量门禁是静态分析加尽力而为的工具检查 — <code>.tex</code> 文件只做静态检查、从不编译，而当 Quarto（渲染）或 Rscript（解析）不可用或超时（<code>QUALITY_QUARTO_TIMEOUT</code>、<code>QUALITY_RSCRIPT_TIMEOUT</code>）时，门禁把该项列进「未核验的检查」，而不是判失败。请把那些未核验的注记当作<em>未清</em>，执行层面的保证要靠核验器代理（它真的编译）。</p>
+<p>核验协议 <code>.codebuddy/rules/verification-protocol.md</code> 要求 WorkBuddy 在报告任务完成前，编译、渲染或以其他方式核验每份产出。实现编排器模式的技能把这项要求作为第 2 步 VERIFY 执行，因此在这些技能中，WorkBuddy <strong>不能</strong>未经实际检查就报告「完成」。</p>
+<p>但机械质量门禁的能力有限。它结合静态分析和尽力而为的工具检查：<code>.tex</code> 文件只接受静态检查，从不编译；Quarto 渲染或 Rscript 解析不可用或超时时，超时时长由 <code>QUALITY_QUARTO_TIMEOUT</code>、<code>QUALITY_RSCRIPT_TIMEOUT</code> 控制，门禁会把相应项目列为「未核验的检查」，而不是判定失败。这些注记表示检查<em>尚未完成</em>，不能当作通过。执行层面的保证仍要依靠真正会编译文件的核验器代理。</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3394,7 +3395,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>怀疑的读者应当分清「WorkBuddy 被告知要检查」与「一个确定性过程跑过并留下了证据」。这里是诚实的对照表：</p>
+<p>读者需要区分两件事：WorkBuddy 收到检查指令，以及确定性过程确实运行并留下证据。下表逐项说明：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 16%">
@@ -3418,8 +3419,8 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td>门禁总检（12 个门禁）</td>
 <td>脚本，pre-commit + CI</td>
-<td>全仓库一致性/时效性，<strong>外加门禁层自身</strong> — 台账覆盖率与钩子接线（第 9 道门禁）、针对各自目标失效重放防线钩子（第 10 道门禁）、换宿主后答案是否仍然相同（第 11 道门禁）、幻灯片内容不变量即引文可解析与每页框数（第 12 道门禁）</td>
-<td><strong>闭合</strong> — 提交被拦</td>
+<td>全仓库一致性和时效性，<strong>以及门禁层自身</strong>：台账覆盖率与钩子接线（第 9 道门禁）、针对目标失效重放防线钩子（第 10 道门禁）、更换宿主后结果是否一致（第 11 道门禁）、幻灯片内容不变量，即引文可解析与每页框数（第 12 道门禁）</td>
+<td><strong>阻断</strong>：拒绝提交</td>
 <td><code>--no-verify</code></td>
 <td>门禁输出、CI 日志</td>
 </tr>
@@ -3427,47 +3428,47 @@ APPROVED   NEEDS WORK
 <td>质量分 ≥ 80</td>
 <td>脚本，pre-commit</td>
 <td>已暂存的 <code>.tex</code>/<code>.qmd</code>/<code>.R</code></td>
-<td><strong>闭合</strong>；渲染检查尽力而为 → 记 <code>UNVERIFIED</code>，不判失败</td>
+<td><strong>阻断</strong>；渲染检查尽力而为，无法完成时记为 <code>UNVERIFIED</code>，不判失败</td>
 <td><code>SKIP_QUALITY_GATE=1</code></td>
-<td>打分报告</td>
+<td>评分报告</td>
 </tr>
 <tr class="odd">
 <td>破坏性 git 防线</td>
 <td>PreToolUse 钩子</td>
 <td>会话内的 <code>git</code> 命令</td>
-<td><strong>闭合</strong> — 调用被拦</td>
-<td>你自己在终端里跑</td>
+<td><strong>阻断</strong>：拒绝调用</td>
+<td>你自己在终端里运行</td>
 <td>钩子消息</td>
 </tr>
 <tr class="even">
 <td>信任根防线</td>
 <td>PreToolUse 钩子（<code>Bash</code>）</td>
-<td>会话内对 <code>.codebuddy/settings*.json</code>、<code>.codebuddy/hooks/</code>、<code>.githooks/</code> 的<em>静默 shell</em> 写入（尽力而为的绊线；<code>Edit</code>/<code>Write</code> 仍能通过）</td>
-<td><strong>闭合</strong> — 调用被拦</td>
+<td>会话内通过 shell 静默写入 <code>.codebuddy/settings*.json</code>、<code>.codebuddy/hooks/</code>、<code>.githooks/</code>；这是尽力而为的绊线，<code>Edit</code>/<code>Write</code> 仍可通过</td>
+<td><strong>阻断</strong>：拒绝调用</td>
 <td><code>ALLOW_ROOT_OF_TRUST_WRITE=1</code></td>
 <td>钩子消息</td>
 </tr>
 <tr class="odd">
 <td>issue 防线</td>
-<td>PreToolUse 钩子（<code>Bash</code>，只为 <code>gh</code> 命令生成）</td>
-<td>会话内的 <code>gh issue create</code>，或 REST/GraphQL 建 issue（尽力而为的绊线，不是安全边界）</td>
-<td><strong>闭合</strong> — 调用被拦，并指向 <code>scripts/file-issue.py</code></td>
-<td>你自己在终端里跑 <code>gh</code></td>
+<td>PreToolUse 钩子（注册到所有 <code>Bash</code> 调用；脚本对非 <code>gh</code> 命令快速放行）</td>
+<td>会话内的 <code>gh issue create</code>，或通过 REST/GraphQL 创建 issue；这是尽力而为的绊线，不是安全边界</td>
+<td><strong>阻断</strong>：拒绝调用，并指向 <code>scripts/file-issue.py</code></td>
+<td>你自己在终端里运行 <code>gh</code></td>
 <td>钩子消息；查重结果记在 issue 正文里</td>
 </tr>
 <tr class="even">
 <td>数值断言护照</td>
 <td>脚本 + 技能</td>
-<td>按论文声明的断言</td>
-<td>FAIL/STALE = <code>/commit</code> 时必须修</td>
+<td>论文中声明的断言</td>
+<td>FAIL/STALE 时，<code>/commit</code> 要求先修复</td>
 <td>具名覆盖，有记录</td>
-<td><code>passport.yaml</code> 的行</td>
+<td><code>passport.yaml</code> 中的行</td>
 </tr>
 <tr class="odd">
 <td><code>/verify-claims</code></td>
 <td>独立上下文核验器代理</td>
-<td>草稿里的引文与数字</td>
-<td>HIGH-WARN 使报告闭合失败（永不被报为已核验）；<strong>不是</strong>提交门禁 — 由作者决定</td>
+<td>草稿中的引文和数字</td>
+<td>HIGH-WARN 使核验报告失败，草稿不得标为已核验；<strong>不是</strong>提交门禁，由作者决定</td>
 <td>显式 <code>--no-fail-closed</code></td>
 <td>核验报告</td>
 </tr>
@@ -3475,24 +3476,24 @@ APPROVED   NEEDS WORK
 <td>审阅代理 / 审稿人</td>
 <td>模型审阅者</td>
 <td>稿件、幻灯片、代码</td>
-<td><strong>建议性</strong> — 出报告，从不自动阻断</td>
+<td><strong>建议性</strong>：只出报告，从不自动阻断</td>
 <td>不适用</td>
 <td>报告文件</td>
 </tr>
 <tr class="odd">
 <td><code>/humanize</code>、校对</td>
 <td>模型审计者</td>
-<td>散文</td>
-<td><strong>建议性</strong>，只检测</td>
+<td>正文</td>
+<td><strong>建议性</strong>：只检测</td>
 <td>不适用</td>
 <td>报告文件</td>
 </tr>
 </tbody>
 </table>
-<p>这张表背后有两条设计规则：所有<strong>闭合</strong>的东西都是确定性的（脚本，而不是模型判断），而模型判断从不当门禁 — 它产出报告，由人裁定。另外，本模板刻意<strong>不</strong>在三条 <code>PreToolUse</code> 防线（破坏性 git 防线、信任根绊线、issue 防线）之外再堆会话期强制钩子。每次调用都跑的防线会拖慢每一次交互，而这份代价每分钟都落在你身上；这正是 issue 防线只为 <code>gh</code> 命令生成的原因。</p>
+<p>这张表遵循两条设计规则。所有会<strong>阻断</strong>操作的检查都由确定性的脚本执行，不依赖模型判断；模型判断只生成报告，由人裁定，不直接充当门禁。本模板也只设置三条 <code>PreToolUse</code> 防线：破坏性 git 防线、信任根绊线和 issue 防线，不再增加其他会话期强制钩子。issue 防线虽注册到所有 <code>Bash</code> 调用，但脚本会对非 <code>gh</code> 命令快速返回，不扫描其他工具调用。</p>
 <section id="不要跳过核验" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="不要跳过核验"><span class="header-section-number">3.5</span> 不要跳过核验</h2>
-<p>在 Econ 730 里，核验抓到过会带着重叠标签上线的未核验 TikZ 图、Quarto 幻灯片里显示不出来的坏 SVG，以及漏了截距项、产出静悄悄错误估计的 R 脚本。</p>
+<p>在 Econ 730 中，核验曾发现未检查的 TikZ 图带有重叠标签、损坏的 SVG 无法在 Quarto 幻灯片中显示，以及 R 脚本漏掉截距项并在没有警告的情况下产出错误估计。</p>
 </section>
 </div>
 </div>
@@ -3506,22 +3507,22 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Anthropic 公开承认过一次模型质量回退，见<a href="https://www.anthropic.com/engineering">他们 2026 年 4 月 23 日的工程博客《An update on recent Claude Code quality reports》</a>。该文指出三处起作用的改动，并对内部评测的局限坦率得罕见。对我们工作流的含义：不要把任何给定的模型检查点当作稳定基线。</p>
-<p>本模板的防线都假定<strong>模型质量会漂移</strong>：</p>
+<p>Anthropic 曾公开承认一次模型质量回退，见<a href="https://www.anthropic.com/engineering">他们 2026 年 4 月 23 日的工程博客《An update on recent Claude Code quality reports》</a>。文章指出三项产生影响的改动，也少见地坦承了内部评测的局限。对这套工作流而言，结论是不能把任何特定模型检查点当作稳定基线。</p>
+<p>本模板的所有防线都以<strong>模型质量可能漂移</strong>为前提：</p>
 <ul>
-<li><strong><code>/verify-claims</code></strong> 加 Chain-of-Verification 独立上下文核验器（即便编排器的检查点回退了，核验器也无法自我确认）。</li>
-<li><strong><code>/audit-reproducibility</code></strong> 加 <code>passport.yaml</code>（数值断言锚定到具体的脚本输出值，而不是模型对这些值的记忆）。</li>
-<li><strong>跨产物审读规则</strong>（论文的断言要对照产出它的代码来查，而不是对照模型对它们是否「合理」的直觉）。</li>
-<li><strong>HIGH-WARN 在报告里闭合失败</strong> — 编造的引文或数值矛盾被首先浮出，草稿永不被呈现为已核验，哪怕模型「感觉很自信」。（这是一条报告规则：<code>/commit</code> 与 pre-commit 钩子都不读 <code>/verify-claims</code> 的判定，所以提交前是否解决 HIGH-WARN 由作者决定。）</li>
+<li><strong><code>/verify-claims</code></strong> 使用 Chain-of-Verification 独立上下文核验器。即使编排器使用的检查点发生回退，核验器也不能靠自我确认通过检查。</li>
+<li><strong><code>/audit-reproducibility</code></strong> 使用 <code>passport.yaml</code>，把数值断言对应到具体的脚本输出值，而不是模型对这些值的记忆。</li>
+<li><strong>跨产物审读规则</strong>要求用生成论文断言的代码核查断言，而不是凭模型直觉判断它们是否「合理」。</li>
+<li><strong>HIGH-WARN 使核验报告失败。</strong>编造的引文或数值矛盾会被优先报告；即使模型显得很自信，草稿也不能标为已核验。这条规则只约束报告：<code>/commit</code> 和 pre-commit 钩子都不读取 <code>/verify-claims</code> 的判定，因此作者仍须自行决定在提交前解决 HIGH-WARN。</li>
 </ul>
-<p>Anthropic 那篇博文还提醒了一件有用的事：跑 <code>/review-paper --peer &lt;journal&gt; --variance N</code>（Pass 2C E）是对「我该不该信这份输出？」的实证回答 — 单个任务上模型质量的一个点估计，会掩盖本模板对抗式审读模式所浮出的方差。</p>
+<p>Anthropic 那篇文章还提示了一种实证检查方法：运行 <code>/review-paper --peer &lt;journal&gt; --variance N</code>（Pass 2C E），观察「我该不该信这份输出？」的答案是否稳定。单个任务上的一次模型质量点估计会掩盖输出方差，而本模板的对抗式审读模式可以显示这种方差。</p>
 </div>
 </div>
 </section>
 </section>
 <section id="sec-vaccinate" class="level2" data-number="3.6">
 <h2 data-number="3.6" class="anchored" data-anchor-id="sec-vaccinate"><span class="header-section-number">3.6</span> 当 AI 核对数学时，谁来核对 AI？</h2>
-<p>本指南开头那个问题是<em>「没人核对数学」</em>。加上检查器就回答了它 — 并立刻引出下一问。上面每一项检查本身都是一段软件或一个模型在干活，而两者都不会宣告自己已经失效。</p>
+<p>本指南开头提出的问题是<em>「没人核对数学」</em>。检查器可以承担核对工作，但也带来下一个问题：上面每项检查都由软件或模型执行，而它们失效时不会主动说明。</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3532,31 +3533,32 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>在一个能跑的代码库里故意埋了二十个 bug，再让审阅代理去查。<strong>它们报告一切正常。</strong> 召回：20 个里抓了 0 个。（这是本模板自身开发过程中的一次工作会话事故，2026 年 6 月 — 它早于资格台账，也正是台账存在的原因：门禁结果现在带一行可复现的记录。）</p>
-<p>输出里没有任何东西能把它与一次真正干净的运行区分开。审阅者自信、流利、完全错 — 而读报告的人无从分辨。</p>
+<p>我们曾在一个可以运行的代码库中故意植入二十个 bug，再让审阅代理检查。<strong>它们报告一切正常。</strong>20 个 bug 一个也没有发现，召回数为 0。这是本模板开发过程中于 2026 年 6 月发生的一次会话事故，早于资格台账的建立。正因为有这次事故，现在的门禁结果都要附上一行可复现的台账记录。</p>
+<p>这份输出与真正没有问题的运行结果没有可见区别。审阅者表达自信、语言流畅，结论却完全错误，读者仅凭报告无法分辨。</p>
 </div>
 </div>
-<p>把它想成一支<strong>疫苗</strong>：一小剂受控的错误，让整个系统变强。由此得出的规则，本模板视为不可谈判：</p>
+<p>这里的思路类似<strong>疫苗</strong>：用少量受控错误检验整个系统。本模板因此坚持一条不可谈判的规则：</p>
 <blockquote class="blockquote">
 <p><strong>一道没做过资格认定的检查，不是弱证据。它什么证据都不是。</strong></p>
 </blockquote>
-<p>「它通过了」与以下情形全都相容：检查根本没跑；跑在一份过期副本上；悄悄跳过了它无法对账的东西；比对之后把容差放宽了；或者它根本检测不了它本该检测的那种失效。<em>检查的条数不是严谨度的度量。</em></p>
+<p>「它通过了」可能对应多种情况：检查根本没有运行；检查的是过期副本；无法核对的内容被静默跳过；比对后放宽了容差；或者检查器原本就识别不了目标失效。<em>检查数量本身不能证明严谨。</em></p>
 <section id="给一道检查做资格认定约十分钟" class="level3" data-number="3.6.1">
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="给一道检查做资格认定约十分钟"><span class="header-section-number">3.6.1</span> 给一道检查做资格认定，约十分钟</h3>
-<p><a href="#all-skills"><code>/vaccinate</code></a> 把它做成一套协议：</p>
+<p><a href="#all-skills"><code>/vaccinate</code></a> 将这个过程整理为一套协议：</p>
 <ol type="1">
-<li><strong>点名失效。</strong>「抓问题」不是一个类别。「检测出正文里某个系数与它的表已经对不上」才是。</li>
-<li><strong>把它埋进</strong>一份副本 — 外加<strong>至少一个干净的对照</strong>。</li>
-<li><strong>盲跑检查器</strong>，每次运行一个变体，用全新上下文。</li>
-<li><strong>打分</strong>：召回率<em>与</em>假阳性率。干净对照上的发现，只有在<em>事实上错了</em>时才算在检查器头上，仅仅不受欢迎不算。</li>
-<li><strong>与更简单的基线比。</strong> 一个五人代理小组如果打得还不如 <code>grep -n</code>，就没挣到它的成本。</li>
-<li><strong>写一行台账。</strong> 在 <code>quality_reports/qualification/LEDGER.md</code> 里没有行的检查器就是未获资格的，它的绿灯毫无意义。</li>
+<li><strong>明确目标失效。</strong>「抓问题」不是具体的失效类别，「检测正文中的系数与对应表格不一致」才是。</li>
+<li><strong>把失效植入一份副本</strong>，并准备<strong>至少一个干净对照</strong>。</li>
+<li><strong>盲跑检查器。</strong>每次测试一个变体，并使用全新上下文。</li>
+<li><strong>同时计算召回率和假阳性率。</strong>干净对照上的发现只有<em>确实错误</em>时才记为检查器的假阳性，不能仅因发现不受欢迎就计入。</li>
+<li><strong>与更简单的基线比较。</strong>如果五人代理小组还不如 <code>grep -n</code>，就不值得承担它的成本。</li>
+<li><strong>在台账中写一行。</strong>未出现在 <code>quality_reports/qualification/LEDGER.md</code> 中的检查器尚未获得资格，其通过结果没有意义。</li>
 </ol>
-<p>资格认定运行之外还有两件事，很容易被跳过。一个是<strong>噪声底</strong> — 在什么都没错的对照上，这道检查多久触发一次 — 它让一个召回数字可解释，而不只是听着漂亮。另一个是<strong>运行标签</strong>：预先指定的、验证性的，还是探索性的。在跑之前写下的标签，正是防止一次探索性扫描日后被当作确认来报的东西。</p>
+<p>资格认定还容易漏掉两项工作。第一是测量<strong>噪声底</strong>，即对照完全正确时检查器多久触发一次；有了它，召回率才容易解释。第二是预先标明<strong>运行标签</strong>：预先指定、验证性，还是探索性。运行前写下标签，才能防止日后把探索性扫描当成确认性证据。</p>
 </section>
 <section id="越界之后会怎样" class="level3" data-number="3.6.2">
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="越界之后会怎样"><span class="header-section-number">3.6.2</span> 越界之后会怎样</h3>
-<p>资格边界只有在越界要付代价时才有意义。当一场实测战役错过了事先定下的边界，处置是<strong>撤回</strong>：没通过的那个东西降级为显式选择加入，而边界<strong>永不</strong>放宽。在看见数字之后挪动的边界不是边界 — 它是对结果的描述，而此后引用它的每一条断言都是循环论证。降级而非删除，让读过那个数字并接受它的人仍可用它，而删除摧毁了轨迹。只有当中途失败的数字、它错过的边界、以及处置方式都发布在用户会读到的地方（发布说明<em>与</em>判定产物），当失败的战役被保存为负向校准证据，且每个相邻表都被列为受影响或明确列为不受影响时，撤回才算完成。</p>
+<p>只有越界会产生后果，资格边界才有意义。如果一次实测未达到事先确定的边界，应当<strong>撤回</strong>相应默认值：把未通过的功能改为必须显式选择加入，边界本身<strong>绝不</strong>放宽。看到数字后移动边界，只是在描述结果；之后再引用这个边界支持断言，就构成循环论证。</p>
+<p>这里选择降级而不是删除，是因为已经读过并接受该数字的人仍可使用它，删除则会破坏记录。完成撤回必须同时满足几个条件：把失败数字、未达到的边界和处置方式发布在用户会看到的发布说明<em>与</em>判定产物中；把失败运行保存为负向校准证据；把每个相邻表分别标为受影响或明确不受影响。</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -3569,10 +3571,10 @@ APPROVED   NEEDS WORK
 </div>
 <div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><em>一个构造出来的示例，不是记录在案的事故 — 机制是真的，数字是为把机制讲具体而选的。</em></p>
-<p>一个做测定分析的 R 包把自动基线校正例程作为默认值发布。维护者在跑任何东西之前就写下了边界，也写下了什么算越界：在预注册的、300 份已知浓度掺入样本的留出集上，名义 95% 区间必须以 <strong>94% 或更好</strong>的覆盖率覆盖真实浓度，只有当测量值低于该值两个标准误以上才算越界，并且要在任何处置生效之前，以同一预算在新种子上做一次预先承诺的复跑确认。战役开跑。实测覆盖率：<strong>267/300 = 89.0%</strong>，标准误 1.8 个百分点 — 不是擦边，也不是噪声。确认复跑同样越界。</p>
-<p>诱人的做法是放宽。89% 是<em>可用的</em>，缺口集中在噪声最大的那几块板上，而那个边界毕竟也是现在看结果的这同一批人选的。维护者却选择降级这个例程：仍然可用，仍有文档，只是现在写作 <code>baseline = &quot;auto&quot;</code> 而不再是默认值。该版本的 <code>NEWS</code> 逐字带上那个数字与它错过的边界，就写在处置旁边。两场战役都留在仓库里。预注册禁止的是相反的顺序 — 在处置<em>之后</em>重掷一场失败的战役，直到某次抽样过了边界。两个下游函数继承了这个默认值；两者都被列出，一个受影响，一个明确不受影响并说明理由。</p>
-<p>让这个边界成为真边界的，不是它的数值。而是错过它有一个事先写下的后果。</p>
+<p><em>这是一个构造的示例，不是记录在案的事故。机制是真实的，数字仅用于具体说明机制。</em></p>
+<p>一个测定分析 R 包把自动基线校正例程设为默认值。维护者在运行任何测试前写下边界和越界条件：在预注册的留出集中，有 300 份掺入已知浓度的样本，名义 95% 区间覆盖真实浓度的比例必须达到 <strong>94% 或更高</strong>；测量值低于该边界两个标准误以上才算越界；任何处置生效前，还要用相同预算和新种子进行一次事先承诺的确认复跑。实测覆盖率为 <strong>267/300 = 89.0%</strong>，标准误为 1.8 个百分点，明显越界而非噪声。确认复跑也未达到边界。</p>
+<p>维护者当然可以放宽边界：89% 看似<em>可用</em>，缺口又集中在噪声最大的几块板上，而边界原本也是这批查看结果的人选定的。但他们选择把该例程降级：功能仍然可用，文档仍然保留，<code>baseline = &quot;auto&quot;</code> 也仍然有效，只是不再作为默认值。该版本的 <code>NEWS</code> 在处置说明旁原样记录实测数字和未达到的边界，两次运行都保留在仓库中。预注册禁止相反的操作顺序，即在处置<em>之后</em>反复重跑失败的测试，直到某次抽样越过边界。两个下游函数继承了这个默认值，因此两者都被列出：一个受影响，另一个明确不受影响并说明理由。</p>
+<p>让边界真正有效的不是具体数值，而是未达到边界时会产生事先写明的后果。</p>
 </div>
 </div>
 </div>
@@ -3586,15 +3588,15 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>在做 v2.5 时，我们拿本仓库自己的一致性门禁去对一个埋进去的缺陷：在 <code>README.md</code> 里加了一句 <code>This template has NN skills.</code>，那个数与磁盘对不上。</p>
-<p><strong>当时套件里每一道门禁都仍然全绿。</strong> 那些计数模式是刻意做成复合的 — 它们要求一行里出现好几个类别 — 这样才不会对「start with 2–3 skills」这类普通散文开火。一个只带模板动词的计数，就径直从缝里漏了过去。</p>
-<p>那道门禁一直<strong>绿着且是错的</strong>，只有埋一个缺陷才能分辨出来。它被修好，然后<em>双向</em>重新做了资格认定：3 次埋入漂移全抓到，3 段正当散文上 0 次误报。</p>
+<p>开发 v2.5 时，我们在本仓库的一致性门禁中植入了一个缺陷：在 <code>README.md</code> 加入 <code>This template has NN skills.</code>，其中数量与磁盘实际数量不符。</p>
+<p><strong>当时套件中的每道门禁仍然全部通过。</strong>这些计数模式有意采用复合结构，要求同一行出现多个类别，以免把「start with 2–3 skills」这类正常文字误判为计数断言。但只含模板动词的计数因此绕过了检查。</p>
+<p>这道门禁一直显示通过，结果却是错的，只有植入缺陷才能暴露问题。修复后，我们重新做了<em>双向</em>资格认定：3 次植入的漂移全部被发现，3 段正常文字的误报数为 0。</p>
 </div>
 </div>
 </section>
 <section id="核验纪律写在哪里" class="level3" data-number="3.6.3">
 <h3 data-number="3.6.3" class="anchored" data-anchor-id="核验纪律写在哪里"><span class="header-section-number">3.6.3</span> 核验纪律写在哪里</h3>
-<p>这些参考文件承载着它，按需加载，而不是常驻每个会话的上下文：</p>
+<p>以下参考文件按需加载，不会一直占用每个会话的上下文：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3605,34 +3607,34 @@ APPROVED   NEEDS WORK
 <tbody>
 <tr class="odd">
 <td><a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/verification-ladder.md"><code>verification-ladder.md</code></a></td>
-<td>你想从头到尾走完 7 级阶梯 — 给检查器做资格认定、确定性门禁、四层产物阶梯、独立性、解析核验、台账、外部裁判</td>
+<td>需要完整了解 7 级阶梯：检查器资格认定、确定性门禁、四层产物阶梯、独立性、解析核验、台账和外部裁判</td>
 </tr>
 <tr class="even">
 <td><a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/external-oracle-process.md"><code>external-oracle-process.md</code></a></td>
-<td>你要把论文或证明送给外部前沿模型，需要提示词契约、覆盖率清单与裁定协议</td>
+<td>要把论文或证明交给外部前沿模型，并需要提示词契约、覆盖率清单和裁定协议</td>
 </tr>
 <tr class="odd">
 <td><a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/provenance-and-ground-truth.md"><code>provenance-and-ground-truth.md</code></a></td>
-<td>你在移植、复现或升级，而「数字对得上」即将为一条断言背书</td>
+<td>正在移植、复现或升级，并准备用「数字对得上」支持一条断言</td>
 </tr>
 <tr class="even">
 <td><a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/release-engineering.md"><code>release-engineering.md</code></a></td>
-<td>你交付的是软件而不是结果 — 一个包、一个 <code>.ado</code>、一件带版本的复现产物 — 需要提交信息与静默处理的普查、为一次移植冻结的特性矩阵、以哈希声明的继承测试，以及按 commit 固定下游版本</td>
+<td>交付软件而非结果，例如一个包、一个 <code>.ado</code> 或一件带版本的复现产物；需要普查提交信息与静默处理、为移植冻结特性矩阵、用哈希声明继承测试，并按 commit 固定下游版本</td>
 </tr>
 </tbody>
 </table>
-<p>另外，一条命令跑完这一切里机械的那一半：</p>
+<p>下面这条命令可以完成其中所有机械检查：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>    <span class="co"># twelve gates: consistency, skill integrity, currency, links, spec, staleness,</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># hygiene, derived counts, ledger coverage, hook battery, portability,</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># slide content invariants</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>第 9、10 两项检查的是检查层本身，而不是内容。<strong>台账覆盖率</strong>读资格台账与实际运行的检查集合，要求两者双向一致：注册过的检查在台账里没有行，构建失败；某行点名的检查器已不存在，构建失败；某行停在<em>尚未获资格</em>之下则告警 — 让债务可见，而不是无声。它还核验 <code>.codebuddy/settings.json</code> 里注册的每个钩子都指向一个存在、可调用、且在 git 中被跟踪的文件。<strong>钩子用例集</strong>随后用合成事件逐条触发每道激活的防线钩子，要求它对当初被写来对付的那种失效仍然变红，同时干净对照必须保持绿。第 9 道门禁证明钩子接对了线；第 10 道证明它还会动作。</p>
-<p>第 11 道，<strong>可移植性回归集</strong>，换了一个问题：前面十道都在回答「这套仓库现在对不对」，它回答「换一台机器之后，答案会不会悄悄变成另一个」。路径分隔符、代码页、行尾、<code>git ls-files</code> 对非 ASCII 文件名的引用方式，这些在 macOS 上从不发作，在 Windows 上每一处都能让一道门禁静默失效。本机缺少对应机制而跑不到的用例不会消失，它会被逐条点名，并把整道门禁记成一次<strong>有上限</strong>的通过 —— 跑完了，但只钉住了跑到的那些。</p>
-<p>第 12 道，<strong>幻灯片内容不变量</strong>，是这十二道里唯一直接看产出的门。它数两件此前只有散文规定的事：每个引文键能否在唯一那份文献库里解析到（INV-5），以及每页彩色框是否超过两个（INV-7）。两个都是静态检查，渲染之前就能跑，不需要 LaTeX 也不需要 Quarto。补上它的理由是一次验收 — 2026-10-31 那条幻灯片线上埋了两个缺陷：一个不存在的引文键被 xelatex、citeproc 与打分器<strong>三处</strong>报出来，却没有一处判失败，而 PDF 里那些位置印的是 <code>(键名?)</code>；一页放了三个框，也没有任何检查按 INV-7 报出它，<strong>发现它的是像素度量</strong>，因为那一页因此溢出了 26.5 像素。换一页内容短一点的，框还在，溢出消失，这个缺陷就会安静过关 — 一条只有在有人认真读的时候才生效的规则，在匆忙的一轮里等于不存在。</p>
-<p>审查发现本身是机器检查而非口头描述的：审阅者输出一个 JSON 数组，由 <code>scripts/validate-findings.py</code> 对照 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/finding-schema.json"><code>finding-schema.json</code></a> 校验。每条发现都必须引用它所违反的<strong>规则</strong>（不引用规则的发现只是意见），并给出一个<strong>失败用例</strong> — 一个能打破该断言的具体配置，而不是「这里可以更清楚」。发现的 id 是确定性的，所以跨轮审读的去重是精确的，而不是模糊的。</p>
+<p>第 9、10 道门禁检查的是检查层本身，而不是内容。<strong>台账覆盖率</strong>读取资格台账和实际运行的检查集合，要求两者一一对应：已注册检查在台账中没有记录，构建失败；台账行点名的检查器已不存在，构建失败；台账行仍处于<em>尚未获资格</em>状态，则发出警告，让未完成的资格认定保持可见。它还核验 <code>.codebuddy/settings.json</code> 中注册的每个钩子都指向一个存在、可调用且被 git 跟踪的文件。随后，<strong>钩子用例集</strong>用合成事件逐条触发每道已启用的防线钩子，要求它仍能识别当初针对的失效并判定失败，同时让干净对照保持通过。第 9 道门禁确认钩子接线正确，第 10 道确认钩子仍会执行预期动作。</p>
+<p>第 11 道是<strong>可移植性回归集</strong>。前十道回答「仓库现在是否正确」，它回答「换一台机器后，结果是否会静默改变」。路径分隔符、代码页、行尾，以及 <code>git ls-files</code> 引用非 ASCII 文件名的方式，在 macOS 上可能不会出问题，在 Windows 上却都可能导致门禁静默失效。如果本机缺少相应机制，无法运行的用例不会被省略，而会逐条列出；整道门禁只记为<strong>有限通过</strong>，表示流程跑完了，但只验证了实际运行的用例。</p>
+<p>第 12 道是<strong>幻灯片内容不变量</strong>，也是十二道门禁中唯一直接检查产出的一道。它检查两项过去只写在文字规范中的要求：每个引文键能否在唯一的文献库中解析，即 INV-5；每页彩色框是否超过两个，即 INV-7。两项都是静态检查，可以在渲染前运行，不需要 LaTeX 或 Quarto。增加这道门禁源于 2026-10-31 的一次幻灯片验收，当时植入了两个缺陷。其一是不存在的引文键：xelatex、citeproc 和评分器<strong>三处</strong>都报告了它，却没有一处判定失败，PDF 相应位置只显示 <code>(键名?)</code>。其二是一页放了三个框：没有检查根据 INV-7 报告问题，最后是<strong>像素测量</strong>发现该页因此溢出 26.5 像素。如果换成内容较短的一页，三个框仍然存在，却不再溢出，缺陷就会静默通过。只在有人认真阅读时才生效的规则，在匆忙的一轮中等于没有。</p>
+<p>审查发现也采用机器可检查的形式，而不只是口头描述。审阅者输出 JSON 数组，由 <code>scripts/validate-findings.py</code> 按 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/finding-schema.json"><code>finding-schema.json</code></a> 校验。每条发现都必须引用被违反的<strong>规则</strong>，否则只能算意见；还必须给出<strong>失败用例</strong>，即能使该断言失效的具体配置，而不是只说「这里可以更清楚」。发现的 id 由确定性规则生成，因此可以精确跨轮去重。</p>
 </section>
 <section id="五个可信度问题" class="level3" data-number="3.6.4">
 <h3 data-number="3.6.4" class="anchored" data-anchor-id="五个可信度问题"><span class="header-section-number">3.6.4</span> 五个可信度问题</h3>
-<p>AI 辅助实证工作最常出错的方式，不是一个数字算错。而是把回答某个问题的证据，读成了回答另一个问题的证据。</p>
+<p>AI 辅助实证工作的常见错误，不只是算错一个数字，还包括把回答一个问题的证据误当成回答另一个问题的证据。</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3643,47 +3645,47 @@ APPROVED   NEEDS WORK
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>可复现性</strong> — 代码能跑并产出所报告的数字吗？</td>
+<td><strong>可复现性</strong>：代码能运行并产出所报告的数字吗？</td>
 <td><a href="#all-skills"><code>/audit-reproducibility</code></a>、护照</td>
 <td>估计量本身是对的</td>
 </tr>
 <tr class="even">
-<td><strong>实现保真度</strong> — 代码实现的是它声称的估计量吗？</td>
-<td><a href="#all-skills"><code>/differential-audit</code></a> 对照一份钉住的参考实现</td>
+<td><strong>实现保真度</strong>：代码实现的是它声称的估计量吗？</td>
+<td><a href="#all-skills"><code>/differential-audit</code></a> 对照固定的参考实现</td>
 <td>该估计量表现良好</td>
 </tr>
 <tr class="odd">
-<td><strong>统计表现</strong> — 它在有限样本里行为正常吗？</td>
+<td><strong>统计表现</strong>：它在有限样本中的行为正常吗？</td>
 <td><a href="#all-skills"><code>/simulation-study</code></a>、对照真值的覆盖率</td>
 <td>该度量有效</td>
 </tr>
 <tr class="even">
-<td><strong>测量效度</strong> — 变量捕捉到了构念吗？</td>
+<td><strong>测量效度</strong>：变量捕捉到了构念吗？</td>
 <td>领域审读、数据文档</td>
 <td>因果断言成立</td>
 </tr>
 <tr class="odd">
-<td><strong>识别</strong> — 因果断言站得住吗？</td>
+<td><strong>识别</strong>：因果断言站得住吗？</td>
 <td>设计、<a href="#all-skills"><code>/challenge</code></a>、证伪</td>
-<td>任何关于代码的东西</td>
+<td>任何关于代码的结论</td>
 </tr>
 </tbody>
 </table>
-<p><strong>回答一个问题的证据，永远不能为另一个问题结案。</strong> 一道绿的复现性检查告诉你算术忠实地反映了脚本。它对脚本是否识别出任何东西一无所知。当一个代理报告「所有检查都通过」时，它几乎总是在说第一级，却被听成第五级。</p>
+<p><strong>回答一个问题的证据，不能替另一个问题下结论。</strong>复现性检查通过，只说明计算结果忠实反映脚本，并不说明脚本识别出了任何对象。代理报告「所有检查都通过」时，通常只验证了第一级，却容易被误解为已经验证第五级。</p>
 </section>
 <section id="而且审读不能替代稳健性" class="level3" data-number="3.6.5">
 <h3 data-number="3.6.5" class="anchored" data-anchor-id="而且审读不能替代稳健性"><span class="header-section-number">3.6.5</span> 而且，审读不能替代稳健性</h3>
-<p>在一项对照研究里（<a href="https://arxiv.org/abs/2603.16744">Gao &amp; Xiao 2026，“Nonstandard Errors in AI Agents”，arXiv:2603.16744</a> — 一篇在 NYSE TAQ 数据上研究六个市场质量假设的预印本，所以证据来自一个实证金融场景，不是整个社会科学），150 个自主代理拿到同一份数据、同一批问题。效应量的四分位距达到约 <strong>10.7 %/年</strong>，而离散度集中在<strong>离散的度量选择分叉</strong>上 — 美元成交量还是份额成交量、逐笔还是 Amihud — 而不是估计噪声。在同一度量族内，代理之间的一致性约为 0.25 %/年。</p>
-<p>那项研究里有两个结果对本模板的设计是承重的：</p>
+<p>一项对照研究让 150 个自主代理使用同一份数据、回答同一批问题，见 <a href="https://arxiv.org/abs/2603.16744">Gao &amp; Xiao 2026，“Nonstandard Errors in AI Agents”，arXiv:2603.16744</a>。这篇预印本用 NYSE TAQ 数据研究六个市场质量假设，因此证据来自一个实证金融场景，不能代表整个社会科学。效应量的四分位距约为 <strong>10.7 %/年</strong>，离散度主要来自<strong>不同的度量选择</strong>，例如美元成交量还是份额成交量、逐笔指标还是 Amihud，而不是估计噪声。在同一度量族内，代理间一致性约为 0.25 %/年。</p>
+<p>其中两个结果直接影响了本模板的设计：</p>
 <ul>
-<li><strong>AI 同行评审让离散度基本没变。</strong> 审读抓错误。它不降低分析选择的方差。一份干净的审稿报告不是稳健性。</li>
-<li>接触范例论文让离散度塌缩 80–99% — <strong>靠模仿的收敛，不是靠正确。</strong> 羊群不是共识。</li>
+<li><strong>AI 同行评审基本没有改变离散度。</strong>审读可以发现错误，却不会降低分析选择的方差，因此一份没有问题的审稿报告不等于稳健性证据。</li>
+<li>接触范例论文使离散度降低 80–99%，但这是<strong>模仿带来的收敛，不代表结果正确</strong>。代理得出相似答案，不等于它们形成了可靠共识。</li>
 </ul>
-<p>这就是 <a href="#all-skills"><code>/challenge</code></a> 存在的原因，也是它单独成一级的原因：离散度必须被<em>度量</em>，不能被审读掉。</p>
+<p>因此需要 <a href="#all-skills"><code>/challenge</code></a>，并将它单独列为一级：离散度必须实际<em>测量</em>，不能指望审读自行消除。</p>
 </section>
 <section id="投稿就绪把核验透镜叠起来" class="level3" data-number="3.6.6">
 <h3 data-number="3.6.6" class="anchored" data-anchor-id="投稿就绪把核验透镜叠起来"><span class="header-section-number">3.6.6</span> 投稿就绪：把核验透镜叠起来</h3>
-<p>对于要投期刊的论文，四只正交的透镜一起跑 — 各抓不同类别的失效：</p>
+<p>准备投稿的论文需要同时使用四个互补的检查视角，分别针对不同失效类别：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3701,7 +3703,7 @@ APPROVED   NEEDS WORK
 <td>否（建议性）</td>
 </tr>
 <tr class="even">
-<td><strong>AI 腔调痕迹</strong>（v1.9.0）</td>
+<td><strong>AI 文风痕迹</strong>（v1.9.0）</td>
 <td><a href="#all-skills"><code>/humanize</code></a></td>
 <td>套话过渡（“Moreover”、“It is important to note”）、AI 陈词词表（“delve”、“navigate the complexities”）、层层限定、谄媚</td>
 <td>否（建议性；作者手工改）</td>
@@ -3710,7 +3712,7 @@ APPROVED   NEEDS WORK
 <td><strong>事实性断言</strong></td>
 <td><a href="#all-skills"><code>/verify-claims</code></a></td>
 <td>编造的引文、数值矛盾、方向性矛盾</td>
-<td><strong>报告，不阻断</strong> — HIGH-WARN 使核验闭合失败（草稿永不被报为已核验）；<code>/commit</code> 不读它，所以提交前解决它得靠你自己</td>
+<td><strong>只报告，不阻断</strong>：HIGH-WARN 使核验报告失败，草稿不得标为已核验；<code>/commit</code> 不读取该结果，因此作者要自行在提交前解决</td>
 </tr>
 <tr class="even">
 <td><strong>数值溯源</strong></td>
@@ -3720,16 +3722,16 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>这些是<em>互补的</em>，不是冗余的。一篇论文可以过 <code>/proofread</code>（语法干净）而挂 <code>/humanize</code>（文风读起来像 AI 起草）。可以过 <code>/humanize</code>（是你自己的声音）而挂 <code>/verify-claims</code>（引文是编的）。可以过 <code>/verify-claims</code>（引文真实）而挂 <code>/audit-reproducibility</code>（表 2 与代码不符）。投稿前把四个都跑一遍；在此之上，再加 <code>/review-paper --peer &lt;journal&gt; --variance N</code> 拿模拟同行评审的判定。</p>
-<p><strong><code>/humanize</code> 的设计选择</strong>：只检测，没有 <code>--rewrite</code> 模式。自动改写 AI 痕迹会降低文风质量（跨厂商研究的发现），还会引入新的痕迹。由作者读报告、自己改 — 这一步手工，是保住自己声音的代价。如果报告每 1000 词标出 8 个以上 HIGH 级痕迹，就把受影响的那一段从头重写，而不是一条条打补丁。</p>
+<p>这些检查<em>互补</em>，并不重复。论文可能通过 <code>/proofread</code>，语法没有问题，却未通过 <code>/humanize</code>，因为文风像 AI 起草；也可能通过 <code>/humanize</code>，保留了作者自己的声音，却未通过 <code>/verify-claims</code>，因为引文是编造的；还可能通过 <code>/verify-claims</code>，引文真实，却未通过 <code>/audit-reproducibility</code>，因为表 2 与代码不符。投稿前应运行全部四项检查，再运行 <code>/review-paper --peer &lt;journal&gt; --variance N</code>，获得模拟同行评审的判定。</p>
+<p><strong><code>/humanize</code> 只检测，不提供 <code>--rewrite</code> 模式。</strong>跨厂商研究发现，自动改写 AI 痕迹会降低文风质量，还会引入新的痕迹。作者需要阅读报告并亲自修改，以保留自己的声音。如果报告在每 1000 词中标出 8 个以上 HIGH 级痕迹，就应从头重写受影响段落，而不是逐条修补。</p>
 </section>
 </section>
 <section id="sec-domain-reviewer" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="sec-domain-reviewer"><span class="header-section-number">3.7</span> 打造你自己的领域审阅者</h2>
-<p>模板里带 <code>domain-reviewer.md</code> — 一个骨架，供你搭出针对本领域的实质审阅者。它要抓的那类缺陷是：幻灯片断言了一个比所引论文实际证明的更强的性质 — 这个区别微妙但关键，任何语法或版面检查器都不会标出来。</p>
+<p>模板提供的 <code>domain-reviewer.md</code> 是一个基础框架，可用于构建本领域的实质审阅者。它要发现的一类缺陷是：幻灯片声称的性质强于所引论文实际证明的性质。这个区别微妙但关键，语法或版面检查器都不会标出。</p>
 <section id="五透镜框架" class="level3" data-number="3.7.1">
 <h3 data-number="3.7.1" class="anchored" data-anchor-id="五透镜框架"><span class="header-section-number">3.7.1</span> 五透镜框架</h3>
-<p>每个领域都能从这五只审读透镜中获益：</p>
+<p>不同领域都可以从以下五个审读视角受益：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -3785,14 +3787,14 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>模板在 <code>.codebuddy/agents/domain-reviewer.md</code> 里带了<strong>两份具体的领域审阅者定制</strong>：一个计量经济学示例（假设、识别、R/Stata 代码-理论对齐）与一个政治学示例（可忽略性、联合分析 AMCE、<code>cjoint</code>/<code>survey</code> 包默认值）。两者都遵循五透镜结构；任一个都是你为本领域动手的可行起点。</p>
-<p>要定制，打开 <code>.codebuddy/agents/domain-reviewer.md</code> 并填上：</p>
+<p><code>.codebuddy/agents/domain-reviewer.md</code> 提供<strong>两份具体的领域审阅者定制</strong>：计量经济学示例覆盖假设、识别和 R/Stata 代码与理论的对齐；政治学示例覆盖可忽略性、联合分析 AMCE，以及 <code>cjoint</code>/<code>survey</code> 包的默认值。两者都采用五透镜结构，任选其一即可作为本领域定制的起点。</p>
+<p>定制时，打开 <code>.codebuddy/agents/domain-reviewer.md</code> 并填写：</p>
 <ol type="1">
-<li>你所在领域常见的假设类型</li>
-<li>需要核验的典型推导模式</li>
-<li>关键论文及其正确归属</li>
-<li>针对你所用工具的代码-理论对齐检查</li>
-<li>针对你读者的逻辑链要求</li>
+<li>你所在领域常见的假设类型。</li>
+<li>需要核验的典型推导模式。</li>
+<li>关键论文及其正确归属。</li>
+<li>针对所用工具的代码与理论对齐检查。</li>
+<li>针对目标读者的逻辑链要求。</li>
 </ol>
 <hr>
 </section>
@@ -3800,20 +3802,20 @@ APPROVED   NEEDS WORK
 </section>
 <section id="sec-blocks" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> 构成部件</h1>
-<p>理解这些配置层，有助于你定制这套工作流、在出问题时排查。WorkBuddy 的力量来自五层协同工作的配置 — 把它们想成你学术项目的操作系统。</p>
+<p>了解五层配置如何协作，有助于你按需定制工作流，并在出现问题时定位原因。</p>
 <section id="codebuddy.md-你项目的宪法" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="codebuddy.md-你项目的宪法"><span class="header-section-number">4.1</span> CODEBUDDY.md — 你项目的宪法</h2>
-<p><code>CODEBUDDY.md</code> 是最重要的单个文件。WorkBuddy 在每次会话开始时读它。但关键洞见在这里：<strong>WorkBuddy 能可靠遵循大约 100–150 条自定义指令。</strong> 你的系统提示已经用掉约 50 条，剩下约 100–150 条给你的项目。CODEBUDDY.md 与常驻规则共享这份预算。</p>
-<p>这意味着 CODEBUDDY.md 应当是一部<strong>精瘦的宪法</strong> — 短短的指令与指针，而不是详尽的文档。目标约 120 行：</p>
+<p><code>CODEBUDDY.md</code> 是最重要的单个文件，WorkBuddy 会在每次会话开始时读取它。需要注意的是，<strong>WorkBuddy 能可靠遵循大约 100–150 条自定义指令</strong>。系统提示已经占用约 50 条，项目大约还有 100–150 条可用，CODEBUDDY.md 与常驻规则共享这份预算。</p>
+<p>因此，CODEBUDDY.md 应当<strong>精简</strong>，只保留简短指令和指向详细文档的链接，目标约 120 行：</p>
 <ul>
-<li><strong>核心原则</strong> — 4–5 条（计划先行、事后核验、质量门禁、LEARN 标签）</li>
-<li><strong>文件夹结构</strong> — 什么住在哪里</li>
-<li><strong>命令</strong> — 编译、部署、关键工具</li>
-<li><strong>定制表</strong> — Beamer 环境、CSS 类</li>
-<li><strong>当前状态</strong> — 什么做完了、什么在做</li>
-<li><strong>技能速查</strong> — 可用斜杠命令的表格</li>
+<li><strong>核心原则</strong>：4–5 条，包括计划先行、事后核验、质量门禁和 LEARN 标签。</li>
+<li><strong>文件夹结构</strong>：说明各类内容的位置。</li>
+<li><strong>命令</strong>：编译、部署和关键工具。</li>
+<li><strong>定制表</strong>：Beamer 环境和 CSS 类。</li>
+<li><strong>当前状态</strong>：已经完成和正在进行的工作。</li>
+<li><strong>技能速查</strong>：可用斜杠命令的表格。</li>
 </ul>
-<p>其余一切搬进 <code>.codebuddy/rules/</code> 的文件（带上路径作用域，让它们只在相关时加载）。</p>
+<p>其余内容移到 <code>.codebuddy/rules/</code>，并设置路径作用域，让规则只在相关任务中加载。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># CODEBUDDY.md --- My Course Development</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>**Project:** Econ 730 --- Causal Panel Data</span>
@@ -3842,14 +3844,14 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>CODEBUDDY.md 每次会话都加载。保持精瘦 — 官方指引建议控制在约 200 行以内，行数越长遵循度越低（过载的文件会静悄悄丢掉规则）。把详细标准放进按路径作用域的规则（<code>.codebuddy/rules/</code>）— 它们只在 WorkBuddy 处理匹配文件时加载，因此不争夺注意力。</p>
+<p>CODEBUDDY.md 会在每次会话中加载。官方指引建议控制在约 200 行以内；文件越长，指令遵循度越低，内容过载时部分规则可能被静默忽略。详细标准应放入 <code>.codebuddy/rules/</code> 中按路径作用域加载的规则，这样只有 WorkBuddy 处理匹配文件时才占用指令预算。</p>
 </div>
 </div>
 </section>
 <section id="rules---domain-knowledge-that-auto-loads" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="rules---domain-knowledge-that-auto-loads"><span class="header-section-number">4.2</span> 规则 — 自动加载的领域知识</h2>
-<p>规则是 <code>.codebuddy/rules/</code> 下的 markdown 文件，由 WorkBuddy 自动加载。它们把项目的标准编码下来。关键设计原则是<strong>路径作用域</strong>：带 <code>paths:</code> YAML frontmatter 的规则只在 WorkBuddy 处理匹配文件时加载。</p>
-<p><strong>常驻规则</strong>（没有 <code>paths:</code> frontmatter）每次会话都加载。这些要少而聚焦：</p>
+<p>规则是 <code>.codebuddy/rules/</code> 下的 Markdown 文件，用于记录项目标准，并由 WorkBuddy 自动加载。关键设计是<strong>路径作用域</strong>：带 <code>paths:</code> YAML frontmatter 的规则，只在 WorkBuddy 处理匹配文件时加载。</p>
+<p><strong>常驻规则</strong>没有 <code>paths:</code> frontmatter，会在每次会话中加载，因此应当少而集中：</p>
 <pre><code>.codebuddy/rules/
 ├── plan-first-workflow.md       # ~83 lines — plan before you build
 ├── session-logging.md           # ~23 lines — three logging triggers
@@ -3867,9 +3869,9 @@ APPROVED   NEEDS WORK
 ├── orchestrator-protocol.md     # paths: [&quot;.codebuddy/skills/**&quot;, &quot;.codebuddy/agents/**&quot;, ...] — review runtime
 ├── meta-governance.md           # paths: [top-level docs, &quot;guide/**&quot;, &quot;.codebuddy/**&quot;, ...] — template vs working project
 └── ...32 path-scoped rules total</code></pre>
-<p>常驻规则刻意做得紧凑 — 加起来远在 WorkBuddy 每次会话可靠读取的预算之内。最大的两条规则刻意做成路径作用域：<code>orchestrator-protocol</code>（审读运行时）在编写技能与审阅代理时加载 — 扇出型技能直接链接它 — 而 <code>meta-governance</code>（模板的双重身份）只在维护者处理文档、<code>.codebuddy/</code> 与门禁脚本时加载，于是一次研究或教学会话不必为这两者中的任何一个付账。按路径作用域的规则恰好在 WorkBuddy 需要时补上丰富、领域专属的指引。</p>
-<p><strong>同步 vs 翻译：</strong><code>beamer-quarto-sync</code> 规则管增量修改 — 在 Beamer 里修一个笔误，同样的修法同步到 Quarto。<code>/translate-to-quarto</code> 技能用于一讲新讲义的整体初次翻译。译一次，之后靠同步。</p>
-<p><strong>规则为何要紧：</strong> 没有它们，WorkBuddy 会用通用默认值。有了它们，WorkBuddy 跨会话一致地遵循<em>你的</em>标准。</p>
+<p>常驻规则有意保持紧凑，总长度远低于 WorkBuddy 每次会话能够可靠读取的预算。两条最大的规则也采用路径作用域：<code>orchestrator-protocol</code> 规定审读运行时，只在编写技能和审阅代理时加载，扇出型技能会直接链接它；<code>meta-governance</code> 说明模板的双重身份，只在维护者处理文档、<code>.codebuddy/</code> 和门禁脚本时加载。这样，研究或教学会话不必承担这两条规则的上下文成本，需要时仍能获得详细的领域指引。</p>
+<p><strong>同步与翻译的分工：</strong><code>beamer-quarto-sync</code> 规则负责增量修改。例如，在 Beamer 中修正笔误后，要把同一修改同步到 Quarto。<code>/translate-to-quarto</code> 技能用于首次整体翻译一讲新讲义。初次翻译完成后，后续修改通过同步处理。</p>
+<p><strong>规则的作用：</strong>没有规则时，WorkBuddy 使用通用默认值；配置规则后，它会跨会话一致地遵循<em>你的</em>标准。</p>
 <section id="例子按路径作用域的-r-代码规范规则" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="例子按路径作用域的-r-代码规范规则"><span class="header-section-number">4.2.1</span> 例子：按路径作用域的 R 代码规范规则</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
@@ -3888,35 +3890,35 @@ APPROVED   NEEDS WORK
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visual Identity</span></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>primary_blue  &lt;- &quot;#012169&quot;</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>primary_gold  &lt;- &quot;#b9975b&quot;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>paths:</code> 块意味着这条规则只在 WorkBuddy 读或改 <code>scripts/</code>、<code>Figures/</code> 或 <code>explorations/</code> 下的分析脚本 <code>.R</code> 文件时加载。R 包的源码（<code>R/</code>、<code>tests/</code>）加载的是 <code>r-package-conventions</code>，而 WorkBuddy 处理 <code>.tex</code> 文件时，两条规则都不占任何指令预算。</p>
+<p>这个 <code>paths:</code> 块表示，只有 WorkBuddy 读取或修改 <code>scripts/</code>、<code>Figures/</code>、<code>explorations/</code> 下的 <code>.R</code> 分析脚本时，才加载该规则。R 包源码 <code>R/</code>、<code>tests/</code> 使用 <code>r-package-conventions</code>；处理 <code>.tex</code> 文件时，这两条规则都不占用指令预算。</p>
 </section>
 </section>
 <section id="宪制治理可选" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="宪制治理可选"><span class="header-section-number">4.3</span> 宪制治理（可选）</h2>
-<p>随着项目长大，有些决定变得不可谈判（为了守住质量、可复现性或协作标准）。另一些仍然灵活。</p>
-<p><code>templates/constitutional-governance.md</code> 模板帮你区分：</p>
+<p>项目逐渐扩大后，有些决定会成为不可谈判的原则，用于维持质量、可复现性或协作标准；其他决定仍可灵活调整。</p>
+<p><code>templates/constitutional-governance.md</code> 模板将两者区分为：</p>
 <ul>
-<li><strong>不可变原则</strong>（第一条至第五条）：确保一致性的不可谈判规则</li>
-<li><strong>用户偏好</strong>：可随语境变化的灵活模式</li>
+<li><strong>不可变原则</strong>：第一条至第五条，规定确保一致性的不可谈判规则。</li>
+<li><strong>用户偏好</strong>：可以随语境变化的灵活模式。</li>
 </ul>
 <section id="你可能定义的条目示例" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="你可能定义的条目示例"><span class="header-section-number">4.3.1</span> 你可能定义的条目示例</h3>
 <ul>
-<li><strong>第一条：主产物</strong> — 哪个文件是权威（例如 <code>.tex</code> vs <code>.qmd</code>、<code>.Rmd</code> vs <code>.html</code>、笔记本 vs 脚本）</li>
-<li><strong>第二条：计划先行阈值</strong> — 何时进入计划模式（例如 &gt;3 个文件、&gt;30 分钟、多步工作流）</li>
-<li><strong>第三条：质量门禁</strong> — 提交所需的最低分（例如 80/100、全部测试通过）</li>
-<li><strong>第四条：核验标准</strong> — 提交前必须通过什么（例如编译、测试、渲染）</li>
-<li><strong>第五条：文件组织</strong> — 不同文件类型住在哪里（防止乱撒）</li>
+<li><strong>第一条：主产物</strong>：指定权威文件，例如 <code>.tex</code> 或 <code>.qmd</code>、<code>.Rmd</code> 或 <code>.html</code>、笔记本或脚本。</li>
+<li><strong>第二条：计划先行阈值</strong>：规定何时进入计划模式，例如超过 3 个文件、超过 30 分钟或包含多个步骤。</li>
+<li><strong>第三条：质量门禁</strong>：规定提交所需的最低分，例如 80/100，并要求全部测试通过。</li>
+<li><strong>第四条：核验标准</strong>：规定提交前必须通过的检查，例如编译、测试或渲染。</li>
+<li><strong>第五条：文件组织</strong>：规定不同文件类型的位置，避免文件散落。</li>
 </ul>
-<p>模板含 LaTeX、R、Python、Jupyter 与多语言工作流的示例。</p>
-<p>在你已经确立了 3-7 个想一致执行的反复出现的模式<strong>之后</strong>，再上宪制治理。不要第一天就建 — 先让模式浮现，再把它成文。单干项目、标准还在演进，或你更愿意逐案决定时，就跳过它。</p>
+<p>模板包含 LaTeX、R、Python、Jupyter 和多语言工作流示例。</p>
+<p>只有在你已经形成 3-7 个反复出现、需要一致执行的模式<strong>之后</strong>，才适合引入宪制治理。不要在第一天建立，先观察实际工作模式，再将其写成规则。独立项目、标准仍在变化，或你更希望逐案决定时，可以不使用它。</p>
 <p><strong>模板：</strong> <code>templates/constitutional-governance.md</code></p>
 </section>
 </section>
 <section id="skills---reusable-slash-commands" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="skills---reusable-slash-commands"><span class="header-section-number">4.4</span> 技能 — 可复用的斜杠命令</h2>
-<p>技能是用 <code>/command</code> 显式调用、或由 WorkBuddy 按元数据匹配后自动调用的多步工作流。<code>.codebuddy/skills/</code> 是官方支持的项目技能目录，随仓库共享，项目级优先于用户级；用户技能库用于跨项目复用。界面或菜单没有列出某项，不等于引擎没有发现它，也不等于 <code>/name</code> 不能调用。元数据用于匹配，正文在触发时加载，附属材料按需读取。</p>
-<p>本模板的项目技能住在 <code>.codebuddy/skills/[name]/SKILL.md</code>：</p>
+<p>技能是可复用的多步工作流，可以通过 <code>/command</code> 显式调用，也可以由 WorkBuddy 根据元数据匹配后自动调用。<code>.codebuddy/skills/</code> 是官方支持的项目技能目录，随仓库共享，项目级技能优先于用户级技能；用户技能库用于跨项目复用。某项技能没有出现在界面或菜单中，不代表引擎没有发现它，也不代表 <code>/name</code> 无法调用。引擎用元数据匹配技能，在触发时加载正文，并按需读取附属材料。</p>
+<p>本模板的项目技能位于 <code>.codebuddy/skills/[name]/SKILL.md</code>：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> compile-latex</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Compile LaTeX with 3-pass XeLaTeX + bibtex</span></span>
@@ -3931,7 +3933,7 @@ APPROVED   NEEDS WORK
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="at">5. Run xelatex pass 3</span></span>
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="at">6. Check for errors</span></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="at">7. Report results</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>模板里给你的技能：</strong></p>
+<p><strong>模板提供的主要技能：</strong></p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -3993,14 +3995,14 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>除了本模板的 63 个技能之外，上游 Claude Code 还自带一些内置技能（<code>/batch</code>、<code>/simplify</code>、<code>/debug</code> 等），本平台没有这些；它们对应的能力在本模板里以技能或子代理形式实现。</p>
+<p>上游 Claude Code 自带 <code>/batch</code>、<code>/simplify</code>、<code>/debug</code> 等内置技能，本平台没有这些技能。本模板用自身的 63 个技能或子代理实现相应能力。</p>
 </div>
 </div>
-<p>需要本模板之外的技能？可以在 WorkBuddy 里搜索并安装，但市场安装、上传与通用创建默认进入用户技能库，不会自动进入当前项目的 <code>.codebuddy/skills/</code>。要随仓库共享，必须显式把技能放进项目目录。本仓库的 <code>/new-skill</code> 按本仓库约定生成项目技能；WorkBuddy 内置 <code>/skill-creator</code> 是通用创建器（GUI：<strong>技能 → 添加技能 → 创建技能</strong>）。新建技能的方法见下文「第 4 步：创建自定义技能」。</p>
+<p>如果需要模板之外的技能，可以在 WorkBuddy 中搜索并安装。不过，从市场安装、上传或通过通用创建器生成的技能，默认进入用户技能库，不会自动进入当前项目的 <code>.codebuddy/skills/</code>。要随仓库共享，必须显式将技能放入项目目录。本仓库的 <code>/new-skill</code> 按本仓库约定生成项目技能；WorkBuddy 内置的 <code>/skill-creator</code> 是通用创建器，GUI 路径为<strong>技能 → 添加技能 → 创建技能</strong>。新建方法见下文「第 4 步：创建自定义技能」。</p>
 </section>
 <section id="agents---specialized-reviewers" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="agents---specialized-reviewers"><span class="header-section-number">4.5</span> 代理 — 专职审阅者</h2>
-<p>代理是这套系统真正的力量。每个代理是某一个质量维度的专家：</p>
+<p>每个代理专门负责一个质量维度：</p>
 <pre><code>.codebuddy/agents/
 +-- proofreader.md        # Grammar, typos, consistency
 +-- slide-auditor.md      # Visual layout, overflow, spacing
@@ -4014,7 +4016,7 @@ APPROVED   NEEDS WORK
 +-- domain-reviewer.md    # YOUR domain-specific substance review</code></pre>
 <section id="代理的解剖" class="level3" data-number="4.5.1">
 <h3 data-number="4.5.1" class="anchored" data-anchor-id="代理的解剖"><span class="header-section-number">4.5.1</span> 代理的解剖</h3>
-<p>每个代理文件由 YAML frontmatter 加详细指令构成：</p>
+<p>每个代理文件由 YAML frontmatter 和详细指令组成：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> proofreader</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> Reviews slides for grammar, typos, and consistency</span></span>
@@ -4048,8 +4050,8 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>一条提示词同时检查语法、版面、数学与代码，样样都只能做到中不溜。专职代理只管一个维度，并把它做透。<code>/slide-excellence</code> 技能把适用于该文件的审阅代理并行跑起来，再归并结果。</p>
-<p>上游 Claude Code 还有一个实验性的 <strong>Agent Teams</strong> 特性（研究预览，截至 2026 年 8 月），本平台没有；这里描述的编排器 + 子代理模式对学术工作流更成熟、也更稳。</p>
+<p>让一条提示词同时检查语法、版面、数学和代码，容易分散注意力。专职代理只检查一个维度，<code>/slide-excellence</code> 再并行调用适用于该文件的审阅代理并归并结果。</p>
+<p>上游 Claude Code 另有实验性的 <strong>Agent Teams</strong> 特性，截至 2026 年 8 月仍处于研究预览阶段，本平台没有该特性。这里使用的是编排器与子代理模式。</p>
 </div>
 </div>
 </section>
@@ -4065,13 +4067,13 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>本平台只有<strong>三档</strong>：<code>default</code> / <code>lite</code> / <code>reasoning</code>。上游 Claude Code 的 Fable / Opus / Sonnet / Haiku 四层在这里<strong>不存在</strong>——不要 <code>/model fable</code> 或写 <code>model: opus</code>，档位只认这三个值：</p>
+<p>本平台只有<strong>三档</strong>：<code>default</code> / <code>lite</code> / <code>reasoning</code>。上游 Claude Code 的 Fable / Opus / Sonnet / Haiku 四层在这里<strong>不存在</strong>。不要运行 <code>/model fable</code>，也不要写 <code>model: opus</code>；档位只接受以下三个值：</p>
 <ul>
-<li><strong><code>lite</code></strong>：机械活（改名、引文重排、bib 校验、校对修复、简单文件查找）。</li>
-<li><strong><code>default</code></strong>：审读与批评（r-reviewer、slide-auditor、proofreader、quarto-fixer）。</li>
-<li><strong><code>reasoning</code></strong>：高判断力（editor、审稿人、claim-verifier、稿件审读）。</li>
+<li><strong><code>lite</code></strong>：机械任务，例如改名、引文重排、bib 校验、校对修复和简单文件查找。</li>
+<li><strong><code>default</code></strong>：审读与批评，例如 r-reviewer、slide-auditor、proofreader、quarto-fixer。</li>
+<li><strong><code>reasoning</code></strong>：需要较强判断力的任务，例如 editor、审稿人、claim-verifier 和稿件审读。</li>
 </ul>
-<p>档位在代理 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 <code>model:</code> 字段里直接钉住（技能也读 <code>model:</code>，但更常见的是继承会话默认）。完整的路由配方与「不得降档」反模式见 <code>.codebuddy/rules/model-routing.md</code>。<strong>不要在这里硬编码具体型号</strong>——型号会变，档位才稳定；具体型号的单一真源是 <code>model-versions.md</code>。</p>
+<p>代理档位直接在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 <code>model:</code> 字段中指定。技能也会读取 <code>model:</code>，但更常见的做法是继承会话默认档位。完整路由配置和「不得降档」反模式见 <code>.codebuddy/rules/model-routing.md</code>。<strong>不要在这里硬编码具体型号</strong>，因为型号会变化，档位才是稳定接口；具体型号以 <code>model-versions.md</code> 为单一真源。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -4085,16 +4087,16 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong>档位是那个旋钮，不是散文。</strong> 深度只有一条轴：换档。想要更短更快的回答，降到 <code>lite</code>；问题更难，升到 <code>reasoning</code>。「再想想」或「别想太多」这类话比换档更弱，还可能起反效果。</li>
-<li><strong>说一次，说清楚，带上理由。</strong> 模型会紧密且字面地遵循指令：讲明目标、约束以及约束为何成立、以及你将如何核验结果。<code>MUST</code>/<code>CRITICAL</code> 式喊话、为老模型写的那种冗长分步脚本，如今会引起过度触发与僵硬执行。</li>
-<li><strong>不要让它把推理写进回答。</strong> 要求它复述内部推理可能被拒绝；改为要论证、要证据，或要一句简短理由。</li>
-<li><strong>粘进来的文本是数据。</strong> 当你粘入一份审稿报告、一封邮件或一个网页时，说明一下；粘入文本里的指令应当被当作要处理的内容，而不是要遵从的指示。</li>
-<li><strong>无人值守的运行需要终点线。</strong> 对定时任务（automation 或 <code>CronCreate</code>）与长时间后台运行，写清什么算「完成」、你接受哪些提前停止（仅在受阻时）；对任何不可逆的事保留人工门禁。<strong>注意本平台的定时运行问不到人</strong>：automation 会话里的确认请求会被立即拒绝，所以关卡要设计成「只提议、不执行」，而不是「运行到一半弹窗问一句」。</li>
-<li><strong>它读图很好。</strong> 图、渲染后的幻灯片与截图能被准确读取，不需要裁切放大的脚手架 — 旧的视觉变通做法在保留之前先重测一遍。</li>
+<li><strong>通过换档调整深度。</strong>需要更短、更快的回答时降到 <code>lite</code>，问题更难时升到 <code>reasoning</code>。与直接换档相比，「再想想」或「别想太多」这类提示作用更弱，还可能产生反效果。</li>
+<li><strong>清楚说明一次，并给出理由。</strong>模型会严格按字面遵循指令，因此应说明目标、约束、约束成立的理由，以及你将如何核验结果。大量使用 <code>MUST</code>/<code>CRITICAL</code>，或沿用为旧模型编写的冗长分步脚本，如今容易引起过度触发和僵硬执行。</li>
+<li><strong>不要要求模型把推理过程写进回答。</strong>这种要求可能被拒绝；可以改为要求论证、证据或一句简短理由。</li>
+<li><strong>把粘贴的文本当作数据。</strong>粘贴审稿报告、邮件或网页时，应说明文本类型。其中的指令是要处理的内容，不是需要遵从的指示。</li>
+<li><strong>为无人值守的运行写明完成条件。</strong>对于定时任务（automation 或 <code>CronCreate</code>）和长时间后台运行，要定义什么算「完成」，以及哪些情况下允许提前停止，例如仅在受阻时停止；不可逆操作必须保留人工门禁。<strong>本平台的定时运行无法向人提问</strong>：automation 会话中的确认请求会被立即拒绝，因此流程应设计为「只提议、不执行」，不能运行到一半再弹窗询问。</li>
+<li><strong>模型可以直接读图。</strong>图、渲染后的幻灯片和截图都能被准确读取，不需要额外裁切和放大。保留旧的视觉变通做法前，应先重新测试是否仍有必要。</li>
 </ul>
 </div>
 </div>
-<p>并非所有代理都需要同一个模型。每个代理文件的 YAML frontmatter 里都有 <code>model:</code> 字段。在 v2.0 里，19 个代理全部被<strong>钉住</strong>到明确的档位（<code>default</code> / <code>lite</code> / <code>reasoning</code>，不再沿用继承），遵循下面的 70/20/10 路由模式。你可以重调任何代理来优化成本：</p>
+<p>不同代理可以使用不同模型，每个代理文件的 YAML frontmatter 都有 <code>model:</code> 字段。v2.0 为全部 19 个代理明确指定了 <code>default</code> / <code>lite</code> / <code>reasoning</code> 档位，不再继承会话档位，并采用下面的 70/20/10 路由模式。你可以调整任何代理的档位来优化成本：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 24%">
@@ -4114,25 +4116,25 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td>对抗式比较 / 高判断力审读</td>
 <td><code>model: reasoning</code></td>
-<td>需要同时深刻理解两件产物</td>
+<td>需要同时深入理解两件产物</td>
 <td>quarto-critic、tikz-reviewer、editor</td>
 </tr>
 <tr class="even">
-<td>快速、受限的活</td>
+<td>快速、范围受限的任务</td>
 <td><code>model: default</code></td>
-<td>速度比深度更要紧</td>
+<td>速度比深度更重要</td>
 <td>beamer-translator、r-reviewer、quarto-fixer、proofreader、slide-auditor</td>
 </tr>
 <tr class="odd">
-<td>机械默认</td>
+<td>机械任务</td>
 <td><code>model: lite</code></td>
-<td>有界、快速的活</td>
+<td>范围明确且要求快速完成</td>
 <td>promote-memory-council</td>
 </tr>
 </tbody>
 </table>
-<p><strong>原则：</strong> 需要同时在脑子里握住两份大文档的任务（对抗式比较、审稿）用 <code>reasoning</code>。范围清晰、有界的任务（修这 12 个问题、查这个 R 脚本）用 <code>default</code>。机械性工作交给 <code>lite</code>。在 v2.0 里每个代理都是显式钉住的，而不是继承 — 完整名单与档位见 <code>agent-fleet.md</code>。</p>
-<p>要改某个代理的模型档位，编辑它的 YAML frontmatter：</p>
+<p><strong>选择原则：</strong>需要同时理解两份大型文档的任务，例如对抗式比较和审稿，使用 <code>reasoning</code>；目标清楚、范围有限的任务，例如修复这 12 个问题或检查这个 R 脚本，使用 <code>default</code>；机械任务交给 <code>lite</code>。v2.0 中每个代理都显式指定档位，不采用继承。完整名单和档位见 <code>agent-fleet.md</code>。</p>
+<p>要修改某个代理的模型档位，编辑它的 YAML frontmatter：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> quarto-critic</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> reasoning</span><span class="co">   # pinned per agent-fleet.md (v2.0: no agent inherits)</span></span>
@@ -4147,13 +4149,13 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>如果你按代理配模型，一次典型的 Beamer→Quarto 翻译会让批评者跑在 <code>reasoning</code> 上（2–4 轮），而修复者跑在 <code>default</code> 上（同样轮数）。在我们的用法里，这比全部跑 <code>reasoning</code> 大约省 40–60%，在修复那一步上没有观察到质量损失 — 这是我们自己项目里的路由经验法则，不是有基准的保证。</p>
+<p>按代理配置模型时，一次典型的 Beamer→Quarto 翻译会让批评者使用 <code>reasoning</code>，修复者使用 <code>default</code>，两者都运行 2–4 轮。在我们的用法中，这比全部使用 <code>reasoning</code> 大约节省 40–60%，且修复阶段没有观察到质量损失。这是来自我们自己项目的路由经验，不是基准测试保证。</p>
 </div>
 </div>
 </section>
 <section id="sec-agent-config" class="level3" data-number="4.5.3">
 <h3 data-number="4.5.3" class="anchored" data-anchor-id="sec-agent-config"><span class="header-section-number">4.5.3</span> 高级代理配置</h3>
-<p>除模型选择之外，代理定义还支持若干配置字段：</p>
+<p>除模型选择外，代理定义还支持以下配置字段：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4171,7 +4173,7 @@ APPROVED   NEEDS WORK
 <tr class="even">
 <td><code>maxTurns</code></td>
 <td>限制代理迭代次数</td>
-<td><code>10</code>（防止跑飞）</td>
+<td><code>10</code>（避免无限迭代）</td>
 </tr>
 <tr class="odd">
 <td><code>isolation</code></td>
@@ -4180,7 +4182,7 @@ APPROVED   NEEDS WORK
 </tr>
 <tr class="even">
 <td><code>effort</code>（代理读、技能不读）</td>
-<td>代理 frontmatter 的 <code>effort:</code> 调同一档内的思考预算，不改模型档位；技能里写它无效</td>
+<td>代理 frontmatter 的 <code>effort:</code> 调整同一档内的思考预算，不改变模型档位；技能中设置无效</td>
 <td>见 <code>.codebuddy/rules/model-routing.md</code></td>
 </tr>
 <tr class="odd">
@@ -4190,12 +4192,12 @@ APPROVED   NEEDS WORK
 </tr>
 <tr class="even">
 <td><code>tools</code></td>
-<td>白名单指定工具</td>
+<td>用白名单指定工具</td>
 <td><code>[&quot;Read&quot;, &quot;Grep&quot;, &quot;Glob&quot;]</code></td>
 </tr>
 <tr class="odd">
 <td><code>disallowedTools</code></td>
-<td>黑名单指定工具</td>
+<td>用黑名单指定工具</td>
 <td><code>[&quot;Write&quot;, &quot;Edit&quot;]</code></td>
 </tr>
 <tr class="even">
@@ -4210,19 +4212,19 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>例子：一个改不了文件的只读校对代理：</p>
+<p>例如，下面的配置定义了一个无法修改文件的只读校对代理：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> proofreader</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> default</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">maxTurns</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;Read&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;Grep&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;Glob&quot;</span><span class="kw">]</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>用 <code>maxTurns</code> 防审阅代理无限循环，用 <code>tools</code> 给那些只该出报告的代理落实只读行为。</p>
+<p><code>maxTurns</code> 用于防止审阅代理无限循环，<code>tools</code> 用于确保只应生成报告的代理无法修改文件。</p>
 </section>
 <section id="sec-cost" class="level3" data-number="4.5.4">
 <h3 data-number="4.5.4" class="anchored" data-anchor-id="sec-cost"><span class="header-section-number">4.5.4</span> 成本意识组合：路由与深度预算</h3>
-<p>成本在你看月账单之前是看不见的。两个杠杆，按影响排序：</p>
-<p><strong>1. 按代理做模型路由。</strong> 上面的多模型策略表给出的是原则；<strong>70/20/10 模式</strong>是它的操作形态：</p>
+<p>控制成本主要有两种方法，按影响大小排列如下。</p>
+<p><strong>1. 按代理进行模型路由。</strong>上面的多模型策略表说明选择原则，<strong>70/20/10 模式</strong>则给出具体分配方式：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -4240,7 +4242,7 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td><strong><code>lite</code></strong></td>
 <td>~70%</td>
-<td>机械活：TikZ 提取、引文重排、bib 校验、校对修复、简单文件查找</td>
+<td>机械任务：TikZ 提取、引文重排、bib 校验、校对修复、简单文件查找</td>
 </tr>
 <tr class="even">
 <td><strong><code>default</code></strong></td>
@@ -4254,8 +4256,9 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>按代理在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 里用 <code>model:</code> 设置。在我们的用法里，相对全部跑 <code>reasoning</code> 的典型节省：<strong>路由过的技能上 50–80%</strong>，在机械层没有观察到质量损失（经验法则，不是基准）。社区趋同的比例记录在 <a href="https://augmentcode.com">Augment Code 的路由数据</a>里，并与 Aider 的架构者/编辑者分工一致；我们引用 Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>作为该模式的一手来源背书。</p>
-<p><strong>2. 深度预算。</strong> 下面的<a href="#sec-effort">深度档位</a>一节讲本平台的<strong>三档</strong> — <code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一根轴</strong>：代理 frontmatter 的 <code>effort:</code> 取 <code>minimal</code>–<code>max</code>，调的是同一档内的思考预算，不改模型档位（技能里写它无效）；<code>maxEffortLevel</code> 这类封顶设置不存在。两根轴正交，所以：让 <code>default</code> 做默认；只在假 PASS 代价高昂的门禁上钉 <code>reasoning</code>（本模板对编辑、两位审稿人、断言核验器，以及 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 这类核验门禁或正确性关键的技能这么做 — 完整清单在 <code>model-routing.md</code>）；机械活降到 <code>lite</code>；扩展探索（深度搜索、大重构、最难的 <code>/review-paper</code> 运行）不是去换一个更高的档，而是把工作拆成更小的有界调用，只让 <code>reasoning</code> 碰判断点。</p>
+<p>在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 中用 <code>model:</code> 按代理设置。在我们的用法中，与全部使用 <code>reasoning</code> 相比，采用路由的技能通常可节省 <strong>50–80%</strong>，机械任务阶段没有观察到质量损失。这是经验法则，不是基准结果。<a href="https://augmentcode.com">Augment Code 的路由数据</a>记录了社区中相近的分配比例，Aider 的架构者与编辑者分工也采用类似思路；Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>是这一模式的一手来源。</p>
+<p><strong>2. 控制深度预算。</strong>下面的<a href="#sec-effort">深度档位</a>一节介绍本平台的<strong>三档</strong>：<code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一项独立设置</strong>：代理 frontmatter 的 <code>effort:</code> 可取 <code>minimal</code>–<code>max</code>，调整同一模型档位内的思考预算，不改变档位；技能中设置它无效。平台没有 <code>maxEffortLevel</code> 这类上限设置。</p>
+<p>日常任务默认使用 <code>default</code>，机械任务降到 <code>lite</code>。只有假 PASS 代价高昂的检查才指定 <code>reasoning</code>。本模板对编辑、两位审稿人和断言核验器采用这一安排，也用于 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 等核验门禁或正确性关键技能，完整清单见 <code>model-routing.md</code>。深度搜索、大型重构和最复杂的 <code>/review-paper</code> 运行等扩展探索，不必整体换用更高档位；可以把工作拆成范围明确的小调用，只在需要判断的环节使用 <code>reasoning</code>。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4267,10 +4270,10 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong><code>/cost</code></strong>（2026 年 4 月第 15 周）— 当前会话按模型与缓存命中率的分解。</li>
-<li><strong><code>/usage</code></strong>（2026 年 4 月第 16 周）— 本月至今的合计 + 各套餐档位的剩余额度。</li>
+<li><strong><code>/cost</code></strong>（2026 年 4 月第 15 周）：按模型和缓存命中率分解当前会话的成本。</li>
+<li><strong><code>/usage</code></strong>（2026 年 4 月第 16 周）：显示本月至今的合计用量和各套餐档位的剩余额度。</li>
 </ul>
-<p>任何 <code>/review-paper --peer</code> 流水线跑完都跑一次 <code>/cost</code>。如果第二、三轮的缓存命中率低于 60%，你几乎肯定是挨了 5 分钟 TTL 的刀。</p>
+<p>每次 <code>/review-paper --peer</code> 流水线结束后，都应运行一次 <code>/cost</code>。如果第二、三轮的缓存命中率低于 60%，很可能受到了 5 分钟 TTL 的影响。</p>
 </div>
 </div>
 </section>
@@ -4286,16 +4289,16 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>WorkBuddy 桌面客户端<strong>不提供命令行入口</strong>——它只有工作空间与任务。要在脚本、cron 或例行任务里跑这套工作流，需要另装一条独立的产品线：CodeBuddy Code CLI（<code>npm i -g @tencent-ai/codebuddy-code</code>，命令 <code>codebuddy</code> 或 <code>cbc</code>，配置目录 <code>~/.codebuddy</code>，文档 <a href="https://www.workbuddy.cn/docs/cli/headless" class="uri">https://www.workbuddy.cn/docs/cli/headless</a>），非交互调用必须带 <code>-y</code>。两者共用引擎，所以 <code>-p</code>、<code>--output-format</code>、<code>--setting-sources</code>、<code>--disallowedTools</code> 这些标志都成立；但<strong>配置目录是分开的</strong>，装之前先读官方那句「与 WorkBuddy 共存时避免配置冲突」。</p>
-<p>本仓库里唯一依赖它的是 <code>scripts/run-skill-eval.sh</code>（技能 A/B 评测：同一个提示词跑两遍，带技能与不带技能，看技能到底有没有改变输出）。它按 <code>EVAL_CLI</code> → <code>codebuddy</code> → <code>cbc</code> → <code>claude</code> 的顺序探测，一个都找不到时以 <code>2</code> 退出并给出安装命令——<strong>它不参与任何门禁</strong>，没装 CLI 完全不影响这套模板的正常使用。</p>
-<p>无头运行里有两处行为要知道：会话交接钩子与 issue 自动开立都按环境变量判定「这次是不是无头」，而桌面端<strong>不设置</strong> <code>CLAUDE_CODE_ENTRYPOINT</code>（引擎里没有这个变量），所以那两个判定在这里不会自动生效。要在 cron 里避免它们，显式导出 <code>CODEBUDDY_HANDOFF=off</code> 与 <code>CODEBUDDY_ISSUES_AT_START=off</code>——不要指望平台帮你判断。</p>
+<p>WorkBuddy 桌面客户端<strong>不提供命令行入口</strong>，只提供工作空间和任务。如果要在脚本、cron 或例行任务中运行这套工作流，需要另装独立产品 CodeBuddy Code CLI。安装命令为 <code>npm i -g @tencent-ai/codebuddy-code</code>，命令为 <code>codebuddy</code> 或 <code>cbc</code>，配置目录为 <code>~/.codebuddy</code>，文档见 <a href="https://www.workbuddy.cn/docs/cli/headless" class="uri">https://www.workbuddy.cn/docs/cli/headless</a>。非交互调用必须带 <code>-y</code>。两者共用引擎，因此 <code>-p</code>、<code>--output-format</code>、<code>--setting-sources</code>、<code>--disallowedTools</code> 等标志都可用，但<strong>配置目录彼此独立</strong>。安装前请阅读官方关于「与 WorkBuddy 共存时避免配置冲突」的说明。</p>
+<p>本仓库只有 <code>scripts/run-skill-eval.sh</code> 依赖 CLI。该脚本用于技能 A/B 评测：分别运行带技能和不带技能的同一个提示词，检查技能是否改变输出。脚本按 <code>EVAL_CLI</code> → <code>codebuddy</code> → <code>cbc</code> → <code>claude</code> 的顺序探测；全部找不到时，以 <code>2</code> 退出并给出安装命令。<strong>它不参与任何门禁</strong>，因此未安装 CLI 不影响模板的正常使用。</p>
+<p>无头运行还有两项环境差异。会话交接钩子和启动时列出未关闭 issue 的功能都根据环境变量判断当前是否为无头运行，而桌面端<strong>不设置</strong> <code>CLAUDE_CODE_ENTRYPOINT</code>，引擎中也没有这个变量，所以这两个判断在桌面端不会自动生效。如果要在 cron 中停用它们，应显式导出 <code>CODEBUDDY_HANDOFF=off</code> 和 <code>CODEBUDDY_ISSUES_AT_START=off</code>，不能依赖平台自动识别。</p>
 </div>
 </div>
 </section>
 </section>
 <section id="settings---permissions-and-hooks" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="settings---permissions-and-hooks"><span class="header-section-number">4.6</span> 设置 — 权限与钩子</h2>
-<p><code>.codebuddy/settings.json</code> 控制 WorkBuddy 被允许做什么。模板交付的是一份兜底式允许清单，而不是一份精选清单：七条通配规则，没有 deny 规则，也没有默认模式。下面是权限块加上其中一只钩子：</p>
+<p><code>.codebuddy/settings.json</code> 控制 WorkBuddy 可以执行哪些操作。模板提供的是一份兜底允许清单，而非精选清单：包含七条通配规则，不包含 deny 规则，也不设置默认模式。下面的例子展示权限块和其中一个钩子：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allow&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
@@ -4321,8 +4324,8 @@ Warning
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
 <span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在<strong>默认权限</strong>档下这七条通配让常规的读写与 shell 命令不再逐个询问；受保护路径（<code>.git</code>、<code>.codebuddy</code> 等）照旧会问，<code>allow</code> 里写什么都不算数。切到<strong>完全访问权限</strong>时，询问与安全检查都被跳过，但 <code>deny</code> 规则与钩子仍然生效。要收紧，例如让受限数据进不了模型，就加 <code>deny</code> 规则：见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#让受限数据不进入模型">TROUBLESHOOTING.md</a> 里的「让受限数据不进入模型」。</p>
-<p><strong>权限档位。</strong> 桌面客户端把这件事收成<strong>两档</strong>：</p>
+<p>在<strong>默认权限</strong>档下，这七条通配规则让常规读写和 shell 命令不再逐一询问。不过，写入 <code>.git</code>、<code>.codebuddy</code> 等受保护路径时仍会询问，不受 <code>allow</code> 配置影响。切换到<strong>完全访问权限</strong>后，系统会跳过询问和安全检查，但 <code>deny</code> 规则与钩子仍然生效。如果需要收紧权限，例如阻止受限数据进入模型，可以添加 <code>deny</code> 规则，详见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/TROUBLESHOOTING.md#让受限数据不进入模型">TROUBLESHOOTING.md</a> 的「让受限数据不进入模型」。</p>
+<p><strong>权限档位。</strong>桌面客户端提供<strong>两档</strong>：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 21%">
@@ -4342,22 +4345,22 @@ Warning
 <tr class="odd">
 <td><strong>默认权限</strong></td>
 <td><code>sandbox.defaultPermission</code></td>
-<td>常规动作按上面的 <code>allow</code> 规则放行；写入受保护路径（<code>.git</code>、<code>.vscode</code>、<code>.idea</code>、<code>.husky</code>、<code>.codebuddy</code>，旧信任根 <code>.claude</code> 同样受保护）、装软件、联网这类照旧逐个询问</td>
+<td>常规动作按上面的 <code>allow</code> 规则放行；写入受保护路径，包括 <code>.git</code>、<code>.vscode</code>、<code>.idea</code>、<code>.husky</code>、<code>.codebuddy</code> 和旧信任根 <code>.claude</code>，以及安装软件、联网等操作，仍会逐一询问</td>
 <td>日常</td>
 </tr>
 <tr class="even">
 <td><strong>完全访问权限</strong></td>
 <td><code>sandbox.fullAccessPermission</code></td>
-<td>跳过询问与安全检查（<code>deny</code> 规则与钩子仍然生效）</td>
-<td>隔离环境、可信仓库的成批操作；界面上有一个确认框，勾了才会开</td>
+<td>跳过询问与安全检查，<code>deny</code> 规则与钩子仍然生效</td>
+<td>隔离环境、可信仓库的成批操作；必须勾选界面中的确认框才能开启</td>
 </tr>
 </tbody>
 </table>
-<p>切换位置在输入框旁的权限选择。<strong>别再去找上游那六档</strong>（<code>default</code> / <code>acceptEdits</code> / <code>dontAsk</code> / <code>plan</code> / <code>auto</code> / <code>bypassPermissions</code>）：引擎内部认得这些名字，但桌面端没有把它们暴露成可选档位；桌面选择器不提供 <code>Shift+Tab</code> 循环与 <code>--permission-mode</code> 启动标志，后两者属于 <a href="https://www.workbuddy.ai/docs/cli/permission-modes">CodeBuddy Code CLI</a>。桌面端以选择器当前的位置为准，写进配置文件的 <code>permissions.defaultMode</code> 不会有可观察的效果。</p>
-<p>CLI 不使用这个桌面选择器。其默认模式按官方优先级解析：<strong>当前会话值 → <code>--permission-mode</code> → <code>permissions.defaultMode</code> → <code>default</code></strong>。因此 <code>permissions.defaultMode</code> 不是只在无头路径中回退；没有当前会话值与 <code>--permission-mode</code> 时，它先于内置 <code>default</code> 生效。</p>
+<p>可以在输入框旁的权限选择器中切换。<strong>桌面端不提供上游的六档</strong>：<code>default</code> / <code>acceptEdits</code> / <code>dontAsk</code> / <code>plan</code> / <code>auto</code> / <code>bypassPermissions</code>。引擎内部识别这些名称，但桌面端没有将它们暴露为可选档位。桌面选择器也不提供 <code>Shift+Tab</code> 循环和 <code>--permission-mode</code> 启动标志，后两者属于 <a href="https://www.workbuddy.ai/docs/cli/permission-modes">CodeBuddy Code CLI</a>。桌面端只以选择器当前位置为准，配置文件中的 <code>permissions.defaultMode</code> 不会产生可观察的效果。</p>
+<p>CLI 不使用桌面选择器，而是按官方优先级确定默认模式：<strong>当前会话值 → <code>--permission-mode</code> → <code>permissions.defaultMode</code> → <code>default</code></strong>。因此，<code>permissions.defaultMode</code> 并非只在无头运行中作为回退；没有当前会话值和 <code>--permission-mode</code> 时，它会先于内置 <code>default</code> 生效。</p>
 <section id="六层权限栈上游对照桌面端与-cli-分开看" class="level3" data-number="4.6.1">
 <h3 data-number="4.6.1" class="anchored" data-anchor-id="六层权限栈上游对照桌面端与-cli-分开看"><span class="header-section-number">4.6.1</span> 六层权限栈（上游对照；桌面端与 CLI 分开看）</h3>
-<p>上游 Claude Code 把权限模式解析成<strong>六层</strong>，后面的层覆盖前面的层。<code>.codebuddy/settings.json</code> 与 <code>settings.local.json</code> 里的 <code>hooks</code> 与 <code>permissions</code> 都生效，CLI 用户级配置位于 <code>~/.codebuddy/settings.json</code>；<code>claudeCode.*</code> 那两层（第 1–2 层）在这里不存在。<strong>桌面端的档位在界面里选，CLI 则按上面的优先级解析默认模式。</strong> 下面这张表用于对照上游与平台差异。要判断某个动作到底被谁拦下，跑 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md"><code>/permission-check</code></a>。</p>
+<p>上游 Claude Code 将权限模式分为<strong>六层</strong>，后面的层覆盖前面的层。<code>.codebuddy/settings.json</code> 和 <code>settings.local.json</code> 中的 <code>hooks</code> 与 <code>permissions</code> 都会生效，CLI 用户级配置位于 <code>~/.codebuddy/settings.json</code>。<code>claudeCode.*</code> 对应的第 1–2 层在这里不存在。<strong>桌面端通过界面选择档位，CLI 则按上述优先级确定默认模式。</strong>下表用于对照上游和本平台的差异。若要判断某个动作被哪一层拦截，请运行 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/permission-check/SKILL.md"><code>/permission-check</code></a>。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -4378,25 +4381,25 @@ Warning
 <td>1</td>
 <td>VSCode 用户</td>
 <td><code>~/Library/Application Support/Code/User/settings.json</code>（macOS）、<code>~/.config/Code/User/settings.json</code>（Linux）、<code>%APPDATA%/Code/User/settings.json</code>（Windows）</td>
-<td><code>claudeCode.initialPermissionMode</code> — 上游 VS Code 扩展层，本平台不读</td>
+<td><code>claudeCode.initialPermissionMode</code>：上游 VS Code 扩展层，本平台不读取</td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>VSCode 工作区</td>
 <td><code>&lt;repo&gt;/.vscode/settings.json</code></td>
-<td>同一个键 — 上游层；本仓库不再提供这个文件</td>
+<td>同一个键：上游层；本仓库不再提供这个文件</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>CLI 用户</td>
 <td><code>~/.codebuddy/settings.json</code></td>
-<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>CLI 读取</strong>；<code>permissions.defaultMode</code> 按上述优先级生效，并非只在无头路径回退</td>
+<td><code>hooks</code> 与 <code>permissions.*</code>：<strong>CLI 读取</strong>；<code>permissions.defaultMode</code> 按上述优先级生效，并非只在无头路径回退</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>CLI 项目</td>
 <td><code>&lt;repo&gt;/.codebuddy/settings.json</code></td>
-<td><code>hooks</code> 与 <code>permissions.*</code> — <strong>CLI 读取</strong>，本模板那七条通配 <code>allow</code> 就在这一层</td>
+<td><code>hooks</code> 与 <code>permissions.*</code>：<strong>CLI 读取</strong>，本模板的七条通配 <code>allow</code> 位于这一层</td>
 </tr>
 <tr class="odd">
 <td>5</td>
@@ -4412,22 +4415,22 @@ Warning
 </tr>
 </tbody>
 </table>
-<p><strong>桌面端与 CLI 不要混套规则。</strong> 桌面端的档位由第 6 层的界面选择器决定，配置文件里的 <code>permissions.defaultMode</code> 不改变桌面选择器，默认档位是「默认权限」。CLI 不使用这个桌面选择器；其默认模式按上面的四级优先级解析，所以配置文件里的 <code>permissions.defaultMode</code> 会在没有当前会话值和 <code>--permission-mode</code> 时生效，未配置时才落到 <code>default</code>。</p>
+<p><strong>桌面端和 CLI 的规则不能混用。</strong>桌面端档位由第 6 层的界面选择器决定，<code>permissions.defaultMode</code> 不会改变桌面选择器，默认档位是「默认权限」。CLI 不使用这个选择器，而是按上述四级优先级确定默认模式。因此，没有当前会话值和 <code>--permission-mode</code> 时，CLI 会使用配置文件中的 <code>permissions.defaultMode</code>；只有未配置该项时，才回退到 <code>default</code>。</p>
 </section>
 <section id="故障排查切了完全访问权限却仍然弹提示" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="故障排查切了完全访问权限却仍然弹提示"><span class="header-section-number">4.6.2</span> 故障排查：切了「完全访问权限」却仍然弹提示</h3>
-<p>这是最常见的困惑来源。按顺序走这份清单：</p>
+<p>遇到这种情况时，按以下顺序排查：</p>
 <ol type="1">
-<li><strong>看模式选择器。</strong> 桌面端的权限只有两档：<strong>默认权限</strong> 与 <strong>完全访问权限</strong>（界面对应的键是 <code>sandbox.defaultPermission</code> / <code>sandbox.fullAccessPermission</code>）。上游那五档（Manual / Auto / Plan / Accept edits / Bypass）在桌面端没有暴露成可选档位，所以「设了 <code>bypassPermissions</code> 却没生效」这个问法本身要换掉：先确认选择器停在哪一档。本仓库<strong>不配置状态行</strong> — 桌面渲染层不消费 <code>statusLine</code> 已核实；引擎读取设置键未证实（2026-10-30 核查：本机客户端包里 <code>statusLine</code> 的 8 次命中全是 HTTP 状态行，不能作为引擎读取证据），所以别指望在状态栏看模式徽标。</li>
-<li><strong>跑 <code>/permission-check</code></strong>，把三处来源摊开看：<code>permissions.allow</code> / <code>deny</code> 匹配到了哪几条、钩子链拒了哪条命令、选择器停在哪一档。它不会给你「解析出的模式」——本平台没有那个东西。</li>
-<li><strong>检查是否有过期会话。</strong> 如果设置最近改过，而会话早于那次改动，它仍在旧模式下运行。重载窗口（<code>Cmd+Shift+P</code> → “Developer: Reload Window”）并开一个新会话。</li>
-<li><strong>检查 <code>deny</code> 列表。</strong> 任何一层 <code>deny</code> 里的匹配都会拦住该工具，不管别处的 <code>allow</code> 怎么写。</li>
-<li><strong>分清是钩子拒的，还是平台问的。</strong> 被 <code>.codebuddy/hooks/</code> 里的守卫拒掉，会点名具体脚本与具体命令；被平台问的不会在任何配置文件里留下痕迹。两者的补救方式完全不同，混在一起改只会越改越乱。</li>
+<li><strong>查看模式选择器。</strong>桌面端只有<strong>默认权限</strong>和<strong>完全访问权限</strong>两档，界面对应键为 <code>sandbox.defaultPermission</code> / <code>sandbox.fullAccessPermission</code>。上游的 Manual / Auto / Plan / Accept edits / Bypass 五档没有暴露为桌面可选档位，因此遇到「设了 <code>bypassPermissions</code> 却没生效」时，应先确认选择器位于哪一档。本仓库<strong>不配置状态行</strong>。已核实桌面渲染层不消费 <code>statusLine</code>；引擎是否读取该设置键尚未证实。2026-10-30 核查时，本机客户端包中 <code>statusLine</code> 的 8 次命中全是 HTTP 状态行，不能作为引擎读取证据。因此，不要指望状态栏显示模式徽标。</li>
+<li><strong>运行 <code>/permission-check</code></strong>，分别查看三类信息：<code>permissions.allow</code> / <code>deny</code> 命中了哪些规则，钩子链拒绝了哪条命令，以及选择器位于哪一档。它不会给出「解析后的模式」，因为本平台没有这一项输出。</li>
+<li><strong>检查会话是否过期。</strong>如果设置在会话开始后修改过，旧会话仍按旧模式运行。请重载窗口，路径为 <code>Cmd+Shift+P</code> → “Developer: Reload Window”，再开启新会话。</li>
+<li><strong>检查 <code>deny</code> 列表。</strong>任何一层 <code>deny</code> 命中都会拦截工具，无论其他位置的 <code>allow</code> 如何配置。</li>
+<li><strong>区分钩子拒绝与平台询问。</strong><code>.codebuddy/hooks/</code> 中的守卫拒绝操作时，会指出具体脚本和命令；平台询问则不会在任何配置文件中留下记录。两者的处理方法不同，不能混在一起修改。</li>
 </ol>
 </section>
 <section id="计划-执行的交接推荐的日常驱动" class="level3" data-number="4.6.3">
 <h3 data-number="4.6.3" class="anchored" data-anchor-id="计划-执行的交接推荐的日常驱动"><span class="header-section-number">4.6.3</span> 计划 → 执行的交接（推荐的日常驱动）</h3>
-<p>计划模式加一个低提示的执行档位 — <strong>完全访问权限</strong>，或者日常就用默认权限配计划先行 — 串成一条工作流，给你<strong>先审后执行</strong>的便利：动手之前你先看到做法，然后执行阶段不再逐个工具被打断。</p>
+<p>日常使用时，可以先进入计划模式，再选择提示较少的执行档位。可以使用<strong>完全访问权限</strong>，也可以保持默认权限并坚持计划先行。这样既能<strong>先审查做法再执行</strong>，又能减少执行阶段逐个工具确认的中断。</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4438,8 +4441,8 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>通过 <code>ExitPlanMode</code> 批准计划，会把你交回执行阶段。一旦到了那里，此后任何工具调用（Edit、Write、Bash）都在 <code>.codebuddy/settings.json</code> 的 <code>permissions.allow</code> 与当前档位下执行，<strong>不是</strong>在由计划推导出的范围里。一次错误的实现仍可能改动无关文件，或跑出破坏性的 shell 命令，没有第二个检查点。</p>
-<p>把这条流程当作便捷机制，不是安全控制。如果你需要一道硬性强制边界：把档位留在<strong>默认权限</strong>，并删掉模板里的通配 <code>Bash(*)</code>、<code>Edit(**)</code> 与 <code>Write(**)</code>，或给高风险工具加 <code>deny</code> 规则，让每一个都单独弹提示。</p>
+<p>通过 <code>ExitPlanMode</code> 批准计划后，会话会回到执行阶段。此后的 Edit、Write、Bash 等工具调用，都依据 <code>.codebuddy/settings.json</code> 的 <code>permissions.allow</code> 和当前档位执行，<strong>不会</strong>自动限制在计划推导出的范围内。错误实现仍可能修改无关文件或运行破坏性 shell 命令，中间没有第二个检查点。</p>
+<p>这套流程只是为了方便，不是安全控制。如果希望恢复逐次确认，请保持<strong>默认权限</strong>，并从 <code>permissions.allow</code> 删除相应的通配规则：<code>Bash(*)</code>、<code>Edit(**)</code>、<code>Write(**)</code> 和 <code>MultiEdit(**)</code>；未获其他规则或档位放行的调用会再次请求确认。若要硬禁止某类操作，才添加相应的 <code>deny</code> 规则：<code>deny</code> 命中后会直接拒绝调用，<strong>不会弹出确认提示</strong>。</p>
 </div>
 </div>
 <p>流程如下：</p>
@@ -4460,18 +4463,18 @@ You approve in the plan-review UI
      | allow-list still lets routine edits through.
      v
 Orchestrator executes the plan end-to-end.</code></pre>
-<p><strong>为什么这是推荐的日常流程：</strong></p>
+<p><strong>推荐它的原因：</strong></p>
 <ul>
-<li>动手之前你先看到做法（计划模式下不能编辑文件，这一条由平台强制，不靠自觉）。</li>
-<li>一旦批准，此后常规动作不再逐个打断。</li>
-<li>不需要会话中途切换 — 批准就是唯一的交接点。</li>
-<li>与本仓库强制的计划先行规则严丝合缝。</li>
+<li>执行前可以先审查做法。平台强制计划模式下不能编辑文件，不依赖模型自觉遵守。</li>
+<li>批准后，常规操作不再逐一中断。</li>
+<li>无需在会话中途切换，批准就是唯一的交接点。</li>
+<li>与本仓库的计划先行规则一致。</li>
 </ul>
-<p><strong>前提：</strong> 要完全不被打断，档位得是<strong>完全访问权限</strong>（在输入框旁切换；<code>permissions.defaultMode</code> 在桌面端没有可观察效果）。更稳妥的日常驱动是留在<strong>默认权限</strong>：那七条通配 <code>allow</code> 已经让常规编辑与命令直接通过，只有受保护路径、装软件、联网这类会问 — 而问的那几次恰好是最该看一眼的。</p>
+<p><strong>前提：</strong>如果希望完全不被打断，必须在输入框旁选择<strong>完全访问权限</strong>；<code>permissions.defaultMode</code> 在桌面端没有可观察效果。更稳妥的日常选择是保持<strong>默认权限</strong>：七条通配 <code>allow</code> 已允许常规编辑和命令直接执行，只有受保护路径、安装软件和联网等操作会询问，而这些操作也正值得人工确认。</p>
 </section>
 <section id="sec-session-management" class="level3" data-number="4.6.4">
 <h3 data-number="4.6.4" class="anchored" data-anchor-id="sec-session-management"><span class="header-section-number">4.6.4</span> 会话管理</h3>
-<p>有几条命令能削减实际编辑循环里的摩擦。在你慌慌张张去用它们之前，值得先知道：</p>
+<p>以下命令和快捷键可以减少编辑过程中的中断：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4483,73 +4486,73 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tbody>
 <tr class="odd">
 <td><code>/btw &lt;question&gt;</code></td>
-<td>问一个旁支问题，答案出现在可关闭的浮层里 — 永不进入对话历史</td>
-<td>你不想让它膨胀上下文的「X 是干什么的？」「这个版本兼容吗？」</td>
+<td>提出旁支问题，答案显示在可关闭的浮层中，不进入对话历史</td>
+<td>询问「X 是干什么的？」「这个版本兼容吗？」等不想写入上下文的问题</td>
 </tr>
 <tr class="even">
 <td><code>Esc Esc</code> 或 <code>/rewind</code></td>
-<td>打开回退菜单 — 把对话、代码或两者一起恢复到先前的检查点</td>
-<td>试了有风险的东西，想干净地撤销而不用 <code>git reset</code>（检查点<strong>不是</strong> git — 只跟踪 WorkBuddy 做的改动）</td>
+<td>打开回退菜单，将对话、代码或两者恢复到先前的检查点</td>
+<td>试验有风险，希望不用 <code>git reset</code> 就撤销；检查点<strong>不是</strong> git，只跟踪 WorkBuddy 作出的改动</td>
 </tr>
 <tr class="odd">
 <td><code>/clear</code></td>
 <td>完全重置对话上下文</td>
-<td>切到无关任务；上下文已经很杂的长会话</td>
+<td>切换到无关任务，或长会话的上下文已经很杂</td>
 </tr>
 <tr class="even">
 <td><code>/compact &lt;instruction&gt;</code></td>
-<td>对当前对话做有引导的摘要</td>
-<td>「压缩，重点保留 API 改动」— 在同一任务上继续之前的选择性保留</td>
+<td>按指令摘要当前对话</td>
+<td>继续同一任务前选择性保留信息，例如「压缩，重点保留 API 改动」</td>
 </tr>
 <tr class="odd">
 <td><code>Ctrl+G</code>（计划模式下）</td>
-<td>在 <code>$EDITOR</code> 里打开进行中的计划文件，批准前直接编辑</td>
-<td>你想精确微调计划，而不必把指令打回给 WorkBuddy</td>
+<td>在 <code>$EDITOR</code> 中打开当前计划文件，批准前直接编辑</td>
+<td>需要精确微调计划，而不必把修改要求口述给 WorkBuddy</td>
 </tr>
 <tr class="even">
 <td>点任务卡片继续</td>
-<td>回到一个已有任务接着聊——侧边栏的任务列表就是「最近几次对话」，不需要记 id</td>
-<td>接续一个跨多天的项目 — 把任务当分支用</td>
+<td>回到已有任务继续对话；侧边栏任务列表就是最近几次对话，无需记住 id</td>
+<td>继续跨多天的项目，把任务当作分支使用</td>
 </tr>
 <tr class="odd">
 <td><code>/checkpoint &lt;slug&gt;</code></td>
-<td>把结构化状态快照写到 <code>quality_reports/checkpoints/</code>（本模板的，不是 Anthropic 的）</td>
-<td>停止或交接之前 — 与叙事式会话日志配套</td>
+<td>将结构化状态快照写入 <code>quality_reports/checkpoints/</code>，这是本模板的功能，不是 Anthropic 的</td>
+<td>停止或交接前，与叙事式会话日志配套使用</td>
 </tr>
 <tr class="even">
 <td><code>/goal &lt;verifiable condition&gt;</code>（CLI / Web UI ACP；桌面端未证实）</td>
-<td><a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>描述了跨轮目标评估；本机桌面共享引擎有命令注册与 <code>GoalService</code>（L2），但无桌面运行时观测</td>
+<td><a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>描述了跨轮目标评估；本机桌面共享引擎有命令注册和 <code>GoalService</code>（L2），但没有桌面运行时观测</td>
 <td>可在官方文档明确覆盖的产品线使用；桌面端不要当作已证实可用的步骤</td>
 </tr>
 <tr class="odd">
 <td><code>/fork</code></td>
-<td>把对话复制进一个新的后台会话，你继续干活（2026 年 7 月）</td>
-<td>试一个分析的风险变体而不丢主线</td>
+<td>将对话复制到新的后台会话，同时让你继续当前工作（2026 年 7 月）</td>
+<td>尝试分析的高风险变体，同时保留主线</td>
 </tr>
 <tr class="even">
 <td><code>/doctor</code>（别名 <code>/checkup</code>）</td>
-<td>完整配置体检，诊断 — 并能修 — 配置问题（2026 年 7 月）</td>
-<td>某个以前好用的东西在更新后不好用了</td>
+<td>全面检查配置，诊断并修复配置问题（2026 年 7 月）</td>
+<td>更新后，原本正常的功能出现异常</td>
 </tr>
 <tr class="odd">
 <td><code>/skill-doctor</code></td>
-<td>显示每个技能的上下文成本与使用频次（2026 年 9 月）</td>
-<td>剪掉从不用的技能；查一个新技能的上下文成本</td>
+<td>显示每个技能的上下文成本和使用频次（2026 年 9 月）</td>
+<td>清理从不使用的技能，或查看新技能的上下文成本</td>
 </tr>
 </tbody>
 </table>
-<p><strong>2026 年年中以来的新增</strong>（上游 Claude Code 发布说明，2026 年 6–9 月）：</p>
+<p><strong>2026 年年中以来的新增功能</strong>，来自上游 Claude Code 2026 年 6–9 月发布说明：</p>
 <ul>
-<li><strong>子代理在后台运行，且分叉模式在交互式会话里默认开启</strong> — 子代理跑的时候 WorkBuddy 继续干活，<code>/fork</code> 把对话复制进一个后台会话。分叉<em>继承那段对话</em>，所以必须独立的审读（断言核验、审稿人）要用独立上下文子代理，绝不用分叉。</li>
-<li><strong>输出风格：</strong><code>/output-style</code> 切换 WorkBuddy 的写法。<strong>Concise</strong> 先给结果、跳过开场白；<strong>Learning</strong> 留一部分给你自己写 — 配合 <code>/scaffold-exercises</code> 用于教学很合适。</li>
-<li><strong><code>/skill-doctor</code></strong> 显示每个技能的上下文成本与使用情况。<strong><code>plugin eval</code></strong>（给一个插件对测试用例打分，并与无插件基线比较）属于上游命令行那条产品线的能力，桌面客户端没有对应命令；本仓库可用的度量工具是 <code>scripts/run-skill-eval.sh</code>，见<a href="#sec-headless">上文「无头运行」</a>。</li>
-<li><strong>截止安全的更新：</strong>在 <code>~/.workbuddy/settings.json</code> 里设 <code>&quot;autoUpdatesChannel&quot;: &quot;stable&quot;</code>（以及 <code>minimumVersion</code>）— 见 TROUBLESHOOTING。本平台没有给深度封顶的设置：深度由档位决定（<code>lite</code> / <code>default</code> / <code>reasoning</code>）。</li>
+<li><strong>子代理可以在后台运行，分叉模式在交互式会话中默认开启。</strong>子代理运行时，WorkBuddy 可以继续工作；<code>/fork</code> 会把对话复制到后台会话。分叉会<em>继承那段对话</em>，因此断言核验、审稿等必须独立的审读应使用独立上下文子代理，不能使用分叉。</li>
+<li><strong>输出风格：</strong><code>/output-style</code> 用于切换 WorkBuddy 的写作方式。<strong>Concise</strong> 直接给出结果，省略开场白；<strong>Learning</strong> 留出一部分内容由你自己写，适合与 <code>/scaffold-exercises</code> 配合用于教学。</li>
+<li><strong><code>/skill-doctor</code></strong> 显示每个技能的上下文成本和使用情况。<strong><code>plugin eval</code></strong> 用于评估插件在测试用例上的表现，并与无插件基线比较；它属于上游命令行产品，桌面客户端没有对应命令。本仓库可用 <code>scripts/run-skill-eval.sh</code> 进行测量，见<a href="#sec-headless">上文「无头运行」</a>。</li>
+<li><strong>控制更新版本：</strong>在 <code>~/.workbuddy/settings.json</code> 中设置 <code>&quot;autoUpdatesChannel&quot;: &quot;stable&quot;</code>，也可同时设置 <code>minimumVersion</code>，详见 TROUBLESHOOTING。本平台没有深度上限设置，深度由 <code>lite</code> / <code>default</code> / <code>reasoning</code> 档位决定。</li>
 </ul>
-<p><strong>三种配合得好的模式：</strong></p>
+<p><strong>三种常用组合：</strong></p>
 <ul>
-<li><strong>问旁支问题而不污染上下文：</strong> <code>/btw why does Quarto need ::: for callouts?</code> — 拿到答案，关掉浮层，继续干活。</li>
-<li><strong>停工，或切到无关工作：</strong>先 <code>/checkpoint current-work</code>，再对新任务 <code>/clear</code>。要回到第一个任务，就新建一个任务：交接钩子把最新的检查点（或 7 天内的 <code>/compress-session</code> 注记）交给下一个全新会话，只交一次。如果此后已经开过一个新会话，或写了更新的检查点，就让 WorkBuddy 改去读 <code>quality_reports/checkpoints/&lt;file&gt;</code>。或者直接点回那个任务卡片接着聊（那条路上钩子不会递送检查点）。</li>
-<li><strong>编辑到一半要改计划：</strong>计划模式期间按 <code>Ctrl+G</code> 直接编辑计划文件 — 比把修订口述回给 WorkBuddy 快。</li>
+<li><strong>提出旁支问题而不增加对话上下文：</strong>运行 <code>/btw why does Quarto need ::: for callouts?</code>，获得答案后关闭浮层并继续工作。</li>
+<li><strong>停止工作或切换到无关任务：</strong>先运行 <code>/checkpoint current-work</code>，再为新任务运行 <code>/clear</code>。要回到第一个任务，可以新建任务；交接钩子会把最新检查点或 7 天内的 <code>/compress-session</code> 注记交给下一个全新会话，而且只递交一次。如果此后已经开过新会话，或写入了更新的检查点，就让 WorkBuddy 改读 <code>quality_reports/checkpoints/&lt;file&gt;</code>。也可以直接点击原任务卡片继续，但这种路径不会触发钩子递交检查点。</li>
+<li><strong>编辑过程中需要调整计划：</strong>在计划模式下按 <code>Ctrl+G</code> 直接编辑计划文件，不必向 WorkBuddy 口述修订。</li>
 </ul>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -4561,15 +4564,15 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>计划<strong>固定落在全局目录</strong> <code>~/.workbuddy/plans/</code>，不在你的项目里。上游有一个 <code>plansDirectory</code> 设置可以把它们挪进仓库，本平台的引擎<strong>完全不认这个键</strong>（2026-10-30 核查：客户端引擎零命中），所以别去找它，也别往 <code>.codebuddy/settings.json</code> 里加 —— 加了不会有任何效果，只会让下一个读文件的人以为计划已经跟着仓库走了。需要把计划留在项目里，就在批准之后自己拷一份到 <code>quality_reports/plans/</code>（模板 gitignore 了这个目录 — 计划是本地的过程记录）。</p>
+<p>计划<strong>固定保存在全局目录</strong> <code>~/.workbuddy/plans/</code>，不在项目内。上游提供 <code>plansDirectory</code> 设置，可以把计划移入仓库，但本平台引擎<strong>完全不识别这个键</strong>。2026-10-30 核查时，客户端引擎中没有命中。不要查找或向 <code>.codebuddy/settings.json</code> 添加该设置，它不会有任何效果，只会让后续读者误以为计划已随仓库保存。如果需要把计划留在项目中，应按 Pattern 1 协议另行写入 <code>quality_reports/plans/</code>，或手动复制到该目录；平台不会自动同步。模板已 gitignore 此目录，因为计划属于本地过程记录。</p>
 </div>
 </div>
-<p><strong>Stop 钩子</strong>在每次回复后跑一个快速 Python 脚本（<code>.codebuddy/hooks/log-reminder.py</code>）。没有 LLM 调用，没有延迟。当工作树自上次条目以来有变化时，它往 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加一条（改动过的文件、生效的计划、任何比其编译产物更新的 <code>Slides/*.tex</code> 或 <code>Quarto/*.qmd</code>）；设 <code>CODEBUDDY_COMPILE_GATE=block</code> 可让未编译的产物阻断停止。像核验、Beamer-Quarto 同步这类行为规则，通过 <code>.codebuddy/rules/</code> 里自动加载的规则执行 — 对 WorkBuddy 能在上下文中评估的细微判断，那才是对的工具。</p>
+<p><strong>Stop 钩子</strong>在每次回复后运行快速 Python 脚本 <code>.codebuddy/hooks/log-reminder.py</code>，不调用 LLM，也不增加模型调用延迟。如果工作树自上次记录以来发生变化，它会向 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加一条记录，包括修改过的文件、当前生效的计划，以及任何比编译产物更新的 <code>Slides/*.tex</code> 或 <code>Quarto/*.qmd</code>。设置 <code>CODEBUDDY_COMPILE_GATE=block</code> 后，未编译的产出会阻止会话停止。核验、Beamer-Quarto 同步等行为规范则由 <code>.codebuddy/rules/</code> 中自动加载的规则执行，因为这些细微判断需要 WorkBuddy 结合上下文评估。</p>
 </section>
 </section>
 <section id="sec-effort" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="sec-effort"><span class="header-section-number">4.7</span> 深度档位 — 成本 vs 彻底程度</h2>
-<p><strong>本平台有两根正交的轴：档位选模型，<code>effort</code> 调思考预算。</strong> 详见 <code>.codebuddy/rules/model-routing.md</code>。档位三档 — <code>default</code> / <code>lite</code> / <code>reasoning</code>，换档就是换模型路由；<code>effort</code> 六档 — <code>minimal</code> / <code>low</code> / <code>medium</code> / <code>high</code> / <code>xhigh</code> / <code>max</code>，另有一条 <code>/effort</code> 命令改当前会话。代理 frontmatter 里写 <code>effort:</code> 生效，技能里写它不生效。<code>maxEffortLevel</code> 这类封顶设置不存在（见<a href="#sec-cost">成本意识组合</a>）。</p>
+<p><strong>本平台有两项相互独立的设置：模型档位决定路由，<code>effort</code> 决定思考预算。</strong>详见 <code>.codebuddy/rules/model-routing.md</code>。模型档位有 <code>default</code> / <code>lite</code> / <code>reasoning</code> 三档，换档会改变模型路由；<code>effort</code> 有 <code>minimal</code> / <code>low</code> / <code>medium</code> / <code>high</code> / <code>xhigh</code> / <code>max</code> 六档，也可以用 <code>/effort</code> 修改当前会话。代理 frontmatter 中的 <code>effort:</code> 会生效，技能中的相同设置不生效。平台没有 <code>maxEffortLevel</code> 这类上限设置，见<a href="#sec-cost">成本意识组合</a>。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4588,7 +4591,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tbody>
 <tr class="odd">
 <td><code>lite</code></td>
-<td>单遍、有界 — 不为多步推理做预留</td>
+<td>单遍、范围明确，不为多步推理预留</td>
 <td>快速排版、grep、文件改名</td>
 <td>$</td>
 </tr>
@@ -4601,26 +4604,26 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </tr>
 <tr class="odd">
 <td>技能 frontmatter 的 <code>model:</code></td>
-<td>按技能钉档 — 调用时固定跑在钉住的那一档</td>
-<td>让一个技能稳定停在它需要的深度上</td>
-<td>随钉的档</td>
+<td>按技能固定档位，调用时使用指定档位</td>
+<td>让技能始终使用所需深度</td>
+<td>由指定档位决定</td>
 </tr>
 <tr class="even">
 <td>代理 frontmatter 的 <code>model:</code></td>
-<td>按代理钉档 — 扇出时每个代理各按自己的档跑</td>
-<td>混合阵容：批评者 <code>reasoning</code>、修复者 <code>default</code></td>
-<td>随钉的档</td>
+<td>按代理固定档位，扇出时分别使用各自档位</td>
+<td>混合配置：批评者 <code>reasoning</code>、修复者 <code>default</code></td>
+<td>由指定档位决定</td>
 </tr>
 </tbody>
 </table>
-<p><strong>怎么设档位：</strong></p>
+<p><strong>设置方法：</strong></p>
 <ul>
-<li><strong>按会话：</strong>换档就是换你这次会话用的模型档；<code>/effort</code> 可以在会话内改努力档（含一个 <code>ultracode</code> 档），但它改的是思考预算，不是模型。</li>
-<li><strong>按技能：</strong>在技能 frontmatter 里写 <code>model:</code>，而不是写一个深度数字（见<a href="#skill-frontmatter">技能 frontmatter 参考</a>）</li>
-<li><strong>按代理：</strong>在代理 frontmatter 里写 <code>model:</code>，扇出时逐代理生效（见<a href="#sec-agent-config">高级代理配置</a>）</li>
-<li><strong>在提示里：</strong>没有 <code>ultrathink</code> 这类关键词可分配额外深度；“think hard” 之类的话会被当作普通指令。要更深，就把那一步交给 <code>reasoning</code>，或者把任务拆成有界的几块</li>
-<li><strong>没有环境变量：</strong>本平台不存在 <code>CLAUDE_CODE_EFFORT_LEVEL</code> 这种全局深度开关 — 深度写在配置里（<code>model:</code> 字段），不写在环境里</li>
-<li><strong>钩子读不到档位：</strong>钩子输入里没有 <code>effort.level</code> 这样的字段，Bash 子进程里也没有 <code>$CLAUDE_EFFORT</code>；要按档位分支，就把档位写进钩子自己的配置</li>
+<li><strong>按会话：</strong>换档会改变本次会话使用的模型档位。<code>/effort</code> 可以修改会话内的思考预算，包含一个 <code>ultracode</code> 档，但不会改变模型。</li>
+<li><strong>按技能：</strong>在技能 frontmatter 中设置 <code>model:</code>，不要填写深度数字，见<a href="#skill-frontmatter">技能 frontmatter 参考</a>。</li>
+<li><strong>按代理：</strong>在代理 frontmatter 中设置 <code>model:</code>，扇出时对各代理分别生效，见<a href="#sec-agent-config">高级代理配置</a>。</li>
+<li><strong>在提示中：</strong>没有 <code>ultrathink</code> 这类可以分配额外深度的关键词，“think hard” 等说法只会被当作普通指令。需要更深入时，应把该步骤交给 <code>reasoning</code>，或把任务拆成范围明确的小块。</li>
+<li><strong>没有环境变量：</strong>本平台不存在 <code>CLAUDE_CODE_EFFORT_LEVEL</code> 这种全局深度开关。模型档位写在配置的 <code>model:</code> 字段中，不写在环境中。</li>
+<li><strong>钩子读不到档位：</strong>钩子输入中没有 <code>effort.level</code> 这类字段，Bash 子进程中也没有 <code>$CLAUDE_EFFORT</code>。如果钩子需要按档位分支，应在钩子自己的配置中写明档位。</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -4632,14 +4635,14 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>档位与模型选择是同一件事：档位就是路由，所以「搭配」不是两个旋钮相乘。<code>default</code> 跑排版这类有界任务比 <code>reasoning</code> 便宜，可能产出可比的结果，而 <code>lite</code> 更便宜。只有真正需要深度多步推理的任务才值得 <code>reasoning</code> — 复杂证明、棘手的数据流水线调试，或全面的论文批评。</p>
+<p>档位本身就是模型路由，因此不存在两个独立旋钮相乘的「搭配」。对于排版等范围明确的任务，<code>default</code> 比 <code>reasoning</code> 便宜，也可能得到相近结果，<code>lite</code> 的成本则更低。只有真正需要多步推理的任务才值得使用 <code>reasoning</code>，例如复杂证明、棘手的数据流水线调试或全面的论文批评。</p>
 </div>
 </div>
 </section>
 <section id="memory---cross-session-persistence" class="level2" data-number="4.8">
 <h2 data-number="4.8" class="anchored" data-anchor-id="memory---cross-session-persistence"><span class="header-section-number">4.8</span> 记忆 — 跨会话持久化</h2>
-<p>WorkBuddy 的原生自动记忆位于用户级 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>：其中的 <code>MEMORY.md</code> 索引跨会话持久，并被加载进每一次对话，细节放在同目录的主题文件里。</p>
-<p>用它来存： - 机器相关的关键项目事实与本地路径 - 你不想重复的用户专属纠正（<code>[LEARN:tag]</code> 格式） - 个人工具偏好与版本变通</p>
+<p>WorkBuddy 的原生自动记忆位于用户级目录 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>。其中的 <code>MEMORY.md</code> 索引会跨会话保留，并在每次对话中加载；详细内容存放在同目录的主题文件中。</p>
+<p>它适合保存： - 与机器有关的关键项目事实和本地路径。 - 不希望反复说明的用户专属纠正，使用 <code>[LEARN:tag]</code> 格式。 - 个人工具偏好和版本变通方法。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Auto Memory</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Facts</span></span>
@@ -4652,61 +4655,61 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">LEARN:workflow</span><span class="co">]</span> Every Beamer edit must auto-sync to Quarto</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="三层记忆架构通用经验-原生自动记忆-项目工作日志" class="level4" data-number="4.8.0.1">
 <h4 data-number="4.8.0.1" class="anchored" data-anchor-id="三层记忆架构通用经验-原生自动记忆-项目工作日志"><span class="header-section-number">4.8.0.1</span> 三层记忆架构（通用经验 / 原生自动记忆 / 项目工作日志）</h4>
-<p>模板把记忆分成三层（见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md"><code>meta-governance.md</code></a>）：</p>
+<p>模板把记忆分成三层，详见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md"><code>meta-governance.md</code></a>：</p>
 <ul>
-<li><strong>根 <code>MEMORY.md</code></strong>（人工筛选、可提交，≤ 200 行）— 对所有 fork 者都有用的通用经验：工作流模式、设计原则、文档标准、跨领域通用的质量阈值。</li>
-<li><strong>原生自动记忆</strong>（用户级 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>，本机存放，永不提交）— 机器相关与用户相关的经验：TeX 安装怪癖、文件路径、个人档位偏好、工具版本变通。</li>
-<li><strong>项目内 <code>.workbuddy/memory/</code></strong>（已 gitignore）— 本仓库的按日工作日志与本机状态。这些日志保留在本机，不删除、不提交，也不等同于用户级原生自动记忆。</li>
+<li><strong>根 <code>MEMORY.md</code></strong>：人工筛选、可以提交，长度 ≤ 200 行、体积 ≤ 25KB。记录对所有 fork 用户都有用的通用经验，包括工作流模式、设计原则、文档标准和跨领域通用的质量阈值。</li>
+<li><strong>原生自动记忆</strong>：位于用户级 <code>~/.workbuddy/projects/&lt;project&gt;/memory/</code>，只保存在本机，永不提交。记录机器和用户相关经验，例如 TeX 安装问题、文件路径、个人档位偏好和工具版本变通。</li>
+<li><strong>项目内 <code>.workbuddy/memory/</code></strong>：已 gitignore，保存本仓库的按日工作日志和本机状态。这些日志只保留在本机，不删除、不提交，也不等同于用户级原生自动记忆。</li>
 </ul>
-<p>fork 的用户 <code>git clone</code> 之后拿到的是通用的根 <code>MEMORY.md</code>；原生自动记忆与 <code>.workbuddy/memory/</code> 都留在各自本机，不随仓库克隆。</p>
+<p>用户 fork 并 <code>git clone</code> 后，只会获得通用的根 <code>MEMORY.md</code>。原生自动记忆和 <code>.workbuddy/memory/</code> 都留在各自本机，不随仓库克隆。</p>
 </section>
 <section id="promote-memory-让经验毕业v1.9.0" class="level4" data-number="4.8.0.2">
 <h4 data-number="4.8.0.2" class="anchored" data-anchor-id="promote-memory-让经验毕业v1.9.0"><span class="header-section-number">4.8.0.2</span> <code>/promote-memory</code> — 让经验毕业（v1.9.0）</h4>
-<p>原生自动记忆与根 <code>MEMORY.md</code> 之间有一个晋升问题：<em>谁决定哪些 <code>[LEARN]</code> 条目从本机经验变成可提交的通用经验？</em> 答案是一个<strong>五批评者议事会</strong>，最终仍由用户批准；项目按日工作日志不会被自动晋升。</p>
-<p><code>/promote-memory [filter]</code> 并行跑五个批评者，各审一个维度：</p>
+<p>把原生自动记忆中的内容写入根 <code>MEMORY.md</code> 前，需要判断哪些 <code>[LEARN]</code> 条目能从本机经验变成可提交的通用经验。模板用<strong>五批评者议事会</strong>完成评审，最终仍由用户批准。项目按日工作日志不会自动晋升。</p>
+<p><code>/promote-memory [filter]</code> 并行运行五个批评者，分别检查：</p>
 <ol type="1">
-<li><strong>通用性</strong> — 一个非经济学的 fork 者会受益吗？</li>
-<li><strong>时效性</strong> — 它与当前代码矛盾吗（<code>grep</code> 被引用的文件）？</li>
-<li><strong>冗余</strong> — 它已经在 MEMORY.md、CODEBUDDY.md 或某条规则里了吗？</li>
-<li><strong>证据</strong> — 它引用了原始事故 / 文件 / 原因吗？</li>
-<li><strong>格式</strong> — 它遵循 <code>[LEARN:category] wrong → right</code> 吗？</li>
+<li><strong>通用性</strong>：非经济学领域的 fork 用户能否受益？</li>
+<li><strong>时效性</strong>：条目是否与当前代码矛盾？需要用 <code>grep</code> 检查被引用文件。</li>
+<li><strong>冗余</strong>：MEMORY.md、CODEBUDDY.md 或某条规则是否已经包含它？</li>
+<li><strong>证据</strong>：条目是否引用原始事故、文件或原因？</li>
+<li><strong>格式</strong>：是否遵循 <code>[LEARN:category] wrong → right</code>？</li>
 </ol>
-<p>多数（5 票中 3 票以上 YES）建议晋升；由用户批准最终挪动。批评者跑在<em>隔离的独立上下文</em>里 — 它们看不见彼此的投票 — 所以各维度是被独立审的，没有群体思维。批评者用 <code>lite</code>（依 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/model-routing.md">model-routing.md</a>），因为这项审读偏机械。</p>
-<p>何时跑：每月做一次记忆维护（设个提醒并在本地会话里跑 — 它由用户调用、读本机自动记忆，所以定时例行任务跑不了它），分享 fork 之前，或一轮论文/课程交付之后。</p>
+<p>5 票中有 3 票以上 YES 时，议事会建议晋升，最终移动仍须用户批准。批评者运行在<em>隔离的独立上下文</em>中，看不到彼此的投票，因此可以分别评估各维度，减少相互影响。按照 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/model-routing.md">model-routing.md</a>，这项审读偏机械，批评者使用 <code>lite</code>。</p>
+<p>可以每月进行一次记忆维护，也可以在分享 fork 前或一轮论文、课程交付后运行。记忆维护需要设置提醒并在本地会话中手动调用，因为它由用户触发并读取本机自动记忆，定时例行任务无法代为运行。</p>
 </section>
 <section id="计划-抗压缩的任务记忆" class="level3" data-number="4.8.1">
 <h3 data-number="4.8.1" class="anchored" data-anchor-id="计划-抗压缩的任务记忆"><span class="header-section-number">4.8.1</span> 计划 — 抗压缩的任务记忆</h3>
-<p>MEMORY.md 存长期项目事实，而<strong>计划</strong>存任务专属策略。每份非琐碎计划都带时间戳存到 <code>quality_reports/plans/</code>。这意味着：</p>
+<p>MEMORY.md 保存长期项目事实，<strong>计划</strong>保存具体任务的执行策略。平台计划固定写入 <code>~/.workbuddy/plans/</code>；<code>quality_reports/plans/</code> 不会自动收到副本，只有按 Pattern 1 协议另行写入或手动复制到该目录，项目内才会持久保存带时间戳的计划。因此：</p>
 <ul>
-<li>计划扛得住自动压缩（它们在磁盘上，不只在上下文里）</li>
-<li>计划扛得住会话边界（任何未来会话都读得到）</li>
-<li>计划构成设计决策的审计轨迹</li>
+<li>计划写入磁盘后，不会因自动压缩而丢失。</li>
+<li>后续会话仍可读取计划，不受会话边界影响。</li>
+<li>计划可以形成设计决策的审计轨迹。</li>
 </ul>
-<p>完整协议见「工作流模式」里的 Pattern 1（<a href="#sec-patterns">Workflow Patterns</a>）。</p>
+<p>完整协议见「工作流模式」中的 Pattern 1（<a href="#sec-patterns">Workflow Patterns</a>）。</p>
 </section>
 <section id="会话日志-为什么而不只是什么的历史自动写入" class="level3" data-number="4.8.2">
 <h3 data-number="4.8.2" class="anchored" data-anchor-id="会话日志-为什么而不只是什么的历史自动写入"><span class="header-section-number">4.8.2</span> 会话日志 — 为什么而不只是什么的历史（自动写入）</h3>
-<p>git 提交记录改了什么，但不记录<em>为什么</em>。会话日志填这个空。WorkBuddy 在三个时点写 <code>quality_reports/session_logs/</code>：计划刚被批准之后、实现过程中增量写（决策一发生就写）、以及会话结束时。这意味着日志能在自动压缩丢弃之前抓住<em>正在发生</em>的推理 — 前提是增量记录的习惯真被遵守。</p>
-<p>因为只靠指令是脆的（长会话里 WorkBuddy 会忘），一只 <strong>Stop 钩子</strong>（<code>.codebuddy/hooks/log-reminder.py</code>）在每次回复后触发。在 v2.0 里它不再只是唠叨 — 它为每一组有意义的改动<strong>自动写一份会话日志骨架</strong>（改动过的文件、生效的计划、时间戳），所以日志总是<em>存在</em>。<strong>为什么</strong> — 决策、被否掉的备选 — 按会话日志规则增量追加；钩子保证的是文件，不是推理。</p>
-<p>新会话可以读这些日志，理解的不只是项目当前状态，还有它背后的推理。完整协议见「工作流模式」里的 Pattern 1（<a href="#sec-patterns">Workflow Patterns</a>）。</p>
+<p>git 提交记录说明改了什么，却不记录<em>为什么</em>。会话日志用于补充决策原因。WorkBuddy 在三个时点写入 <code>quality_reports/session_logs/</code>：计划刚批准后、实现过程中每当决策发生时，以及会话结束时。只要确实遵守增量记录规则，日志就能在自动压缩丢弃上下文前保存<em>当时形成</em>的推理。</p>
+<p>长会话中，仅靠指令可能会遗忘记录，因此 <strong>Stop 钩子</strong> <code>.codebuddy/hooks/log-reminder.py</code> 会在每次回复后触发。v2.0 中，它会针对每组有意义的改动<strong>自动写入会话日志骨架</strong>，包括修改过的文件、当前生效的计划和时间戳，确保日志文件<em>存在</em>。决策原因和被否决的备选方案仍要按照会话日志规则增量追加；钩子保证的是文件，不会自动补全推理。</p>
+<p>新会话可以读取这些日志，同时了解项目当前状态及其形成原因。完整协议见「工作流模式」中的 Pattern 1（<a href="#sec-patterns">Workflow Patterns</a>）。</p>
 </section>
 <section id="github-issues-memory" class="level3" data-number="4.8.3">
 <h3 data-number="4.8.3" class="anchored" data-anchor-id="github-issues-memory"><span class="header-section-number">4.8.3</span> GitHub Issues — 项目的待办清单与记忆</h3>
-<p>计划与会话日志记录的是一个任务、一次会话。项目还需要一份比两者都长的记录：哪里不对、试过什么、还有什么没关。把它留在 GitHub issue 里。</p>
-<p><strong>习惯。</strong> 每个值得修的问题都成为它自己的 issue — 论文里一句误导人的断言、一个与表格不符的数字、一张难读的图、一个 bug、一项留待日后的改进。未关闭的 issue 就是待办清单。你回到项目时，从它们开始。修复落地时，你<strong>带一条评论</strong>关闭它：哪里错了、你试过什么（包括没成的以及为什么）、什么修好了它、你怎么核验的。几个月后回看，关闭的 issue 就是项目的记忆 — 可搜索、链到干了这活的提交、在每台机器上对每位合作者都一样，而一份聊天记录或某一台笔记本上的笔记文件做不到这些。</p>
-<p>对一篇论文，它长这样：</p>
+<p>计划和会话日志分别记录一个任务和一次会话。项目还需要更长期的记录，说明哪里有问题、尝试过什么、哪些事项尚未关闭。GitHub issue 可以承担这项工作。</p>
+<p><strong>使用习惯。</strong>每个值得修复的问题都应单独建立 issue，例如论文中的误导性断言、与表格不符的数字、难以阅读的图、bug，或留待日后的改进。未关闭的 issue 构成待办清单，回到项目时可以从这里开始。修复完成后，关闭 issue 时要<strong>附一条评论</strong>，说明原来的问题、尝试过的方法，包括失败尝试及原因、最终有效的修复，以及核验方式。几个月后，已关闭的 issue 仍能作为可搜索的项目记录，并链接到完成修复的提交。所有合作者在任何机器上都能看到相同内容，而聊天记录或单台笔记本上的笔记做不到这一点。</p>
+<p>论文项目中的例子如下：</p>
 <blockquote class="blockquote">
 <p><strong>#41 引言夸大了样本：§1 写 3,412，表 1 写 3,142</strong> <em>哪里不对：</em>§1 第 18 行写的是「3,412 个县」；表 1 与日志说 3,142。<em>何时算解决：</em>正文与 <code>output/sample.csv</code> 一致。</p>
-<p><em>关闭评论：</em>3,412 是限制前的计数，在平衡面板筛选之前拷过来的。试过从日志重新推导 — 与 3,142 一致。在 a1b2c3d 里修好：§1 现在引用筛选后的计数并点名该筛选。已核验：<code>/audit-reproducibility</code> 通过该样本量的断言。</p>
+<p><em>关闭评论：</em>3,412 是限制前的计数，在平衡面板筛选之前拷过来的。试过从日志重新推导，结果与 3,142 一致。在 a1b2c3d 里修好：§1 现在引用筛选后的计数并点名该筛选。已核验：<code>/audit-reproducibility</code> 通过该样本量的断言。</p>
 </blockquote>
-<p><strong>技能。</strong> <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/issues/SKILL.md"><code>/issues</code></a> 让这个习惯变便宜。<code>/issues file &lt;report&gt;</code> 把一次审读确认的发现转成 issue（<code>/review-paper</code>、<code>/seven-pass-review</code> 与 <code>/adjudicate-review</code> 在结尾提供它）；<code>/issues list</code> 显示手头这项工作还开着什么，并建议下一条接什么；<code>/issues close 41</code> 从提到该 issue 的提交起草关闭评论。每一份草稿都给你看，没有你的同意什么都不发。</p>
-<p><strong>每次都查重，不靠良好意愿。</strong> 当同一个问题住在三个地方时，issue 追踪器就不再是记忆了。所以每个新 issue 都走 <code>scripts/file-issue.py</code>，它在创建任何东西之前用几种方式搜索未关闭<em>与</em>已关闭的 issue — 标题里最具辨识度的词放在一起搜一次、取前三个词单独搜一次、你补充的任何词、以及该 issue 点名的至多三条文件路径，最多八次搜索 — 并且在每个找到的候选都被审过之前拒绝创建。issue 正文记录这些搜索与判定。<code>issue-guard</code> 钩子拒绝 WorkBuddy 直接发起的裸 <code>gh issue create</code>，并指向那个脚本；它只为 <code>gh</code> 命令生成，所以会话其余部分不为它付任何成本。</p>
-<p><strong>从清单开始会话（可选）。</strong> 设 <code>CODEBUDDY_ISSUES_AT_START=1</code> — 放在 <code>.codebuddy/settings.local.json</code> 的 <code>env</code> 下，只对你本机开启 — 启动时 <code>open-issues</code> 钩子会列出未关闭 issue 的编号与标题。它默认关闭：它每次启动都要调 GitHub（约半秒，拖的是 WorkBuddy 第一次回复，不是你的打字），而没有 issue 的 fork 从中什么也得不到。它只列出 owner 与合作者开的 issue，只列标题，因为任何人都能在公开仓库上开 issue，而其正文不是指令。</p>
-<p><strong>两点告诫。</strong> 公开仓库上的 issue 就是公开的：把论文工作留在<strong>私有</strong>仓库里，否则未发表的结果与你正在修的弱点任何人都看得见。绝不要把受限数据放进 issue — 数据使用协议之下的数据，其数值、标识符、路径、截图都不行；抽象地描述问题，把证据留在数据所在之处。这一切背后的规则是 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/issue-ledger.md"><code>issue-ledger.md</code></a>：什么该开 issue、一份报告必须带什么、以及关闭评论必须说什么。</p>
+<p><strong>相关技能。</strong><a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/skills/issues/SKILL.md"><code>/issues</code></a> 可以简化这些操作。<code>/issues file &lt;report&gt;</code> 将审读确认的发现转成 issue，<code>/review-paper</code>、<code>/seven-pass-review</code> 和 <code>/adjudicate-review</code> 会在结束时提供该命令；<code>/issues list</code> 显示当前工作尚未关闭的 issue，并建议下一项；<code>/issues close 41</code> 根据提到该 issue 的提交起草关闭评论。所有草稿都会先交给你查看，未经同意不会发布。</p>
+<p><strong>每次都要查重。</strong>同一个问题如果同时记录在三处，issue 追踪器就无法再充当可靠记忆。因此，每个新 issue 都必须经过 <code>scripts/file-issue.py</code>。创建前，脚本会同时搜索未关闭<em>和</em>已关闭的 issue：把标题中最具辨识度的词组合搜索一次，取前三个词分别搜索，再搜索你补充的词，以及 issue 点名的至多三条文件路径，最多执行八次搜索。所有候选都经过审查前，脚本会拒绝创建。搜索过程和判定会写入 issue 正文。<code>issue-guard</code> 钩子会拒绝 WorkBuddy 直接发起未经查重的 <code>gh issue create</code>，并指向该脚本。它注册到所有 <code>Bash</code> 调用，但脚本对非 <code>gh</code> 命令快速放行。</p>
+<p><strong>可选：从清单开始会话。</strong>在 <code>.codebuddy/settings.local.json</code> 的 <code>env</code> 下设置 <code>CODEBUDDY_ISSUES_AT_START=1</code>，即可只在本机启用。启动时，<code>open-issues</code> 钩子会列出未关闭 issue 的编号和标题。该功能默认关闭，因为每次启动都要调用 GitHub，约耗时半秒，延迟发生在 WorkBuddy 第一次回复前，不影响输入；没有 issue 的 fork 也得不到帮助。它只列出 owner 和合作者创建的 issue，并且只显示标题，因为任何人都能在公开仓库创建 issue，其正文不能视为指令。</p>
+<p><strong>两项限制。</strong>公开仓库中的 issue 也是公开的，因此论文工作应放在<strong>私有</strong>仓库中，否则任何人都能看到未发表结果和你正在修复的问题。受限数据绝不能写入 issue；对于受数据使用协议约束的数据，数值、标识符、路径和截图都不能出现。应抽象描述问题，并把证据留在数据所在位置。完整规则见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/issue-ledger.md"><code>issue-ledger.md</code></a>，其中规定了何时创建 issue、报告必须包含什么，以及关闭评论必须说明什么。</p>
 </section>
 <section id="一切如何咬合" class="level3" data-number="4.8.4">
 <h3 data-number="4.8.4" class="anchored" data-anchor-id="一切如何咬合"><span class="header-section-number">4.8.4</span> 一切如何咬合</h3>
-<p>有了 CODEBUDDY.md、MEMORY.md、计划、会话日志与 GitHub issue，系统有五层持久记忆。下面说明每一层做什么、何时要紧：</p>
+<p>CODEBUDDY.md、MEMORY.md、计划、会话日志和 GitHub issue 共同构成五层持久记忆。各层的作用和更新时机如下：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -4744,21 +4747,21 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <td><code>quality_reports/plans/</code></td>
 <td>是（在磁盘上）</td>
 <td>每个任务一次</td>
-<td>计划扛过从规划到实现的交接</td>
+<td>让计划在规划到实现的交接中保留</td>
 </tr>
 <tr class="even">
 <td>决策推理</td>
 <td><code>quality_reports/session_logs/</code></td>
 <td>是（在磁盘上）</td>
 <td>增量</td>
-<td>记录<em>为什么</em>做了那些决定</td>
+<td>记录<em>为什么</em>作出那些决定</td>
 </tr>
 <tr class="odd">
 <td>未完成与已完成的工作</td>
 <td>GitHub issue</td>
 <td>是（在 GitHub 上）</td>
 <td>每发现或修复一个问题</td>
-<td>待办清单，以及每个条目上试过什么</td>
+<td>待办清单，以及每个条目的尝试记录</td>
 </tr>
 <tr class="even">
 <td>对话</td>
@@ -4769,12 +4772,12 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </tr>
 </tbody>
 </table>
-<p>前五层是你的安全网。写到磁盘上的东西永久存活。对话上下文是短暂的 — 自动压缩最终会丢掉细节。这套工作流的设计保证了：任何值得留的东西，都在压缩抹掉它之前写进了五层持久层之一。</p>
+<p>前五层用于持久保存信息。写入磁盘的内容可以长期保留，对话上下文则会因自动压缩逐渐丢失细节。因此，任何值得保留的信息都应在压缩前写入五层持久层之一。</p>
 </section>
 <section id="hooks---automated-enforcement" class="level3" data-number="4.8.5">
 <h3 data-number="4.8.5" class="anchored" data-anchor-id="hooks---automated-enforcement"><span class="header-section-number">4.8.5</span> 钩子 — 自动执行</h3>
-<p>上面那个会话日志提醒，是一个更大模式的例子：用<strong>钩子</strong>去执行 WorkBuddy 在长会话里可能忘掉的规则。规则活在上下文里，会被压缩掉。钩子活在 <code>.codebuddy/settings.json</code> 里，每次都触发，不管上下文是什么状态。</p>
-<p>模板包含 11 个钩子，负责日志、通知、上下文存活、git 安全、issue 跟踪，以及保护那些定义门禁的配置（另有一只是真正的 git pre-commit 钩子 <code>.githooks/pre-commit</code>，由 <code>./scripts/install-hooks.sh</code> 安装）：</p>
+<p>会话日志自动写入展示了钩子的作用：执行 WorkBuddy 在长会话中可能忘记的规则。规则位于上下文中，可能被压缩；钩子配置在 <code>.codebuddy/settings.json</code> 中，每次对应事件发生时都会触发，不依赖当前上下文状态。</p>
+<p>模板包含 11 个钩子，分别处理日志、通知、上下文保存与恢复、git 安全、issue 跟踪，以及门禁配置保护。另外还有一个真正的 git pre-commit 钩子 <code>.githooks/pre-commit</code>，由 <code>./scripts/install-hooks.sh</code> 安装：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 23%">
@@ -4792,12 +4795,12 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>会话日志自动写入</td>
 <td><code>Stop</code></td>
-<td>只要工作树状态自上次条目以来有变化，就往 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加一条会话日志（时间戳、改动过的文件、生效的计划）</td>
+<td>工作树状态自上次记录以来发生变化时，向 <code>quality_reports/session_logs/YYYY-MM-DD_auto.md</code> 追加会话日志，包括时间戳、修改过的文件和生效的计划</td>
 </tr>
 <tr class="even">
 <td>桌面通知</td>
 <td><code>Notification</code></td>
-<td>WorkBuddy 需要你注意时给桌面提醒（macOS/Linux）</td>
+<td>WorkBuddy 需要用户注意时发出桌面提醒（macOS/Linux）</td>
 </tr>
 <tr class="odd">
 <td>上下文状态捕获</td>
@@ -4812,51 +4815,56 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>会话交接</td>
 <td><code>SessionStart[startup]</code> + <code>UserPromptSubmit</code></td>
-<td>把一个 7 天内写下的最新检查点交给全新会话；只有当你敲下提示词时才用掉它（<code>CODEBUDDY_HANDOFF=off</code> 可跳过）</td>
+<td>把 7 天内写入的最新检查点交给全新会话；只有用户输入提示词时才使用该检查点，设置 <code>CODEBUDDY_HANDOFF=off</code> 可跳过</td>
 </tr>
 <tr class="even">
 <td>上下文监控</td>
 <td><code>PostToolUse[Bash|Agent|Task]</code></td>
-<td>在上下文 40%/55%/65%/80%/90% 处逐级告警</td>
+<td>在上下文用量达到 40%/55%/65%/80%/90% 时逐级告警</td>
 </tr>
 <tr class="odd">
 <td>git 防线</td>
 <td><code>PreToolUse[Bash|Write|Edit|MultiEdit]</code></td>
-<td>拦住破坏性 git（<code>reset --hard</code>、<code>clean -f</code>、<code>push --force</code>、<code>add -A</code>），并在工作树脏时拒绝 merge、rebase 或 pull — 包括那些会先清干净树的链式命令；对代码文件（<code>.R</code>、<code>.Rmd</code>、<code>.qmd</code>、<code>.do</code>、<code>.py</code>）的 <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code>，对硬编码的机器路径（<code>/Users/…</code>、<code>/home/…</code>）告警，并在 <code>CODEBUDDY_STRICT_PATHS=1</code> 时拒绝</td>
+<td>拦截破坏性 git 操作，包括 <code>reset --hard</code>、<code>clean -f</code>、<code>push --force</code>、<code>add -A</code>；工作树有未提交改动时拒绝 merge、rebase 或 pull，也包括会先清理工作树的链式命令。对 <code>.R</code>、<code>.Rmd</code>、<code>.qmd</code>、<code>.do</code>、<code>.py</code> 文件执行 <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code> 时，检查 <code>/Users/…</code>、<code>/home/…</code> 等硬编码机器路径并告警；设置 <code>CODEBUDDY_STRICT_PATHS=1</code> 时改为拒绝</td>
 </tr>
 <tr class="even">
 <td>断言对账</td>
 <td><code>PostToolUse[Write|Edit|MultiEdit]</code></td>
-<td>当分析脚本变动时，标出已过期的数值断言</td>
+<td>分析脚本变动时，标出已经过期的数值断言</td>
 </tr>
 <tr class="odd">
 <td>issue 防线</td>
-<td><code>PreToolUse[Bash]</code>，只为 <code>gh</code> 命令生成（<code>&quot;if&quot;: &quot;Bash(gh *)&quot;</code>）</td>
-<td>拒绝未经查重就创建的新 GitHub issue（<code>gh issue create</code>/<code>new</code>，或 REST/GraphQL 创建），并指向 <code>scripts/file-issue.py</code>，后者先搜未关闭与已关闭的 issue</td>
+<td><code>PreToolUse[Bash]</code>，注册所有 <code>Bash</code> 调用；脚本对非 <code>gh</code> 命令快速放行</td>
+<td>拒绝未经查重就创建 GitHub issue，包括 <code>gh issue create</code>/<code>new</code> 或通过 REST/GraphQL 创建，并指向会先搜索未关闭和已关闭 issue 的 <code>scripts/file-issue.py</code></td>
 </tr>
 <tr class="even">
 <td>未关闭 issue（可选启用）</td>
 <td><code>SessionStart[startup]</code></td>
-<td>设 <code>CODEBUDDY_ISSUES_AT_START=1</code> 时，列出未关闭 issue 的编号与标题 — 只限 owner 与合作者的 — 好让会话一开始就知道待办清单；默认关闭</td>
+<td>设置 <code>CODEBUDDY_ISSUES_AT_START=1</code> 时，列出 owner 和合作者创建的未关闭 issue 编号与标题，让会话开始时就能看到待办事项；默认关闭</td>
 </tr>
 <tr class="odd">
 <td>信任根防线</td>
 <td><code>PreToolUse[Bash]</code></td>
-<td>是一条绊线，不是一把锁：拒绝<em>静默 shell 写入</em> <code>.codebuddy/settings*.json</code>、<code>.codebuddy/hooks/</code> 与 <code>.githooks/</code> — 那些定义其他每道门禁的文件 — 并把破坏性 git 的拒绝清单套用到 <code>bash -c</code> / <code>env -S</code> 的载荷上。<code>Edit</code>/<code>Write</code>、一次分支切换，或钩子自身的 bug，仍可能替换它们</td>
+<td>作为绊线而非锁，拒绝通过 shell 静默写入 <code>.codebuddy/settings*.json</code>、<code>.codebuddy/hooks/</code> 和 <code>.githooks/</code>，这些文件定义了其他门禁；同时把破坏性 git 拒绝清单应用于 <code>bash -c</code> / <code>env -S</code> 的载荷。通过 <code>Edit</code>/<code>Write</code>、切换分支或钩子自身的 bug，仍可能替换这些文件</td>
 </tr>
 </tbody>
 </table>
-<p>其中有两条值得一注，因为它们编码的是教训而不是偏好。<strong>git 防线</strong>在工作树脏时拒绝 merge、rebase 或 pull：这种操作要么中途中止，要么把未提交的工作悄悄折进结果里，而两种结局都不会自己声明。先带标签 stash，或者如果你就是要这样，设 <code>ALLOW_DIRTY_MERGE=1</code>。<code>--abort</code> 与 <code>--continue</code> 被直接豁免 — 那正是你<em>走出</em>一个脏的进行中操作的方式。<code>--autostash</code> 不在豁免之列：只有当 <code>git status --porcelain</code> 报告没有任何未跟踪条目时才允许，因为 <code>git stash</code> 不 stash 未跟踪文件，所以对着一条 <code>??</code> 行做 autostash，那一行会原地不动。</p>
-<p>它<strong>即便同一条命令行本来会先把树清干净</strong>也拒绝 — <code>git stash push -m wip &amp;&amp; git merge</code> 被拒，你改成两步分开跑。这看着迂腐，直到你看清替代方案付出了什么。这项检查最初试图从链式命令的文本里<em>预测</em>：merge 真正跑的时候树是否还是脏的。一轮又一轮对抗式审读，每次都发现预测又猜错了一件事 — 先是 stash 的参数，然后是 stash 的子命令，然后是中间插入的段，然后是输出重定向，然后是命令替换，最后是那个朴素的事实：<code>git stash</code> 根本不 stash 未跟踪文件，所以即便正确解析出「这条会清干净树」，有时也是假的。现在这条规则读的是树的<em>实际</em>状态，然后拒绝。</p>
-<p>但这个读取必须挣得来，这就是<strong>第 0 条规则：独立，否则免谈。</strong> 一个 <code>PreToolUse</code> 钩子在 bash 跑那一行之前做判断，所以此刻读到的状态对操作真正起始的树一无所知 — <code>printf &#39;\n# note\n&#39; &gt;&gt; analysis.R &amp;&amp; git merge main</code> 在钩子时刻读起来是干净的，执行时却是脏的。所以被识别出的 merge、rebase 或 pull，只有作为<em>独立的简单命令</em>时才会走到读树这一步。第二个 shell 段、管道、重定向、参数里的命令替换或进程替换、分组、<code>cd</code>，或同一行上的变量赋值，一律直接拒绝，树根本不读。这就用构造而非枚举堵住了所有先写后操作的顺序，同时也否掉了一些普通的尾随便利 — <code>git pull | tail -5</code>、<code>git pull &gt; log 2&gt;&amp;1</code>、<code>git merge x &amp;&amp; npm install</code>。<strong>删掉预测，就把整类缺陷一起带走了</strong> — 代价是多一次工具调用，连同它自己的钩子周期与代理往返。</p>
-<p>钩子最终并没有变小，而原因正是这条教训里有用的部分。取代预测的是<em>解析</em> — 算出命令行的哪一部分是一次 git 调用，以及一个标志是真的标志还是只是某条消息里的一个词。这看着是更难的工作，但它<strong>有限且可核查</strong>：shell 语法可以被正确读取，读错的时候有测试会说。而预测一条命令会对工作树<em>做什么</em>，没有这样的地板。把一个无界问题换成一个有界问题，值得为此付代码的代价；错的是曾经站在无界的那一边。</p>
-<p>它仍看不见的东西是写下来的，而不是含糊掉的。它的 docstring 列举了它被试探过的形态 — 藏在 <code>bash -c</code>、解释器、别名、脚本或 Makefile 里的 <code>git merge</code>；以及<strong>另一个进程</strong>在读取与 git 启动之间那几毫秒里的写入 — 然后明说这份清单报告的是解析器<em>被试探过</em>的地方，不是它完备的地方。有一种形态坐在这条兜底之下而不是在清单上，值得点名，因为它很容易被假定为已覆盖：藏在命令替换<strong>内部</strong>的操作 — <code>echo $(git merge main)</code>、<code>x=$(git merge main)</code>、反引号写法 — 根本不会作为一段到达解析器，所以对这种写法钩子是<strong>沉默</strong>的，而裸写法会被拒绝（2026-08-23 对交付版钩子在一个脏夹具上实测）。第 0 条规则拒绝的是<em>被识别</em>操作参数里的替换；而<em>承载</em>该操作的替换永远不会被识别，这是两件不同的事。<code>cd</code> 到另一个仓库以前在 docstring 的清单上，直到第 0 条规则到来把它连同其他所有多段形态一起拒绝 — 这也正好关掉了「同一条命令行自己把树弄脏」那个案子。第二只钩子 — 文件是 <code>root-of-trust-guard.py</code>，诚实的描述是<strong>静默 shell 写入绊线</strong> — 之所以存在，是因为设置文件与钩子目录决定了其他任何门禁到底跑不跑：一条 shell 单行命令可以用一个重定向关掉仓库里每一道门禁，而事后对话记录里看不出任何异常。读取通过，<code>Edit</code> / <code>Write</code> 仍然允许，好让对门禁的改动以可审读的 diff 形式到达，而不是一次看不见的覆盖；逃生口是 <code>ALLOW_ROOT_OF_TRUST_WRITE=1</code>。</p>
-<p>因为那只钩子本来就会拆开 <code>bash -c</code> 与 <code>env -S</code> 的载荷去找藏在里面的写入，它现在把拆出来的载荷也交给 git-guardrails <em>自己</em>的破坏性 git 拒绝清单 — 用导入，不是拷贝，这样两只钩子不会在「什么算破坏性」上分道扬镳。这补上了两者之间一直敞着的一个缺口：<code>bash -c &#39;git reset --hard&#39;</code> 与 <code>bash -c &#39;git clean -fdx&#39;</code> 对第一只钩子来说没点名任何受保护路径，对第二只来说又像一个不透明的词，于是两只都不拒绝，而拆开后的写法一直是被拒的。干净树检查<em>不</em>共享，所以在脏树上 <code>bash -c &#39;git merge main&#39;</code> 仍然两只都看不见。</p>
-<p>现在说这个名字搞错的那部分。一个仓库内、可改、失败即放行的文本扫描不是信任根，文件名只是个文件名，不是一句断言。这次扫描把命令行当文本读，所以它抓的是直接形态 — 重定向、<code>tee</code>、<code>cp</code>/<code>mv</code>/<code>rm</code>、就地编辑 — 以及它认识的载荷载体，包括藏在常见包装器后面的。它看不见它不读的解释器内部（<code>python3 -c</code>、<code>perl -e</code>）、被管道送进删除器的路径，或某种还没被枚举的执行形态。更要紧的是，它盯的那些文件仍可通过模板刻意允许的四条通道被替换，而没有一条会触发它：对那些同一文件的 <code>Edit</code> / <code>Write</code> / <code>MultiEdit</code> — 包括一次把钩子自身的注册从 <code>.codebuddy/settings.json</code> 里删掉的编辑；一次普通的 <code>git switch</code> 切到树里带着不同钩子的分支；一次导入同样改动的干净 merge 或 pull；以及钩子自身的 bug，它失败即放行，变成一个空操作。</p>
-<p>所以把它的价值说准：<strong>它改变的是修改到达的通道 — 可审读的 diff 而非看不见的覆盖 — 仅此而已。</strong> 它不是锁，而在一个全新的 fork 里，它背后可能没有任何其他控制：可见的 diff 是事后的可见性，不是授权；选 <code>bypassPermissions</code> 是一种姿态，不是控制；<code>~/.workbuddy/hooks/</code> 里的机器级钩子是可选且住在仓库之外的。如果你想要一个真的，它必须坐在工作树之外 — 权限系统里一份非空的 <code>deny</code> 清单，或一个机器级钩子 — 而且它必须也覆盖 <code>Edit</code>/<code>Write</code> 与分支切换。也请注意审计轨迹不是什么：对话记录记下了一次丢失发生过，<code>git reflog</code> / <code>ORIG_HEAD</code> 能救回被移动的提交指针，但两者都不持有一次未提交编辑、一个未跟踪文件、或一个被忽略文件的字节 — 而那恰恰是 <code>reset --hard</code> 与 <code>clean -fdx</code> 摧毁的东西。一道宣传的覆盖面超过实际覆盖面的防线，比没有更糟，因为你会停止查看。</p>
-<p>这里还有一条更深的教训，也是最可能迁移到你正在守的任何东西上的那一条。一条路径可以用许多种写法到达同一个文件 — 一个 glob、在不区分大小写的文件系统上换个大小写、名字里塞一个引号或反斜杠、一个变量、一次命令替换。一轮轮审读每次都翻出又一个。这就是对 shell 语法做文本扫描的本性：对直接形态有用，但不是闭集。所以务实的建议不是放弃这道防线 — 它仍然让一次事故付一次拒绝 — 而是在 docstring 里诚实说明它真正被测试过哪些形态，并说明还有别的。如果你要的是保证而不是减速带，机制就必须不再是文本扫描：权限系统里一条真正的 <code>deny</code> 规则，或一个操作绕不过去的包装器。</p>
-<p>里面有一个区分值得保留，因为它改变了一个修法能做什么。那些形态里大多数只是<strong>文本</strong> — 信息在命令行里，所以扫描器可以被教会读它，再来一轮解析是合理的答案。符号链接不是：它是关于文件系统的事实，读命令行救不回来。一个名字随便叫什么、指向你保护的那个目录的链接，对文本扫描是不可见的，而 shell 径直穿过它写入。那一条被写下来当作不可及，而不是去追 — 而你打造自己的防线时，同一个问题会告诉你哪些缺口值得更多解析、哪些意味着这个机制对你想要的那个保证而言形状就不对。</p>
-<p>核验与 Beamer-Quarto 同步通过自动加载的规则执行，这对细微判断才是对的工具。钩子留给那些<em>必须</em>扛过上下文压缩的执行。</p>
+<p>下面两条防线源于实际事故，不只是偏好。<strong>git 防线</strong>在工作树有未提交改动时拒绝 merge、rebase 或 pull，因为这些操作可能中途终止，也可能在没有明确提示的情况下把未提交工作合并进结果。请先创建带标签且包含未跟踪文件的 stash（<code>git stash push -u -m &lt;label&gt;</code>），或先另行处理未跟踪文件；如果确实需要在非干净工作树上操作，可以设置 <code>ALLOW_DIRTY_MERGE=1</code>。<code>--abort</code> 和 <code>--continue</code> 直接豁免，因为它们用于<em>退出</em>尚未完成的操作。<code>--autostash</code> 不在豁免范围内，只有 <code>git status --porcelain</code> 不含任何未跟踪条目时才允许。原因是 <code>git stash</code> 默认不会保存未跟踪文件，存在 <code>??</code> 行时，autostash 后这些文件仍留在原处。</p>
+<p>即使同一条命令会先清理工作树，钩子也会拒绝。例如，<code>git stash push -m wip &amp;&amp; git merge</code> 必须拆成两步分别运行。早期版本曾尝试根据链式命令文本<em>预测</em> merge 运行时工作树是否干净，但多轮对抗式审读不断发现遗漏：stash 参数、stash 子命令、中间插入的命令段、输出重定向、命令替换，以及 <code>git stash</code> 默认不保存未跟踪文件这一事实。即使解析器正确判断某条命令会清理工作树，这个判断也可能不成立。因此，现在改为读取工作树的<em>实际</em>状态后再决定是否拒绝。</p>
+<p>读取实际状态也有前提，这就是<strong>第 0 条规则：命令必须独立，否则直接拒绝。</strong><code>PreToolUse</code> 钩子在 bash 执行命令前运行，此时读取的状态无法代表后续操作开始时的状态。例如，<code>printf &#39;\n# note\n&#39; &gt;&gt; analysis.R &amp;&amp; git merge main</code> 在钩子运行时可能仍是干净工作树，到 merge 执行时却已有改动。因此，只有识别为<em>独立简单命令</em>的 merge、rebase 或 pull 才会进入工作树检查。只要存在第二个 shell 命令段、管道、重定向、参数中的命令替换或进程替换、分组、<code>cd</code>，或同一行上的变量赋值，钩子就直接拒绝，不再读取工作树。</p>
+<p>这种结构从机制上阻止了先写入再执行的操作顺序，但也会拒绝一些常见写法，例如 <code>git pull | tail -5</code>、<code>git pull &gt; log 2&gt;&amp;1</code>、<code>git merge x &amp;&amp; npm install</code>。取消状态预测消除了这一整类缺陷，代价是多一次工具调用，以及相应的钩子周期和代理往返。</p>
+<p>钩子代码并未因此减少，因为预测被<em>解析</em>取代了。解析器要识别命令行中哪部分是 git 调用，并区分真正的标志和消息文本中的普通词。这项工作更复杂，但<strong>范围有限且可以核查</strong>：shell 语法可以正确解析，解析错误也有测试覆盖。相比之下，预测命令会如何改变工作树没有明确的完备边界。用有界问题替换无界问题，值得增加这些代码。</p>
+<p>钩子的限制必须明确写出。它的 docstring 列出了已经测试的形式，包括藏在 <code>bash -c</code>、解释器、别名、脚本或 Makefile 中的 <code>git merge</code>，以及<strong>另一个进程</strong>在读取状态与启动 git 之间的几毫秒内写入文件。文档同时说明，这份清单只记录解析器<em>接受过的测试</em>，不代表覆盖已经完备。</p>
+<p>还有一类容易被误以为已经覆盖、但不属于上述清单的形式：藏在命令替换<strong>内部</strong>的操作。<code>echo $(git merge main)</code>、<code>x=$(git merge main)</code> 和反引号写法都不会作为独立命令段进入解析器，因此钩子对它们<strong>不作提示</strong>；直接写出的相同操作则会被拒绝。2026-08-23，交付版钩子已在包含未提交改动的测试夹具上验证这一行为。第 0 条规则拒绝的是<em>已识别</em>操作参数中的替换，而<em>包含</em>该操作的替换根本不会被识别，这是两种不同情况。过去，docstring 还单独列出 <code>cd</code> 到另一个仓库的形式；第 0 条规则现在把它与其他多段命令一起拒绝，也顺便阻止了同一命令行先修改工作树再执行操作的情况。</p>
+<p>第二个钩子是 <code>root-of-trust-guard.py</code>，准确地说，它是<strong>静默 shell 写入绊线</strong>。设置文件和钩子目录决定其他门禁是否运行，一条带重定向的 shell 单行命令就可能关闭仓库中的所有门禁，事后对话记录却未必显示异常。该钩子允许读取，也仍允许 <code>Edit</code> / <code>Write</code>，使门禁修改以可审读的 diff 形式出现，而不是不可见的覆盖。特殊情况下可以设置 <code>ALLOW_ROOT_OF_TRUST_WRITE=1</code> 放行。</p>
+<p>这个钩子原本就会展开 <code>bash -c</code> 和 <code>env -S</code> 的载荷，以查找隐藏的写入。现在，它还通过导入而不是复制，把展开后的载荷交给 git-guardrails <em>自身</em>的破坏性 git 拒绝清单，确保两个钩子采用同一套判定。这修复了两道防线之间的缺口：<code>bash -c &#39;git reset --hard&#39;</code> 和 <code>bash -c &#39;git clean -fdx&#39;</code> 对第一个钩子而言没有点名受保护路径，对第二个钩子而言又只是不透明的文本，因此过去两者都不会拒绝，而直接写出的命令一直会被拒绝。干净工作树检查并<em>没有</em>共享，所以在有未提交改动的工作树中，<code>bash -c &#39;git merge main&#39;</code> 仍可能逃过两个钩子。</p>
+<p>「信任根」这个文件名并不代表它真的构成信任根。它位于仓库内，可以被修改，失败时会放行，本质上只是文本扫描。它把命令行当作文本，因此能识别重定向、<code>tee</code>、<code>cp</code>/<code>mv</code>/<code>rm</code>、就地编辑等直接形式，也能识别常见包装器中已知类型的载荷。它无法检查没有读取的解释器内部代码，例如 <code>python3 -c</code>、<code>perl -e</code>，也无法识别通过管道传给删除器的路径，或尚未枚举的执行形式。</p>
+<p>更重要的是，模板有意保留的四条通道仍可替换它监视的文件，而且不会触发该钩子：对这些文件使用 <code>Edit</code> / <code>Write</code> / <code>MultiEdit</code>，包括从 <code>.codebuddy/settings.json</code> 删除钩子自身的注册；通过普通 <code>git switch</code> 切换到包含不同钩子的分支；通过干净的 merge 或 pull 引入相同改动；以及钩子自身出现 bug 后失败放行，等同于不执行检查。</p>
+<p>因此，它的作用仅限于：<strong>让修改尽量通过可审读的 diff 到达，而不是通过不可见的覆盖到达。</strong>它不是锁，在全新 fork 中甚至可能没有其他控制作为后盾。可见的 diff 只提供事后可见性，不等于授权；选择 <code>bypassPermissions</code> 只是一种运行状态，不是控制；<code>~/.workbuddy/hooks/</code> 中的机器级钩子则是可选的，并位于仓库之外。</p>
+<p>如果需要真正的信任根，就必须把控制放在工作树之外，例如权限系统中的非空 <code>deny</code> 清单或机器级钩子，而且必须同时覆盖 <code>Edit</code>/<code>Write</code> 和分支切换。审计轨迹也不能替代备份：对话记录只能说明丢失发生过，<code>git reflog</code> / <code>ORIG_HEAD</code> 可以恢复被移动的提交指针，但两者都不保存未提交编辑、未跟踪文件或被忽略文件的内容，而这些正是 <code>reset --hard</code> 与 <code>clean -fdx</code> 会销毁的内容。把防线的覆盖范围说得比实际更大，会让用户停止检查，比明确承认没有防线更危险。</p>
+<p>路径可以用多种写法指向同一个文件，例如 glob、在不区分大小写的文件系统中改变大小写、在名称中加入引号或反斜杠、使用变量或命令替换。多轮审读曾不断发现新的形式，这反映了 shell 文本扫描的固有限制：它适合处理直接形式，却无法枚举所有可能。因此，不应简单放弃这道仍可能拦截事故的防线，而应在 docstring 中如实列出已测试的形式和其他缺口。如果需要保证而不只是增加操作成本，就不能继续依赖文本扫描，而应使用权限系统中真正生效的 <code>deny</code> 规则，或操作无法绕过的包装器。</p>
+<p>还要区分两类缺口。大多数形式只是<strong>文本</strong>问题，相关信息已经出现在命令行中，因此可以改进扫描器和解析器。符号链接则不同，它属于<strong>文件系统事实</strong>，仅凭命令行无法判断。一个名称任意、指向受保护目录的链接对文本扫描不可见，shell 却会跟随链接写入。这里明确承认该机制无法覆盖，而不是继续堆叠解析规则。设计自己的防线时，也应据此判断哪些缺口可以通过解析弥补，哪些说明当前机制根本无法提供所需保证。</p>
+<p>核验和 Beamer-Quarto 同步由自动加载的规则执行，因为这类工作需要细微判断。钩子则只用于<em>必须</em>在上下文压缩后仍然生效的执行机制。</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -4869,15 +4877,16 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 <div id="callout-30" class="callout-30-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><em>一个构造出来的示例，不是记录在案的事故 — 失效模式是真的，场景是为了把它讲具体而虚构的。</em></p>
-<p>设想一个实验室的共享模板，它注册了一只防线钩子，拒绝写入仪器校准文件。有人重整了钩子目录并把 <code>settings.json</code> 相应更新，但打成了 <code>.codebuddy/hooks/calibration_guard.py</code>，而磁盘上的文件是 <code>calibration-guard.py</code>。</p>
-<p>丢掉的是<em>防护</em>本身，而取代它的症状从来不会以「某只钩子配错了」的形式可读。你得到哪种症状取决于钩子是怎么注册的，而两种各有各的糟。本模板除一只外全部钩子都注册为 <code>python3 &lt;path&gt;</code>；Python 打不开的路径以 <strong>2</strong> 退出，而 <code>PreToolUse</code> 钩子退 2 意味着 BLOCK（下面的处理器表说明了这个契约）。所以某只防线上一个笔误，会拒绝<em>每一次</em>匹配的调用，交回的原因是一条关于文件缺失的解释器错误 — 最响亮的失效，却仍然不是一个读者会解读成「设置打错了字」的东西。换成裸路径注册，缺失的文件退 127（存在但不可执行则 126）：一个非阻断错误，滚过去就没了，会话继续，工具被允许，唯一变了的正是没人盯着的那一样东西。实验室那个案子就是这样。防线写在设置文件里、写在 README 里、写在入职文档里。它不在进程里。几周后，一个校准文件被一个代理覆盖掉了，而那只钩子正是写来拦它的。</p>
-<p>第 9 道门禁，台账覆盖率，正是本来能抓到它的那道检查：它打开 <code>.codebuddy/settings.json</code> 里注册的每一只钩子，要求文件存在、可调用、且在 git 中被跟踪。仓库里没有别的东西拿设置文件去对磁盘，所以<strong>一只钩子可以接到空气上，而套件里每道门禁仍然全绿</strong> — 这种失效没有自己的探测器。这就是第 9 道门禁的价值：打错的路径在提交那一刻就让构建失败，而不是等到防线本该开火的那一天。</p>
-<p>但接对了线还不等于能用的钩子。一道防线可以保住路径、继续触发，却不再拒绝 — 一个过宽的例外、调试会话里放松的正则、留下的一个提前 <code>return allow</code>。第 10 道门禁，钩子用例集，用合成事件驱动每道激活的防线，要求它对当初被写来对付的失效仍然变红，对干净对照保持绿。312 个用例，秒级运行。</p>
+<p><em>这是一个构造的示例，不是记录在案的事故。失效模式是真实的，场景仅用于具体说明。</em></p>
+<p>假设一个实验室共享模板注册了防线钩子，用于拒绝写入仪器校准文件。有人整理钩子目录并更新 <code>settings.json</code>，却把注册命令末尾的钩子文件名写成 <code>calibration_guard.py</code>，而磁盘上的实际文件是 <code>calibration-guard.py</code>。</p>
+<p>此时失效的是<em>防护本身</em>，但症状不会直接说明「某只钩子配错了」。本模板的所有钩子都通过 <code>bash .../.codebuddy/hooks/lib/hook-runner.sh &lt;hook 文件名&gt;</code> 注册，由 runner 按扩展名选择解释器。找不到目标文件或可用解释器时，runner 会在 stderr 留下诊断并以 <strong>0</strong> 退出（fail-open），不会以 <strong>2</strong> 阻断调用。因此，防线路径中的一个笔误会让本应拒绝的操作继续执行，而不是拒绝每一次匹配调用。</p>
+<p>实验室示例属于这种失效开放的情况：设置文件、README 和入职文档都写明了防线，但实际进程中没有防线。几周后，一个代理覆盖了校准文件，而原本用于阻止该操作的钩子并未运行。</p>
+<p>第 9 道门禁「台账覆盖率」正是用于发现这类问题的检查。它逐一检查 <code>.codebuddy/settings.json</code> 中注册的钩子，要求对应文件存在、可以调用并被 git 跟踪。此前，仓库中没有其他机制将设置文件与磁盘核对，因此<strong>钩子可能指向不存在的文件，而套件中的每道门禁仍然全部通过</strong>。第 9 道门禁让错误路径在提交时立即使构建失败，不必等到防线应当起作用时才发现。</p>
+<p>但路径正确、钩子仍会触发，也不代表钩子仍然有效。过宽的例外、调试时放松的正则，或遗留的提前 <code>return allow</code>，都可能让防线不再拒绝。第 10 道门禁「钩子用例集」使用合成事件驱动每道已启用的防线，要求它对目标失效仍然判定失败，对干净对照保持通过。312 个用例，秒级运行。</p>
 </div>
 </div>
 </div>
-<p><strong>钩子处理器类型。</strong> 上面的例子用的是 <code>command</code> 钩子（shell 脚本），但 WorkBuddy 支持五种处理器类型：</p>
+<p><strong>钩子处理器类型。</strong>上面的例子使用 <code>command</code> 钩子，也就是 shell 脚本。WorkBuddy 共支持五种处理器类型：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -4894,32 +4903,32 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tbody>
 <tr class="odd">
 <td><strong><code>command</code></strong></td>
-<td>跑一个 shell 脚本。退 0 = 允许，退 2 = 在能阻断的事件上阻断（PreToolUse、UserPromptSubmit、Stop 等）</td>
+<td>运行 shell 脚本。退出 0 表示允许；在 PreToolUse、UserPromptSubmit、Stop 等可阻断事件上，退出 2 表示阻断</td>
 <td>文件保护、状态捕获、通知</td>
 </tr>
 <tr class="even">
 <td><strong><code>prompt</code></strong></td>
-<td>把钩子输入加上你的提示词发给一个快速模型（默认 <code>lite</code> 档）做单轮检查；模型返回 <code>{&quot;ok&quot;: true/false, &quot;reason&quot;: &quot;...&quot;}</code> 作为允许/阻断的判定 — 不需要脚本</td>
-<td>难以脚本化的判断门禁：「请求的任务真的都完成了吗？」用在 <code>Stop</code> 上</td>
+<td>将钩子输入和你的提示词交给快速模型进行单轮检查，默认使用 <code>lite</code> 档；模型返回 <code>{&quot;ok&quot;: true/false, &quot;reason&quot;: &quot;...&quot;}</code>，据此允许或阻断，无需脚本</td>
+<td>难以脚本化的判断门禁，例如在 <code>Stop</code> 时判断「请求的任务真的都完成了吗？」</td>
 </tr>
 <tr class="odd">
 <td><strong><code>http</code></strong></td>
-<td>POST 到一个外部端点</td>
-<td>CI/CD 集成、向外部服务记日志</td>
+<td>向外部端点发送 POST 请求</td>
+<td>CI/CD 集成、向外部服务记录日志</td>
 </tr>
 <tr class="even">
 <td><strong><code>agent</code></strong></td>
-<td>生成一个能用工具核验条件的子代理</td>
+<td>启动可以使用工具核验条件的子代理</td>
 <td>需要多步检查的复杂校验</td>
 </tr>
 <tr class="odd">
 <td><strong><code>mcp_tool</code></strong></td>
-<td>在已连接的 MCP 服务器上调用一个工具</td>
+<td>在已连接的 MCP 服务器上调用工具</td>
 <td>无需 shell 或 HTTP 包装的 Zotero / Stata / 数据库集成</td>
 </tr>
 </tbody>
 </table>
-<p><strong>PreToolUse 输入改写。</strong> PreToolUse 钩子现在可以<strong>改写工具输入</strong>，不只是阻断或允许。你的钩子脚本可以返回改写后的 JSON，在工具执行前重写参数 — 例如自动修正文件路径，或强制命名规范。</p>
+<p><strong>PreToolUse 输入改写。</strong>PreToolUse 钩子现在不仅可以允许或阻断，还能<strong>改写工具输入</strong>。钩子脚本可以返回修改后的 JSON，在工具执行前重写参数，例如自动修正文件路径或强制执行命名规范。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4930,16 +4939,16 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>快速的机械检查（文件存在吗？计数器过阈值了吗？）用 <strong>command 钩子</strong>。允许/阻断的判定需要一个模型的判断而不是一个脚本时（<code>Stop</code> 之前活真的干完了吗？），用 <strong>prompt 钩子</strong>。WorkBuddy 应当带在上下文里的指引（WorkBuddy 核验得对吗？），用<strong>规则</strong>。避免把 prompt 钩子挂在高频事件上 — 每次触发都是一次独立的模型调用，增加延迟与成本，而在 <code>PreToolUse</code>/<code>PostToolUse</code> 上，<code>ok: false</code> 会结束这一轮，除非设了 <code>continueOnBlock</code>。</p>
+<p>文件是否存在、计数器是否超过阈值等快速机械检查，应使用 <strong>command 钩子</strong>。允许或阻断需要模型判断而无法只靠脚本决定时，例如在 <code>Stop</code> 前检查任务是否真正完成，应使用 <strong>prompt 钩子</strong>。WorkBuddy 需要保留在上下文中的行为指引，例如核验方法，应写成<strong>规则</strong>。不要把 prompt 钩子挂在高频事件上，因为每次触发都会单独调用模型，增加延迟和成本。在 <code>PreToolUse</code>/<code>PostToolUse</code> 中，<code>ok: false</code> 会结束当前轮次，除非设置 <code>continueOnBlock</code>。</p>
 </div>
 </div>
 </section>
 <section id="context-survival-system-advanced" class="level3" data-number="4.8.6">
 <h3 data-number="4.8.6" class="anchored" data-anchor-id="context-survival-system-advanced"><span class="header-section-number">4.8.6</span> 上下文存活系统（进阶）</h3>
-<p>上下文压缩发生时，WorkBuddy 会丢掉工作记忆。<strong>上下文存活系统</strong>确保你能无缝恢复。</p>
+<p>上下文压缩会丢弃 WorkBuddy 的部分工作记忆。<strong>上下文存活系统</strong>用于保存和恢复任务状态。</p>
 <section id="它怎么工作" class="level4" data-number="4.8.6.1">
 <h4 data-number="4.8.6.1" class="anchored" data-anchor-id="它怎么工作"><span class="header-section-number">4.8.6.1</span> 它怎么工作</h4>
-<p>两个钩子协作，负责保存与恢复状态：</p>
+<p>两个钩子协作保存并恢复状态：</p>
 <pre><code>Session running → context fills up → PreCompact fires
                                            ↓
                                     pre-compact.py saves:
@@ -4975,7 +4984,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>计划路径</td>
 <td>会话缓存</td>
-<td>好让 WorkBuddy 能读计划文件</td>
+<td>让 WorkBuddy 能读取计划文件</td>
 </tr>
 <tr class="even">
 <td>当前任务</td>
@@ -4985,7 +4994,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>近期决策</td>
 <td>会话缓存</td>
-<td>最新一份会话日志最后 50 行里至多 3 条像决策的条目（取最先找到的）</td>
+<td>最新会话日志最后 50 行中至多 3 条类似决策的条目，取最先找到的条目</td>
 </tr>
 <tr class="even">
 <td>压缩注记</td>
@@ -4997,7 +5006,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </section>
 <section id="上下文监控" class="level4" data-number="4.8.6.3">
 <h4 data-number="4.8.6.3" class="anchored" data-anchor-id="上下文监控"><span class="header-section-number">4.8.6.3</span> 上下文监控</h4>
-<p><code>context-monitor.py</code> 钩子跟踪大致的上下文用量，并给出逐级告警：</p>
+<p><code>context-monitor.py</code> 钩子估算上下文用量，并在不同阈值发出告警：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5010,12 +5019,12 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="odd">
 <td>40%、55%、65%</td>
 <td>建议 <code>/learn</code></td>
-<td>在压缩之前抓住不显然的发现</td>
+<td>在压缩前记录不显然的发现</td>
 </tr>
 <tr class="even">
 <td>80%</td>
 <td>提示信息</td>
-<td>自动压缩临近，不必急</td>
+<td>自动压缩临近，不必急于处理</td>
 </tr>
 <tr class="odd">
 <td>90%</td>
@@ -5024,25 +5033,25 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </tr>
 </tbody>
 </table>
-<p>随时用 <code>/context-status</code> 查看当前会话的健康状况。</p>
-<p>注：该监控器从对话记录的大小估算上下文（退回为工具调用计数），所以告警可能比实际压缩来得早或晚；状态行在可用时优先用 WorkBuddy 自己的 <code>context_window.used_percentage</code>。</p>
+<p>可以随时用 <code>/context-status</code> 查看当前会话状态。</p>
+<p>该监控器根据对话记录大小估算上下文，必要时回退到工具调用计数，因此告警可能早于或晚于实际压缩。状态行可用时，优先采用 WorkBuddy 自己提供的 <code>context_window.used_percentage</code>。</p>
 </section>
 <section id="压缩之后怎么恢复" class="level4" data-number="4.8.6.4">
 <h4 data-number="4.8.6.4" class="anchored" data-anchor-id="压缩之后怎么恢复"><span class="header-section-number">4.8.6.4</span> 压缩之后怎么恢复</h4>
-<p>如果任务中途发生压缩，WorkBuddy 会自动看到：</p>
+<p>如果任务中途发生压缩，WorkBuddy 会自动获得：</p>
 <ol type="1">
-<li><strong>恢复消息</strong> — 当时哪份计划在生效、哪个任务在进行</li>
-<li><strong>恢复动作</strong> — 读计划、查 git 状态、继续</li>
+<li><strong>恢复消息</strong>：说明当时生效的计划和正在进行的任务。</li>
+<li><strong>恢复动作</strong>：读取计划、检查 git 状态并继续工作。</li>
 </ol>
-<p>你也可以手工把 WorkBuddy 指到正确的上下文：</p>
+<p>你也可以手动告诉 WorkBuddy 应恢复哪份上下文：</p>
 <blockquote class="blockquote">
 <p>「我们刚被压缩了。读 <code>quality_reports/plans/2026-02-06_translate-lecture5.md</code>，从我们停下的地方继续。」</p>
 </blockquote>
 </section>
 <section id="压缩前先蒸馏compress-sessionv1.9.0" class="level4" data-number="4.8.6.5">
 <h4 data-number="4.8.6.5" class="anchored" data-anchor-id="压缩前先蒸馏compress-sessionv1.9.0"><span class="header-section-number">4.8.6.5</span> 压缩前先蒸馏：<code>/compress-session</code>（v1.9.0）</h4>
-<p>自动压缩是<em>有损的</em> — 它留下近几轮、丢掉更早的，不保留会话中途<em>决定了什么</em>。对长流水线（长时间调试会话、多决策重构、下班交接），<code>/compress-session</code> 是<strong>蒸馏而非截断</strong>的替代：结构化注记，含生效状态、已做决策、碰过的文件、未决问题、下一步动作，以及明确列出的<strong>作为噪声丢弃</strong>（不该被带下去的失败假设）。</p>
-<p><code>/compress-session</code> 与 <code>/checkpoint</code> 是伙伴，不是替代品：</p>
+<p>自动压缩是<em>有损的</em>：保留最近几轮，丢弃更早的内容，不会完整保存会话中途<em>作出过哪些决定</em>。对于长时间调试、多决策重构和下班交接等长流程，<code>/compress-session</code> 提供<strong>蒸馏而非截断</strong>的替代方案。它生成结构化注记，记录当前生效状态、已作决策、处理过的文件、未决问题和下一步动作，并明确列出<strong>作为噪声丢弃</strong>的内容，即不应带入后续会话的失败假设。</p>
+<p><code>/compress-session</code> 与 <code>/checkpoint</code> 相互补充，不能互相替代：</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -5059,13 +5068,13 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tbody>
 <tr class="odd">
 <td><strong>何时</strong></td>
-<td>自然的停止点（一天结束、换模型、交接给合作者）</td>
-<td>被迫压缩（长流水线、噪声累积、自动压缩临近）</td>
+<td>自然的停止点，例如一天结束、更换模型或交接给合作者</td>
+<td>被迫压缩，例如长流水线、噪声累积或自动压缩临近</td>
 </tr>
 <tr class="even">
 <td><strong>保留什么</strong></td>
 <td>生效的计划、决策、文件指针、下一步动作</td>
-<td>同上，外加一条明确的「作为噪声丢弃」</td>
+<td>同上，另加一条明确的「作为噪声丢弃」</td>
 </tr>
 <tr class="odd">
 <td><strong>输出</strong></td>
@@ -5075,11 +5084,11 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <tr class="even">
 <td><strong><code>[LEARN]</code> 提议</strong></td>
 <td>可选</td>
-<td>会话浮出教训时提 0–3 条；安静的会话一条都不提</td>
+<td>会话出现值得保留的教训时提出 0–3 条；没有新教训时不提</td>
 </tr>
 </tbody>
 </table>
-<p>「作为噪声丢弃」这一节是新的贡献：失败的假设与走不通的调试路径被明确列出，好让它们<em>不</em>在未来的会话里作祟。这防的是 <a href="https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html">Drew Breunig 说的「上下文中毒」</a>失效模式 — 早期轮次里幻觉或错误的内容被后面的轮次引用。</p>
+<p>「作为噪声丢弃」明确记录失败的假设和走不通的调试路径，避免它们影响未来会话。这用于防止 <a href="https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html">Drew Breunig 所说的「上下文中毒」</a>：后续轮次引用早期轮次中的幻觉或错误内容。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5090,7 +5099,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>既然你已经理解了这些构成部件，这里是新增的部分：WorkBuddy 增加了用于成本控制的<a href="#sec-effort">深度档位</a>、<a href="#hooks---automated-enforcement">扩展的钩子事件</a>、用于细粒度技能配置的<a href="#skill-frontmatter">技能 frontmatter 字段</a>、用于控制 WorkBuddy 自主权的<a href="#settings---permissions-and-hooks">权限模式</a>、<a href="#sec-agent-config">高级代理配置</a>、<a href="#extending-with-plugins">插件</a>，以及无头 CLI 模式。每一项都有自己的小节：多数在上面，而技能 frontmatter 与插件在后面<a href="#sec-customize">为你的领域定制</a>里讲。</p>
+<p>了解这些部件后，可以继续查看新增功能：用于成本控制的<a href="#sec-effort">深度档位</a>、<a href="#hooks---automated-enforcement">扩展的钩子事件</a>、用于细粒度技能配置的<a href="#skill-frontmatter">技能 frontmatter 字段</a>、用于控制 WorkBuddy 自主权的<a href="#settings---permissions-and-hooks">权限模式</a>、<a href="#sec-agent-config">高级代理配置</a>、<a href="#extending-with-plugins">插件</a>，以及无头 CLI 模式。每一项都有独立小节，多数位于上文；技能 frontmatter 和插件则在后面的<a href="#sec-customize">为你的领域定制</a>中介绍。</p>
 </div>
 </div>
 <hr>
