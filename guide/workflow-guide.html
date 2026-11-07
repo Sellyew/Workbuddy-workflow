@@ -6697,48 +6697,48 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="sec-platform" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> WorkBuddy 平台能力</h1>
-<p>前面的章节讲的是<strong>这个模板</strong>里装了什么——技能、规则、代理、钩子，这些随 fork 走。这一章讲的是 <strong>WorkBuddy 平台本身</strong>自带、而上游 Claude Code 没有的能力：它们不随仓库走，是你用这个客户端时就能用的。</p>
+<p>前面介绍了<strong>这个模板</strong>自带的技能、规则、代理和钩子，fork 仓库时也会一并带走。本章介绍 <strong>WorkBuddy 平台本身</strong>提供而上游 Claude Code 不具备的能力。它们由客户端提供，不随仓库分发。</p>
 <section id="sec-automation" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="sec-automation"><span class="header-section-number">6.1</span> 定时任务与自动化</h2>
-<p>WorkBuddy 支持一次性与循环的定时任务：一次性任务在指定时刻触发一次；循环任务按每天、每周、每月或每年的节奏重复。你只要用自然语言说「每天早上 9 点拉一次数据并生成报告」，任务就会落成一个由专门会话执行的自动化。</p>
-<p>三条值得提前知道的实测事实：</p>
+<p>WorkBuddy 支持一次性和循环定时任务。前者只在指定时刻触发一次，后者可以每天、每周、每月或每年重复执行。你只需用自然语言说明，例如「每天早上 9 点拉取一次数据并生成报告」，WorkBuddy 就会创建一项自动化任务，由专门会话执行。</p>
+<p>使用前需要知道以下三条实测结果：</p>
 <ul>
-<li><strong>跑在真实工作树。</strong> 定时会话看到的不是全新克隆，而是你仓库的真实状态——包括未提交的改动。</li>
-<li><strong>无人值守时问不到人。</strong> 定时会话里的确认请求会被立即拒绝，不是等待。所以给定时任务写的关卡要设计成「只提议、不执行」，而不是「跑到一半弹窗问一句」。</li>
-<li><strong>持久任务落盘。</strong> 持久任务写进 <code>.codebuddy/scheduled_tasks.json</code>，挺过重启；不持久的任务会话结束就消失。</li>
+<li><strong>定时会话在真实工作树中运行。</strong> 它不会另建一个全新的克隆，因此能看到仓库的真实状态，包括未提交的改动。</li>
+<li><strong>无人值守时无法向你确认。</strong> 定时会话会立即拒绝确认请求，不会停下来等待。因此，定时任务中的确认关卡应设计成『只提议、不执行』，不要安排运行到一半再请求确认的流程。</li>
+<li><strong>持久任务会写入磁盘。</strong> 持久任务保存在 <code>.codebuddy/scheduled_tasks.json</code> 中，重启后仍然保留；非持久任务会在会话结束后消失。</li>
 </ul>
-<p>什么时候用：每日门禁、定期拉数据或生成报告、周期提醒。这条「问不到人」的性质在<a href="#multi-model-strategy-cost-vs-quality">「多模型策略」</a>的「无人值守运行需要终点线」一条里也讲过。</p>
+<p>这些任务适用于每日门禁、定期拉取数据或生成报告，以及周期提醒。关于无人值守时无法请求用户确认这条限制，<a href="#multi-model-strategy-cost-vs-quality">「多模型策略」</a>中的「无人值守运行需要终点线」也有说明。</p>
 </section>
 <section id="sec-experts" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="sec-experts"><span class="header-section-number">6.2</span> 专家</h2>
-<p>WorkBuddy 内置一个<strong>专家中心</strong>（左侧「专家」入口），有 100+ 位领域专家可选——从某个学科的方法论到某个工具链的实操。选中一位专家，会话就带上它的领域知识与工作习惯。</p>
-<p>你也可以把自己的专业能力固化成一个可复用的<strong>专家包</strong>（创建、转化、审查走 <code>expert-manager</code>）。定时任务也能指定专家，让周期任务带上特定领域的判断。</p>
-<p>什么时候用：需要专业判断、领域知识，或多角色协作时。</p>
+<p>WorkBuddy 的左侧「专家」入口提供<strong>专家中心</strong>，其中有 100+ 位领域专家，覆盖学科方法论、工具链实践等方向。选择专家后，其领域知识与工作习惯会进入当前会话。</p>
+<p>你也可以把自己的专业能力整理成可复用的<strong>专家包</strong>，并通过 <code>expert-manager</code> 创建、转化和审查。定时任务同样可以指定专家，让周期任务也能借助特定领域的专业判断。</p>
+<p>需要专业判断、领域知识或多角色协作时，可以使用专家。</p>
 </section>
 <section id="sec-connectors" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="sec-connectors"><span class="header-section-number">6.3</span> 连接器</h2>
-<p>连接器把 WorkBuddy 接到外部服务与数据源：企业微信、腾讯文档、微信支付等。MCP 服务器也是连接器的一种——接入方法见后文<a href="#sec-customize">「扩展：接入 MCP 服务器」</a>。</p>
-<p>入口在左下角「+」菜单的连接器管理页。原则不变：先用仓库里的技能与规则（这些你完全掌控），真需要接外部系统时再上连接器，而且接入前先读它到底能做什么。</p>
+<p>连接器用于连接 WorkBuddy 与外部服务和数据源，例如企业微信、腾讯文档、微信支付等。MCP 服务器也是一种连接器，接入方法见后文<a href="#sec-customize">「扩展：接入 MCP 服务器」</a>。</p>
+<p>入口位于左下角「+」菜单中的连接器管理页。你仍应优先使用仓库中完全由自己掌控的技能和规则；确需接入外部系统时再使用连接器，并在接入前了解它具体能做什么。</p>
 </section>
 <section id="sec-library-cloud" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="sec-library-cloud"><span class="header-section-number">6.4</span> 资料库与云服务</h2>
-<p>WorkBuddy 自带两块云端能力，做网站或小程序时用得着：</p>
+<p>WorkBuddy 提供两类云端能力，开发网站或小程序时可以使用：</p>
 <ul>
-<li><strong>资料库（library）</strong>：文档、表格、页面、网盘、附件的云空间，跨设备、协作、分享，可搭知识库、工作台、看板。</li>
-<li><strong>云服务（cloud-service）</strong>：云数据库、文件存储、用户认证（邮箱 / 手机 / 微信登录）、免密钥大模型调用——对标 Supabase / Firebase，不用自己搭后端。</li>
+<li><strong>资料库（library）</strong>：为文档、表格、页面、网盘和附件提供云空间，支持跨设备访问、协作与分享，可用来搭建知识库、工作台和看板。</li>
+<li><strong>云服务（cloud-service）</strong>：提供云数据库、文件存储、用户认证（邮箱 / 手机 / 微信登录）和免密钥大模型调用，功能对标 Supabase / Firebase，无需自行搭建后端。</li>
 </ul>
-<p>注意区分：这里的「资料库 / 知识库」是 WorkBuddy 的<strong>云空间</strong>，与<a href="#sec-customize">「搭建你的知识库」</a>里说的 <code>.codebuddy/rules/knowledge-base-template.md</code>（模板里那条按路径生效的领域知识规则）是两回事。</p>
+<p>这里的「资料库 / 知识库」指 WorkBuddy 的<strong>云空间</strong>，不要与<a href="#sec-customize">「搭建你的知识库」</a>中的 <code>.codebuddy/rules/knowledge-base-template.md</code> 混淆。后者是模板中的一条领域知识规则，按路径生效。</p>
 </section>
 <section id="sec-miniprogram-publish" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="sec-miniprogram-publish"><span class="header-section-number">6.5</span> 微信小程序与发布为应用</h2>
-<p>WorkBuddy 可以在客户端内创建、预览、托管发布<strong>微信小程序</strong>；也可以把网站、小游戏或任意单端口 HTTP 项目<strong>发布为在线链接</strong>（或下线已发布的链接）。</p>
-<p>什么时候用：要做一个小程序，或想把本地做好的网站 / 项目变成一个可分享的链接时。</p>
+<p>WorkBuddy 可以在客户端内创建、预览并托管发布<strong>微信小程序</strong>；也可以把网站、小游戏或任何单端口 HTTP 项目<strong>发布为在线链接</strong>，或下线已发布的链接。</p>
+<p>需要开发小程序，或想分享本地网站 / 项目的在线链接时，可以使用这些能力。</p>
 <hr>
 </section>
 </section>
 <section id="sec-ecosystem" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> 生态：别人已经造了什么</h1>
-<p>本仓库提供地基 — 那套对任何学术任务都管用的基础设施模式（计划先行、编排器、质量门禁、对抗式审读、上下文存活）。有人把这些模式推得更远，为特定需要造出专门的工作流。下面是这些项目共享的原则，以及在这里怎么用：</p>
+<p>本仓库提供适用于各类学术任务的基础模式，包括计划先行、编排器、质量门禁、对抗式审读和上下文延续。一些项目则针对特定需求，把这些模式扩展成专门工作流。下表列出它们共同采用的原则，以及本仓库的实现方式：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -6750,53 +6750,53 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tbody>
 <tr class="odd">
 <td>对抗式审读（而非自审）</td>
-<td>全部</td>
-<td>用独立上下文批评（<a href="#pattern-8-devils-advocate">Pattern 8</a>）或 worker-critic 配对</td>
+<td>各工作流项目</td>
+<td>通过独立上下文开展批评（<a href="#pattern-8-devils-advocate">Pattern 8</a>），或采用 worker-critic 配对</td>
 </tr>
 <tr class="even">
 <td>结构化的中间文件</td>
 <td>Xu &amp; Yang</td>
-<td>把每个算出来的对象存到磁盘；代理之间通过文件通信</td>
+<td>将每个计算得到的对象写入磁盘，代理通过文件通信</td>
 </tr>
 <tr class="odd">
 <td>与阶段相称的严谨度</td>
 <td>clo-author</td>
-<td>探索用轻审读（60/100），投稿用完整对抗式（95/100）</td>
+<td>探索阶段采用轻量审读（60/100），投稿阶段采用完整对抗式审读（95/100）</td>
 </tr>
 <tr class="even">
-<td>保住声音</td>
+<td>保持写作风格</td>
 <td>claudeblattman</td>
-<td>维护一份记录你写作风格的参考文档；作为上下文加载</td>
+<td>维护一份记录写作风格的参考文档，并将其加载为上下文</td>
 </tr>
 <tr class="odd">
 <td>模板-执行器分离</td>
 <td>Xu &amp; Yang</td>
-<td>规格 = 量什么，编排器 = 怎么执行</td>
+<td>规格规定量什么，编排器负责怎么执行</td>
 </tr>
 <tr class="even">
 <td>自我改进的配置</td>
 <td>claudeblattman</td>
-<td>用 <code>/learn</code> 捕获发现；定期审 MEMORY.md</td>
+<td>用 <code>/learn</code> 记录发现，定期审查 MEMORY.md</td>
 </tr>
 <tr class="odd">
 <td>人做判断，AI 做执行</td>
 <td>Xu &amp; Yang</td>
-<td>你设计诊断，WorkBuddy 去跑</td>
+<td>你设计诊断，WorkBuddy 执行</td>
 </tr>
 <tr class="even">
-<td>美就是功能</td>
+<td>视觉设计要有实际作用</td>
 <td>MixtapeTools</td>
-<td>每个视觉元素都挣得它的在场；没有功能的装饰是噪声</td>
+<td>每个视觉元素都应承担功能，纯装饰只会增加噪声</td>
 </tr>
 <tr class="odd">
 <td>约束下的自主</td>
 <td>autoresearch</td>
-<td>在 Markdown 里界定边界（什么能改/不能改）；让 WorkBuddy 在边界内探索</td>
+<td>在 Markdown 中写明可改与不可改的边界，让 WorkBuddy 在边界内探索</td>
 </tr>
 <tr class="even">
 <td>顺序独立审计</td>
 <td>ClaudeCodeTools</td>
-<td>跑 N 遍盲审；独立性防群体思维（<a href="#pattern-15-sequential-audits">Pattern 15</a>）</td>
+<td>进行 N 遍盲审，通过独立性避免群体思维（<a href="#pattern-15-sequential-audits">Pattern 15</a>）</td>
 </tr>
 </tbody>
 </table>
@@ -6810,26 +6810,26 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>如果你写<strong>论文</strong>：从 clo-author（对抗式审读配对）或 ClaudeCodeTools（七遍审计协议，见 <a href="#pattern-15-sequential-audits">Pattern 15</a>）开始。如果你做<strong>演讲</strong>：MixtapeTools。如果你跑<strong>计算实验</strong>：autoresearch。如果你是<strong>不写代码的学者</strong>：claudeblattman。它们全都建在本模板的同一套基础模式上 — <a href="#sec-system">编排器</a>、<a href="#sec-quality">质量门禁</a>与<a href="#the-adversarial-pattern-critic-fixer">对抗式审读</a>。</p>
-<p>你从这些项目里拿什么都可以，但抄进来之前先读一遍 — 见<a href="#extending-with-plugins">用插件扩展</a>。</p>
+<p>如果你写<strong>论文</strong>，可从 clo-author 的对抗式审读配对或 ClaudeCodeTools 的七遍审计协议开始，后者见 <a href="#pattern-15-sequential-audits">Pattern 15</a>。如果你做<strong>演讲</strong>，可选 MixtapeTools；如果你跑<strong>计算实验</strong>，可选 autoresearch；如果你是<strong>不写代码的学者</strong>，可选 claudeblattman。它们都采用与本模板相同的基础模式：<a href="#sec-system">编排器</a>、<a href="#sec-quality">质量门禁</a>与<a href="#the-adversarial-pattern-critic-fixer">对抗式审读</a>。</p>
+<p>你可以借鉴这些项目的任何内容，但复制到本仓库之前要先通读该项目，具体要求见<a href="#extending-with-plugins">用插件扩展</a>。</p>
 </div>
 </div>
-<p>下面说明每个项目做什么、你什么时候该用它。</p>
+<p>下面分别介绍各项目的用途和适用场景。</p>
 <section id="clo-author以论文为中心的研究工作流" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="clo-author以论文为中心的研究工作流"><span class="header-section-number">7.1</span> clo-author：以论文为中心的研究工作流</h2>
 <p><strong>仓库：</strong> <a href="https://github.com/hugosantanna/clo-author">hugosantanna/clo-author</a> <strong>作者：</strong> Hugo Sant’Anna（UAB） <strong>建于：</strong> 本仓库的 fork</p>
-<p>clo-author 把整套工作流从幻灯片转向<strong>研究论文</strong>。论文（<code>Paper/main.tex</code>）成为单一真源；报告与附录从它派生。关键的架构创新是<strong>对抗式 worker-critic 代理配对</strong>：每个创作型代理都配一个专职批评代理，权力严格分离（批评者从不创作，创作者从不自评）。</p>
-<p><strong>它增加了什么：</strong></p>
+<p>clo-author 将整套工作流的重心从幻灯片转向<strong>研究论文</strong>，以论文（<code>Paper/main.tex</code>）为单一真源，并从中生成报告和附录。它的关键架构设计是<strong>对抗式 worker-critic 代理配对</strong>：每个创作型代理都配一名专职批评代理，两者职责严格分开，批评代理不负责创作，创作代理也不评价自己的成果。</p>
+<p><strong>主要新增能力：</strong></p>
 <ul>
-<li><strong>17 个专职代理</strong>，组织成 6 对 worker-critic（Librarian、Explorer、Strategist、Coder、Writer、Storyteller — 每个都配一位专职批评者），外加独立代理（data-engineer、domain-referee、methods-referee、orchestrator、verifier）</li>
-<li><strong>按阶段变化的严厉梯度</strong> — 批评者在 Discovery 阶段是鼓励的，Strategy 阶段是建设性的，Execution 阶段是严格的，Peer Review 阶段是对抗式的</li>
-<li><strong>加权汇总打分</strong>，各组成部分有下限：文献 10%、数据 10%、识别 25%、代码 15%、论文 25%、打磨 10%、复现 5%。投稿门禁（≥ 95）要求每个组成部分各自 ≥ 80</li>
-<li><strong>模拟盲审同行评审</strong> — 两位独立的 Referee 代理加一位 Editor 做编辑决定（Accept / Minor / Major / Reject）</li>
-<li><strong>去 AI 腔的一道</strong> — 在四个类别（结构性小动作、用词痕迹、修辞模式、排版痕迹）里识别并剥掉 24 种 AI 写作模式</li>
-<li><strong>领域画像系统</strong> — 一份可配置的领域专属校准文件，所有代理都读它</li>
-<li><strong>完整的投稿流水线</strong> — 期刊定位、R&amp;R 回复路由（把审稿意见分类为 NEW ANALYSIS / CLARIFICATION / DISAGREE / MINOR）、AEA 复现合规、预分析计划、投稿信生成</li>
+<li><strong>v4.x 的 17 个专职代理</strong>：组成 6 对 worker-critic，即 Librarian、Explorer、Strategist、Coder、Writer、Storyteller 各自搭配一名专职批评者；另有独立代理 data-engineer、domain-referee、methods-referee、orchestrator、verifier</li>
+<li><strong>随阶段调整的审读严格程度</strong>：Discovery 阶段以鼓励为主，Strategy 阶段提供建设性意见，Execution 阶段严格审查，Peer Review 阶段进行对抗式审读</li>
+<li><strong>加权汇总评分</strong>：文献占 10%、数据占 10%、识别占 25%、代码占 15%、论文占 25%、打磨占 10%、复现占 5%。投稿门禁要求总分 ≥ 95，并且每个组成部分都 ≥ 80</li>
+<li><strong>模拟盲审同行评审</strong>：由两位独立的 Referee 代理评审，再由一位 Editor 作出编辑决定（Accept / Minor / Major / Reject）</li>
+<li><strong>AI 写作痕迹清理</strong>：识别并去除四类共 24 种 AI 写作模式，这四类是结构性手法、用词痕迹、修辞模式和排版痕迹</li>
+<li><strong>领域画像系统</strong>：所有代理都会读取一份可配置的领域专属校准文件</li>
+<li><strong>完整的投稿流水线</strong>：覆盖期刊定位、R&amp;R 回复路由、AEA 复现合规、预分析计划和投稿信生成。R&amp;R 回复路由会将审稿意见分为 NEW ANALYSIS / CLARIFICATION / DISAGREE / MINOR</li>
 </ul>
-<p><strong>何时用它：</strong> 你的主要产出是研究论文，并且你想要覆盖全生命周期的生产级基础设施 — 从文献综述到期刊投稿与修回。</p>
+<p><strong>何时用它：</strong> 你的主要产出是研究论文，并且需要一套覆盖文献综述、期刊投稿和修回等环节的基础设施。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -6840,76 +6840,76 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>clo-author 在 v4 之后交付了实质性的架构。当前版本（v26.05，2026-05-10）增加了：</p>
+<p>clo-author 在 v4 之后进行了实质性的架构调整。当前版本（v26.05，2026-05-10）新增了以下内容：</p>
 <ul>
-<li><strong>MAS v2</strong> — 第二代多代理系统，worker/critic 边界更清晰，并以阶段感知的严厉梯度</li>
-<li><strong>技能中心的重构</strong> — 仓库围绕 13 个技能 + 18 个代理重组（v4.x 线上是 17 个）</li>
-<li><strong>HTML 看板</strong> — 自包含的可视界面，用于跨阶段跟踪流水线状态（不需要服务器）</li>
+<li><strong>MAS v2</strong>：第二代多代理系统，进一步划清 worker/critic 的职责边界，并根据阶段调整审读严格程度</li>
+<li><strong>技能中心重构</strong>：仓库围绕 13 个技能 + 18 个代理重新组织，v4.x 系列则有 17 个代理</li>
+<li><strong>HTML 看板</strong>：无需服务器的自包含可视界面，可跨阶段跟踪流水线状态</li>
 </ul>
-<p>像 <code>/checkpoint</code> 这样的模式（最初经许可改编自 clo-author v4.2.0）可追溯到更早的那条线；如果你今天直接 fork clo-author，你拿到的是 MAS v2 / 技能中心的布局。</p>
+<p><code>/checkpoint</code> 等模式最初经许可改编自 clo-author v4.2.0，属于更早的版本路线。现在直接 fork clo-author，得到的则是 MAS v2 和技能中心布局。</p>
 </div>
 </div>
 </section>
 <section id="claudeblattman给不写代码的学者的工作流" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="claudeblattman给不写代码的学者的工作流"><span class="header-section-number">7.2</span> claudeblattman：给不写代码的学者的工作流</h2>
 <p><strong>网站：</strong> <a href="https://claudeblattman.com">claudeblattman.com</a> <strong>仓库：</strong> <a href="https://github.com/chrisblattman/claudeblattman">chrisblattman/claudeblattman</a> <strong>作者：</strong> Chris Blattman（芝加哥大学）</p>
-<p>claudeblattman 是一份给不写代码的学者的完整指南，出自一位自述「从未写过一行代码」的政治经济学家之手。它证明上游 Claude Code 的工作流远远超出技术任务，延伸到日常学术生活。</p>
-<p><strong>它增加了什么：</strong></p>
+<p>claudeblattman 是面向不写代码学者的完整指南，作者 Chris Blattman 是一位自称「从未写过一行代码」的政治经济学家。该项目说明，上游 Claude Code 的工作流不仅适用于技术任务，也能服务日常学术工作。</p>
+<p><strong>主要新增能力：</strong></p>
 <ul>
-<li><strong>行政助理工作流</strong> — 晨间简报（天气、日程、收件箱、VIP 跟踪）、带 14 个阶段的智能邮件分诊、每日问候仪式、日程查询、待办管理</li>
-<li><strong>申请书写</strong> — 资助方画像、声音包（跨文档保持一致的写作风格）、模板门禁、带审稿意见分类的重投处理</li>
-<li><strong>独立上下文批评</strong> — 智识上的核心：拉起一个独立上下文代理来审你的作品，不带自我偏误（见 Pattern 8）</li>
-<li><strong>带单独归并的并行批评者</strong> — 持不同视角的代理各自独立工作，另一次单独的归并把它们的发现作比较（见 Pattern 9）</li>
-<li><strong>技巧流水线</strong> — 自我改进系统：给自己发邮件收技巧，<code>/tips-curate</code> 做质量过滤，<code>/tips-integrate</code> 把它们转成具体的配置改动</li>
-<li><strong>深度校准</strong> — Light/Standard/Deep 三档彻底程度，防止对简单请求过度工程化</li>
-<li><strong>优雅降级</strong> — 每个技能在残缺的基础设施下都能工作。缺 MCP 集成时给出解释，而不是报错</li>
-<li><strong>写作风格规则</strong> — 数字胜过形容词、主题句要下断言、不要清嗓子、只在有理由或数字时才限定</li>
+<li><strong>行政助理工作流</strong>：晨间简报涵盖天气、日程、收件箱和 VIP 跟踪；还包括带 14 个阶段的智能邮件分诊、每日问候仪式、日程查询和待办管理</li>
+<li><strong>申请书写</strong>：资助方画像、用于跨文档保持写作风格一致的声音包、模板门禁，以及按审稿意见分类处理重投</li>
+<li><strong>独立上下文批评</strong>：在独立上下文中启动代理审阅作品，避免自我偏误（见 Pattern 8）</li>
+<li><strong>并行批评与单独归并</strong>：不同视角的代理各自独立工作，再通过一次单独的归并比较它们的发现（见 Pattern 9）</li>
+<li><strong>技巧流水线</strong>：把技巧通过邮件发给自己，用 <code>/tips-curate</code> 按质量筛选，再由 <code>/tips-integrate</code> 转化为具体配置改动，形成自我改进系统</li>
+<li><strong>深度校准</strong>：提供 Light/Standard/Deep 三档处理深度，避免把简单请求过度工程化</li>
+<li><strong>优雅降级</strong>：即使基础设施不完整，每个技能也能工作；缺少 MCP 集成时会解释情况，而不是直接报错</li>
+<li><strong>写作风格规则</strong>：优先用数字而非形容词，主题句直接给出论断，删去没有信息的开场，只在有理由或数字支持时加限定</li>
 </ul>
-<p><strong>何时用它：</strong> 你刚接触 WorkBuddy，想要编程之外的实用日常工作流，或者想看看一个不写程序的学者是怎么搭出一套精巧系统的。</p>
+<p><strong>何时用它：</strong> 你刚接触 WorkBuddy，需要编程之外的实用日常工作流，或想参考不写程序的学者如何搭建一套完整系统。</p>
 </section>
 <section id="xu-yang2026可复现性作为一种架构" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="xu-yang2026可复现性作为一种架构"><span class="header-section-number">7.3</span> Xu &amp; Yang（2026）：可复现性作为一种架构</h2>
 <p><strong>论文：</strong> Yiqing Xu（斯坦福）与 Leo Yang Yang（HKBU），“<a href="https://yiqingxu.org/papers/2026_ai/AI_reproducibility.pdf">Scaling Reproducibility: An AI-Assisted Workflow for Large-Scale Reanalysis</a>”，2026。</p>
-<p>这篇论文把本工作流凭直觉使用的一些原则形式化了。它展示了一条 AI 辅助流水线在 92 篇论文（215 个设定）上达到 <strong>100% 可复现</strong> — 以数据和代码可获取为条件 — 每篇论文处理时间不到四分钟。</p>
+<p>这篇论文将本工作流中一些凭直觉采用的原则形式化。论文报告的 AI 辅助流水线处理了 92 篇论文、215 个设定；在数据和代码均可获取的条件下，可复现率达到 <strong>100%</strong>，每篇论文的处理时间不到四分钟。</p>
 <p><strong>关键原则：</strong></p>
 <ul>
-<li><strong>模板-执行器分离</strong> — 人设计诊断模板（量什么），AI 负责执行（怎么跑）。对应我们的先规格后计划工作流。</li>
-<li><strong>三层架构</strong> — LLM 编排器（协调）→ 技能描述与知识库（契约与累积经验）→ 确定性代理代码（数值工作）。对应我们的编排器 → 技能/规则 → 代理。</li>
-<li><strong>结构化的中间文件</strong> — 代理之间通过磁盘上的标准化文件（JSON、CSV、日志）通信，而不是隐藏状态。确保每一步可查看、可重跑。</li>
-<li><strong>受版本控制的知识累积</strong> — 用 Context/Problem/Fix/Impact 格式的 SKILL.md 文件。对应我们的 <code>/learn</code> 技能。</li>
-<li><strong>在两次运行之间适配，而不是在运行之中</strong> — 修复以受版本控制的更新形式在会话之间并入，绝不在会话内打临时补丁。这保证了可复现性。</li>
+<li><strong>模板-执行器分离</strong>：人设计诊断模板，明确量什么；AI 负责执行，决定怎么跑。这对应本模板的先规格后计划工作流。</li>
+<li><strong>三层架构</strong>：LLM 编排器负责协调，技能描述与知识库提供契约和累积经验，确定性代理代码处理数值工作。这对应本模板的编排器 → 技能/规则 → 代理。</li>
+<li><strong>结构化的中间文件</strong>：代理通过磁盘上的标准化文件（JSON、CSV、日志）通信，不使用隐藏状态，因此每一步都可查看、可重跑。</li>
+<li><strong>受版本控制的知识累积</strong>：使用 Context/Problem/Fix/Impact 格式的 SKILL.md 文件，对应本模板的 <code>/learn</code> 技能。</li>
+<li><strong>在两次运行之间适配，不在运行中适配</strong>：修复只能在会话之间通过受版本控制的更新并入，绝不能在会话内临时打补丁，以保证可复现性。</li>
 </ul>
-<p><strong>何时参考它：</strong> 你在设计一条可复现工作流、搭一个复现包，或者想把本指南架构背后的原则形式化。</p>
+<p><strong>何时参考它：</strong> 你在设计可复现工作流或复现包，或者希望将本指南架构背后的原则形式化。</p>
 </section>
 <section id="mixtapetools幻灯片的修辞学" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="mixtapetools幻灯片的修辞学"><span class="header-section-number">7.4</span> MixtapeTools：幻灯片的修辞学</h2>
 <p><strong>仓库：</strong> <a href="https://github.com/scunning1975/MixtapeTools">scunning1975/MixtapeTools</a> <strong>作者：</strong> Scott Cunningham（贝勒大学），《Causal Inference: The Mixtape》的作者</p>
-<p>MixtapeTools 提供了学术演示设计的哲学与实践框架（见 Pattern 14）。在「幻灯片的修辞学」之外，它还包含：</p>
+<p>MixtapeTools 提供学术演示设计的理念与实践框架（见 Pattern 14）。除「幻灯片的修辞学」外，它还包含：</p>
 <ul>
-<li><strong>Referee 2</strong> — 一套系统化的 5 轮审计对抗协议，用于审读与复现实证研究</li>
-<li><strong>幻灯片生成提示词</strong> — 一份经过检验、可自定义的多代理提示词，用于生成 Beamer 幻灯片（构建者 → 修辞审阅者 → 图形专员）</li>
-<li><strong>示例幻灯片</strong>，附专业配色、自定义 ggplot2 主题（<code>theme_rhetoric()</code>）与完整的 Beamer 模板</li>
-<li><strong>零警告编译标准</strong> — 连 0.5pt 的 overfull hbox 都必须修掉</li>
+<li><strong>Referee 2</strong>：一套包含 5 轮审计的系统化对抗协议，用于审读和复现实证研究</li>
+<li><strong>幻灯片生成提示词</strong>：一份经过检验且可自定义的多代理提示词，用于生成 Beamer 幻灯片，流程为构建者 → 修辞审阅者 → 图形专员</li>
+<li><strong>示例幻灯片</strong>：配有专业配色、自定义 ggplot2 主题 <code>theme_rhetoric()</code> 和完整的 Beamer 模板</li>
+<li><strong>零警告编译标准</strong>：即使 overfull hbox 只有 0.5pt，也必须修复</li>
 </ul>
-<p><strong>何时参考它：</strong> 你想让演示文稿真正漂亮、修辞上真正有效，或者想要一条经过检验的、给 Claude Code 用的幻灯片生成工作流。</p>
+<p><strong>何时参考它：</strong> 你希望提升演示文稿的视觉与修辞效果，或需要一套经过检验的 Claude Code 幻灯片生成工作流。</p>
 </section>
 <section id="aea-data-editor-模板" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="aea-data-editor-模板"><span class="header-section-number">7.5</span> AEA Data Editor 模板</h2>
 <p><strong>网站：</strong> <a href="https://social-science-data-editors.github.io/template_README/">social-science-data-editors.github.io/template_README</a> <strong>仓库：</strong> <a href="https://github.com/social-science-data-editors/template_README">social-science-data-editors/template_README</a> <strong>维护者：</strong> Lars Vilhuber（康奈尔大学）及 REStat、EJ、CJE 的编辑</p>
-<p>这是 5 家以上主要经济学期刊对复现包的合规标准（见 Pattern 13）。提供 Markdown、Word、LaTeX 与 PDF 四种格式。</p>
-<p><strong>何时参考它：</strong> 你在为投稿准备复现包，需要拿到数据编辑们会逐条对照的那份原始模板。</p>
+<p>这是 5 家以上主要经济学期刊采用的复现包合规标准（见 Pattern 13），提供 Markdown、Word、LaTeX 和 PDF 四种格式。</p>
+<p><strong>何时参考它：</strong> 你在为投稿准备复现包，需要拿到数据编辑会逐条核对的原始模板。</p>
 </section>
 <section id="autoresearch基于约束的自主研究" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="autoresearch基于约束的自主研究"><span class="header-section-number">7.6</span> autoresearch：基于约束的自主研究</h2>
 <p><strong>仓库：</strong> <a href="https://github.com/karpathy/autoresearch">karpathy/autoresearch</a> <strong>作者：</strong> Andrej Karpathy</p>
-<p>一个自主研究代理：无需人工干预，持续跑实验 — 改代码、训模型、评结果。它对学术工作流的关键启示是：</p>
+<p>这是一个自主研究代理，无需人工干预即可持续运行实验，包括修改代码、训练模型和评估结果。它为学术工作流提供的主要启示是：</p>
 <ul>
-<li><strong>把 <code>program.md</code> 当宪法性文件</strong> — 一个 Markdown 文件就界定了代理<strong>可以</strong>改什么（架构、超参）、<strong>不可以</strong>改什么（数据管线、评估指标），以及成功长什么样（验证指标，越低越好）</li>
-<li><strong>结构化记录结果</strong> — 每个实验都记进一个 TSV，含分支名、指标、状态</li>
-<li><strong>限定时间的迭代</strong> — 固定的训练窗口让实验之间可比</li>
+<li><strong>把 <code>program.md</code> 作为最高约束</strong>：用一个 Markdown 文件明确规定代理<strong>可以</strong>修改哪些内容，例如架构和超参数；<strong>不可以</strong>修改哪些内容，例如数据管线和评估指标；以及如何判断成功，例如验证指标越低越好</li>
+<li><strong>结构化记录结果</strong>：每个实验都记录到一个 TSV 文件中，包括分支名、指标和状态</li>
+<li><strong>限定时间的迭代</strong>：固定训练窗口，确保不同实验可以比较</li>
 </ul>
-<p><strong>何时参考它：</strong> 你在跑迭代式计算实验（蒙特卡洛模拟、超参搜索、模型比较），想让 WorkBuddy 在既定约束内半自主地探索这个空间。</p>
-<p><strong>示例：</strong> 把 <code>program.md</code> 这一模式套到一项蒙特卡洛研究上：</p>
+<p><strong>何时参考它：</strong> 你在运行迭代式计算实验，例如蒙特卡洛模拟、超参数搜索或模型比较，并希望 WorkBuddy 在既定约束内半自主探索这个空间。</p>
+<p><strong>示例：</strong> 将 <code>program.md</code> 模式用于一项蒙特卡洛研究：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># program.md — Monte Carlo Experiment Constraints</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## What You CAN Modify</span></span>
@@ -6927,38 +6927,38 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="stata-mcp执行-stata-的-mcp-服务器" class="level2" data-number="7.7">
 <h2 data-number="7.7" class="anchored" data-anchor-id="stata-mcp执行-stata-的-mcp-服务器"><span class="header-section-number">7.7</span> stata-mcp：执行 Stata 的 MCP 服务器</h2>
-<p><strong>仓库：</strong> <a href="https://github.com/SepineTam/stata-mcp">SepineTam/stata-mcp</a> <strong>作者：</strong> SepineTam（171+ star、91 个 release，2026 年 5 月时为 v1.17.3）</p>
-<p>一个成熟的 MCP 服务器，让本平台的代理通过带命令守卫的接口执行 Stata <code>.do</code> 文件 — 拒绝破坏性 shell 操作（<code>!/shell/erase</code> 等）、监控内存，并与 Stata Language Server 配合。<strong>每个用户装一次即可：</strong>在左侧「插件 → MCP 服务器 → 配置 MCP」里添加，或写进 <code>~/.workbuddy/mcp.json</code>：</p>
+<p><strong>仓库：</strong> <a href="https://github.com/SepineTam/stata-mcp">SepineTam/stata-mcp</a> <strong>作者：</strong> SepineTam（截至 2026 年 5 月，171+ star、91 个 release，版本为 v1.17.3）</p>
+<p>这个 MCP 服务器让本平台的代理通过带命令限制的接口执行 Stata <code>.do</code> 文件。该服务器会拒绝 <code>!</code>、<code>shell</code>、<code>erase</code> 等高风险命令或操作，还会监控内存，并与 Stata Language Server 配合。<strong>每个用户只需安装一次：</strong>在左侧「插件 → MCP 服务器 → 配置 MCP」里添加，或写进 <code>~/.workbuddy/mcp.json</code>：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;stata-mcp&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;uvx&quot;</span><span class="fu">,</span> <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;stata-mcp&quot;</span><span class="ot">]</span> <span class="fu">}</span> <span class="fu">}</span> <span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>需要 <code>uv</code> 和本地安装的 Stata。（上游用的是 <code>claude mcp add</code> 那条命令，本平台没有对应实现。）</p>
-<p><strong>为何本模板需要它：</strong> v1.9.0 为 Stata 优先的项目加了 <a href="#sec-appendix"><code>/stata-replication</code></a>，该技能依赖这个 MCP 服务器。R 优先的项目（本模板最初的关注点）继续用 <a href="#sec-appendix"><code>/data-analysis</code></a>；两个技能是平行的 — 流水线形状相同，只是源语言不同。原始复现包用 Stata 写的 AEA 投稿，就是它的典型用例。</p>
-<p>端到端的 Stata 工作流见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md"><code>.codebuddy/rules/stata-code-conventions.md</code></a>（文件头脚手架、带编号的流水线、esttab 表格、聚类纪律、AEA Data Editor 合规）。</p>
+<p>使用时需要 <code>uv</code> 和本地安装的 Stata。上游使用 <code>claude mcp add</code> 命令，本平台没有对应实现。</p>
+<p><strong>为何本模板需要它：</strong> v1.9.0 为以 Stata 为主的项目增加了 <a href="#sec-appendix"><code>/stata-replication</code></a>，该技能依赖这个 MCP 服务器。以 R 为主的项目是本模板最初关注的方向，可继续使用 <a href="#sec-appendix"><code>/data-analysis</code></a>。两个技能采用相同的流水线结构，只是源语言不同。它特别适合复现包原本使用 Stata 编写的 AEA 投稿。</p>
+<p>完整的 Stata 工作流见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/stata-code-conventions.md"><code>.codebuddy/rules/stata-code-conventions.md</code></a>，内容包括文件头模板、带编号的流水线、esttab 表格、聚类规范和 AEA Data Editor 合规。</p>
 </section>
 <section id="claudecodetools编辑人格" class="level2" data-number="7.8">
 <h2 data-number="7.8" class="anchored" data-anchor-id="claudecodetools编辑人格"><span class="header-section-number">7.8</span> ClaudeCodeTools：编辑人格</h2>
 <p><strong>仓库：</strong> <a href="https://github.com/aspi6246/ClaudeCodeTools">aspi6246/ClaudeCodeTools</a></p>
-<p>一组 Claude Code 人格设定，其中「The Editor」是一个结构极为严整的学术论文审阅者，跑七轮顺序审计（见 <a href="#pattern-15-sequential-audits">Pattern 15</a>）。值得注意的特性：</p>
+<p>该项目提供一组 Claude Code 人格设定。其中，「The Editor」以严密的结构审阅学术论文，并运行七轮顺序审计（见 <a href="#pattern-15-sequential-audits">Pattern 15</a>）。主要特性包括：</p>
 <ul>
-<li><strong>R&amp;R 模式</strong> — 跟踪审稿意见，并把每一条关切与修改稿逐条交叉核对</li>
-<li><strong>直白、具体的反馈</strong> — 说「这一段逻辑不通」，而不是「或可更清晰」</li>
-<li><strong>「So What」试金石</strong> — 每篇论文都必须清楚回答的五个问题</li>
+<li><strong>R&amp;R 模式</strong>：跟踪审稿意见，将每一条关切与修改稿逐项交叉核对</li>
+<li><strong>直白、具体的反馈</strong>：直接指出「这一段逻辑不通」，而不是含糊地说「或可更清晰」</li>
+<li><strong>「So What」试金石</strong>：每篇论文都必须清楚回答五个问题</li>
 </ul>
-<p><strong>何时参考它：</strong> 你想在投稿前做一遍结构化的论文审读，或者正在回复审稿意见、需要系统追踪哪些关切已经处理。</p>
+<p><strong>何时参考它：</strong> 你想在投稿前做一遍结构化的论文审读，或正在回复审稿意见，需要系统追踪哪些关切已经处理。</p>
 </section>
 <section id="上游-cli-命令在桌面端不可用或未证实" class="level2" data-number="7.9">
 <h2 data-number="7.9" class="anchored" data-anchor-id="上游-cli-命令在桌面端不可用或未证实"><span class="header-section-number">7.9</span> 上游 CLI 命令在桌面端不可用或未证实</h2>
-<p>上游 Claude Code 有一批一方（first-party）命令——<code>/team-onboarding</code>、<code>/autofix-pr</code>、<code>/powerup</code>、Ultraplan、<code>/loop</code>、<code>/fewer-permission-prompts</code>、<code>claude agents</code>。本平台的桌面客户端<strong>没有命令行</strong>，这些命令在这里不可用；它们对应的能力在本模板里以技能形式实现——例如 <code>/permission-check</code>（诊断权限弹窗疲劳）、<code>/commit</code>（提交前质量门禁）、fork + 自定义（团队 onboarding）。</p>
-<p><code>/goal</code> 单列，不与上面的确定不可用项混写：<a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>明确支持它，并描述 Web UI / ACP 面板；本机桌面共享引擎也有 <code>/goal</code> 命令注册和 <code>GoalService</code> 实现（L2）。但截至 2026-11-07 没有 WorkBuddy 桌面端运行时观测，所以桌面支持状态是<strong>未证实</strong>，本指南不提供「桌面可用」断言。证据与复核命令见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/platform-facts.md"><code>platform-facts.md</code></a>。</p>
+<p>上游 Claude Code 提供多项一方（first-party）命令，包括 <code>/team-onboarding</code>、<code>/autofix-pr</code>、<code>/powerup</code>、Ultraplan、<code>/loop</code>、<code>/fewer-permission-prompts</code>、<code>claude agents</code>。本平台的桌面客户端<strong>没有命令行</strong>，因此无法使用这些命令。本模板用技能或仓库自定义提供相应能力，例如用 <code>/permission-check</code> 诊断反复出现权限弹窗的问题，用 <code>/commit</code> 执行提交前质量门禁，以及通过 fork 和自定义完成团队接入。</p>
+<p><code>/goal</code> 需要单独说明，不能与上述已确认不可用的命令并列。<a href="https://www.workbuddy.cn/docs/cli/goal">CodeBuddy Code CLI 官方文档</a>明确支持该命令，并介绍了 Web UI / ACP 面板；本机桌面共享引擎也注册了 <code>/goal</code> 命令，并实现了 <code>GoalService</code>（L2）。不过，截至 2026-11-07，尚无 WorkBuddy 桌面端的运行时观测证据，因此桌面支持状态仍为<strong>未证实</strong>，本指南也不声称「桌面可用」。证据和复核命令见 <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/references/platform-facts.md"><code>platform-facts.md</code></a>。</p>
 </section>
 <section id="sec-community" class="level2" data-number="7.10">
 <h2 data-number="7.10" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">7.10</span> 社区采用情况</h2>
-<p>多个学科的研究组都 fork 并改造过这套工作流，用于自己的项目 — <strong>2026 年 3 月调研时为 15+ 个研究组</strong>；此后仓库已超过 <strong>2,900 个 fork</strong>、1,500 个 star（GitHub，2026-08-24）。fork 不等于研究组 — 调研数字和 fork 数度量的是两回事，且只有前者经过手工核对：</p>
+<p>多个学科的研究组曾 fork 并改造这套工作流，用于自己的项目。<strong>2026 年 3 月调研时，这类研究组有 15+ 个</strong>；此后仓库累计超过 <strong>2,900 个 fork</strong> 和 1,500 个 star（GitHub，2026-08-24）。fork 数不等于研究组数：调研数字与 fork 数衡量的是不同对象，而且只有前者经过手工核对：</p>
 <ul>
-<li><strong>经济学</strong> — 中国创新政策、心理健康与裁员、AIGC 与股价、医疗领域的资本/劳动份额</li>
-<li><strong>能源</strong> — 尼泊尔与全球能源经济学、光伏组件可靠性</li>
-<li><strong>教学</strong> — ECN 152 课程开发、Econ 730 因果面板数据</li>
+<li><strong>经济学</strong>：中国创新政策、心理健康与裁员、AIGC 与股价、医疗领域的资本/劳动份额</li>
+<li><strong>能源</strong>：尼泊尔与全球能源经济学、光伏组件可靠性</li>
+<li><strong>教学</strong>：ECN 152 课程开发、Econ 730 因果面板数据</li>
 </ul>
-<p>每一次改造都走同一条路子：fork 模板、填 <code>CODEBUDDY.md</code> 占位符、自定义领域审阅者、加领域专属技能。基础设施（编排器、钩子、质量门禁）可以不加修改地平移。</p>
+<p>这些改造遵循同一流程：fork 模板、填写 <code>CODEBUDDY.md</code> 占位符、自定义领域审阅者，以及添加领域专属技能。编排器、钩子和质量门禁等基础设施无需修改即可沿用。</p>
 <hr>
 </section>
 </section>
