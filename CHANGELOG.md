@@ -8,6 +8,12 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## Unreleased — 静默失效与假告警：平台事实、调度、钩子、引文、effort、远程只读、Beamer 编译、中文渲染、扇出、R 探测、Claude 称谓残留、技能死字段、指南去 Claude 化、平台能力章节、私有开关双读
 
+### Changed — 全部代理按中文表达重写并修复审读契约
+
+19 个代理按中文理解顺序重写，保留模型档位、effort 和输出结构。独立复核中立化了未经
+owner 签核的方法诊断，统一方差人数、CoVe 状态、差值 MCSE、图形与引文映射、五票输入和只读
+边界；修复 TikZ 贝塞尔测量、真实退出码、slide-qa 证据与 ViewImage 图像核验，无法看图时不得假 PASS。
+
 ### Changed — 全部技能按中文表达重写并修复 WorkBuddy 执行契约
 
 63 个技能按中文理解顺序重写，同步中文触发描述，保留字段、代码和实质限制。多轮独立复核
