@@ -112,7 +112,7 @@ oracle -s did-proof-audit-r1 -p "$(cat prompt.md)" -f main.tex supplement.tex --
 
 > **记录实际作答的是哪个模型。** 选择器随账号而异，而且会在你脚下变化；请求的别名不是证据。把运行里解析出的模型与投入（`--dry-run` 的 `target=` 行、会话的 `meta.json`，或对话头部）抄进归档的 `meta.json`，写成 `oracle.model`、`oracle.effort`、`oracle.transport` 与 `oracle.cli`——这正是 2026-08-23 那次咨询已经记录的字段。
 
-> **把逐字记录归档进仓库——会话目录不是记录。** `~/.oracle/sessions/` 是本机的、未纳入版本控制，而且再来一次 `--force` 重启就会被覆盖。把每次咨询的 `artifacts/transcript.md` 与它的 `meta.json`（里面带着确切的提示词、文件清单、会话 URL）复制进一个带日期的目录：`quality_reports/oracle_audits/YYYY-MM-DD_<topic>/`。此后**任何依赖某次咨询的断言都引用归档的逐字记录**，绝不是从会话记忆里回忆出的「oracle 说过」——§5 的断言记录会点明那个路径。一次没人能重开的咨询是轶事，后来的读者分不清一条已裁定的发现与一条凭记忆复述的发现。
+> **逐字记录必须持久归档——会话目录不是记录。** `~/.oracle/sessions/` 是本机的、未纳入版本控制，而且再来一次 `--force` 重启就会被覆盖。把每次咨询的 `artifacts/transcript.md` 与它的 `meta.json`（里面带着确切的提示词、文件清单、会话 URL）复制进一个带日期的本机目录：`quality_reports/oracle_audits/YYYY-MM-DD_<topic>/`。原始记录默认保留本机、不入库；公开前必须做披露检查。公开断言依赖某次咨询时，必须提供可重开的脱敏证据，并引用该证据而不是会话记忆；确需公开原始记录时，在披露审查后显式提交。§5 的断言记录应点明相应证据路径。一次没人能重开的咨询是轶事，后来的读者分不清一条已裁定的发现与一条凭记忆复述的发现。
 
 ---
 

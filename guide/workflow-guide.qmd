@@ -1269,7 +1269,7 @@ WorkBuddy 的原生自动记忆位于用户级目录 `~/.workbuddy/projects/<pro
 
 模板把记忆分成三层，详见 [`meta-governance.md`](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/meta-governance.md)：
 
-- **根 `MEMORY.md`**：人工筛选、可以提交，长度 ≤ 200 行、体积 ≤ 25KB。记录对所有 fork 用户都有用的通用经验，包括工作流模式、设计原则、文档标准和跨领域通用的质量阈值。
+- **根 `MEMORY.md`**：人工筛选、可以提交，长度 ≤ 200 行、体积严格 `<25KB`。记录对所有 fork 用户都有用的通用经验，包括工作流模式、设计原则、文档标准和跨领域通用的质量阈值。
 - **原生自动记忆**：位于用户级 `~/.workbuddy/projects/<project>/memory/`，只保存在本机，永不提交。记录机器和用户相关经验，例如 TeX 安装问题、文件路径、个人档位偏好和工具版本变通。
 - **项目内 `.workbuddy/memory/`**：已 gitignore，保存本仓库的按日工作日志和本机状态。这些日志只保留在本机，不删除、不提交，也不等同于用户级原生自动记忆。
 
@@ -1284,8 +1284,8 @@ WorkBuddy 的原生自动记忆位于用户级目录 `~/.workbuddy/projects/<pro
 1. **通用性**：非经济学领域的 fork 用户能否受益？
 2. **时效性**：条目是否与当前代码矛盾？需要用 `grep` 检查被引用文件。
 3. **冗余**：MEMORY.md、CODEBUDDY.md 或某条规则是否已经包含它？
-4. **证据**：条目是否引用原始事故、文件或原因？
-5. **格式**：是否遵循 `[LEARN:category] wrong → right`？
+4. **证据**：条目是否说明通用理由和适用边界，并提供现存文件、可运行命令或当前行为作为可复核证据？单次事故或具体案例仅作可选补充。
+5. **格式**：是否以 `[LEARN:category] <原则/总结>` 开头，并包含通用理由、适用边界和当前可复核证据？不强制采用 wrong → right。
 
 5 票中有 3 票以上 YES 时，议事会建议晋升，最终移动仍须用户批准。批评者运行在*隔离的独立上下文*中，看不到彼此的投票，因此可以分别评估各维度，减少相互影响。按照 [model-routing.md](https://github.com/Sellyew/Workbuddy-workflow/blob/main/.codebuddy/rules/model-routing.md)，这项审读偏机械，批评者使用 `lite`。
 
@@ -2601,7 +2601,7 @@ research_spec_<topic>.md  ──────→  YYYY-MM-DD_<slug>.md
 
 先完成穷尽的内部覆盖，再把外部裁判用于**确认，而不是发现**。这样成本更低，得到的答案也更明确。
 
-**归档对话记录。** 外部裁判的每一轮交流都是决策输入；缺少记录，就无法重建该决策。对话记录保存到 `quality_reports/oracle_audits/YYYY-MM-DD_topic/` 并**提交**，与 `qualification/` 和 `passports/` 一样，不像会话日志和计划目录那样被 gitignore。这种差异是有意设计的：计划和会话日志属于工作脚手架，而产生 REFUTED 判定的交流属于证据。只存在于聊天窗口中的证据无法发挥证据作用。
+**持久归档对话记录。** 外部裁判的每一轮交流都是决策输入；缺少记录，就无法重建该决策。原始记录保存到本机 `quality_reports/oracle_audits/YYYY-MM-DD_topic/`，默认不入库。公开前必须做披露检查；公开断言依赖某次咨询时，提供可重开的脱敏证据，确需公开原始记录时在审查后显式提交。任何依赖咨询的断言都应引用归档证据，而不是聊天窗口或会话记忆。
 
 ---
 

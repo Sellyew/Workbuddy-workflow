@@ -468,9 +468,10 @@ cd my-project
 
 ## 版本与贡献
 
-- **有什么新东西：** 见 [CHANGELOG.md](CHANGELOG.md)。项目采用较宽松的 semver：破坏性变更会提升大版本号，你可以自行决定何时拉取更新。
+- **版本说明：** 当前发布与升级说明见 [CHANGELOG.md](CHANGELOG.md)，历史发布记录见 git tags/history。项目采用较宽松的 semver：破坏性变更会提升大版本号，你可以自行决定何时拉取更新。
 - **怎么贡献：** 见 [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)。欢迎提交可推广到其他项目的改进；只适用于你的 fork 的工作，请留在自己的仓库中。
-- **固定到某个版本：** 运行 `git checkout $(git describe --tags --abbrev=0)` 可切换到最新的发布标签；各版本内容见 [CHANGELOG.md](CHANGELOG.md)。
+- **维护与同步：** 维护者流程见 [docs/maintenance/UPSTREAM.md](docs/maintenance/UPSTREAM.md)。
+- **固定到某个版本：** 运行 `git checkout $(git describe --tags --abbrev=0)` 可切换到最新的发布标签；也可用 `git tag --list` 查看标签，历史内容见 git tags/history。
 
 ---
 

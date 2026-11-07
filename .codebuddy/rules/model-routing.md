@@ -10,7 +10,7 @@ paths:
 > 本平台**只有三档**：`default` / `lite` / `reasoning`，没有第四层。
 > 本平台也有 `effort` 轴，但它独立于模型档位：代理在 frontmatter 中用 `effort:` 设置，取值范围为 `minimal`–`max`，另有 `/effort` 命令。它调整的是**思考预算**，不会改变模型档位。**写在技能中无效。**
 > 两个轴彼此正交，因此下文先说明模型档位，最后单独说明 effort。
-> 上游原文见 `UPSTREAM.md` 记录的上游仓库。
+> 上游归属与同步契约见 [`docs/maintenance/UPSTREAM.md`](../../docs/maintenance/UPSTREAM.md)。
 
 **应根据任务需要的判断能力选择模型档位。**机械任务使用 `lite`，审读与批评使用 `default`，只有高度依赖判断的任务才使用 `reasoning`。Aider 的架构师/编辑分工是这种分工在社区中的标准形式。
 
@@ -27,7 +27,7 @@ paths:
 ```yaml
 ---
 name: quarto-fixer
-model: default      # 原来是 sonnet
+model: default
 ---
 ```
 
@@ -46,8 +46,6 @@ model: default      # 原来是 sonnet
 1. **先降低模型档位，再降低 effort。**换档会更换模型，不同档位的价差通常大于同一档位内不同思考预算的价差；即使把 `effort` 降到 `minimal`，使用的仍是同一个模型。
 2. **关卡代理的模型档位和 effort 都不能降低。**`editor`、`domain-referee`、`methods-referee`、`claim-verifier` 应保持 `reasoning` + `effort: high`。原因见下面的反面模式。
 3. **控制成本应优先缩小上下文，而不是降低模型档位。**独立上下文的子代理只阅读自己负责审读的材料，成本远低于让一个大模型读取整套仓库。这也是 `orchestrator-protocol.md` 的扇出既能降低成本又能提高质量的原因。
-
-**不要再写「本平台没有 effort 轴」。**2026-10-30 早些时候曾出现这一错误判断，原因是只检查了代理**名录**的 schema，没有检查加载器。它曾导致 18 个代理的 `effort:` 被删除，之后又由同一批人恢复。证据与命令见 [`platform-facts.md`](../references/platform-facts.md)。
 
 ## 为什么不是所有代理都用 `reasoning`
 

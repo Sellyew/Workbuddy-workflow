@@ -18,9 +18,6 @@ ROOT_ALLOW = {
     # .codebuddy/CODEBUDDY.md → AGENTS.md，且它**不读** CLAUDE.md，所以这个文件
     # 必须留在根目录才能成为入口；放进子目录等于让工作流没有全局指令。
     "README.md", "CODEBUDDY.md", "AGENTS.md", "MEMORY.md", "CHANGELOG.md", "TROUBLESHOOTING.md",
-    # [WorkBuddy 适配] 上游同步说明。放在根目录是有意的：它是**每次合并前**
-    # 第一个该被读到的文件，藏进 docs/ 等于没人会读。
-    "UPSTREAM.md",
     "LICENSE", "CITATION.cff", ".gitignore", ".gitattributes",
     "Bibliography_base.bib", ".DS_Store",
     # Records which source produced the current rendered artifacts. Must live at

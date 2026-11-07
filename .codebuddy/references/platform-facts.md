@@ -2,11 +2,8 @@
 
 **这个文件只有一个用途：让每一句「本平台支持 / 不支持 X」都钉在可重跑的证据上。**
 
-它存在的理由是一次事故。v3.0.0 依据 `P1_migration_verification.md` 的 T13 一行
-（「`plansDirectory` / `statusLine` 暂不支持」）删掉了 `.codebuddy/settings.json` 的
-`permissions` 块，然后仓库里写了四份文档解释它为什么该被删。复测结果：`permissions`
-引擎读；`statusLine` 只核实了桌面渲染层不消费，引擎是否读取该设置键未证实；只有
-`plansDirectory` 是真的零命中。**错误起点不是判断失误，是没有出处的判断被当成事实继承了四次。**
+每条结论都必须标注观测级别、核查日期和可重跑证据。没有证据的判断不得继承为平台事实；
+「引擎未证实」「桌面端未证实」与「不支持」是不同结论。
 
 ## 使用规约
 
@@ -28,8 +25,7 @@
 **L1 与 L2 的区别是这道台账的核心。** `statusLine` 的 8 次命中全是 HTTP 头，
 既不能支撑 L1，也不能支撑 L2；已核实的只是桌面渲染层不消费，引擎读取设置键未证实。
 反过来，`effort` 在代理**列表** schema 里没有位置，却在加载器、`--effort` 旗标与
-`/effort` 命令里各有一条消费路径——**只看命中数、或者只查一个 schema，都会得出与事实相反的结论**，
-两种错法这道台账都犯过。
+`/effort` 命令里各有一条消费路径。只看命中数或只查一个 schema，都不足以判断字段是否生效。
 
 ## 环境
 
@@ -41,7 +37,7 @@ export H="$WB/app.asar.unpacked/node_modules/@genie/agent-harness"
 export S="$H/cli/dist-server/shared.cjs"
 ```
 
-本文历史观测来自客户端版本 `37.10.3-42`（2026-10-27 构建）；换版本后必须重新核查。事实分居三个包，**搜错包会得到假的零命中**：
+下列观测使用客户端版本 `37.10.3-42`（2026-10-27 构建）；其他版本必须重新核查。事实分居三个包，**搜错包会得到假的零命中**：
 
 | 问题类型 | 该去哪个文件找 |
 |---|---|
@@ -51,14 +47,9 @@ export S="$H/cli/dist-server/shared.cjs"
 
 ### 宿主工具链
 
-下面几条不是 WorkBuddy 的事实，是**这台机器能不能把工作流跑起来**的事实——同一类坑：
-装好了、命令存在、错误信息却在说别的事。
-
-| 事实 | 观测级别 | 证据 | 日期 |
+| 事实 | 观测级别 | 可复现证据 | 日期 |
 |---|---|---|---|
-| kpathsea 的路径分隔符**平台相关**：POSIX `:`，**Windows 版 TeX Live `;`**。且 `TEXINPUTS` / `BIBINPUTS` **必须以分隔符结尾**——否则默认搜索路径（含 `.`）被整个替换掉 | L3 | Windows 上 `TEXINPUTS="../Preambles:"` → `! I can't find file 'HelloWorld.tex'`（文件就在）；`TEXINPUTS="../Preambles;"` → 4 页；`TEXINPUTS="../Preambles"` 同样失败；`TEXINPUTS=""` → 4 页 | 2026-10-31 |
-| **本机历史记录，不是公共机制结论**：当时 `xelatex` = TeX Live 2026（Windows 构建），`quarto`、`pdftotext`（poppler）在 PATH；当时**没有 R / Rscript**。其他机器须重新检查，不能继承这项安装状态 | L3（仅该本机、该日期） | `xelatex --version`；`which Rscript R` → not found | 2026-10-31 |
-| `quarto render` 会去取 Google Fonts。代理不通时它打印 `ProxyConnectException … 502`，但**仍然产出 HTML** | L3 | 本次渲染：`(ProxyConnectException "fonts.googleapis.com" 443 … 502)` 之后紧接 `Output created: workflow-guide.html` | 2026-10-31 |
+| kpathsea 的路径分隔符**平台相关**：POSIX `:`，**Windows 版 TeX Live `;`**。且 `TEXINPUTS` / `BIBINPUTS` **必须以分隔符结尾**——否则默认搜索路径（含 `.`）被整个替换掉 | L3 | 在 Windows 最小 TeX 项目中分别设置 `TEXINPUTS="../Preambles;"` 与 `TEXINPUTS="../Preambles"` 后运行 `xelatex`；前者可找到 preamble，后者报文件缺失。POSIX 环境将分号改为冒号重跑 | 2026-10-31 |
 
 ## 事实表
 
@@ -78,33 +69,31 @@ export S="$H/cli/dist-server/shared.cjs"
 |---|---|---|---|---|
 | 事件集合 | 引擎认 **28 个**事件，不是上游那 9 个 | L2 | `grep -ao 'HOOK_EVENT_NAMES=new Map(\[.\{300,1200\}' "$H/lib/runtime/component-protocol.js"` | 2026-10-30 |
 | 已注册的 7 个 | `PreToolUse` / `PostToolUse` / `UserPromptSubmit` / `SessionStart` / `PreCompact` / `Stop` / `Notification` **全部有发射点** | L2 | `grep -ao 'executeHooks([A-Za-z_]*\.mb\.[A-Z_]*)' "$H/cli/dist-server/shared.cjs" \| sort -u` | 2026-10-30 |
-| `PreCompact` | **会自动触发**，`trigger` 为 `auto`。2026-10-30 本机两次真实压缩各写出一份 `pre-compact-state.json`（06:25:55 / 06:30:34），`plan_path` 为 `null` 是因为那两个会话确实没有在用的计划 | **L3** | `cat ~/.workbuddy/sessions/*/pre-compact-state.json`；文件带 `"trigger": "auto"` 与 ISO 时间戳 | 2026-10-30 |
-| `Notification` | 有发射点（`SESSION_LIFECYCLE` 分支），**但仓库这一侧到 2026-10-30 为止从未真正执行过**：`notify.sh` 是 shell 脚本，而 `hook-runner.sh` 当时对一切钩子都 `exec $PY`，于是每次都是 `SyntaxError: unmatched ')'`。已改为按扩展名分派 | 发射 L2 ⏳／handler 已修 | `bash .codebuddy/hooks/lib/hook-runner.sh notify.sh <<< '{"message":"x"}'` → exit 0 且写出 `notifications.log` | 2026-10-30 |
+| `PreCompact` | **会自动触发**，`trigger` 为 `auto`；真实压缩会写出 `pre-compact-state.json` | **L3** | 触发一次自动压缩后运行 `cat ~/.workbuddy/sessions/*/pre-compact-state.json`；核对文件含 `"trigger": "auto"` 与 ISO 时间戳 | 2026-10-30 |
+| `Notification` | 有发射点（`SESSION_LIFECYCLE` 分支）；注册的 shell handler 经 `hook-runner.sh` 按扩展名分派后可执行并落盘 | 发射 L2 ⏳／handler L3 | `bash .codebuddy/hooks/lib/hook-runner.sh notify.sh <<< '{"message":"x"}'` → exit 0 且写出 `notifications.log` | 2026-10-30 |
 | 可用但未接 | `SessionEnd` · `SubagentStart` · `SubagentStop` · `PostToolUseFailure` · `FileChanged` · `PermissionDenied` · `FinalStop` · `PostCompact` · `ConfigChange` · `CwdChanged` · `InstructionsLoaded` · `WorktreeCreate/Remove` | L2 | 同上 | 2026-10-30 |
 
-**⏳ 的含义要说清**：`PreCompact` 与 `Notification` 此前被记为「尚未验证」，读起来像
-「可能不支持」。实际是发射点明确存在、只是没在本机触发过——这两件事在文档里必须区别对待。
-2026-10-30 的两次真实压缩把 `PreCompact` 抬到了 L3；`Notification` 仍是 ⏳，但它现在会落盘
-（`quality_reports/session_logs/notifications.log`），下一次触发就能自己证明，不必再靠猜。
+**⏳ 的含义要说清**：它表示代码路径存在而平台运行时触发尚未观测，不表示「可能不支持」。
+`PreCompact` 已有 L3 运行时证据；`Notification` 的发射点仍为 L2 ⏳，其 handler 已单独验证会落盘
+（`quality_reports/session_logs/notifications.log`）。
 
-**一条更贵的教训**：L2「有发射点」不等于 L3，但 L2 也不保证 handler 能跑。`Notification`
-的发射点一直在，而它的**处理器**从未成功执行过——中间隔着 `hook-runner.sh` 的解释器分派。
-判断「这个钩子在工作吗」要连着看两段：平台发射了没有，注册的命令到没到达钩子文件。后者由
-`scripts/check-hooks.py` 的 `check_wiring()` 检查，它对每条注册命令都要求「跑到、且留下痕迹」。
+L2「有发射点」不等于 L3，也不保证 handler 能跑。判断「这个钩子在工作吗」要连着看两段：
+平台是否发射，注册的命令是否到达钩子文件。后者由 `scripts/check-hooks.py` 的 `check_wiring()`
+检查，它对每条注册命令都要求「跑到、且留下痕迹」。
 
 ### 技能 / 规则 / 代理
 
 | 项 | 事实 | 级别 | 证据 | 核查 |
 |---|---|---|---|---|
-| 项目与用户技能库 | `.codebuddy/skills/` 是官方支持的项目技能目录，随仓库共享；项目级优先于用户级，用户技能库跨项目。市场安装、上传与通用创建默认进入用户技能库，随仓库共享须显式放进项目目录 | L2（目录契约）＋L3（项目目录发现） | 官方目录约定；`P1` T4 只作项目目录发现的运行时证据 | 2026-11-07 |
-| 技能发现与显式调用 | 项目技能可被引擎发现，显式 `/name` 可调。**这项证据不自动覆盖自动调用或 UI 可见性** | L3（仅限发现与显式调用） | `P1` T4；本会话技能列表来源即此目录 | 2026-10-29 |
+| 项目与用户技能库 | `.codebuddy/skills/` 是官方支持的项目技能目录，随仓库共享；项目级优先于用户级，用户技能库跨项目。市场安装、上传与通用创建默认进入用户技能库，随仓库共享须显式放进项目目录 | L2（目录契约）＋L3（项目目录发现） | 官方目录约定；在项目目录放置最小技能，确认引擎发现并显式调用成功 | 2026-11-07 |
+| 技能发现与显式调用 | 项目技能可被引擎发现，显式 `/name` 可调。**这项证据不自动覆盖自动调用或 UI 可见性** | L3（仅限发现与显式调用） | 创建只返回固定标记的最小项目技能，另开会话用 `/name` 调用并核对标记 | 2026-10-29 |
 | 技能加载 | 元数据用于匹配，正文在触发时加载，附属材料按需读取；不能改写为「每轮从磁盘读取所有描述」 | L2 | `$S` 中的技能元数据解析与触发加载路径；复核时分别记录匹配、正文加载、附属读取 | 2026-11-07 |
 | 技能热重载 | **未证实**，不得写「无需重启」。若未按新正文运行，记录客户端与技能版本，新开会话复测 | 未验证 | 没有足以支撑热重载的运行时证据 | 2026-11-07 |
 | 动态命令注入 `` !`command` `` | 该语法是否在技能加载时执行并注入输出**尚未实测**，不得断言命令必然运行；确需使用时先用无副作用命令探针，记录客户端与技能版本及实际结果 | 未验证 | 没有运行时探针结果；`$ARGUMENTS` 的实测不能外推到命令注入 | 2026-11-07 |
 | 技能 `allowed-tools` | **官方语义是工具白名单 / 限制**：只列技能允许使用的工具，未列出的工具不在白名单内。不是绝对安全边界，模型行为、权限规则与钩子仍须核验；当前没有桌面端相反行为的 L3 证据。若某版本实测不同，须单列客户端版本、最小探针与实际输出 | 官方文档 | [WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)：「工具白名单（逗号分隔）」；[CodeBuddy Code CLI](https://www.workbuddy.ai/docs/cli/skills)：“Allowlist of permitted tools” / “Restrict which tools a Skill can use”；`check-skill-integrity.py` 只检查文档对齐 | 2026-11-07 |
-| `$ARGUMENTS` | 原样带入技能正文 | L3 | `P1` T5 | 2026-10-29 |
-| `.codebuddy/agents/` | 目录**实时加载**，会话内新建即可派发 | L3 | `P1` T6（`ping` 新建即通） | 2026-10-29 |
-| `rules` 的 `paths:` | 按路径条件注入；只碰 `*.md` 时不注入 | L3 | `P1` T2 | 2026-10-29 |
+| `$ARGUMENTS` | 原样带入技能正文 | L3 | 最小技能输出 `$ARGUMENTS`；传入含空格的标记字符串并核对逐字输出 | 2026-10-29 |
+| `.codebuddy/agents/` | 目录**实时加载**，会话内新建即可派发 | L3 | 在会话内创建返回固定标记的最小 agent，立即派发并核对标记 | 2026-10-29 |
+| `rules` 的 `paths:` | 按路径条件注入；只碰 `*.md` 时不注入 | L3 | 用最小规则分别读取匹配与不匹配 `paths:` 的文件，核对规则是否进入上下文 | 2026-10-29 |
 | agent 的 `model:` | **会被解析并用于子代理会话**：`resolveAgentModel` 依次读 `CODEBUDDY_CODE_SUBAGENT_MODEL` → 元数据 `model` → `agentManager.resolveModel`；`default` / `inherit` 表示继承。合法值就是 `default` / `lite` / `reasoning` | L2 | `grep -ao 'async resolveAgentModel(t){.\{0,700\}' "$WB/app.asar.unpacked/cli/dist/codebuddy-lite-wb.mjs"`；`agentMetadataSchema` 含 `model` | 2026-10-30 |
 | agent 的 `effort:` | **被读、被归一化、并施加到子会话**。取值 `minimal`/`low`/`medium`/`high`/`xhigh`/`max`，非法值当场告警并忽略。加载器 `parseAgentFile()` 把它写进代理定义（`...effort:eF`），子代理启动时经 `setOverrideThinking(subSessionId,{reasoningEffort})` 落到会话思考预算 | L2 | `grep -ao 'let eF=(0,tF.normalizeReasoningEffort)(eI.effort)' "$H/cli/dist-server/shared.cjs"`；`grep -ao '\.\.\.eF&&{effort:eF}' 同文件`；`grep -ao 'setOverrideThinking(.\{0,80\}' 同文件` | 2026-10-30 |
 | `/effort` 命令 | **存在且已实现**：`Set the model effort level (low, medium, high, xhigh, max, ultracode)`，带 `execute()` / `parseLevel()` / `resolveEffectiveLevel()` | L2 | `grep -ao '{name:"/effort".\{0,300\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
@@ -115,7 +104,7 @@ export S="$H/cli/dist-server/shared.cjs"
 | agent 的 `background:` / `memory:` / `initialPrompt:` / `skills:` | 均被读。`memory` 只认 `user`/`project`/`local`；`background` 是布尔 | L2 | 同 `parseAgentFile()` | 2026-10-30 |
 | 技能 frontmatter 的 `model:` | **被读，并对模型目录校验**（先按 id 匹配，再按 name 回查）。项目级与插件级两个加载器都携带它 | L2 | `grep -ao 'let eO=eI.model?.trim().\{0,200\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-30 |
 | 技能 frontmatter 的 `effort:` | **不被读**。`parseSkillFile` 返回 `context`/`agent`/`model` 等字段，其中没有 `effort` | L0 | `grep -ao 'async parseSkillFile(.\{0,2200\}' "$H/cli/dist-server/shared.cjs" \| grep -c effort` → 0 | 2026-10-30 |
-| 技能 frontmatter 的 `context: fork` | **被读，而且会让技能失去 `Agent`**。写了它，技能经 `executeSkillInForkContext` 变成 `subagent_type: general-purpose` 的 **detached 任务**；那个子会话的工具集里**没有 `Agent`**——`allowed-tools` 里写了也拿不到。后果：需要「多透镜并行独立审读」的技能退化成同一会话依次扮演每个透镜，报告仍会写「多角度审过」。**多透镜技能（`qa-quarto` / `slide-excellence` / `translate-to-quarto`）已因此删掉这个字段** | L3 | 探针技能实测（输出存 `quality_reports/audits/tool-probe-fork.txt`）：22 个直接工具含 `Skill`/`TaskCreate`/`TaskStop`，**无 `Agent`**；`/translate-to-quarto` 自报「`beamer-translator`、`slide-auditor`、`pedagogy-reviewer`、`proofreader`、`quarto-critic` 一个都没派发」。代码：`grep -ao '"fork"===e_.context.\{0,120\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-31 |
+| 技能 frontmatter 的 `context: fork` | **被读，而且会让技能失去 `Agent`**。写了它，技能经 `executeSkillInForkContext` 变成 `subagent_type: general-purpose` 的 **detached 任务**；那个子会话的工具集里**没有 `Agent`**——`allowed-tools` 里写了也拿不到。需要多透镜并行独立审读的技能不能使用此字段，否则会退化成同一会话依次执行 | L3 | 最小探针的脱敏输出：直接工具含 `Skill` / `TaskCreate` / `TaskStop`，**无 `Agent`**；多透镜技能未派发其声明的审读代理。复跑时创建含 `context: fork` 与 `allowed-tools: Agent` 的最小技能，列出实际工具并尝试派发。代码：`grep -ao '"fork"===e_.context.\{0,120\}' "$H/cli/dist-server/shared.cjs"` | 2026-10-31 |
 
 **创建入口与界面证据也要分开。** 本仓库的 `/new-skill` 是项目技能，按本仓库约定生成项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器（GUI：技能 → 添加技能 → 创建技能）。UI/菜单不显示不等于引擎未发现或 `/name` 不可调用。自动调用要用匹配探针另测，显式调用要用 `/name` 另测，UI 可见性要查看界面；三者不能由一次 T4 互相推导。
 
@@ -139,7 +128,7 @@ export S="$H/cli/dist-server/shared.cjs"
 | `cwds` | 必须是**绝对路径**（引擎校验 `each cwd must be an absolute path`），且有数量上限 | L2 | `grep -ao 'each cwd must be an absolute path.\{0,30\}' "$S"` | 2026-10-30 |
 | 无人值守**问不到人** | automation 会话的双通道交互返回 `automation session synthesises an instant deny`——**立即拒绝，不是等待** | L2 | `grep -ao 'automation session synthesises an instant deny' "$S"` | 2026-10-30 |
 | 后台自动化**没有批准界面** | 需审批的能力在后台 automation 里以 `background-automation-no-approval-ui` 为由被禁用；提权只能创建时用 `permissionMode` | L2 | `grep -ao 'background-automation-no-approval-ui' "$S"` | 2026-10-30 |
-| automation **跑在真实工作树** | `pwd` = 仓库根、读到未跟踪文件、`git status` 里出现 `?? probe/` 与当次未提交的 ` M`、HEAD 与本地一致、非浅克隆。**不是全新克隆，不是隔离沙箱** | **L3** | 探针输出全文见 [`scheduled-routines.md`](scheduled-routines.md)「实测」节 | 2026-10-30 |
+| automation **跑在真实工作树** | `pwd` 为仓库根，能读到未跟踪文件与未提交修改，HEAD 与本地一致，非浅克隆。**不是全新克隆，不是隔离沙箱** | **L3** | 可重跑探针与脱敏输出见 [`scheduled-routines.md`](scheduled-routines.md)「实测」节 | 2026-10-30 |
 | 失败上报 | 有 `automation.run.failure_detail` 遥测事件；推送通道是**企业微信 webhook**，设置键 `automation.wecomWebhookUrl` / `automation.wecomPushConfig.webhookUrl`。不配 = 没有推送 | L1 | `grep -ao 'automation\.wecom[A-Za-z.]*' "$S"` | 2026-10-30 |
 | `/schedule` 斜杠命令 | **不存在**。29 次命中全是 API 路由（`/v2/as/scheduler/tasks`、`/schedule/todo-source`）与打包文件名（`schedule-host-*.js`）；带引号的 `"/schedule"` 零命中 | L0 | `grep -aoF "/schedule" "$WB/app.asar" \| wc -l` → 29；`grep -aoF '"/schedule"' "$WB/app.asar" \| wc -l` → 0 | 2026-10-30 |
 | 云端 Routines | **不存在**：`Routines` 在 `app.asar` 与 `$S` 均零命中；`claude.ai` 连接器语义在 `$S` 零命中 | L0 | `grep -acF "Routines" "$WB/app.asar"` → 0 | 2026-10-30 |
@@ -156,80 +145,16 @@ export S="$H/cli/dist-server/shared.cjs"
 | `/goal` | **CodeBuddy Code CLI 有官方支持；WorkBuddy 桌面端未证实。** 官方 CLI 文档要求 `@tencent-ai/codebuddy-code` 含 `GoalService`，并描述 Web UI / ACP 面板；本机桌面共享引擎存在 `name:"/goal"` 命令注册与 `GoalService` 实现，但尚无桌面运行时观测，不能写成桌面可用 | CLI 官方文档；桌面共享引擎 L2 ⏳ | [官方 `/goal` 文档](https://www.workbuddy.cn/docs/cli/goal)；`grep -ao 'name:"/goal".\{0,180\}' "$S"`；`grep -ao 'Symbol("GoalService")' "$WB/app.asar.unpacked/cli/dist/codebuddy-lite-wb.mjs"`。2026-11-07 只读探针：`$S` 中 `/goal` 19 处、桌面 `codebuddy-lite-wb.mjs` 中 22 处 | 2026-11-07 |
 | 高级代理配置含 `maxTurns`、隔离、工具限制 | **成立，但都在 agent frontmatter 里**，不是设置键。逐条见「技能 / 规则 / 代理」表 | L2 | 同上表 | 2026-10-30 |
 
-## 已知不一致
+## 复核方法
 
-### 已处理
-
-1. **【更正，撤回 2026-10-30 当日早些时候的相反判断】`effort` 不是死字段。**
-   那份判断说「代理元数据 schema 里没有 `effort`，Effect Struct 会剥掉它」，据此把
-   18 个代理文件的 `effort:` 全删了，还把四份文档改成「本平台没有 effort 轴」。
-   **错在搜错了目录**：`lib/agent-registry/schemas.js` 里的 `agentMetadataSchema`
-   是代理**列表**的传输 schema（给界面列名录用的），不是 spawn 用的定义。真正的加载器
-   与消费链都在 `cli/dist-server/shared.cjs`：`parseAgentFile()` 读
-   `normalizeReasoningEffort(frontmatter.effort)`、非法值当场告警、合法值经
-   `...effort:eF` 进代理定义，子代理启动时由
-   `setOverrideThinking(subSessionId,{reasoningEffort})` 落地。同一条链上还有
-   `--effort` 旗标与 `/effort` 命令（`low|medium|high|xhigh|max|ultracode`）。
-   **已恢复** 18 个字段的原值（10 `high` / 7 `medium` / 1 `low`，取自 `b68584f^`），
-   `normalize-model-tiers.py` 改为只对技能删 `effort`。连带更正 `model-routing.md`、
-   `model-versions.md`、`agent-fleet.md`、`README.md`、`CODEBUDDY.md`、`TROUBLESHOOTING.md`、
-   `MEMORY.md`、`UPSTREAM.md`、`check-spec-conformance.py` 的 `INERT_FIELDS`。
-   **教训**：`grep -rao effort "$H/lib/"` 返回 6 —— 那个 6 **是真的**，而这个目录
-   **不包含加载器**。台账第 2 条方法教训（「在正确的包里找」）写着「搜错包得到的零命中
-   和真的不存在长得一模一样」，这次错的是**收窄了子目录**而不是包。搜索范围越窄，
-   零命中越像结论。
-
-2. ~~[`scheduled-routines.md`](scheduled-routines.md) 整篇指向不存在的机制~~ —— **2026-10-30 已重写**。
-   重写前先把「上游那三件套到底哪几件在这里存在」逐条落回引擎，结果推翻了原来的判断：
-   `CronCreate` / `CronList` / `CronDelete` **是存在的**（5 段 cron、本地时间；`durable: true`
-   落 `.codebuddy/scheduled_tasks.json` 并挺过重启，由专用任务会话执行）；`/schedule` 斜杠命令
-   **不存在**（29 次命中全是 API 路由与打包文件名）；云端 `Routines` **不存在**（两个包均零命中）。
-   上一版写「本平台没有对应入口」，把三件事判成了一件事，而且当时**根本没搜过**——
-   `CronCreate` 有 12 次命中。实测补上最后一块：automation 跑在真实工作树，看得见未跟踪与
-   **当次未提交**的文件（L3，探针输出见 `scheduled-routines.md` 的「实测」节）。
-   连带改了 `TROUBLESHOOTING.md` 的同一条错断言（原文「即便 `durable: true` 也救不了你」）、
-   `README.md`、`MEMORY.md` 的 `[LEARN:scheduling]`、`triage-inbox` 的三处、指南的「无人值守
-   运行」一条、`audit-pet-peeves.md` 第 17 条、`nightly-repro-check.sh` 的头注释。
-   **教训**：「没搜过」和「搜过没有」必须分开写。原来的措辞是「尚未在引擎内定位」——它诚实地
-   描述了「我没查」，却被下一层读成了「查了，没有」，与 T13 那次是同一种误读。
-
-3. ~~README「2026 年的能力」还剩三条未核的上游断言~~ —— **2026-10-30 已逐条落表**。
-   `worktree.baseRef` 的 `fresh`/`head` **是 L0**：没有这个设置键，`baseRef` 只是
-   `addWorktree()` 的实参。五个内置技能（`/fewer-permission-prompts`、`/team-onboarding`、
-   `/autofix-pr`、`/powerup`、Ultraplan）**是 L0**，两个包零命中。`/loop` **没有实现**，
-   命中全在预设任务卡的示例文案里。`maxTurns` / 隔离 / 工具限制**成立**，但都在 agent
-   frontmatter 里，不是设置键。逐行证据见上面新增的「其它上游断言」表；README 对应四条已改。
-
-4. ~~技能级 `model:` 两处说法相反~~ —— **2026-10-30 已定，`model-routing.md` 是对的**。
-   无需运行时实测：两个 `parseSkillFile`（项目级与插件级）都返回 `model: eB.model`，
-   命令转换器还会拿它**对模型目录校验**（先按 id 匹配，再按 name 回查 id）。
-   `check-spec-conformance.py` 的 `INERT_FIELDS` 已把 `model` 移出；`effort` 留在里面
-   是对的——技能加载器确实不读它（代理读，技能不读，这个差别写进了脚本注释）。
-
-5. ~~`.codebuddy/routines/` 与 `.codebuddy/loop.md` 是两条悬着的字符串~~ —— **2026-10-30 已定**。
-   两者都没有实现。它们共同出现在引擎给模型的一句「自我修改」安全说明里——那是一份
-   「agent 启动时会加载的配置」路径清单，是提示词文本，不是发现逻辑。`loop.md` 原来的
-   「4 次命中」是子串误计：4 次全是 `agent-loop.md`。**已在文档里明说它们没有实现**，
-   而不是留着 ⏳ 让人读成「可能有」。
-
-### 未处理
-
-（空。2026-10-30 清空——上面五条是这一轮的完整清单，新条目请按规约先测再写。）
-
-## 方法教训（下次还会犯，所以写下来）
-
-1. **零命中要先怀疑探针。** `grep -o "\"permissions\"" app.asar` 返回 0，`grep -o permissions`
-   返回 695。只测一种引号形态，就会把「支持」写成「不支持」。
-2. **在正确的包里找。** 在 harness 里搜 `permissions` 得 0，不能推出「不支持」——设置管理器
-   在 `app.asar` 里。搜错包得到的零命中，和真的不存在长得一模一样。
-3. **无关命中 ≠ 键存在，更 ≠ 它被用。** `statusLine` 8 次命中全是 HTTP 状态行，
-   既不能支撑 L1，也不能支撑 L2；`agentMetadataSchema` 里有 `model` 而列表里没有 `effort`，
-   但这只能说明「名录上不显示」，推不出「不被读」。只有白名单 / schema / 枚举里的键命中才能支撑 L1，
-   读取或发射路径才能支撑 L2。
-4. **收窄搜索范围会让零命中更像结论。** 「在 `$H/lib/` 里搜 `effort` 得 6，全在会话配置」
-   这句话每个字都是真的，结论却是错的——因为加载器不在 `lib/`。第 2 条说的是别搜错包，
-   这一条更隐蔽：**包对了，子目录错了**。判断某字段是否被消费，先定位**读写它的那个函数**
-   （这里是 `parseAgentFile` / `spawn`），再回头数命中，而不是先数命中再猜。
-5. **测量方式的缺陷会被写成平台的缺陷。** P0 判 agent `model:` 为「部分支持」，真实原因是
-   模型不自报身份；`.codebuddy/loop.md` 的「4 次命中」实际是 `agent-loop.md` 的子串。
-   结论一旦写进表格，就没人再回头问「这是平台的问题还是探针的问题」。
+1. **零命中要先怀疑探针。** `grep -o "\"permissions\"" app.asar` 与 `grep -o permissions app.asar`
+   测量的是不同字面量。至少覆盖引号形态与大小写变体，不能把单一搜索的零命中写成「不支持」。
+2. **在正确的包里找。** 设置管理器在 `app.asar`，不能用在 harness 中的零命中否定设置键。
+   搜错包得到的零命中，和真的不存在长得一模一样。
+3. **无关命中 ≠ 键存在，更 ≠ 它被用。** HTTP 状态行里的 `statusLine` 不能支撑 L1 或 L2；
+   `agentMetadataSchema` 不含 `effort` 也只说明名录不显示。白名单 / schema / 枚举里的键命中支撑 L1，
+   读取或发射路径支撑 L2。
+4. **搜索范围必须覆盖实际加载器。** 判断某字段是否被消费，先定位读写它的函数，例如
+   `parseAgentFile` 与子代理启动路径，再核对消费链；包名正确而子目录过窄仍会产生假零命中。
+5. **区分子串与精确路径。** 统计 `loop.md` 时会同时命中 `agent-loop.md`；记录命中数之前先检查
+   实际上下文，避免把测量方式的问题写成平台缺陷。
