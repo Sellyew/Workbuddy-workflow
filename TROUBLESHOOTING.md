@@ -51,7 +51,7 @@ Stata 流水线技能需要 [`stata-mcp`](https://github.com/SepineTam/stata-mcp
 - **默认权限** —— 常规编辑与 shell 命令按 `.codebuddy/settings.json` 的 `permissions.allow` 直接通过；写入受保护路径、装软件、联网这类仍然逐个询问。
 - **完全访问权限** —— 跳过询问与安全检查（`deny` 规则与钩子仍然生效）。界面上有一个确认框，勾了才会开。Anthropic 把等价能力限定在隔离容器与虚拟机内，这里同理：只在你信任的仓库、并且清楚它会做什么时用。
 
-上游指南里的另外几档（自动、接受编辑、Plan、dontAsk）在本客户端没有暴露成可选档位；`Shift+Tab` 循环与 `--permission-mode` 标志也不存在 —— 哪份文档让你用它们，那份文档写的是命令行那条产品线。
+上游指南里的另外几档（自动、接受编辑、Plan、dontAsk）在桌面端没有暴露成可选档位；桌面选择器也不提供 `Shift+Tab` 循环与 `--permission-mode` 启动标志——后两者属于 CodeBuddy Code CLI，见官方 [Permission Modes](https://www.workbuddy.ai/docs/cli/permission-modes)。
 
 本模板的 `.codebuddy/settings.json` 附带宽泛的放行规则（`Edit(**)`、`Write(**)`、`Bash(*)`、……），`deny` 为空，所以在默认档位下多数常规工作都不询问就能跑。要在任何档位下都把受限数据挡在模型之外，就加上拒绝规则 —— 见下方[「让受限数据不进入模型」](#让受限数据不进入模型)。
 
@@ -86,6 +86,24 @@ WorkBuddy 桌面客户端不提供命令行入口。要在脚本、cron 或例�
 本仓库里唯一依赖它的是 `scripts/run-skill-eval.sh`（技能 A/B 评测）。它按 `EVAL_CLI` → `codebuddy` → `cbc` → `claude` 探测，一个都找不到就以 `2` 退出并打印安装命令——**它不在任何门禁里**，没装 CLI 不影响模板正常使用。
 
 另有一处要留神：`session-handoff.py` 与 `open-issues.py` 里「无头时不递交接 / 不自动开 issue」的判定读的是 `CLAUDE_CODE_ENTRYPOINT`，而桌面端的引擎**不设置**这个变量。要在 cron 里稳定避开这两个行为，显式导出 `CODEBUDDY_HANDOFF=off` 与 `CODEBUDDY_ISSUES_AT_START=off`。
+
+## 技能发现、安装与更新
+
+### 市场安装的技能没有出现在项目目录
+
+这不是项目技能发现失败的证据。市场安装、上传，以及通用创建器创建的技能，默认进入**用户技能库**，用于跨项目复用，不会自动进入当前项目的 `.codebuddy/skills/`。`.codebuddy/skills/` 是官方支持的项目技能目录，随仓库共享，项目级优先于用户级；要随仓库共享，必须显式把技能放进这个目录。
+
+两个创建入口也不要混淆：本仓库的 `/new-skill` 是项目技能，按本仓库约定生成项目技能；WorkBuddy 内置的 `/skill-creator` 是通用创建器（GUI：**技能 → 添加技能 → 创建技能**）。
+
+### 菜单里看不到技能，或修改后没有按新正文运行
+
+把四件事分开核验：引擎能否发现、能否自动调用、显式 `/name` 能否调用、UI/菜单是否可见。菜单不显示不等于不能发现或调用；自动匹配失败也不等于显式调用失败。元数据用于匹配，正文在触发时加载，附属材料按需读取，不是每轮从磁盘读取所有描述。
+
+技能修改后的热重载**尚未证实**，不要假定无需重启。若行为没有反映新正文，记录客户端版本与技能版本，新开会话复测，并分别记录自动与显式调用的结果。
+
+### 技能需要某个工具，但 `allowed-tools` 没列它
+
+按官方语义，`allowed-tools` 是限制技能可用工具的白名单；把实际需要的工具补入白名单，并检查工具名与模式拼写。若桌面某版本实测未列出工具仍能调用，不得据此宣称这是通用机制；须单列客户端版本、最小探针与实际输出。当前没有这种 L3 反证。白名单可用于只读限制，但不是绝对安全边界；仍须核验模型实际调用、`permissions.allow` / `permissions.deny` 与 PreToolUse 等钩子，高风险场景另加拒绝规则或钩子。
 
 ## 编译 / 渲染
 
@@ -156,17 +174,23 @@ tail -5 quality_reports/session_logs/notifications.log
 
 两者都不影响退出码，但都会在汇总里单列——**一次有上限的通过，不能显示成通过**。
 
-### 把 Git Bash 放上 PATH 之前先知道一件事
+### Windows 上「钩子可运行」与「第 11 门宿主边界」是两件事
 
-装上 Git for Windows 之后 `bash` 通常在 `D:\Git\bin`（或 `C:\Program Files\Git\bin`），
-把它加入 PATH 会让第 3 门从 SKIPPED 变成真跑。但它同时会让第 11 门多出一批红：
+先以实际安装结果为准：在 WorkBuddy 能继承到的环境里运行 `where bash`，确认输出指向
+你要用的 Git Bash，并重开会话。`C:\Program Files\Git\bin`、`D:\Git\bin` 这类标准安装
+位置只能作示例，不能代替 `where bash` 的结果。若无输出，修复 Git for Windows / Git Bash
+安装，或让 WorkBuddy 进程的 PATH 包含实际安装目录；不要为了规避门禁而把 bash 移出 PATH。
 
-> 那批用例的跳过谓词是「有 POSIX shell」，而它们实际需要的是「**宿主是 POSIX**」。
-> 在 Windows + Git Bash 这个组合下它们会执行，然后因为 Windows 的路径/符号链接/
-> git 行为而失败——2026-10-29 实测 26 条。CI（Linux）上它们本来就会跑，不受影响。
+这里有两个独立判据：
 
-所以：**要么保持默认（PATH 里没有 bash），要么接受第 11 门在这台机器上是红的并把
-它当作已知边界。** 不要为了让它变绿去改断言——那正是本仓库最贵的 bug 类型。
+- **钩子可运行**：钩子命令以裸 `bash` 启动，因此 WorkBuddy 进程必须找得到它。第 3 门在
+  找不到 bash 时记 SKIPPED；找到后才真正执行。再用 `/hooks` 面板确认注册钩子已挂上。
+- **第 11 门的宿主前提**：那批用例的跳过谓词是「有 POSIX shell」，实际需要的却是
+  「**宿主是 POSIX**」。Windows + Git Bash 只满足前者；用例会执行，并可能因 Windows 的
+  路径、符号链接与 git 行为失败（2026-10-29 本机实测 26 条）。CI（Linux）不受影响。
+
+因此，修好钩子不等于消除了第 11 门的宿主边界，也不要为了让该门变绿去改断言。报告时
+分别写明 bash/钩子检查结果与 Windows 宿主限制。
 
 ### 压缩前的钩子没把计划存下来
 
@@ -204,24 +228,24 @@ PreCompact 钩子（`.codebuddy/hooks/pre-compact.py`）把状态写到 `~/.work
 
 你直接跑了 `03_analyze.R`，而不是 `00_run_all.R`。重跑 `00_run_all.R`（例如经 `/data-analysis` 技能或你惯用的流水线运行器）——那个入口会在最后一步写出会话快照。
 
-## 权限 / bypass / 状态栏（v1.6.0 / v1.8.0）
+## 权限 / 状态栏（v1.6.0 / v1.8.0）
 
-### 「明明设了 `bypassPermissions` 还是弹询问」
+### 「明明想减少询问，桌面端还是弹提示」
 
-三个原因，按常见程度排序：
+按桌面端的真实控件与配置排查：
 
-1. **这项设置在项目设置里。** 写在 `.codebuddy/settings.json` 或 `.codebuddy/settings.local.json` 里的 `defaultMode: "bypassPermissions"` 不被承认，会话以手动模式启动（那里的 `"auto"` 同样会退回内置默认值）。把它从项目文件里删掉，然后在 `~/.workbuddy/settings.json` 里设 bypass，或者在输入框旁的模式选择里切到 Bypass——项目设置不认它，是因为模式由会话启动时决定。（`claudeCode.*` 那几个键属于上游 VS Code 扩展层，本客户端不读；本仓库也不提供会让人误以为能生效的 `.vscode/settings.json`。）
-2. **会话中途的切换。** `Shift+Tab`（CLI）或模式指示器（VS Code）会覆盖文件设置，直到会话结束。
-3. **过期的会话。** 设置在会话启动之后才改；开一个新会话。
+1. **看输入框旁的权限选择器。** 桌面端只有**默认权限**与**完全访问权限**。前者越界仍会问；后者跳过询问与安全检查，但 `deny` 规则与钩子仍然生效。需要后者时就切到**完全访问权限**，不要找 Bypass。
+2. **不要套用上游设置。** `defaultMode: "bypassPermissions"`、`Shift+Tab`、VS Code 的 `claudeCode.*` 键属于上游 CLI / 扩展产品线，不是桌面端操作步骤；项目设置或 `~/.workbuddy/settings.json` 里的 bypass 也不是桌面端开启完全访问权限的方法。
+3. **检查过期会话。** 如果权限相关设置是在会话启动后修改的，开一个新会话复测。
 
 跑 `/permission-check`——它会读**钩子链**（`.codebuddy/settings.json` 的 `hooks` 段）、
 本地覆盖（`settings.local.json`，以及若存在的 `.vscode/settings.json`）与三个守卫脚本，告诉你这个动作是被
-哪条守卫拦下的、还是被平台自己问的；并明确指出哪些照上游文档写进去的开关（`permissions.*`、
-`claudeCode.initialPermissionMode`）在本平台**根本不生效**——这类配置不会报错，只会静默地什么都不做。
+哪条守卫拦下的、还是被平台自己问的；并明确指出哪些照上游文档写进去的开关（例如
+`claudeCode.initialPermissionMode`）在桌面端**根本不生效**——这类配置不会报错，只会静默地什么都不做。
 
 ### 让受限数据不进入模型
 
-WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidential-data.md`](.codebuddy/rules/confidential-data.md) 规定受限微观数据永不离开本机，而**拒绝规则在每一种权限模式下都生效，包括 bypass**。若你的项目有受限目录，就加拒绝规则——加在 `.codebuddy/settings.json` 里保护每一位合作者，或加在 `.codebuddy/settings.local.json` 里只保护你这台机器——并写清你的数据使用协议覆盖的路径：
+WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidential-data.md`](.codebuddy/rules/confidential-data.md) 规定受限微观数据永不离开本机，而**拒绝规则在桌面端两种权限档位下都生效，包括完全访问权限**。若你的项目有受限目录，就加拒绝规则——加在 `.codebuddy/settings.json` 里保护每一位合作者，或加在 `.codebuddy/settings.local.json` 里只保护你这台机器——并写清你的数据使用协议覆盖的路径：
 
 ```json
 {
@@ -262,7 +286,7 @@ WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidentia
 
 ### 状态栏什么都不显示（包括 `gate:off` 徽标）
 
-**这是对的，不是故障。** 引擎实现了 `statusLine`（`settings.json` 里那个键它真读），但桌面渲染层不消费它 —— 2026-10-30 核查本机客户端包，`statusLine` 的 8 次命中全是 HTTP 状态行，没有任何 UI 接线。`.codebuddy/scripts/statusline.sh` 留着是给上游 CLI 用的；本客户端不会显示它，也不该有人去「修」它。
+**这是对的，不是故障。** 桌面渲染层不消费 `statusLine` 已核实；引擎是否读取该设置键未证实——2026-10-30 核查本机客户端包，`statusLine` 的 8 次命中全是 HTTP 状态行，不能作为引擎读取证据。`.codebuddy/scripts/statusline.sh` 留着是给 CodeBuddy Code CLI 用的；桌面端不会显示它，也不该有人去「修」它。
 
 由此带来两个后果，各自有替代：
 
@@ -277,9 +301,9 @@ WorkBuddy 读的每个文件都会被送到模型供应商那里。[`confidentia
 
 ### 本仓库为什么不再提供 `.vscode/settings.json`
 
-上游模板带了这个文件，里面是两个 Claude Code VS Code 扩展的键（`claudeCode.initialPermissionMode`、`claudeCode.allowDangerouslySkipPermissions`）。本平台的桌面客户端不读 VS Code 的工作区设置，本机也没有与之对应的扩展，所以那两个键在这里不会产生任何行为——留着它，读者会以为自己已经开了 bypass，然后在写入受保护路径时被询问，再去追一个并不存在的 bug。
+上游模板带了这个文件，里面是两个 Claude Code VS Code 扩展的键（`claudeCode.initialPermissionMode`、`claudeCode.allowDangerouslySkipPermissions`）。本平台的桌面客户端不读 VS Code 的工作区设置，本机也没有与之对应的扩展，所以那两个键在这里不会产生任何行为——留着它，读者会以为自己已经开了完全访问，然后在写入受保护路径时被询问，再去追一个并不存在的 bug。
 
-要在本平台用 bypass，只有一条路：在输入框旁的模式选择里切到 Bypass，或把 bypass 写进 `~/.workbuddy/settings.json`。想确认某个动作到底被谁拦下，跑 [`/permission-check`](.codebuddy/skills/permission-check/SKILL.md)——它读钩子链与守卫脚本，不读一个不存在的配置文件。
+桌面端如确需跳过权限询问，在输入框旁的权限选择器切到**完全访问权限**。上游 CLI / VS Code 的 bypass 设置属于另一产品线，不要写成桌面步骤。想确认某个动作到底被谁拦下，跑 [`/permission-check`](.codebuddy/skills/permission-check/SKILL.md)——它读钩子链与守卫脚本，不读一个不存在的配置文件。
 
 ## 同行评审流水线（v1.5.0）
 
@@ -371,7 +395,7 @@ Step 0b 会跑 `./scripts/backtest.sh`。它的表面同步门禁（`scripts/che
 
 ### P0：正文调用了工具 X，但 frontmatter 的 allowed-tools 是 [...]
 
-技能的 Steps/Workflow 一节说要使用某个工具（通常是 `Agent`，或它的旧别名 `Task`，用来派生子代理；或 `Edit`/`Write`/`MultiEdit`/`NotebookEdit`），但 frontmatter 的 `allowed-tools` 数组没列它。运行时表现：技能会撞上工具权限错误，或静默跳过那一步。修法：把缺的工具加进 `allowed-tools`。
+技能的 Steps/Workflow 一节说要使用某个工具（通常是 `Agent`，或它的旧别名 `Task`，用来派生子代理；或 `Edit`/`Write`/`MultiEdit`/`NotebookEdit`），但 frontmatter 的 `allowed-tools` 数组没列它。这既是仓库的**文档一致性检查**失败，也说明正文所需工具不在官方定义的白名单内。若正文确实需要这项工具，就把它加进 `allowed-tools`；若并不需要，就修正正文。白名单不是绝对安全边界，模型实际调用、权限规则与钩子仍须核验。
 
 ### P1：在 path/to/file.md 里找不到锚点 `#foo`
 

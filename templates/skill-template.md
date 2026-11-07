@@ -4,6 +4,17 @@
 
 ---
 
+## 先选创建方式与存放位置
+
+`.codebuddy/skills/` 是 WorkBuddy 官方支持的项目技能目录，技能随仓库共享，项目级优先于用户级；用户技能库用于跨项目复用。
+
+- 本仓库的 `/new-skill` 是项目技能，按本仓库约定生成项目技能。WorkBuddy 内置的 `/skill-creator` 才是通用创建器，GUI 入口是**技能 → 添加技能 → 创建技能**。
+- 市场安装、上传，以及通用创建器创建的技能，默认进入用户技能库，不会自动进入当前项目。要随仓库共享，必须显式把技能放到 `.codebuddy/skills/<name>/SKILL.md`。
+- 界面或菜单不显示某项，不等于引擎没有发现它，也不等于不能用 `/name` 显式调用。
+- 技能元数据用于匹配，正文在触发时加载，附属材料按需读取；不要把它理解成每轮从磁盘读取所有描述。
+
+---
+
 ## 什么时候该自建技能
 
 当你发现自己出现下面这些情况时，就该建一个技能：
@@ -95,21 +106,21 @@ Step 3: [Final action and verification]
 - **会读**：`allowed-tools`、`argument-hint`、`model`（`default`/`lite`/`reasoning`）、`agent`、`disable-model-invocation`、`user-invocable`、`description_zh`/`description_en`、`category`、`tags`、`version`。
 - **别写**（写了不生效）：`disallowed-tools`、`paths`、`hooks`、`when_to_use`、`arguments`、`effort`、`background`、`shell`；`context: fork` 有害（失去 `Agent`）。
 
-### `allowed-tools` 是预先批准，不是沙箱 {#allowed-tools}
+### `allowed-tools` 是工具白名单 {#allowed-tools}
 
-**`allowed-tools` 只做「预先批准」，不做「限制」。** 列出的工具在技能生效期间免询问；没列出的工具仍然可用，只是走你正常的权限设置。把 `Bash` 从 `allowed-tools` 里省掉，**并不**会让技能变成只读。
+**官方语义是白名单 / 限制。** [WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)把它定义为「工具白名单（逗号分隔）」，[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)写明 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。因此，只把技能允许使用的工具列入 `allowed-tools`；未列出的工具不在该技能的白名单内。当前没有桌面端相反行为的 L3 证据；若某版本实测不同，必须单列客户端版本、最小探针与实际输出，不能改写官方默认语义。
 
-**WorkBuddy 没有技能级工具黑名单**（上游的 `disallowed-tools` 在这里无对应语义，写了不生效）。要让一个技能「只读」，没有硬机制，只有两条软约束：
+`disallowed-tools` 在这里无对应语义，写了不生效；不要用黑名单思路，直接收窄 `allowed-tools` 白名单。要让一个技能「只读」，使用两层约束：
 
-1. `allowed-tools` 只列你打算用的只读工具（`Read`/`Grep`/`Glob`），把写入工具排除在预批准之外；
+1. `allowed-tools` 只列只读工具（`Read`/`Grep`/`Glob`），利用白名单排除写入工具；
 2. 在正文里写一句明确的只读约束：「本技能不修改被审文件；如需写报告，只写到 `quality_reports/` 下」。
 
-这两条都是「意图声明 + 减少误写」，**不是硬保证**——模型仍可能调用未列出的工具。真正要紧的写入保护要靠项目级 `permissions.deny` 规则或 PreToolUse 钩子（见 `permission-check`）。
+这两层降低误写风险，但**不是绝对安全保证**：仍须核验模型实际调用、项目 `permissions.allow` / `permissions.deny` 与 PreToolUse 钩子；高风险写入保护应再加拒绝规则或钩子（见 `permission-check`）。
 
-**动态内容**——技能正文里可用的字符串替换：
+**动态内容**——已实测的字符串替换与尚未实测的命令注入：
 
 - `$ARGUMENTS` —— 完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）【已实测生效】
-- `` !`git log --oneline -5` `` —— 技能加载时注入命令输出【未实测，谨慎使用】
+- `` !`git log --oneline -5` `` —— 该语法是否在技能加载时执行并注入输出尚未实测，不得断言命令必然运行。确需使用时，先用无副作用命令做探针，记录客户端与技能版本及实际结果，再据此决定是否采用。
 
 上游的 `${CLAUDE_SKILL_DIR}` 和 `$0`/`$1` 位置参数在 WorkBuddy 里没有对应物，别用。
 
@@ -143,7 +154,7 @@ Step 3: [Final action and verification]
 
 ## 写出有效的描述
 
-`description` 字段决定 WorkBuddy 何时加载你的技能。用这个结构：
+`description` 等元数据用于匹配你的技能；匹配并触发后才加载正文，附属材料再按需读取。用这个结构写描述：
 
 ```
 [What it does] + [When to use it] + [Key capabilities]
@@ -397,9 +408,9 @@ Step 4: **Generate report**
 
 1. 创建技能目录：`mkdir -p .codebuddy/skills/your-skill-name`
 2. 复制 SKILL.md 模板并定制
-3. 技能会热重载——改动无需重启就会被检出
-4. 触发技能：用你的一条触发短语
-5. 核验：技能加载了、指令清楚、输出正确
+3. 修改后的热重载尚未证实；若运行没有反映新正文，记录客户端与技能版本，新开会话复测
+4. 触发技能：用你的一条真实中文触发短语，再用 `/name` 做显式调用对照
+5. 核验：区分引擎发现、自动调用、显式调用与 UI 可见性，并检查指令和输出
 
 ### 第 2 步：迭代
 
@@ -441,7 +452,7 @@ Step 4: **Generate report**
 | `Bash` | 跑命令（R 脚本、LaTeX 编译、git） |
 | `Agent` | 派生子代理（用于复杂的多步工作流） |
 
-**安全说明：** `allowed-tools` 只做预先批准——它**不**做限制（见[语义说明](#allowed-tools)）。WorkBuddy 没有技能级工具黑名单，所以「只读技能」的约束是软性的：`allowed-tools` 只列只读工具 + 正文写一句「不修改被审文件」。只把你会用到的工具列进 `allowed-tools` 仍是好卫生（它记录了意图、把静默的预先批准降到最少），但它不是沙箱。
+**安全说明：** `allowed-tools` 是限制技能可用工具的白名单（见[语义说明](#allowed-tools)）。只列实际需要的工具；「只读技能」应只列只读工具，并在正文写一句「不修改被审文件」。`disallowed-tools` 无对应语义。白名单与正文约束能降低误写风险，但不是绝对安全保证；仍须核验模型实际调用、权限规则与钩子。
 
 ---
 

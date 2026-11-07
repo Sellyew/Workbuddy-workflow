@@ -28,9 +28,9 @@
 - **改完要验** —— 任务改动了 `.tex`、`.qmd` 或 `.R` 文件时，必须实际编译或渲染，确认输出后才可报完成
 - **单一真源** —— Beamer `.tex` 是权威源，Quarto `.qmd` 由它派生
 - **质量门禁** —— 低于 80/100 不许出库
-- **[LEARN] 标签** —— 被纠正时，把 `[LEARN:category] 错 → 对` 写进 [MEMORY.md](MEMORY.md)
+- **[LEARN] 标签** —— 被纠正时记录 `[LEARN:category] 错 → 对`；对所有 forker 通用的经验经人工筛选后写进根 [MEMORY.md](MEMORY.md)
 
-跨会话上下文存放在 [MEMORY.md](MEMORY.md)；历史计划、规格与会话日志在 [quality_reports/](quality_reports/)。
+跨会话上下文分三层：根 [MEMORY.md](MEMORY.md) 存人工筛选、可提交的通用经验；原生自动记忆存于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/` 存本仓库按日工作日志与本机状态（已 gitignore，保留但不提交）。历史计划、规格与其他会话日志在 [quality_reports/](quality_reports/)。
 
 **我们如何验证** —— 承载验证纪律的参考文件与规则：
 
@@ -46,7 +46,7 @@
 
 **法则** —— [`research-agent-laws.md`](.codebuddy/references/research-agent-laws.md)：用代理跑科研基础设施的 21 条法则，每一条都由一次真实事故换来。
 
-**我们如何记忆** —— 记录落在仓库里，不落在对话里：
+**我们如何记忆** —— 记录落在磁盘上，不只落在对话里；通用经验与本机日志分层存放：
 
 - [`progress-reports.md`](.codebuddy/rules/progress-reports.md) —— GitHub issue 作缺陷记忆，`quality_reports/` 作工作记忆，`MEMORY.md` 作教训记忆。
 - [`issue-ledger.md`](.codebuddy/rules/issue-ledger.md) —— 每一个已出库的 bug、被推迟的改进、卡住的所有者决策都开一个 GitHub issue，修好落地时手工关闭；取证标准与关闭评论的写法。
@@ -135,10 +135,15 @@ Stata（`/stata-replication`）、R 包（`/r-package-check`）、TikZ（`/extra
 ## 平台约定（WorkBuddy 原生）
 
 - **项目配置根是 `.codebuddy/`**：`rules/` `agents/` `skills/` `hooks/` `references/` `output-styles/`。
+- **项目技能官方支持**：`.codebuddy/skills/` 随仓库共享，项目级优先于用户级；用户技能库跨项目。市场安装、上传与通用创建默认进用户技能库，随仓库共享须显式放进项目目录。
+- **两个创建入口分工不同**：`/new-skill` 是本仓库项目技能，按本仓库约定生成项目技能；WorkBuddy 内置 `/skill-creator` 是通用创建器（GUI：技能 → 添加技能 → 创建技能）。
+- **技能按需加载**：元数据用于匹配，正文在触发时加载，附属材料按需读取。UI/菜单不显示不等于不能发现或用 `/name` 调用。
+- **热重载未证实**：不要写「无需重启」；若未按新正文运行，记录客户端与技能版本，新开会话复测。
+- **`allowed-tools` 是工具白名单**：限制技能可用工具，只列实际需要的工具。它不是绝对安全边界，模型行为、权限规则与钩子仍须核验；桌面端相反行为目前无 L3 证据。
 - **子代理模型只有三档**：`default` / `lite` / `reasoning`，另有 `effort:`（`minimal`–`max`）调同一档内的思考预算——代理可设、技能不可设。把认知需求映射到这两根轴，别再照搬 opus / sonnet / haiku 的说法。
 - **规则按 `paths:` 实时生效**：改文件时匹配的规则即刻注入，不必重开会话。
 - **计划文件落在用户级** `~/.workbuddy/plans/`；项目内留档用 `quality_reports/plans/`。
-- **记忆落在** `.workbuddy/memory/YYYY-MM-DD.md`（按日追加）与 `.workbuddy/memory/MEMORY.md`（长期）。
+- **记忆分三层**：根 `MEMORY.md` 存人工筛选、可提交的通用经验；原生自动记忆在用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/YYYY-MM-DD.md` 等文件存本仓库按日工作日志与本机状态，已 gitignore，保留但不提交。
 - **钩子协议与上游一致**：`PreToolUse` / `PostToolUse` / `UserPromptSubmit` / `SessionStart` / `PreCompact` / `Stop` / `Notification`，统一经 `.codebuddy/hooks/lib/hook-runner.sh` 入口调用。
 
 ---

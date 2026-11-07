@@ -14,7 +14,7 @@
 | `tags` | 标签 |
 | `version` | 版本号（技能市场/版本管理） |
 | `agent_created` | 技能市场来源标记 |
-| `allowed-tools` | 预先批准清单（**不是沙箱**，见下） |
+| `allowed-tools` | 工具白名单（限制技能可用工具；**不是绝对安全边界**，见下） |
 | `argument-hint` | `/name` 之后的参数占位符提示 |
 | `user-invocable` | 是否允许 `/name` 直接调用 |
 | `disable-model-invocation` | 阻止自动触发，只能 `/name` 调用 |
@@ -58,4 +58,4 @@
 
 ## 只读约束
 
-`allowed-tools` 只做「预先批准」，不做「限制」：列出的工具免询问，没列出的仍可按你的权限设置调用。WorkBuddy **没有**技能级工具黑名单（`disallowed-tools` 不生效）。要让一个技能「只读」，只有两条软约束：`allowed-tools` 只列只读工具（`Read`/`Grep`/`Glob`）+ 正文声明「不修改被审文件」。这两条是意图声明、不是硬保证——真正要紧的写入保护靠项目级 `permissions.deny` 规则或 PreToolUse 钩子（见 `permission-check`）。
+`allowed-tools` 是官方定义的工具白名单，用来限制技能可用工具：[WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)写作「工具白名单（逗号分隔）」，[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)写作 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。只列技能允许使用的工具；未列出的工具不在白名单内。`disallowed-tools` 无对应语义，写了不生效。要让一个技能「只读」，用 `allowed-tools` 只列只读工具（`Read`/`Grep`/`Glob`）来排除写入工具，并在正文声明「不修改被审文件」。这不是绝对安全保证：仍须核验模型实际调用、项目 `permissions.deny` 规则与 PreToolUse 钩子（见 `permission-check`）。当前没有桌面端相反行为的 L3 证据；若某版本实测不同，必须单列客户端版本、最小探针与实际输出。
