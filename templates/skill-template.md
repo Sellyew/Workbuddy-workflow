@@ -1,30 +1,30 @@
 # 技能创建模板
 
-**用这个模板为你的学术工作流创建领域专用的技能。**
+**使用此模板，为你的学术工作流创建领域专用技能。**
 
 ---
 
 ## 先选创建方式与存放位置
 
-`.codebuddy/skills/` 是 WorkBuddy 官方支持的项目技能目录，技能随仓库共享，项目级优先于用户级；用户技能库用于跨项目复用。
+`.codebuddy/skills/` 是 WorkBuddy 官方支持的项目技能目录。其中的技能随仓库共享，项目级技能优先于用户级技能；用户技能库用于跨项目复用。
 
-- 本仓库的 `/new-skill` 是项目技能，按本仓库约定生成项目技能。WorkBuddy 内置的 `/skill-creator` 才是通用创建器，GUI 入口是**技能 → 添加技能 → 创建技能**。
-- 市场安装、上传，以及通用创建器创建的技能，默认进入用户技能库，不会自动进入当前项目。要随仓库共享，必须显式把技能放到 `.codebuddy/skills/<name>/SKILL.md`。
-- 界面或菜单不显示某项，不等于引擎没有发现它，也不等于不能用 `/name` 显式调用。
-- 技能元数据用于匹配，正文在触发时加载，附属材料按需读取；不要把它理解成每轮从磁盘读取所有描述。
+- 本仓库的 `/new-skill` 按本仓库约定生成项目技能；WorkBuddy 内置的 `/skill-creator` 是通用创建器，GUI 入口为**技能 → 添加技能 → 创建技能**。
+- 通过市场安装或上传的技能，以及通用创建器生成的技能，默认保存到用户技能库，不会自动进入当前项目。如需随仓库共享，必须显式将技能放到 `.codebuddy/skills/<name>/SKILL.md`。
+- 界面或菜单未显示技能，不代表引擎没有发现它，也不代表无法通过 `/name` 显式调用。
+- 技能元数据用于匹配，触发后加载正文，附属材料按需读取；引擎不会每轮从磁盘读取所有描述。
 
 ---
 
 ## 什么时候该自建技能
 
-当你发现自己出现下面这些情况时，就该建一个技能：
+遇到以下情况时，应当创建技能：
 
 - 反复向 WorkBuddy 解释同一套 3 步以上的工作流
 - 需要领域专用的质量检查（引用格式、记号一致性、实验室规程）
 - 要强制领域专用的输出格式（学位论文结构、期刊模板、实验记录本）
 - 要协调多工具工作流（Figma → R → LaTeX、数据 → 分析 → 稿件）
 
-**以下情形不要建技能：**
+**以下情形不要创建技能：**
 
 - 一次性任务
 - 变动频繁的工作流
@@ -34,7 +34,7 @@
 
 ## 模板结构
 
-把下面的结构复制到 `.codebuddy/skills/[your-skill-name]/SKILL.md`：
+将以下结构复制到 `.codebuddy/skills/[your-skill-name]/SKILL.md`：
 
 ```markdown
 ---
@@ -98,63 +98,63 @@ Step 3: [Final action and verification]
 
 ## 字段参考（单一真源）
 
-技能 frontmatter 的字段语义——会读 / 写了不生效 / 被读但有害——完整清单在
+技能 frontmatter 字段的完整语义见
 [`.codebuddy/references/skill-fields.md`](../.codebuddy/references/skill-fields.md)，
-由门禁 `check-field-docs.py` 校验、与本模板保持一致。写新技能前先看那一份；这里只列最易记错的：
+包括哪些字段会被读取、哪些写入后不生效、哪些虽被读取但有害。该文件由门禁 `check-field-docs.py` 校验，并与本模板保持一致。创建新技能前请先阅读该文件；这里只列出最容易记错的字段：
 
-- **必填**：`name`（小写连字符、与目录名一致）、`description`（≤1024 字符，决定何时自动加载）。
-- **会读**：`allowed-tools`、`argument-hint`、`model`（`default`/`lite`/`reasoning`）、`agent`、`disable-model-invocation`、`user-invocable`、`description_zh`/`description_en`、`category`、`tags`、`version`。
-- **别写**（写了不生效）：`disallowed-tools`、`paths`、`hooks`、`when_to_use`、`arguments`、`effort`、`background`、`shell`；`context: fork` 有害（失去 `Agent`）。
+- **必填**：`name`（使用小写字母与连字符，并与目录名一致）、`description`（≤1024 字符，决定何时自动加载）。
+- **会读取**：`allowed-tools`、`argument-hint`、`model`（`default`/`lite`/`reasoning`）、`agent`、`disable-model-invocation`、`user-invocable`、`description_zh`/`description_en`、`category`、`tags`、`version`。
+- **不要写，写入后也不生效**：`disallowed-tools`、`paths`、`hooks`、`when_to_use`、`arguments`、`effort`、`background`、`shell`。`context: fork` 有害，会导致技能失去 `Agent`。
 
 ### `allowed-tools` 是工具白名单 {#allowed-tools}
 
-**官方语义是白名单 / 限制。** [WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)把它定义为「工具白名单（逗号分隔）」，[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)写明 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。因此，只把技能允许使用的工具列入 `allowed-tools`；未列出的工具不在该技能的白名单内。当前没有桌面端相反行为的 L3 证据；若某版本实测不同，必须单列客户端版本、最小探针与实际输出，不能改写官方默认语义。
+**官方将其定义为白名单，用于限制技能可用的工具。** [WorkBuddy 开放平台](https://open.workbuddy.cn/docs/skill)将其定义为「工具白名单（逗号分隔）」，[CodeBuddy Code CLI 文档](https://www.workbuddy.ai/docs/cli/skills)写明 “Allowlist of permitted tools” 与 “Restrict which tools a Skill can use”。因此，`allowed-tools` 只应列出允许技能使用的工具，未列出的工具不在该技能的白名单内。目前没有桌面端行为相反的 L3 证据。如果某个版本的实测结果不同，必须单独记录客户端版本、最小探针与实际输出，不能据此改写官方默认语义。
 
-`disallowed-tools` 在这里无对应语义，写了不生效；不要用黑名单思路，直接收窄 `allowed-tools` 白名单。要让一个技能「只读」，使用两层约束：
+`disallowed-tools` 在这里没有对应语义，写入后不生效。不要使用黑名单思路，而应直接收窄 `allowed-tools` 白名单。如需将技能限制为只读，请同时设置两层约束：
 
-1. `allowed-tools` 只列只读工具（`Read`/`Grep`/`Glob`），利用白名单排除写入工具；
-2. 在正文里写一句明确的只读约束：「本技能不修改被审文件；如需写报告，只写到 `quality_reports/` 下」。
+1. `allowed-tools` 只列只读工具（`Read`/`Grep`/`Glob`），通过白名单排除写入工具；
+2. 在正文中明确写出只读约束：「本技能不修改被审文件；报告只在聊天中返回，不写文件」。
 
-这两层降低误写风险，但**不是绝对安全保证**：仍须核验模型实际调用、项目 `permissions.allow` / `permissions.deny` 与 PreToolUse 钩子；高风险写入保护应再加拒绝规则或钩子（见 `permission-check`）。
+这两层约束可以降低误写风险，但**不能提供绝对安全保障**。仍须核验模型实际调用、项目 `permissions.allow` / `permissions.deny` 与 PreToolUse 钩子；高风险写入场景还应添加拒绝规则或钩子（见 `permission-check`）。
 
-**动态内容**——已实测的字符串替换与尚未实测的命令注入：
+**动态内容分为已实测的字符串替换与尚未实测的命令注入：**
 
-- `$ARGUMENTS` —— 完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）【已实测生效】
-- `` !`git log --oneline -5` `` —— 该语法是否在技能加载时执行并注入输出尚未实测，不得断言命令必然运行。确需使用时，先用无副作用命令做探针，记录客户端与技能版本及实际结果，再据此决定是否采用。
+- `$ARGUMENTS`：完整参数字符串（例如 `/skill-name Lecture01` → `Lecture01`）【已实测生效】
+- `` !`git log --oneline -5` ``：该语法是否会在技能加载时执行并注入输出，尚未实测，不得断言命令必然运行。确需使用时，请先用无副作用命令进行探测，记录客户端版本、技能版本与实际结果，再决定是否采用。
 
-上游的 `${CLAUDE_SKILL_DIR}` 和 `$0`/`$1` 位置参数在 WorkBuddy 里没有对应物，别用。
+WorkBuddy 不支持上游的 `${CLAUDE_SKILL_DIR}` 和 `$0`/`$1` 位置参数，请勿使用。
 
-细节与示例见[指南的技能 frontmatter 参考](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#skill-frontmatter)。
+更多细节与示例见[指南的技能 frontmatter 参考](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#skill-frontmatter)。
 
 ### 什么时候该设 `disable-model-invocation: true` {#when-to-disable-model-invocation}
 
-凡是技能会写入**持久的、承重的文件**、而用户必须明确意图才能创建这类文件时，就设这个旗标。否则，WorkBuddy 可能在一条含糊匹配的提示词下自动触发该技能，产出一个不做手工清理就很难撤销的文件。
+如果技能会写入**需要长期保留的重要文件**，并且只有在用户明确表达意图时才应创建这些文件，就设置这个旗标。否则，WorkBuddy 可能将含糊的提示词误判为匹配，自动触发技能并生成难以撤销的文件，需要手工清理。
 
-**以下技能要设：**
+**以下技能要设置：**
 
-- 创建新的持久源文件（`/create-lecture` → 新的 `.tex`，`/new-diagram` → 新的 TikZ 源）。
-- 写入会自我修改的产物（`/learn` → 新的 SKILL.md，`/checkpoint` → 状态快照，`/preregister` → 预注册文档）。
-- 跑长时间的写文件循环（`/simulation-study` → 带种子的蒙特卡洛运行与结果，`/vaccinate` → 资格台账的一行，`/deep-audit` → 审计并修复的循环）。
+- 会创建新的持久源文件：`/create-lecture` → 新的 `.tex`，`/new-diagram` → 新的 TikZ 源。
+- 会改写工作流自身状态或配置的技能：`/learn` → 新的 SKILL.md，`/checkpoint` → 状态快照，`/preregister` → 预注册文档。
+- 会运行长时间的写文件循环：`/simulation-study` → 带种子的蒙特卡洛运行与结果，`/vaccinate` → 资格台账的一行，`/deep-audit` → 审计并修复的循环。
 
-**以下技能不要设：**
+**以下技能不要设置：**
 
-- 产出临时分析输出（`/proofread`、`/review-r`、`/visual-audit`——写在 `quality_reports/` 下，容易删）。
-- 是只读诊断（`/permission-check`、`/context-status`）。
-- 从既有源码编译 / 渲染 / 部署（`/compile-latex`、`/deploy`、`/extract-tikz`）。
+- 只生成临时分析输出：`/proofread`、`/review-r`、`/visual-audit`，输出写在 `quality_reports/` 下，容易删除。
+- 只执行只读诊断：`/permission-check`、`/context-status`。
+- 只根据既有源码编译 / 渲染 / 部署：`/compile-latex`、`/deploy`、`/extract-tikz`。
 
-这个旗标仍然允许用 `/skill-name` 直接调用——它只挡住模型凭启发式匹配自动触发。
+这个旗标会阻止模型发起调用，包括自动匹配、其他技能及定时任务中的调用；用户仍可通过 `/skill-name` 显式调用。其他技能需要复用时，应读取其 `SKILL.md` 并遵循其中指令。
 
 ### `@import` 是上游 Claude Code 的 CLAUDE.md 特性，WorkBuddy 不读
 
-上游 Claude Code 的 `CLAUDE.md` 支持 `@path/to/import` 引入额外文件；**WorkBuddy 的 `CODEBUDDY.md` 不读 `@import`**。要拆分指令文件，用普通 markdown 链接（如 `CODEBUDDY.md` 里写 `[MEMORY.md](MEMORY.md)`），不要用 `@` 导入。
+上游 Claude Code 的 `CLAUDE.md` 支持通过 `@path/to/import` 引入额外文件；**WorkBuddy 的 `CODEBUDDY.md` 不读取 `@import`**。如需拆分指令文件，请使用普通 markdown 链接，例如在 `CODEBUDDY.md` 中写 `[MEMORY.md](MEMORY.md)`，不要使用 `@` 导入。
 
-本模板的 `CODEBUDDY.md` 刻意保持精简，不拆分指令文件——forker 期待的是「会话启动时加载一个文件」，拆碎反而把入门上下文打散。
+本模板刻意让 `CODEBUDDY.md` 保持精简，不拆分指令文件。fork 本仓库的用户通常预期会话启动时只加载一个文件，过度拆分反而会打散入门所需的上下文。
 
 ---
 
 ## 写出有效的描述
 
-`description` 等元数据用于匹配你的技能；匹配并触发后才加载正文，附属材料再按需读取。用这个结构写描述：
+`description` 等元数据用于匹配技能。匹配并触发后才加载正文，再按需读取附属材料。描述采用以下结构：
 
 ```
 [What it does] + [When to use it] + [Key capabilities]
@@ -162,7 +162,7 @@ Step 3: [Final action and verification]
 
 ### 好的示例（领域专用）
 
-**引用格式强制（APA 心理学）：**
+**统一引用格式（APA 心理学）：**
 
 ```yaml
 description: Enforces APA 7th edition citation format in manuscripts. Use when user asks to "check citations", "fix references", "apply APA style", or when reviewing .tex or .qmd files with bibliography. Checks author-year format, DOI formatting, and reference list completeness.
@@ -189,13 +189,13 @@ description: Reviews econometric specifications for common errors. Use when user
 ### 坏的示例（太泛）
 
 ❌ `description: Helps with citations`  
-→ 太含糊，没说明风格，也没说明何时触发
+→ 含义过于笼统，既未说明引用风格，也未说明触发时机
 
 ❌ `description: Checks lab notebooks`  
-→ 缺触发短语，没有格式说明
+→ 缺少触发短语和格式说明
 
 ❌ `description: Reviews thesis chapters`  
-→ 没说清查哪些方面，也没说何时激活
+→ 未说明检查内容和激活时机
 
 ---
 
@@ -407,36 +407,36 @@ Step 4: **Generate report**
 ### 第 1 步：手工测试
 
 1. 创建技能目录：`mkdir -p .codebuddy/skills/your-skill-name`
-2. 复制 SKILL.md 模板并定制
-3. 修改后的热重载尚未证实；若运行没有反映新正文，记录客户端与技能版本，新开会话复测
-4. 触发技能：用你的一条真实中文触发短语，再用 `/name` 做显式调用对照
-5. 核验：区分引擎发现、自动调用、显式调用与 UI 可见性，并检查指令和输出
+2. 复制 SKILL.md 模板并按需修改
+3. 修改后是否会热重载尚未证实；如果运行行为未反映新正文，请记录客户端版本与技能版本，在新会话中复测
+4. 触发技能：先使用一条真实的中文触发短语，再用 `/name` 显式调用作为对照
+5. 核验：分别确认引擎发现、自动调用、显式调用与 UI 可见性，并检查指令和输出
 
 ### 第 2 步：迭代
 
-- **技能不触发：** 用更具体的触发短语改 description
-- **指令不清：** 给 Steps 补更多示例与细节
-- **输出不对：** 加校验步骤、加故障排查一节
+- **技能不触发：** 在 description 中使用更具体的触发短语
+- **指令不清：** 在 Steps 中补充更多示例与细节
+- **输出不符预期：** 增加校验步骤和故障排查一节
 
 ### 第 3 步：成功标准
 
-- ✅ 技能在 90%+ 的相关查询上触发
-- ✅ 用预期步数走完整个工作流
-- ✅ 正常运行时零 API 错误
-- ✅ 同一任务跨会话产出一致
+- ✅ 在预先记录的测试集上报告自动触发数/总数，目标 ≥90%，同时检查不相关请求的误触发率。
+- ✅ 按预期步数完成整个工作流
+- ✅ 正常运行时不出现 API 错误
+- ✅ 不同会话对同一任务产出一致结果
 
 ---
 
 ## 领域定制清单
 
-把本模板适配到你的领域时：
+根据所在领域调整本模板时，请检查：
 
-- [ ] 用你领域的术语替换示例触发短语
-- [ ] 加上领域特有的文件类型（`.R`、`.py`、`.ipynb`、`.tex`、`.stan`）
-- [ ] 写进领域惯例（记号、格式、引用风格）
+- [ ] 将示例触发短语替换为本领域的常用说法
+- [ ] 添加领域特有的文件类型（`.R`、`.py`、`.ipynb`、`.tex`、`.stan`）
+- [ ] 写明领域惯例（记号、格式、引用风格）
 - [ ] 引用标准工具（`ggplot2`、`pandas`、`TikZ`、`Stata`）
-- [ ] 加上你工具链里常见的错误信息
-- [ ] 写进机构要求（学位论文格式、期刊模板）
+- [ ] 添加工具链中常见的错误信息
+- [ ] 写明机构要求（学位论文格式、期刊模板）
 
 ---
 
@@ -444,22 +444,22 @@ Step 4: **Generate report**
 
 | 工具 | 用于 |
 |------|---------|
-| `Read` | 读文件内容（脚本、稿件、数据） |
+| `Read` | 读取文件内容（脚本、稿件、数据） |
 | `Write` | 创建新文件（报告、表格、输出） |
-| `Edit` | 原地修改既有文件 |
+| `Edit` | 直接修改既有文件 |
 | `Grep` | 搜索文件内容（引用、函数名） |
-| `Glob` | 按模式找文件（*.R、*.tex、*.csv） |
-| `Bash` | 跑命令（R 脚本、LaTeX 编译、git） |
+| `Glob` | 按模式查找文件（*.R、*.tex、*.csv） |
+| `Bash` | 运行命令（R 脚本、LaTeX 编译、git） |
 | `Agent` | 派生子代理（用于复杂的多步工作流） |
 
-**安全说明：** `allowed-tools` 是限制技能可用工具的白名单（见[语义说明](#allowed-tools)）。只列实际需要的工具；「只读技能」应只列只读工具，并在正文写一句「不修改被审文件」。`disallowed-tools` 无对应语义。白名单与正文约束能降低误写风险，但不是绝对安全保证；仍须核验模型实际调用、权限规则与钩子。
+**安全说明：** `allowed-tools` 是白名单，用于限制技能可用的工具（见[语义说明](#allowed-tools)）。只列实际需要的工具；只读技能应只列只读工具，并在正文中明确写出「不修改被审文件；报告只在聊天中返回，不写文件」。`disallowed-tools` 没有对应语义。白名单与正文约束可以降低误写风险，但不能提供绝对安全保障；仍须核验模型实际调用、权限规则与钩子。
 
 ---
 
 ## 这个模板住在哪
 
 - **文件：** `templates/skill-template.md`
-- **用途：** 领域专用技能的起点
-- **用法：** 复制到 `.codebuddy/skills/[name]/SKILL.md`，按你的领域定制
+- **用途：** 创建领域专用技能的起点
+- **用法：** 复制到 `.codebuddy/skills/[name]/SKILL.md`，再根据所在领域调整
 
-已有技能的示例见 `.codebuddy/skills/` 目录（63 个技能，覆盖 LaTeX、R、Quarto 与研究工作流）。
+`.codebuddy/skills/` 目录提供更多已有技能示例，共有 63 个技能，覆盖 LaTeX、R、Quarto 与研究工作流。
