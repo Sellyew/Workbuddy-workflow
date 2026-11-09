@@ -345,7 +345,7 @@ Phase 3: Re-audit
 
 ## `--peer [journal]` 流程细节
 
-### Phase 0: 跨产物起飞前检查（在 --peer 模式下先于编辑初筛运行）
+### Phase 0: 跨产物开始前检查（在 --peer 模式下先于编辑初筛运行）
 
 除非指定 `--no-cross-artifact`，否则先对稿件及其输出目录自动调用 `/audit-reproducibility`。任何可复现性 FAIL 都可作为编辑引用的直接退稿证据。见 `.codebuddy/rules/cross-artifact-review.md`。
 
@@ -359,7 +359,7 @@ Phase 3: Re-audit
 
 退出方式：`--no-novelty-check` 会完全跳过探测；只要运行了探测，事后核验就是强制的。
 
-**起飞前报告（Phase 1 之前必须给出）。** 该报告回显 [`orchestrator-protocol.md`](../../rules/orchestrator-protocol.md) 中的 `RUN_CONFIG`。启动独立编辑和审稿 Agent 前，必须确定所有交互式选择，包括期刊、取向、痛点预算、审稿人数 N、跨产物/新意开关和轮次，因为独立子代理无法中途暂停提问。打印报告供用户核对；任何必填项未定，例如未知期刊或缺失脚本，都必须在此停止，不能运行到一半才停：
+**开始前报告（Phase 1 之前必须给出）。** 该报告给出 [`orchestrator-protocol.md`](../../rules/orchestrator-protocol.md) 中的 `RUN_CONFIG`。启动独立编辑和审稿 Agent 前，必须确定所有交互式选择，包括期刊、取向、痛点预算、审稿人数 N、跨产物/新意开关和轮次，因为独立子代理无法中途暂停提问。打印报告供用户核对；任何必填项未定，例如未知期刊或缺失脚本，都必须在此停止，不能运行到一半才停：
 
 ```markdown
 ## Pre-Flight Report — /review-paper --peer

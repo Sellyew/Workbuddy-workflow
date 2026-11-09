@@ -8,9 +8,9 @@ paths:
 alwaysApply: false
 ---
 
-# 落地后核验（反幻觉）
+# 完成后核验（反幻觉）
 
-落地后核验与**起飞前报告**相互对应。起飞前报告包括技能级的 `## Phase 0`，例如 `/create-lecture`、`/data-analysis`；在扇出流程中，则是 `.codebuddy/rules/orchestrator-protocol.md` §「RUN_CONFIG：在启动*之前*收集交互输入」所回显的 `RUN_CONFIG`。起飞前检查确认系统在动手*之前*已经读取输入，落地后核验确认产出中的事实性断言在起草*之后*仍然成立，然后技能才能把结果交给用户。
+完成后核验与**开始前报告**相互对应。开始前报告包括技能级的 `## Phase 0`，例如 `/create-lecture`、`/data-analysis`；在扇出流程中，则是 `.codebuddy/rules/orchestrator-protocol.md` §「RUN_CONFIG：在启动*之前*收集交互输入」所列出的 `RUN_CONFIG`。开始前检查确认系统在动手*之前*已经读取输入，完成后核验确认产出中的事实性断言在起草*之后*仍然成立，然后技能才能把结果交给用户。
 
 **改写自：** Dhuliawala 等，2023，"Chain-of-Verification Reduces Hallucination in Large Language Models"（[arXiv:2309.11495](https://arxiv.org/abs/2309.11495)）。**独立性技巧**要求在不包含原始草稿的上下文中回答核验问题，本规则通过架构强制执行这一点：`claim-verifier` 作为一次独立的 `Agent` 调用运行，并从独立上下文启动。它从未见过草稿，因此其核验不是对原草稿判断的自我确认。*对话*分叉，包括 `/fork` 和 fork 模式的子任务，会继承对话并破坏这种独立性；核验绝不能使用分叉。
 
@@ -32,7 +32,7 @@ alwaysApply: false
 
 ### Step 1 — 起草（技能正常的产出生成）
 
-照常生成响应。即使草稿看似「显然正确」，也不能跳过落地后核验。
+照常生成响应。即使草稿看似「显然正确」，也不能跳过完成后核验。
 
 ### Step 2 — 抽取断言
 
@@ -70,7 +70,7 @@ alwaysApply: false
 
 ## 输出契约
 
-每个适用本规则的技能，都必须在响应中包含结构化的落地后核验块。该块可以由用户折叠，并按需显示：
+每个适用本规则的技能，都必须在响应中包含结构化的完成后核验块。该块可以由用户折叠，并按需显示：
 
 ```markdown
 ## Post-Flight Verification
@@ -97,18 +97,18 @@ alwaysApply: false
 ## 失败即关闭语义
 
 - 如果核验代理报错、返回畸形输出或超时，**不要悄悄发布草稿。**必须显示以下提示：
-  > 「落地后核验失败（核验器错误：…）。草稿未经独立检查。请把输出视为暂定。」
-- 这与起飞前检查的失败即关闭契约相对应。流程开始出错时，幻觉防线最有价值；此时静默失败的代价也最高。
+  > 「完成后核验失败（核验器错误：…）。草稿未经独立检查。请把输出视为暂定。」
+- 这与开始前检查的失败即关闭契约相对应。流程开始出错时，幻觉防线最有价值；此时静默失败的代价也最高。
 
 ## 退出选项
 
-在 `/lit-review`、`/research-ideation`、`/respond-to-referees` 和 `/interview-me` 中，`--no-verify` 标志会跳过落地后核验。它适用于对速度敏感的迭代，或用户本人正在阅读来源材料的情况。每个技能的参数提示都必须写明这个退出选项。`/review-paper` 是例外：它没有 `--no-verify`，而是通过 `--no-novelty-check` 直接跳过新颖性探查。只要运行了探查，就必须执行落地后核验。
+在 `/lit-review`、`/research-ideation`、`/respond-to-referees` 和 `/interview-me` 中，`--no-verify` 标志会跳过完成后核验。它适用于对速度敏感的迭代，或用户本人正在阅读来源材料的情况。每个技能的参数提示都必须写明这个退出选项。`/review-paper` 是例外：它没有 `--no-verify`，而是通过 `--no-novelty-check` 直接跳过新颖性探查。只要运行了探查，就必须执行完成后核验。
 
 ## 交叉引用
 
 - `.codebuddy/agents/claim-verifier.md` —— 独立上下文的核验器。
 - `.codebuddy/rules/review-fencing.md` —— 同一纪律的环境一侧：独立上下文并不能把审读者所站的检出围栏起来。
 - `.codebuddy/skills/verify-claims/SKILL.md` —— 面向用户的包装，用于对任意文本做临时核验。
-- `.codebuddy/rules/orchestrator-protocol.md` —— 起飞前检查（输入一侧）：`RUN_CONFIG` 的起飞前报告，以及各技能的 `## Phase 0` 起飞前报告。
-- `.codebuddy/rules/cross-artifact-review.md` —— 基于模式；落地后核验基于草稿。
-- `.codebuddy/rules/summary-parity.md` —— 反对枚举式摘要与其正文漂移的规则；落地后核验是草稿内容上的事实等价物。
+- `.codebuddy/rules/orchestrator-protocol.md` —— 开始前检查（输入一侧）：`RUN_CONFIG` 的开始前报告，以及各技能的 `## Phase 0` 开始前报告。
+- `.codebuddy/rules/cross-artifact-review.md` —— 基于模式；完成后核验基于草稿。
+- `.codebuddy/rules/summary-parity.md` —— 反对枚举式摘要与其正文漂移的规则；完成后核验是草稿内容上的事实等价物。

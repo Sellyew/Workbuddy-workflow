@@ -6549,11 +6549,11 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
                                   /checkpoint preregistration-submitted
                                        ↓
                                   data collection begins</code></pre>
-<p><code>/preregister --input &lt;spec&gt;</code> 会读取 <code>/interview-me</code> 生成的研究需求说明。其中 <code>**Paper type:**</code> 行记录的论文类型，例如 <code>survey-experiment</code>，会影响风格选择。技能生成符合登记处格式的草稿，并为每节标注 <strong>MUST / SHOULD / MAY</strong>。起飞前检查会确认方向性假设、具体估计量、事前排除规则和样本量停止规则是否已经写明。</p>
+<p><code>/preregister --input &lt;spec&gt;</code> 会读取 <code>/interview-me</code> 生成的研究需求说明。其中 <code>**Paper type:**</code> 行记录的论文类型，例如 <code>survey-experiment</code>，会影响风格选择。技能生成符合登记处格式的草稿，并为每节标注 <strong>MUST / SHOULD / MAY</strong>。开始前检查会确认方向性假设、具体估计量、事前排除规则和样本量停止规则是否已经写明。</p>
 </section>
 <section id="各登记风格下的必填字段" class="level4" data-number="5.10.4.4">
 <h4 data-number="5.10.4.4" class="anchored" data-anchor-id="各登记风格下的必填字段"><span class="header-section-number">5.10.4.4</span> 各登记风格下的必填字段</h4>
-<p><code>--style</code> 标志决定 <code>/preregister</code> 填写哪张登记表。各节的 MUST / SHOULD / MAY 等级来自 <code>templates/preregistration-template.md</code> 中的表格。起飞前检查是技能的第 4 阶段，对所有风格采用相同标准：每个假设都必须有方向，草稿必须点明具体估计量和主要结果，样本计划必须量化目标 N、停止规则或功效目标，排除规则必须事前陈述，设计还必须内部自洽。只有满足这些条件，草稿才会标为就绪。下表其余行属于模板标注，不属于起飞前检查：</p>
+<p><code>--style</code> 标志决定 <code>/preregister</code> 填写哪张登记表。各节的 MUST / SHOULD / MAY 等级来自 <code>templates/preregistration-template.md</code> 中的表格。开始前检查是技能的第 4 阶段，对所有风格采用相同标准：每个假设都必须有方向，草稿必须点明具体估计量和主要结果，样本计划必须量化目标 N、停止规则或功效目标，排除规则必须事前陈述，设计还必须内部自洽。只有满足这些条件，草稿才会标为就绪。下表其余行属于模板标注，不属于开始前检查：</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -6626,7 +6626,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </tr>
 </tbody>
 </table>
-<p>* AEA 表格将这一项放入可选的 Pre-Analysis Plan 附件，但起飞前检查对每种风格都要求这一项。缺少该字段的 AEA 草稿会标为 INCOMPLETE。</p>
+<p>* AEA 表格将这一项放入可选的 Pre-Analysis Plan 附件，但开始前检查对每种风格都要求这一项。缺少该字段的 AEA 草稿会标为 INCOMPLETE。</p>
 <p><code>/preregister</code> 会拒绝起草「回顾性预注册」。如果描述包含已经得到的结果或事后推理，技能会中止并解释原因。这项拒绝是模式的核心要求。</p>
 </section>
 <section id="与-checkpoint-配合" class="level4" data-number="5.10.4.5">

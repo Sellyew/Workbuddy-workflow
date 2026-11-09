@@ -43,7 +43,7 @@ metadata:
 - **标签：**用 `git rev-parse --verify <tag>^{commit}` 直接解析为 `diff_base`，日志与 diff 均可使用 `<tag>..HEAD`；不要把标签传给 `--since` 当日期。
 - **空窗口：**日志在窗口内没有提交时，明确写「no commits in window」。若 `rev-list` 没有解析出基线，或窗口内没有提交可供比较，就不要运行带空 revision 的 diff；把 diff 标为「无可用基线／无窗口内提交」，仍继续收集项目状态，不能编造改动。
 
-开始收集前，先分别回显解析出的日志窗口与实际 diff 基线（「Log window: `<point>`；Diff base: `<commit/tag/unavailable>`」）。
+开始收集前，先分别列出解析出的日志窗口与实际 diff 基线（「Log window: `<point>`；Diff base: `<commit/tag/unavailable>`」）。
 
 ### Phase 1 —— 收集增量 + 项目状态
 

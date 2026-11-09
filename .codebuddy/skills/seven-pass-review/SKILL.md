@@ -35,7 +35,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task"]
 
 ## 工作流
 
-### Phase 0: 起飞前检查
+### Phase 0: 开始前检查
 
 1. 解析稿件路径。
 2. 若稿件是 `.pdf`，先抽取文本（`TMP=$(mktemp -d)/paper.txt && pdftotext -layout "$manuscript_path" "$TMP"`）。扫描版或部分扫描的 PDF 即使抽出空白页，也可能以退出码 0 结束，因此还要比较 `pdfinfo "$manuscript_path" | grep Pages` 与实际抽到文本的页数（`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`）。空白页必须用 Read 直接读取，或向作者索要文本版；若未读取就继续，必须说明漏读页码。全部读完后删除抽取副本（`rm -rf "$(dirname "$TMP")"`），因为它是稿件的纯文本拷贝。

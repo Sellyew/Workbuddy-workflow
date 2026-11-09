@@ -42,7 +42,7 @@ Stata 流水线技能依赖 [`stata-mcp`](https://github.com/SepineTam/stata-mcp
 
 `uvx` 是 `uv` 提供的包运行器；尚未安装时，可运行 `brew install uv`。该 MCP 服务器只负责连接 Stata，本机仍须安装 Stata，它不能替代 Stata。保存配置后返回 MCP 列表查看状态：绿色表示已连接，红色表示配置有误。
 
-如果 Stata 本身不在 `PATH` 中，该技能也会停止。[`/stata-replication`](.codebuddy/skills/stata-replication/SKILL.md) Phase 0 的安装说明包含这两项起飞前检查。上游使用 `claude mcp list` 核验，但本平台没有这条命令，请根据列表中的状态圆点判断。
+如果 Stata 本身不在 `PATH` 中，该技能也会停止。[`/stata-replication`](.codebuddy/skills/stata-replication/SKILL.md) Phase 0 的安装说明包含这两项开始前检查。上游使用 `claude mcp list` 核验，但本平台没有这条命令，请根据列表中的状态圆点判断。
 
 ### WorkBuddy 为每个工具反复询问权限
 
@@ -331,15 +331,15 @@ Step 0b 会运行 `./scripts/backtest.sh`。其中的表面同步门禁（`scrip
 
 这是预期结果。门禁会比较磁盘上 `.codebuddy/skills/` 的数量与正文中的计数断言，并要求 README.md 中每张 `<!-- surface-sync-table: ... -->` 表格对磁盘上的每一项恰好只有一行。新增技能后，请将它的行加入 README.md 的技能表；如果新增的是代理，则加入代理表。然后更新 README.md、CODEBUDDY.md（若提到）、`guide/workflow-guide.qmd` 与两份渲染副本（`guide/workflow-guide.html`、`docs/workflow-guide.html`）、`docs/index.html`（og:description 与「What you get」一节）、`templates/skill-template.md` 以及 `.codebuddy/skills/commit/SKILL.md` 中的计数。脚本会指出哪些内容已过期，请重跑直到它以 0 退出。
 
-## 起飞前报告（v1.6.0）
+## 开始前报告（v1.6.0）
 
 ### 技能停在「Pre-Flight Report failed — inputs not readable」
 
-技能无法读取某个必需输入，例如数据集、期刊画像、记号登记表或 `r-code-conventions.md`。请检查报错给出的文件路径与权限，并确认全新 fork 应包含的文件确实存在。`/create-lecture` 对记号登记表提供了全新 fork 下的后备方案，其他技能没有。**不要**为了跳过起飞前检查而修改技能。这项检查的作用是在开始工作前发现编造的变量名与缺失的约定。
+技能无法读取某个必需输入，例如数据集、期刊画像、记号登记表或 `r-code-conventions.md`。请检查报错给出的文件路径与权限，并确认全新 fork 应包含的文件确实存在。`/create-lecture` 对记号登记表提供了全新 fork 下的后备方案，其他技能没有。**不要**为了跳过开始前检查而修改技能。这项检查的作用是在开始工作前发现编造的变量名与缺失的约定。
 
-### 起飞前检查通过了，代理还是在编
+### 开始前检查通过了，代理还是在编
 
-请创建一个 issue 并附上起飞前报告。原因可能是输入 schema 不完整，也可能是代理无视了报告；两种情况都应作为 bug 报告。
+请创建一个 issue 并附上开始前报告。原因可能是输入 schema 不完整，也可能是代理无视了报告；两种情况都应作为 bug 报告。
 
 ## 决策记录（v1.6.0）
 
@@ -351,7 +351,7 @@ Step 0b 会运行 `./scripts/backtest.sh`。其中的表面同步门禁（`scrip
 
 ### `/verify-claims` 超时或报错
 
-`claim-verifier` 在独立子会话中运行时采用保守策略：没有证据，就不会将断言标记为已核验。如果它中途超时或报错，技能会显示警告块，不会静默发出草稿；这与起飞前检查一样采用失败关闭。草稿以**暂定**状态返回，应视为未核验。下一步可以：
+`claim-verifier` 在独立子会话中运行时采用保守策略：没有证据，就不会将断言标记为已核验。如果它中途超时或报错，技能会显示警告块，不会静默发出草稿；这与开始前检查一样采用失败关闭。草稿以**暂定**状态返回，应视为未核验。下一步可以：
 
 - **重试时缩小来源范围。** `/verify-claims --source <specific-paper.pdf>` 比让代理自行寻找来源更快，也更可靠。
 - **改用直接抓取，不再依赖 WebSearch。** 如果代理卡在网络检索上，请将 PDF 下载到 `master_supporting_docs/`，再通过 `--source` 传入。

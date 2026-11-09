@@ -38,9 +38,9 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash"]
 
 ## 工作流
 
-### Phase 0: 设定主题、难度、题数、题型（起飞前检查）
+### Phase 0: 设定主题、难度、题数、题型（开始前检查）
 
-先读取用户指定的素材（讲义 `.tex`/`.qmd`、论文、数据集头部），再在生成题目**之前**输出起飞前报告：
+先读取用户指定的素材（讲义 `.tex`/`.qmd`、论文、数据集头部），再在生成题目**之前**输出开始前报告：
 
 ```markdown
 ## Pre-Flight Report — Problem Set
@@ -114,7 +114,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash"]
 ## 参数
 
 - `--difficulty` —— `intro` | `core` | `advanced`（默认 `core`）；按 Phase 1 所述调整解题步数与深度。
-- `--count` —— 题目总数（默认 6）；按起飞前报告中的计数分配到各题型。
+- `--count` —— 题目总数（默认 6）；按开始前报告中的计数分配到各题型。
 - `--types` —— `analytical,empirical,coding` 的逗号分隔子集（默认三者全要）。
 - `--dataset` —— 实证题所用真实数据集的路径；省略则用带种子的 DGP 模拟一个。
 - `--no-solutions` —— 只写学生版；跳过解答册（Phase 2/3 的解答文件）。

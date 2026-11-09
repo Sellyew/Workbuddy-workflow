@@ -26,7 +26,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Agent", "Task"
 
 ---
 
-## Phase 0 — 起飞前检查
+## Phase 0 — 开始前检查
 
 ### 0A. 环境对齐审计
 扫描 Beamer 中的全部自定义环境，确认主题 SCSS 有对应 CSS；如有缺失，**先**补齐。

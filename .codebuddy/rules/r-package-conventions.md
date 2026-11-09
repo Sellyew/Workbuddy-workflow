@@ -93,4 +93,4 @@ pkg/
 - [`../agents/r-package-reviewer.md`](../agents/r-package-reviewer.md)：执行本规则的代理。
 - [`../agents/r-reviewer.md`](../agents/r-reviewer.md)：通用 R 数值纪律（第 11 类），同样适用于包函数内部。
 - [`replication-protocol.md`](replication-protocol.md)：包需要复现已发表结果时使用。
-- [`../references/release-engineering.md`](../references/release-engineering.md)：除干净的 check 外，*发布*还要求普查报错信息与静默解决、用 `git archive HEAD` 构建起飞前归档、遵守生成状态契约，以及固定下游。
+- [`../references/release-engineering.md`](../references/release-engineering.md)：除干净的 check 外，*发布*还要求普查报错信息与静默解决、用 `git archive HEAD` 构建发布前归档、遵守生成状态契约，以及固定下游。

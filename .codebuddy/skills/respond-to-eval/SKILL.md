@@ -40,9 +40,9 @@ allowed-tools: ["Read", "Write", "Grep", "Glob", "Bash", "Agent", "Task"]
 
 ## 各阶段
 
-### Phase 0: 载入评教 + 上一轮计划（起飞前检查）
+### Phase 0: 载入评教 + 上一轮计划（开始前检查）
 
-读取评教文件和上一轮计划（若给出）。聚类之前，先生成简短的起飞前报告：
+读取评教文件和上一轮计划（若给出）。聚类之前，先生成简短的开始前报告：
 
 ```markdown
 ## Pre-Flight Report

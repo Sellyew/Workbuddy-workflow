@@ -29,7 +29,7 @@ metadata:
 
 ## 工作流阶段
 
-### Phase 0: 起飞前报告
+### Phase 0: 开始前报告
 
 ```markdown
 ## Pre-Flight Report — R Package Check

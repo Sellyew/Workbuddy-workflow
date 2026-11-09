@@ -105,4 +105,4 @@ clean.rds      ──by──> scripts/R/02_clean.R
 
 在 `/review-paper --peer [journal]` 模式下，跨产物审查作为 Phase 0，先于编辑的案头审查运行。这样，编辑可以先取得可复现性证据；承重断言出现任何 FAIL，都足以支持案头退稿。相关情况下，编辑会在 desk_review.md 中引用具体的 `/audit-reproducibility` 发现。
 
-在默认模式与 `--adversarial` 模式下，跨产物审查仍在 Step 6b 运行，即论文审查之后。两种次序都有效；`--peer` 把跨产物审查放在起飞前，是因为编辑会依据数据错误的证据决定是否案头退稿。
+在默认模式与 `--adversarial` 模式下，跨产物审查仍在 Step 6b 运行，即论文审查之后。两种次序都有效；`--peer` 把跨产物审查放在开始前，是因为编辑会依据数据错误的证据决定是否案头退稿。

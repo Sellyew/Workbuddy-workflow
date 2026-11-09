@@ -1,8 +1,8 @@
-# 代理船队清单
+# 代理组清单
 
-18 个专项子代理，各自负责什么、跑在哪个模型档位（[`model-routing.md`](../rules/model-routing.md)），以及由哪个技能派发它。这让船队变得可读——当某个扇出型技能挑选一个透镜时，这就是它从中挑人的花名册。审读器是**只读**的（它们按 [`orchestration-schemas.md`](orchestration-schemas.md) 报告 `FINDING`）；只有修复者会编辑文件。
+18 个专项子代理，各自负责什么、跑在哪个模型档位（[`model-routing.md`](../rules/model-routing.md)），以及由哪个技能派发它。这让代理组变得可读——当某个扇出型技能挑选一个透镜时，这就是它从中挑人的花名册。审读器是**只读**的（它们按 [`orchestration-schemas.md`](orchestration-schemas.md) 报告 `FINDING`）；只有修复者会编辑文件。
 
-> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:` 与 `effort:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改档位时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。另有 `ping` 一个冒烟探针不在船队内。）
+> **让本表与 `.codebuddy/agents/*.md` 的 frontmatter（`model:` 与 `effort:`）以及 `model-routing.md` 保持同步。** 表面同步门禁会数代理数量，但还不会逐行比对本表，所以新增代理或改档位时要更新它。（本文件是 `references/` 下的文件，因此它本身不算作一个代理。另有 `ping` 一个冒烟探针不在代理组内。）
 
 > **[WorkBuddy 适配 · 2026-10-30] 两根轴都在，但只有三档。**
 > 上游那张表按模型层级（Opus / Sonnet / Haiku）分节、用 `effort` 调强度。本平台：
@@ -71,6 +71,6 @@
 ## 交叉引用
 
 - [`.codebuddy/rules/model-routing.md`](../rules/model-routing.md) —— 三档的理由 + 不得降档的反模式。
-- [`.codebuddy/rules/orchestrator-protocol.md`](../rules/orchestrator-protocol.md) —— 船队如何扇出、归并、裁决。
+- [`.codebuddy/rules/orchestrator-protocol.md`](../rules/orchestrator-protocol.md) —— 代理组如何扇出、归并、裁决。
 - [`.codebuddy/references/orchestration-schemas.md`](orchestration-schemas.md) —— 每个审读器返回的 `FINDING`／`SCORECARD` 形状。
 - [`.codebuddy/references/platform-facts.md`](platform-facts.md) —— 「agent 的 `effort:` 被读」的证据与核查日期，以及 2026-10-30 那次错误判断的撤回记录。
