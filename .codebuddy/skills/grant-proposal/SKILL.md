@@ -43,7 +43,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
 
 ### Phase 0 —— 探测资助方与研究需求说明
 
-1. 解析 `--funder`，或根据请求措辞推断；默认使用 `nsf`。起草前先回显所选画像。
+1. 解析 `--funder`，或根据请求措辞推断；默认使用 `nsf`。起草前先给出所选画像。
 2. 定位研究需求说明：优先使用 `--input <path>`，否则读取 `/interview-me` 最近生成的 `quality_reports/specs/research_spec_*.md`。两者都没有时，**停止并建议运行 `/interview-me`**，不要编造科学内容。
 3. 从研究需求说明中提取研究问题、带方向的假设、识别策略（DiD / IV / RDD / RCT / 结构式）、数据来源、样本、预期结果和贡献。如果研究需求说明中有 `**Paper type:**` 值，也要记录。这是 `/interview-me` 写入的表头行；手写研究需求说明中的 `paper_type:` 字段同样有效。
 4. **读取项目自己的招标文件。** 询问一次实际的 solicitation、NOFO、RFP 或 work-programme 文本，可通过 `--call <file>` 提供 PDF 或纯文本，Read 都能处理。拿到文件后，提取必需章节和文书、页数或字数上限、评审标准，引用原文并附页码；**绝不改写任何上限的措辞**。未拿到时继续使用通用画像，并在输出表头注明。

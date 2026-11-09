@@ -35,7 +35,7 @@ metadata:
 
 ## 工作流
 
-### Phase 0：起飞前检查
+### Phase 0：开始前检查
 
 1. 确认本机 Stata 批处理命令可运行，并输出 Stata 版本；无法确认时停下。
 2. 确认 `scripts/stata/` 与 `output/` 已存在或可以创建。

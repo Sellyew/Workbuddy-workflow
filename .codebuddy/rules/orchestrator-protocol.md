@@ -121,7 +121,7 @@ python scripts/validate-findings.py --check-quotes <report>.json   # every quote
 
 ### RUN_CONFIG：在启动*之前*收集交互输入
 
-独立子代理无法暂停下来询问用户。因此，扇出需要的所有交互式选择，包括目标期刊、抽样的审稿取向、挑剔点预算（peeve budget）、N 位审稿人、独立上下文标记、跨产物／新颖性开关，都必须在生成代理组**之前**收集完毕。系统先把它们回显为**起飞前报告**，再启动运行。Schema 见 [`orchestration-schemas.md` §5](../references/orchestration-schemas.md)。必填字段如果悬而未决，例如目标期刊未知，运行会在启动*之前*中止，绝不会中途暂停。因此，即使运行时不接受输入，`--peer`、`--variance` 与 `editor` 的消歧仍能保留交互性。
+独立子代理无法暂停下来询问用户。因此，扇出需要的所有交互式选择，包括目标期刊、抽样的审稿取向、挑剔点预算（peeve budget）、N 位审稿人、独立上下文标记、跨产物／新颖性开关，都必须在生成代理组**之前**收集完毕。系统先把它们作为**开始前报告**列出，再启动运行。Schema 见 [`orchestration-schemas.md` §5](../references/orchestration-schemas.md)。必填字段如果悬而未决，例如目标期刊未知，运行会在启动*之前*中止，绝不会中途暂停。因此，即使运行时不接受输入，`--peer`、`--variance` 与 `editor` 的消歧仍能保留交互性。
 
 ## 运行时在哪里实现
 
@@ -132,9 +132,9 @@ python scripts/validate-findings.py --check-quotes <report>.json   # every quote
 | `/slide-excellence` | 条件扇出 → 归并 | 只生成能产出东西的透镜；不自动修复 |
 | `/qa-quarto` | 批评 → 修复 → 重审，**空轮收敛** | Beamer↔Quarto 一致性；硬门禁 = CRITICAL 汇总 |
 | `/review-paper --adversarial` | 批评 → 修复 → 重审，**空轮收敛** | 稿件审读（与 qa-quarto 同一原语） |
-| `/review-paper --peer` / `--variance` | RUN_CONFIG → 编辑 → 扇出审稿人 → 编辑综合 **+ 幻觉门禁** | 跨产物起飞前检查作为 Phase 0 |
+| `/review-paper --peer` / `--variance` | RUN_CONFIG → 编辑 → 扇出审稿人 → 编辑综合 **+ 幻觉门禁** | 跨产物开始前检查作为 Phase 0 |
 | `/deep-audit` | 分解 → 扇出（每个组件一个查找者）→ 裁决 → 归并 → 修复 → 再核验，**空轮收敛** | 对任何产物（证明、论文、代码库、断言集）的对抗式审计；全仓一致性是其中一个应用（机械检查 → 4 个透镜，见 `references/repo-infrastructure-audit.md`） |
-| `/create-lecture`、`/data-analysis` | 起飞前检查 → 起草 → 核验 | 起飞前检查为必需 |
+| `/create-lecture`、`/data-analysis` | 开始前检查 → 起草 → 核验 | 开始前检查为必需 |
 
 ## 不自动的部分
 

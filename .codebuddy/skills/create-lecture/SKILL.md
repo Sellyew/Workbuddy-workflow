@@ -32,9 +32,9 @@ disable-model-invocation: true
 
 ## 工作流
 
-### Phase 0: 需求接收与语境（必须提交起飞前报告）
+### Phase 0: 需求接收与语境（必须提交开始前报告）
 
-先读取输入，在回复中生成起飞前报告，然后才能进入 Phase 1。
+先读取输入，在回复中生成开始前报告，然后才能进入 Phase 1。
 
 需要读取：
 
@@ -44,7 +44,7 @@ disable-model-invocation: true
 - 项目共享导言区 `Preambles/header.tex`（若 `CODEBUDDY.md` 指定其他路径，则以项目约定为准）；首讲没有往期讲义时必须在 Phase 0 先读取，不存在时按下方兜底取得最小导言区批准
 - 上一讲的 `.tex`，重点是完整导言区、最后一节和结尾页，仅在其存在时读取；导言区接入与编译验证在 Phase 5 单独执行
 
-必须包含以下起飞前报告块：
+必须包含以下开始前报告块：
 
 ```markdown
 ## Pre-Flight Report

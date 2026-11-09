@@ -41,7 +41,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task"]
 - `.qmd` → Quarto
 - `.md` → Markdown 幻灯片
 
-## Step 2：起飞前检查——探测条件
+## Step 2：开始前检查——探测条件
 
 启动任何代理之前，先检查文件，确定哪些审查有实际意义：
 

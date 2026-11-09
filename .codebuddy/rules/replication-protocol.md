@@ -200,7 +200,7 @@ claims:
 - **`/audit-reproducibility`** 开始时读取护照，每审计完一条断言就写回。报告失败断言时同时给出 `id` 与 `location`，作者可以立即在稿件中找到它们。
 - **`/commit`**（步骤 0c）在以下情形读取护照：diff 触及一份在 `quality_reports/passports/` 中有护照的稿件（`.tex`/`.qmd`），触及护照列出的任一 `source_file`，或触及某条断言声明为展示的任一文件，包括它的 `location:` 或某个 `appears_in` 的 `path:`。带有 `status: FAIL` 或 `STALE` 的关键断言属于**必须先修**：`/commit` 会中止，点名该断言，并指向 `/audit-reproducibility` 或过期的脚本。**EXPLAINED 的断言不会中止**，因为作者已经记录了有依据的具名替代。没有护照时，这项检查静默跳过。
 - **`.codebuddy/hooks/claim-reconcile.py`**（PostToolUse）同时监视两条链路并给出提示。写入被跟踪的 `source_file` / `output_file` 时，它会指出哪些断言的数字可能已经变化；写入某个在 `appears_in` 中声明的文件时，它会指出哪些断言的*其他*展示**没有**被编辑、现在可能已经不一致。只声明了一处展示的断言不存在需要核对的其他展示，因此不会触发后一种提示。钩子按路径统计声明，从不读取取值。它只标记两个产物可能失去同步的时点，纵向和横向比对都由 `/audit-reproducibility` 执行。
-- **`/review-paper`** 本身不读取护照。除非设置 `--no-cross-artifact`，否则它会对稿件及其输出自动调用 `/audit-reproducibility`：默认模式下作为第 6b 步，把复现性 FAIL 等致命发现并入审读报告顶部的 "Cross-Artifact Findings" 章节；`--peer` 模式下作为阶段 0 的起飞前检查，此时 FAIL 会成为编辑可以援引的证据。存在护照时，审计以护照模式运行，因此逐条断言的 PASS / FAIL / EXPLAINED / STALE / UNVERIFIED 状态保存在它重写的护照中，而不是审读报告中。编辑或审稿人若想了解数字在成稿时是否经过独立核验，以及哪些有争议的数字已有书面理由，应到护照中查看。
+- **`/review-paper`** 本身不读取护照。除非设置 `--no-cross-artifact`，否则它会对稿件及其输出自动调用 `/audit-reproducibility`：默认模式下作为第 6b 步，把复现性 FAIL 等致命发现并入审读报告顶部的 "Cross-Artifact Findings" 章节；`--peer` 模式下作为阶段 0 的开始前检查，此时 FAIL 会成为编辑可以援引的证据。存在护照时，审计以护照模式运行，因此逐条断言的 PASS / FAIL / EXPLAINED / STALE / UNVERIFIED 状态保存在它重写的护照中，而不是审读报告中。编辑或审稿人若想了解数字在成稿时是否经过独立核验，以及哪些有争议的数字已有书面理由，应到护照中查看。
 
 ### 灵感来源
 

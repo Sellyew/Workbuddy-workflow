@@ -46,7 +46,7 @@ Phase 0: Pre-flight → Phase 1: Critic audit → Phase 2: Fixer → Phase 3: Re
 | **Slide Centering（居中对齐）** | 内容居中，不跳动 |
 | **Notation Fidelity（记号保真）** | 全部数学式与 Beamer 逐字一致 |
 
-## 阶段 0：起飞前检查
+## 阶段 0：开始前检查
 
 1. 定位 Beamer（.tex/.pdf）与 Quarto（.qmd/.html）文件。
 2. 检查新鲜度；QMD 比 HTML 新时重新渲染。

@@ -45,7 +45,7 @@ disable-model-invocation: true
 7. **副作用**：哪些步骤会发送、发布或上传内容，包括邮件、GitHub、外部模型和云同步，或产生无法由 git 撤销的影响？每个这样的步骤都要先向用户说明具体动作，等到 yes 才执行；受限数据还要遵守 [`confidential-data.md`](../../rules/confidential-data.md)。
 8. **新鲜的眼睛**：技能是否会批评本会话产出的内容？这部分必须在独立上下文的子代理中运行，绝不使用对话分叉，见 [`post-flight-verification.md`](../../rules/post-flight-verification.md)。
 
-开始写作前，回显一份**设计简报**，请用户确认。
+开始写作前，给出一份**设计简报**，请用户确认。
 
 ### Phase 2 —— 写 SKILL.md（深模块、简接口）
 

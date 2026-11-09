@@ -33,7 +33,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task", "Skill
 
 ## 工作流
 
-### Phase 0: 起飞前检查——探测语言与输出
+### Phase 0: 开始前检查——探测语言与输出
 
 1. 扫描 `scripts/R/*.R`（+ `renv.lock` / `DESCRIPTION`）、`scripts/stata/*.do`、`scripts/python/*.py`（+ `requirements.txt` / `environment.yml` / `pyproject.toml`），探测分析语言。项目可能**混用多种语言**，必须记录所有探测结果。
 2. 定位 `outputs_dir` 与一键入口（`00_run_all.R`、`99_run_all.do`、`run.py`、`Makefile`）。若一个入口都没有，必须标出，因为 DCAS 要求总控脚本。

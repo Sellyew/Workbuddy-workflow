@@ -27,7 +27,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Agent", "Task", "Write"]
 
 实现 Dhuliawala et al. 2023（[arXiv:2309.11495](https://arxiv.org/abs/2309.11495)）的 4 步 CoVe 循环，并通过架构强制执行独立上下文要求。
 
-### Phase 0 —— 起飞前检查
+### Phase 0 —— 开始前检查
 
 确认：
 
