@@ -19,6 +19,7 @@ This public file keeps the current release and unreleased summary. Earlier relea
 
 - 修正执行链路中的静默失效与假绿，包括钩子接线、子代理派发、字段白名单、编译与渲染、引文检查、内容不变量和派生计数。
 - 强化独立核验、摘要一致性、双向资格认定、失败关闭与负例反证；缺少工具、空扫描或零匹配不再被当作通过。
+- 公开入口已区分 Sant'Anna 的原作与 Sellyew 的非官方 WorkBuddy 中文移植；Emory 背景、PR 和事故记录均明确来自上游。
 
 ---
 

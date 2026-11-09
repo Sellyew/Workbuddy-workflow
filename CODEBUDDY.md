@@ -30,7 +30,7 @@
 - **质量门禁**：低于 80/100 不得交付
 - **[LEARN] 标签**：被纠正时记录 `[LEARN:category] 错 → 对`；适用于所有模板使用者的通用经验，经人工筛选后写入根 [MEMORY.md](MEMORY.md)
 
-跨会话上下文分三层。根 [MEMORY.md](MEMORY.md) 保存人工筛选、可提交的通用经验；原生自动记忆位于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/` 保存本仓库的按日工作日志与本机状态。最后一层已被 gitignore 排除，应保留在本机但不提交。历史计划、规格与其他会话日志位于 [quality_reports/](quality_reports/)。
+跨会话上下文分三层。根 [MEMORY.md](MEMORY.md) 保存人工筛选、可提交的通用经验；原生自动记忆位于用户级 `~/.workbuddy/projects/<project>/memory/`；项目内 `.workbuddy/memory/` 保存本仓库的按日工作日志与本机状态。最后一层已被 gitignore 排除，应保留在本机但不提交。历史计划、需求说明与其他会话日志位于 [quality_reports/](quality_reports/)。
 
 **我们如何验证**：以下参考文件与规则规定了验证要求：
 

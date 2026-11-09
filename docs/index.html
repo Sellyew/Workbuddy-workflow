@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WorkBuddy 学术工作流 —— LaTeX、Quarto、研究自动化</title>
-  <meta name="description" content="一套可直接 fork 的 WorkBuddy 模板，用 AI 辅助完成讲义幻灯片、论文、数据分析与复现包，并提供多代理评审与质量门禁。">
+  <title>WorkBuddy 学术工作流：非官方中文移植</title>
+  <meta name="description" content="这套非官方 WorkBuddy 中文模板基于 Pedro H. C. Sant'Anna 开发的 Claude Code 学术工作流，由 Sellyew 翻译、适配并维护，支持用 AI 完成讲义、论文、数据分析与复现包。">
   <meta name="keywords" content="WorkBuddy, 学术工作流, LaTeX, Quarto, 研究自动化, 讲义幻灯片, 数据分析, 可复现性, 计量经济学, R&amp;R, 同行评审">
-  <meta name="author" content="Pedro H. C. Sant'Anna">
+  <meta name="author" content="原作者：Pedro H. C. Sant'Anna；WorkBuddy 中文移植与维护：Sellyew（非官方）">
   <link rel="canonical" href="https://sellyew.github.io/Workbuddy-workflow/">
 
   <!-- Open Graph / social sharing -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WorkBuddy 学术工作流模板">
-  <meta property="og:description" content="一套可直接 fork 的 WorkBuddy 学术研究模板，支持幻灯片、论文、数据分析与蒙特卡洛模拟研究，提供 63 个技能、19 个专用代理、37 条规则、对抗式 QA 与质量门禁。">
+  <meta property="og:title" content="WorkBuddy 学术工作流：非官方中文移植">
+  <meta property="og:description" content="这套非官方 WorkBuddy 中文模板基于 Pedro H. C. Sant'Anna 开发的 Claude Code 学术工作流，由 Sellyew 翻译、适配并维护，提供多代理评审、对抗式 QA 与质量门禁。">
   <meta property="og:url" content="https://sellyew.github.io/Workbuddy-workflow/">
 
   <!-- Structured data for Google rich snippets -->
@@ -20,13 +20,15 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "WorkBuddy 学术工作流",
-    "description": "可直接 fork 的 WorkBuddy 模板，用于 AI 辅助的学术研究，配备多代理评审、质量门禁与对抗式 QA。",
+    "name": "WorkBuddy 学术工作流：非官方中文移植",
+    "description": "这套非官方 WorkBuddy 中文模板基于 Pedro H. C. Sant'Anna 开发的 Claude Code 学术工作流，由 Sellyew 翻译、适配并维护。",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
     "url": "https://github.com/Sellyew/Workbuddy-workflow",
     "license": "https://opensource.org/licenses/MIT",
-    "author": { "@type": "Person", "name": "Pedro H. C. Sant'Anna" }
+    "isBasedOn": "https://github.com/pedrohcgs/claude-code-my-workflow",
+    "author": { "@type": "Person", "name": "Pedro H. C. Sant'Anna" },
+    "maintainer": { "@type": "Person", "name": "Sellyew" }
   }
   </script>
   <style>
@@ -187,11 +189,11 @@
 </head>
 <body>
 
-  <h1>我的 WorkBuddy 配置</h1>
-  <div class="byline">Pedro H. C. Sant'Anna &middot; Emory University &middot; WorkBuddy 中文移植版（个人学习用）</div>
+  <h1>WorkBuddy 学术工作流：非官方中文移植</h1>
+  <div class="byline">原作者：Pedro H. C. Sant'Anna；Sellyew 负责非官方中文翻译、WorkBuddy 适配与维护</div>
 
   <div class="wip">
-    <strong>持续开发与维护中。</strong>本文介绍这套工作流如何辅助完成幻灯片、论文和数据分析等学术任务。2026 年 3 月的调查记录了来自经济学、能源、政治学与工程学的 15+ 个研究团队；截至 2026-08-24，上游仓库已有 2,900 多次 fork 和 1,500 多个 star。一次 fork 不等于一个研究团队，这两个数字不能混为一谈。仓库文件仍在持续修订。
+    <strong>持续维护中。</strong>本文介绍这套 WorkBuddy 学术工作流如何辅助完成幻灯片、论文和数据分析等任务。以下社区数据来自上游项目：2026 年 3 月的调查记录了经济学、能源、政治学与工程学等领域的 15+ 个研究团队；截至 2026-08-24，原仓库已有 2,900 多次 fork 和 1,500 多个 star。一次 fork 不等于一个研究团队，这两个数字不能混为一谈，也不能当作本移植的采用数据。
   </div>
 
   <p>这个模板用 WorkBuddy 辅助学术研究。你可以让它制作讲义幻灯片、撰写研究论文、分析数据或组装复现包。WorkBuddy 会规划步骤、调用专用代理、修复问题并核验质量，你负责审查结果和裁决评审中的分歧。模板不会作为自主守护进程运行，每一轮循环都由你或你调用的技能启动。</p>
@@ -206,11 +208,11 @@
 它起草讲稿、运行回归、撰写结果说明的速度，比你读完这些内容还快。每份输出都可能带有错误，却又写得自信流畅，让人难以分辨。</p>
 
 <blockquote>
-<p>有人在一个可运行的代码库中刻意植入 20 个 bug，再让评审代理检查。<strong>代理却报告一切正常。</strong></p>
+<p>原指南记载，上游项目曾在一个可运行的代码库中刻意植入 20 个 bug，再让评审代理检查。<strong>代理却报告一切正常。</strong></p>
 <p>仅凭输出，你无法区分这次漏报和一次真正没有问题的运行。</p>
 </blockquote>
 
-<p>因此，这个模板只信任经过实测的检查：<strong>检查必须证明自己能发现问题，不能因为存在就被视为有效。</strong>维护者向每个门禁植入过缺陷，并确认它会失败；召回率与误报率记录在资质台账中。台账本身也受门禁约束，已登记的检查若没有对应行，构建就会失败。<em>尚未</em>实测的检查会按名列出，因为未经有效性验证的检查不是弱证据，而是没有证据。</p>
+<p>因此，这个模板只信任经过实测的检查：<strong>检查必须证明自己能发现问题，不能因为存在就被视为有效。</strong>资质台账中可查到每项资格认定植入了什么缺陷、检查是否按预期失败，以及召回率和误报率。台账本身也受门禁约束，已登记的检查若没有对应行，构建就会失败。<em>尚未</em>实测的检查会按名列出，因为未经有效性验证的检查不是弱证据，而是没有证据。</p>
 
 <h2>从你所在的位置开始</h2>
 
@@ -262,17 +264,17 @@
 <li><strong>63 个技能</strong>覆盖论文、分析、模拟、复现包、申请书、幻灯片与教学等研究工作。</li>
 <li><strong>19 个代理</strong>包括 18 个科研/审读代理（审稿人、校对者、版式审查者、代码审读者、独立上下文的论断核验者等）和 1 个 Harness 自检代理 <code>ping</code>。18 个科研/审读代理均配置模型档位与 <code>effort</code> 思考预算；<code>ping</code> 未设置 <code>effort</code>。</li>
 <li><strong>37 条规则</strong>多数按路径作用域加载，只在处理相关文件时生效，少数始终开启。11 个钩子会直接拦截或执行操作，其中一个会拒绝 shell 命令悄悄改写定义门禁的设置与钩子文件。</li>
-<li><strong>12 个门禁，一条命令。</strong>检查范围包括表面一致性、技能完整性、模型时效性、链接、规格符合性、陈旧度、仓库卫生、派生计数、台账覆盖率、钩子测试、可移植性和幻灯片内容不变量。带固定种子的钩子测试组会让每个防线钩子重新面对它要拦截的失败。可移植性回归集检查路径、编码、行尾与 git 输出在换机器后是否仍给出相同答案；本机无法运行的用例会明确列出，并记为有上限的通过，不会藏进 PASS。幻灯片内容不变量检查包括引文键能否在唯一的文献库中解析，以及每页彩色框是否超过两个；此前，这两条只有文字要求。运行 <code>./scripts/install-hooks.sh</code> 后，门禁会在每次提交前执行。只有暂存内容包含某个钩子、对应设置或测试组本身时，才运行钩子测试组；CI 则运行全部门禁。</li>
+<li><strong>12 个门禁，一条命令。</strong>检查范围包括表面一致性、技能完整性、模型时效性、链接、规范符合性、陈旧度、仓库卫生、派生计数、台账覆盖率、钩子测试、可移植性和幻灯片内容不变量。带固定种子的钩子测试组会让每个防线钩子重新面对它要拦截的失败。可移植性回归集检查路径、编码、行尾与 git 输出在换机器后是否仍给出相同答案；本机无法运行的用例会明确列出，并记为有上限的通过，不会藏进 PASS。幻灯片内容不变量检查包括引文键能否在唯一的文献库中解析，以及每页彩色框是否超过两个；此前，这两条只有文字要求。运行 <code>./scripts/install-hooks.sh</code> 后，门禁会在每次提交前执行。只有暂存内容包含某个钩子、对应设置或测试组本身时，才运行钩子测试组；CI 则运行全部门禁。</li>
 <li><strong>默认保留审计轨迹</strong>：issue 记录缺陷，进度报告记录工作过程，资质台账记录哪些检查已经证明能够发现问题。</li>
 </ul>
 
-<h2>诚实的适用范围</h2>
+<h2>它能做什么，不能做什么</h2>
 
 <ul>
 <li><strong>结果仍然由你负责。</strong>模板降低了检查成本，但不会替你判断。识别策略、估计目标的选择和结果解释仍由你决定。</li>
 <li><strong>它不会自主运行。</strong>每轮评审都由你或你调用的技能启动。模板刻意不提供守护进程。</li>
 <li><strong>它为经济学设计，也可用于其他领域。</strong>核验层与领域无关，但敏感性分析与期刊校准并非如此。</li>
-<li><strong>使用它需要承担模型费用。</strong>模型路由会把机械性工作分配给低成本档位，但完整的同行评审模拟仍会产生费用。</li>
+<li><strong>使用它会消耗积分。</strong>本模板把简单任务配置到较轻量的档位；完整的多代理同行评审需要多轮模型调用，通常消耗更多积分。是否产生额外费用，取决于你的套餐和剩余额度。</li>
 </ul>
 
 <h2>开始使用</h2>
@@ -293,10 +295,7 @@ cd my-project
 <a href="https://github.com/Sellyew/Workbuddy-workflow">Sellyew/Workbuddy-workflow</a>。
 项目采用 MIT 许可，可自由用于教学、研究或其他学术用途。</p>
 
-<p>这一页与整套基础设施是
-<a href="https://github.com/pedrohcgs/claude-code-my-workflow">pedrohcgs/claude-code-my-workflow</a>
-（作者 Pedro H. C. Sant'Anna）的中文移植版，为 WorkBuddy 平台改写，作为个人学习用途维护。
-方法、设计与原创内容归原作者；要引用这套工作流本身，请引用上面那个原始仓库。</p>
+<p>原工作流来源：<a href="https://github.com/pedrohcgs/claude-code-my-workflow">pedrohcgs/claude-code-my-workflow</a>。引用这套工作流的方法与设计时，请使用原始仓库。</p>
 <div class="footer">
   <a href="https://github.com/Sellyew/Workbuddy-workflow/releases/latest">最新版本</a> &middot;
   <a href="https://github.com/Sellyew/Workbuddy-workflow/blob/main/CHANGELOG.md">变更日志</a> &middot;

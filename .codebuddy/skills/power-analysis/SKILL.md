@@ -29,7 +29,7 @@ metadata:
 
 - `--mode mde|n|power` —— 给定 N+功效求 MDE、给定 MDE+功效求 N，或给定 N+MDE 求功效。默认 `mde`。
 - `--design rct|cluster|multiarm|sim` —— 双臂 RCT、聚类 RCT（ICC）、多臂，或基于模拟。默认根据询问得到的设计推断。
-- `--input <path>` —— 一份 [`/interview-me`](../interview-me/SKILL.md) 规格（位于 `quality_reports/specs/`），从中读取 RQ、结果变量与设计。
+- `--input <path>` —— 一份 [`/interview-me`](../interview-me/SKILL.md) 研究需求说明（位于 `quality_reports/specs/`），从中读取 RQ、结果变量与设计。
 
 ## 工作流
 
@@ -112,7 +112,7 @@ metadata:
 
 - `--mode` `<mde|n|power>` —— 要求解的量：最小可检测效应、所需 N，或实际达到的功效。
 - `--design` `<rct|cluster|multiarm|sim>` —— 设计类型：双臂 RCT、聚类/ICC、带校正的多臂，或面向非标准设计的模拟。
-- `--input` `<spec>` —— `/interview-me` 规格或预注册草稿的路径，用于读取设计参数。
+- `--input` `<spec>` —— `/interview-me` 研究需求说明或预注册草稿的路径，用于读取设计参数。
 
 ## 交叉引用
 

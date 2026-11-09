@@ -21,7 +21,7 @@ Drew Breunig 在 ["How Long Contexts Fail"](https://www.dbreunig.com/2025/06/22/
 1. **Poisoning**：后续轮次引用早期幻觉，放大错误。
 2. **Distraction**：无关的早期上下文分散模型对当前任务的注意力。
 3. **Confusion**：相互矛盾的事实不断累积，模型无法判断该相信哪一个。
-4. **Clash**：多份计划、决定或规格同时存在，却没有明确协调。
+4. **Clash**：多份计划、决定或需求说明同时存在，却没有明确协调。
 
 本模板用 200 行的 `MEMORY.md` 上限防止 *distraction*，用计划落盘防止 *clash*。此前没有机制直接处理 *poisoning* 和 *confusion*，本技能补上了这一环。
 
