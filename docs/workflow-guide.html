@@ -2452,7 +2452,7 @@ window.Quarto = {
   <li><a href="#上下文保全" id="toc-上下文保全" class="nav-link" data-scroll-target="#上下文保全"><span class="header-section-number">5.1.3</span> 上下文保全</a></li>
   <li><a href="#会话记录" id="toc-会话记录" class="nav-link" data-scroll-target="#会话记录"><span class="header-section-number">5.1.4</span> 会话记录</a></li>
   </ul></li>
-  <li><a href="#pattern-2-contractor-mode-orchestrator" id="toc-pattern-2-contractor-mode-orchestrator" class="nav-link" data-scroll-target="#pattern-2-contractor-mode-orchestrator"><span class="header-section-number">5.2</span> Pattern 2 — 包工头模式（编排器）</a>
+  <li><a href="#pattern-2-contractor-mode-orchestrator" id="toc-pattern-2-contractor-mode-orchestrator" class="nav-link" data-scroll-target="#pattern-2-contractor-mode-orchestrator"><span class="header-section-number">5.2</span> Pattern 2 — 任务托管模式（编排器）</a>
   <ul class="collapse">
   <li><a href="#心智模型" id="toc-心智模型" class="nav-link" data-scroll-target="#心智模型"><span class="header-section-number">5.2.1</span> 心智模型</a></li>
   <li><a href="#回路" id="toc-回路" class="nav-link" data-scroll-target="#回路"><span class="header-section-number">5.2.2</span> 回路</a></li>
@@ -3016,14 +3016,15 @@ WorkBuddy 调用 /data-analysis，它在内部：
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>我正在这个仓库里开始做 <strong>[PROJECT NAME]</strong>。<strong>[用 2–3 句话描述你的项目：你在做什么、给谁用、用什么工具，例如 LaTeX/Beamer、R、Quarto。]</strong></p>
-<p>我希望我们的协作有清晰结构，并且准确、严谨，即使因此多花一些时间也可以。视觉材料必须打磨到可以直接发表。我不希望反复解释同一件事，因此工作流需要记住已经作出的决定，并从纠正中学习。</p>
-<p>我已经安装好这套 WorkBuddy 学术工作流。仓库中包含配置文件（<code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、templates、scripts）。请阅读并理解这些文件，然后<strong>根据我的项目调整所有配置文件</strong>：填写 <code>CODEBUDDY.md</code> 中的占位符，必要时调整规则，并针对我的用例提出定制建议。</p>
-<p>之后，所有非琐碎任务都先制定计划。我批准计划后，请你自主协调后续工作，只有遇到歧义或需要我决策时再来询问。最初几次会话请多与我确认，帮助我熟悉这套工作流。</p>
-<p>进入计划模式，先为本项目调整工作流配置。</p>
+<p>我要在这个仓库里做 <strong>[PROJECT NAME]</strong>。<strong>[用 2–3 句话描述你的项目：你在做什么、给谁用、用什么工具，例如 LaTeX/Beamer、R、Quarto。]</strong></p>
+<p>我希望我们做事有条理，内容准确，分析严谨；宁可多花些时间，也不要牺牲质量。视觉材料的排版和细节都要处理到位，达到可直接发表的标准。</p>
+<p>我不想为同一件事反复说明。请记录并沿用已经确认的决定；我纠正过的内容，要记下原因，后续遇到同类情况时照此调整。</p>
+<p>我已经安装好这套 WorkBuddy 学术工作流，仓库里有 <code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、templates、scripts 等文件。请先阅读这些文件，弄清各项约定，再按本项目需要调整相关配置：填写 <code>CODEBUDDY.md</code> 中的占位符，必要时调整规则。如果还有适合本项目的调整，请一并提出建议，不要自行扩大修改范围。</p>
+<p>以后，除了很简单的任务，都先给我一份计划，写明准备修改哪些文件、怎么改、如何验证，以及不做什么。需要编排器时，计划获批后由我调用负责实施的技能；仅批准计划不会启动编排器。执行时，你只在获批范围内推进；遇到歧义、需要我决定或超出范围的情况，再回来问我。刚开始的几次会话，请多和我确认。达到质量分数、技能完成或「直接干」均不构成交付授权；提交、推送、发布和部署分别需要我另行明确授权。</p>
+<p>现在请先进入计划模式，列出本项目的配置调整方案，等我批准后再修改。</p>
 </div>
 </div>
-<p><strong>这段提示词会让 WorkBuddy 做什么：</strong>它会读取 <code>CODEBUDDY.md</code> 和全部规则，填写项目名、机构、Beamer 环境、CSS 类与项目状态表，再针对你的用例提出规则调整建议。你批准计划后，WorkBuddy 会完成其余配置。此后，你只需描述要完成的任务。</p>
+<p><strong>这段提示词会让 WorkBuddy 做什么：</strong>它会先阅读相关配置，提出本项目的调整方案，等你批准后再按获批范围修改。以后，除了很简单的任务，它也会先给计划；已确认的决定及你纠正它的原因会被记录下来，供后续工作沿用。遇到歧义、需要决定或超出范围的情况，它会回来询问。达到质量分数、技能完成或「直接干」均不构成交付授权；提交、推送、发布和部署分别需要你另行明确授权。</p>
 </section>
 <section id="可选手工配置" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="可选手工配置"><span class="header-section-number">2.4</span> 可选：手工配置</h2>
@@ -3304,6 +3305,12 @@ APPROVED   NEEDS WORK
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-quality"><span class="header-section-number">3.4</span> 质量审读：80/90/95 体系</h2>
 <p><a href="#sec-blocks">质量门禁规则</a>（<code>quality-gates.md</code>）定义了 <code>/commit</code> 和各审读技能使用的评分阈值。这些阈值在技能内部属于<strong>建议性标准</strong>。运行 <code>./scripts/install-hooks.sh</code> 后，真正的 git pre-commit 钩子 <code>.githooks/pre-commit</code> 还会在每次提交时执行门禁总检套件和质量门禁，要求分数 ≥80。只有暂存内容包含 <code>.codebuddy/hooks/</code>、<code>.githooks/</code>、钩子设置或用例集本身时，pre-commit 才运行钩子用例集；CI 则始终全部运行。确需绕过时，应谨慎使用 <code>SKIP_QUALITY_GATE=1</code> 或 <code>--no-verify</code>。每份实质产物，包括 <code>.tex</code>、<code>.qmd</code>、<code>.R</code>，都有 0 到 100 的质量分：</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 31%">
+<col style="width: 25%">
+<col style="width: 22%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>分数</th>
@@ -3316,14 +3323,14 @@ APPROVED   NEEDS WORK
 <tr class="odd">
 <td><strong>80+</strong></td>
 <td>提交</td>
-<td>可以安全保存进度</td>
-<td>允许 <code>git commit</code></td>
+<td>达到提交的质量条件</td>
+<td>不构成提交授权；提交须由你明确调用 <code>/commit</code></td>
 </tr>
 <tr class="even">
 <td><strong>90+</strong></td>
 <td>PR</td>
-<td>可以部署</td>
-<td>鼓励 <code>gh pr create</code></td>
+<td>达到 PR 的质量条件</td>
+<td>不构成交付授权</td>
 </tr>
 <tr class="odd">
 <td><strong>95+</strong></td>
@@ -4461,16 +4468,16 @@ Plan drafted, saved to ~/.workbuddy/plans/&lt;name&gt;.md   (平台固定路径�
      v
 You approve in the plan-review UI
      |
-     | Approval returns the session to execution. Under 完全访问权限 the
-     | approved plan proceeds with no per-tool prompts; under 默认权限 the
-     | allow-list still lets routine edits through.
+     | Approval only returns the session to execution; it does not start
+     | an orchestrator or execute the plan. Tool prompts still depend on
+     | the permission mode and allow-list.
      v
-Orchestrator executes the plan end-to-end.</code></pre>
+You invoke the implementing skill; only then does its orchestrator start executing the approved plan.</code></pre>
 <p><strong>推荐它的原因：</strong></p>
 <ul>
 <li>执行前可以先审查做法。平台强制计划模式下不能编辑文件，不依赖模型自觉遵守。</li>
 <li>批准后，常规操作不再逐一中断。</li>
-<li>无需在会话中途切换，批准就是唯一的交接点。</li>
+<li>无需在会话中途切换权限；批准后由你调用负责实现的技能，执行限于获批范围，遇到歧义、需要决定或超出范围时会回来询问。</li>
 <li>与本仓库的计划先行规则一致。</li>
 </ul>
 <p><strong>前提：</strong>如果希望完全不被打断，必须在输入框旁选择<strong>完全访问权限</strong>；<code>permissions.defaultMode</code> 在桌面端没有可观察效果。更稳妥的日常选择是保持<strong>默认权限</strong>：七条通配 <code>allow</code> 已允许常规编辑和命令直接执行，只有受保护路径、安装软件和联网等操作会询问，而这些操作也正值得人工确认。</p>
@@ -5132,7 +5139,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </tr>
 <tr class="even">
 <td><strong>一篇论文 / R&amp;R</strong></td>
-<td>1 → 2（包工头模式）→ 15（对抗式审计）→ 16（预注册与投稿）→ 18（外部裁判）</td>
+<td>1 → 2（任务托管模式）→ 15（对抗式审计）→ 16（预注册与投稿）→ 18（外部裁判）</td>
 </tr>
 <tr class="odd">
 <td><strong>数据与复现</strong></td>
@@ -5226,11 +5233,11 @@ Orchestrator executes the plan end-to-end.</code></pre>
 </section>
 </section>
 <section id="pattern-2-contractor-mode-orchestrator" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="pattern-2-contractor-mode-orchestrator"><span class="header-section-number">5.2</span> Pattern 2 — 包工头模式（编排器）</h2>
+<h2 data-number="5.2" class="anchored" data-anchor-id="pattern-2-contractor-mode-orchestrator"><span class="header-section-number">5.2</span> Pattern 2 — 任务托管模式（编排器）</h2>
 <p>你批准计划并调用负责实现的技能后，编排器会在该技能内部接手。它延续 Pattern 1：计划规定<em>做什么</em>，编排器负责<em>怎么做</em>，并在技能范围内自主执行。仅批准计划不会触发任何操作，详见「是运行时，不是守护进程」。</p>
 <section id="心智模型" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="心智模型"><span class="header-section-number">5.2.1</span> 心智模型</h3>
-<p>可以把编排器看作<strong>总包工头</strong>，把你看作甲方。你说明目标，计划先行协议完成蓝图。蓝图批准后，包工头把任务分给合适的专家（代理），检查成果（核验），退回需要修改的部分（审读—修复回路），只在成果通过验收时请你确认（质量门禁）。</p>
+<p>你说明目标，计划先行协议形成实施方案。你批准方案并调用负责实现的技能后，编排器在技能范围内协调合适的代理，核验成果，并通过审读—修复回路处理需要修改的部分，直到达到质量条件。它只在获批范围内推进；遇到歧义、需要你决定或超出范围的情况，会回来询问。</p>
 </section>
 <section id="回路" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="回路"><span class="header-section-number">5.2.2</span> 回路</h3>
@@ -5239,6 +5246,8 @@ Orchestrator executes the plan end-to-end.</code></pre>
   |-- Plan-first (Pattern 1): draft plan, save to disk, get approval
   |
   |-- User: &quot;Approved&quot;
+  |
+  |-- User invokes the implementing skill (e.g., /translate-to-quarto)
   |
   +-- Orchestrator activates (inside the invoked skill):
         |
@@ -5323,7 +5332,7 @@ Orchestrator executes the plan end-to-end.</code></pre>
 <blockquote class="blockquote">
 <p>「把 Lecture 5 译成 Quarto。直接干。」</p>
 </blockquote>
-<p>在这个模式下，编排器仍执行完整的扇出 → 归并 → 裁判 → 空轮收敛流程，不缩减质量检查，但会跳过当前技能最后的批准停顿。它<strong>不会</strong>自动提交。「直接干」不代表授权提交；提交仍须显式调用 <code>/commit</code> 或提出明确请求。编排器最后仍会给出摘要，说明完成了什么。</p>
+<p>在这个模式下，编排器仍执行完整的扇出 → 归并 → 裁判 → 空轮收敛流程，不缩减质量检查，但会跳过当前技能最后的批准停顿。达到质量分数、技能完成或「直接干」均不构成交付授权；提交、推送、发布和部署分别需要你另行明确授权。编排器最后仍会给出摘要，说明完成了什么。</p>
 </section>
 <section id="与既有技能的关系" class="level3" data-number="5.2.5">
 <h3 data-number="5.2.5" class="anchored" data-anchor-id="与既有技能的关系"><span class="header-section-number">5.2.5</span> 与既有技能的关系</h3>
