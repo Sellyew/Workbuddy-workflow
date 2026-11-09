@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Pedro H. C. Sant’Anna">
+<meta name="author" content="原作者：Pedro H. C. Sant’Anna；WorkBuddy 中文移植与维护：Sellyew（非官方）">
 <meta name="dcterms.date" content="2026-09-27">
 
-<title>我的 WorkBuddy 配置</title>
+<title>WorkBuddy 学术工作流：非官方中文移植</title>
 <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -2378,7 +2378,7 @@ window.Quarto = {
   <li><a href="#sec-first-session" id="toc-sec-first-session" class="nav-link" data-scroll-target="#sec-first-session"><span class="header-section-number">2.3</span> 第 2 步：启动 WorkBuddy 并粘入这段提示词</a></li>
   <li><a href="#可选手工配置" id="toc-可选手工配置" class="nav-link" data-scroll-target="#可选手工配置"><span class="header-section-number">2.4</span> 可选：手工配置</a></li>
   <li><a href="#sec-adopt-existing" id="toc-sec-adopt-existing" class="nav-link" data-scroll-target="#sec-adopt-existing"><span class="header-section-number">2.5</span> 在已有项目里采用这套模板</a></li>
-  <li><a href="#sec-spec-then-plan" id="toc-sec-spec-then-plan" class="nav-link" data-scroll-target="#sec-spec-then-plan"><span class="header-section-number">2.6</span> 需求规格（针对复杂任务）</a></li>
+  <li><a href="#sec-spec-then-plan" id="toc-sec-spec-then-plan" class="nav-link" data-scroll-target="#sec-spec-then-plan"><span class="header-section-number">2.6</span> 需求说明（针对复杂任务）</a></li>
   <li><a href="#采用阶梯" id="toc-采用阶梯" class="nav-link" data-scroll-target="#采用阶梯"><span class="header-section-number">2.7</span> 采用阶梯</a></li>
   </ul></li>
   <li><a href="#sec-system" id="toc-sec-system" class="nav-link" data-scroll-target="#sec-system"><span class="header-section-number">3</span> 系统实战</a>
@@ -2559,7 +2559,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">我的 WorkBuddy 配置</h1>
+<h1 class="title">WorkBuddy 学术工作流：非官方中文移植</h1>
 <p class="subtitle lead">AI 辅助学术工作流完全指南：幻灯片、论文、数据分析与其他</p>
 </div>
 
@@ -2570,7 +2570,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Pedro H. C. Sant’Anna </p>
+             <p>原作者：Pedro H. C. Sant’Anna；WorkBuddy 中文移植与维护：Sellyew（非官方） </p>
           </div>
   </div>
     
@@ -2584,7 +2584,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 8, 2026</p>
+      <p class="date-modified">November 9, 2026</p>
     </div>
   </div>
     
@@ -2595,6 +2595,9 @@ window.Quarto = {
 </header>
 
 
+<blockquote class="blockquote">
+<p><strong>原作与移植：</strong> 本指南是 <a href="https://github.com/pedrohcgs/claude-code-my-workflow">pedrohcgs/claude-code-my-workflow</a> 的非官方 WorkBuddy 中文移植。上游工作流的方法与设计来自 Pedro H. C. Sant’Anna；Sellyew 负责中文翻译、WorkBuddy 适配和维护。下文用「上游」统称 Sant’Anna 的原项目、原指南和课程记录。</p>
+</blockquote>
 <section id="sec-why" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> 这套工作流为何存在</h1>
 <section id="问题" class="level2" data-number="1.1">
@@ -2671,7 +2674,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>这套工作流源于一门「因果面板数据」博士课的开发过程。课程经过 6 个多轮会话完成，共产出 6 讲完整讲义，每讲 140+ 页，均有 Beamer 和 Quarto 两个版本，并配有交互式 Plotly 图、TikZ 图和 R 复现脚本。编排器管理制作流程，专职代理从 5 个质量维度审读成果。</p>
+<p>这套工作流源于原作者的「因果面板数据」博士课：6 个多轮会话共产出 6 讲完整讲义，每讲 140+ 页，均有 Beamer 和 Quarto 两个版本，并配有交互式 Plotly 图、TikZ 图和 R 复现脚本。编排器管理制作流程，专职代理从 5 个质量维度审读成果。</p>
 <p>这个案例以幻灯片为主，但代理、编排器和质量门禁同样适用于研究论文、数据分析与项目申请书。</p>
 </div>
 </div>
@@ -2812,8 +2815,8 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <ul>
 <li><strong>平台特性</strong>：WorkBuddy 的行为，已对照官方文档核验；对可能变化的内容会注明「截至某日」。</li>
 <li><strong>模板实现</strong>：本仓库实际交付的代码如何工作，可在点名文件中核查。</li>
-<li><strong>本仓库实测</strong>：带日期的数字；属于资格台账覆盖范围时，还会附上相应记录。</li>
-<li><strong>经验法则</strong>：我们在真实项目中的做法，会明确写成「在我们的用法里……」，不视为基准测试结果。</li>
+<li><strong>实测记录</strong>：带日期的数字会注明来自上游项目还是本移植；有资格台账记录的，还会附上对应条目。</li>
+<li><strong>经验法则</strong>：来自上游项目的做法会标明来源。这类经验不是基准测试，也不等于已在 WorkBuddy 复验。</li>
 <li><strong>政策要求</strong>：期刊或资助方的规定，按原文强度区分「要求」与「强烈鼓励」。</li>
 </ul>
 <p>如果某条断言会影响你的决定，可以根据类别选择核查方式。发现内容已经变化时，请开 issue 报告这个 bug。</p>
@@ -2971,7 +2974,7 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 agents, disk has fewer</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">--</span> README.md      <span class="co"># undo</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># green again</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>这组命令展示了这一过程：通过、植入缺陷、失败、还原、再次通过。仓库中的每道门禁都做过这样的资格认定，结果记录在 <code>quality_reports/qualification/LEDGER.md</code>。</p>
+<p>这组命令展示了这一过程：通过、植入缺陷、失败、还原、再次通过。<code>quality_reports/qualification/LEDGER.md</code> 记录了各门禁的资格认定结果。</p>
 </div>
 </div>
 </div>
@@ -2992,14 +2995,14 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>不用终端，用 VS Code 或桌面应用？
+<span class="screen-reader-only">Note</span>用 VS Code 编辑，用 WorkBuddy 桌面端运行？
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>本指南介绍的工作流适用于各个 WorkBuddy 界面。在 <strong>VS Code</strong> 中，点击侧边栏的 WorkBuddy 图标，或按 Cmd+Shift+P 并选择 “WorkBuddy: Open”，即可打开 WorkBuddy 面板。在<strong>桌面应用</strong>中，打开项目文件夹并开启本地会话。然后粘贴下面的起始提示词。</p>
-<p>本指南用终端命令举例，因为这种写法最通用。无论你使用哪个界面，技能、代理、钩子和规则的核心机制都相同，但具体行为取决于各界面加载的配置与运行环境。</p>
+<p>可以用 VS Code 编辑项目文件，但 WorkBuddy 会话要在 <strong>WorkBuddy 桌面客户端</strong>中新建，并选择同一个项目目录，再粘贴下面的起始提示词。这里只给出桌面客户端的操作步骤。CodeBuddy 的 VS Code 插件是另一套产品。</p>
+<p>本指南用终端命令举例，因为这种写法最通用。</p>
 </div>
 </div>
 </div>
@@ -3073,11 +3076,11 @@ WorkBuddy 调用 /data-analysis，它在内部：
 <li><strong>按名称暂存复制进来的文件：</strong><code>git add .codebuddy .githooks scripts templates Preambles CODEBUDDY.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>。台账检查要求 git 跟踪钩子文件，模板自带的防线也会拒绝不加区分的 <code>git add -A</code>。</li>
 <li><strong>依次运行</strong> <code>./scripts/validate-setup.sh</code>、<code>./scripts/install-hooks.sh</code> 和 <code>./scripts/backtest.sh</code>。</li>
 </ol>
-<p>我们在一个已有 README、<code>paper/</code>、<code>code/</code> 和根目录 <code>Makefile</code> 的项目上测试过这些步骤。直接复制后有五项检查失败；完成第 1–5 步后，包括钩子用例集在内的全套检查均通过。</p>
+<p>上游原指南记录过同类迁移测试：在一个已有 README、<code>paper/</code>、<code>code/</code> 和根目录 <code>Makefile</code> 的项目上，直接复制后有五项检查失败；完成第 1–5 步后，包括钩子用例集在内的全套检查均通过。上述 WorkBuddy 步骤不据此视为已复验。</p>
 </section>
 <section id="sec-spec-then-plan" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="sec-spec-then-plan"><span class="header-section-number">2.6</span> 需求规格（针对复杂任务）</h2>
-<p>对于复杂或有歧义的任务，WorkBuddy 可能先提出 3-5 个澄清问题，整理成需求规格后再制定计划。这样可以尽早发现歧义，减少返工。</p>
+<h2 data-number="2.6" class="anchored" data-anchor-id="sec-spec-then-plan"><span class="header-section-number">2.6</span> 需求说明（针对复杂任务）</h2>
+<p>对于复杂或有歧义的任务，WorkBuddy 可能先提出 3-5 个澄清问题，整理成需求说明后再制定计划。这样可以尽早发现歧义，减少返工。</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href>做幻灯片</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href>数据分析</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href>代码重构</a></li></ul>
 <div class="tab-content">
@@ -3090,7 +3093,7 @@ WorkBuddy：「我先澄清几点：
 3. 有哪些约束（时间、记号改动）？
 4. 要更新哪些产出（幻灯片、网页版、两者）？」
 
-[创建带 MUST/SHOULD/MAY 优先级的规格]
+[列一份任务要求，并用 MUST/SHOULD/MAY 标明优先级]
 [你批准]
 [然后进入计划模式]</code></pre>
 </div>
@@ -3114,14 +3117,14 @@ WorkBuddy：「我先澄清几点：
 </div>
 </div>
 </div>
-<p>提出 3-5 个问题后，WorkBuddy 会在 <code>quality_reports/specs/</code> 生成需求规格文档，内容包括：</p>
+<p>WorkBuddy 先问 3-5 个问题，再把整理好的需求说明写入 <code>quality_reports/specs/</code>，内容包括：</p>
 <ul>
 <li><strong>MUST</strong>：必须满足的不可谈判要求。</li>
 <li><strong>SHOULD</strong>：应当具备的偏好特性。</li>
 <li><strong>MAY</strong>：可以选择的增强项。</li>
 <li><strong>清晰度状态</strong>：每个方面标为 CLEAR、ASSUMED 或 BLOCKED。</li>
 </ul>
-<p>你批准规格后，WorkBuddy 才会规划实现。这能把执行计划期间的方向调整减少 30-50%。</p>
+<p>你批准需求说明后，WorkBuddy 才会规划实现。这能把执行计划期间的方向调整减少 30-50%。</p>
 <p><strong>模板：</strong> <code>templates/requirements-spec.md</code></p>
 <hr>
 </section>
@@ -3533,7 +3536,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>我们曾在一个可以运行的代码库中故意植入二十个 bug，再让审阅代理检查。<strong>它们报告一切正常。</strong>20 个 bug 一个也没有发现，召回数为 0。这是本模板开发过程中于 2026 年 6 月发生的一次会话事故，早于资格台账的建立。正因为有这次事故，现在的门禁结果都要附上一行可复现的台账记录。</p>
+<p>上游项目于 2026 年 6 月在一个可以运行的代码库中故意植入二十个 bug，再让审阅代理检查。<strong>它们报告一切正常。</strong>20 个 bug 一个也没有发现，召回数为 0。这次会话事故发生在资格台账建立之前。现在，门禁结果都要附上一行可复现的台账记录。</p>
 <p>这份输出与真正没有问题的运行结果没有可见区别。审阅者表达自信、语言流畅，结论却完全错误，读者仅凭报告无法分辨。</p>
 </div>
 </div>
@@ -3584,13 +3587,13 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>这不是假设 — 它在本仓库抓到过一个真实的 bug
+<span class="screen-reader-only">Note</span>这不是假设 — 它在上游项目抓到过一个真实的 bug
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>开发 v2.5 时，我们在本仓库的一致性门禁中植入了一个缺陷：在 <code>README.md</code> 加入 <code>This template has NN skills.</code>，其中数量与磁盘实际数量不符。</p>
+<p>上游项目开发 v2.5 时，有一次针对一致性门禁的缺陷植入测试：在 <code>README.md</code> 加入 <code>This template has NN skills.</code>，其中数量与磁盘实际数量不符。</p>
 <p><strong>当时套件中的每道门禁仍然全部通过。</strong>这些计数模式有意采用复合结构，要求同一行出现多个类别，以免把「start with 2–3 skills」这类正常文字误判为计数断言。但只含模板动词的计数因此绕过了检查。</p>
-<p>这道门禁一直显示通过，结果却是错的，只有植入缺陷才能暴露问题。修复后，我们重新做了<em>双向</em>资格认定：3 次植入的漂移全部被发现，3 段正常文字的误报数为 0。</p>
+<p>这道门禁当时一直显示通过，只有植入缺陷才暴露了问题。修复后重新做了<em>双向</em>资格认定：3 次植入的漂移全部被发现，3 段正常文字的误报数为 0。</p>
 </div>
 </div>
 </section>
@@ -4149,7 +4152,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>按代理配置模型时，一次典型的 Beamer→Quarto 翻译会让批评者使用 <code>reasoning</code>，修复者使用 <code>default</code>，两者都运行 2–4 轮。在我们的用法中，这比全部使用 <code>reasoning</code> 大约节省 40–60%，且修复阶段没有观察到质量损失。这是来自我们自己项目的路由经验，不是基准测试保证。</p>
+<p>在上游项目的一个 Beamer→Quarto 翻译例子中，批评者通常使用 <code>reasoning</code>，修复者使用 <code>default</code>，两者都运行 2–4 轮。与全部使用 <code>reasoning</code> 相比，这种按代理配置模型的做法大约节省 40–60%，修复阶段没有观察到质量损失。这个数字不是基准测试结果，尚未在 WorkBuddy 复验。</p>
 </div>
 </div>
 </section>
@@ -4256,7 +4259,7 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 中用 <code>model:</code> 按代理设置。在我们的用法中，与全部使用 <code>reasoning</code> 相比，采用路由的技能通常可节省 <strong>50–80%</strong>，机械任务阶段没有观察到质量损失。这是经验法则，不是基准结果。<a href="https://augmentcode.com">Augment Code 的路由数据</a>记录了社区中相近的分配比例，Aider 的架构者与编辑者分工也采用类似思路；Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>是这一模式的一手来源。</p>
+<p>在 <code>.codebuddy/agents/&lt;name&gt;.md</code> 的 frontmatter 中用 <code>model:</code> 按代理设置。上游项目采用这种路由后，与全部使用 <code>reasoning</code> 相比通常可节省 <strong>50–80%</strong>，机械任务阶段没有观察到质量损失。这个数字是经验估计，不是基准测试结果，尚未在 WorkBuddy 复验。<a href="https://augmentcode.com">Augment Code 的路由数据</a>记录了社区中相近的分配比例，Aider 的架构者与编辑者分工也采用类似思路；Anthropic 2026 年 4 月 8 日的<a href="https://www.anthropic.com/engineering">“解耦大脑与双手”</a>是这一模式的一手来源。</p>
 <p><strong>2. 控制深度预算。</strong>下面的<a href="#sec-effort">深度档位</a>一节介绍本平台的<strong>三档</strong>：<code>default</code> / <code>lite</code> / <code>reasoning</code>。<strong><code>effort</code> 是另一项独立设置</strong>：代理 frontmatter 的 <code>effort:</code> 可取 <code>minimal</code>–<code>max</code>，调整同一模型档位内的思考预算，不改变档位；技能中设置它无效。平台没有 <code>maxEffortLevel</code> 这类上限设置。</p>
 <p>日常任务默认使用 <code>default</code>，机械任务降到 <code>lite</code>。只有假 PASS 代价高昂的检查才指定 <code>reasoning</code>。本模板对编辑、两位审稿人和断言核验器采用这一安排，也用于 <code>/audit-reproducibility</code>、<code>/seven-pass-review</code>、<code>/simulation-study</code> 等核验门禁或正确性关键技能，完整清单见 <code>model-routing.md</code>。深度搜索、大型重构和最复杂的 <code>/review-paper</code> 运行等扩展探索，不必整体换用更高档位；可以把工作拆成范围明确的小调用，只在需要判断的环节使用 <code>reasoning</code>。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -5435,7 +5438,7 @@ Phase 4: Only then extend
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>在一门课上，我们发现一个广泛使用的 R 包因隐蔽的设定问题产出了<strong>错误的估计</strong>，却没有发出警告。这个 bug 在不同脚本中被发现了 3 次。如果缺少复现优先协议，这些错误数字就会被带进博士生课堂。</p>
+<p>上游课程曾发现一个广泛使用的 R 包因隐蔽的设定问题产出了<strong>错误的估计</strong>，却没有发出警告。这个 bug 在不同脚本中被发现了 3 次。如果缺少复现优先协议，这些错误数字就会被带进博士生课堂。</p>
 </div>
 </div>
 <p><strong>源语言覆盖：</strong> 这个模式不限定语言。模板为 R 优先的项目提供 <a href="#all-skills"><code>/data-analysis</code></a>，为 Stata 优先的项目提供 <a href="#all-skills"><code>/stata-replication</code></a>（v1.9.0）。后者与 <code>/data-analysis</code> 完全对应：编号流水线的结构相同，实现语言不同，并通过 <code>stata-mcp</code> MCP 服务器执行。Python 优先的项目遵循同一约定，把编号脚本放在 <code>scripts/python/</code>，把结果写入共享的顶层 <code>output/</code>；每种语言都写入这个目录。</p>
@@ -5891,7 +5894,7 @@ Decision point (1-2 hours):
 </tr>
 <tr class="odd">
 <td><code>/interview-me [topic]</code></td>
-<td>通过交互式访谈，将模糊想法整理成具体规格</td>
+<td>通过交互式访谈，将模糊想法整理成研究需求说明</td>
 <td>你有直觉但还没计划时</td>
 </tr>
 <tr class="even">
@@ -6335,7 +6338,7 @@ Decision point (1-2 hours):
 <p>本工作流遵循一条关键原则：<strong>把科学推理与计算执行分开。</strong> 人设计诊断模板，决定测量什么；AI 负责执行，决定怎样运行。</p>
 <p>这就是模板—执行器架构，你已经在使用它：</p>
 <ul>
-<li><strong>你的规格</strong>（需求规格）= 模板，规定<em>什么</em>必须为真。</li>
+<li><strong>你的需求说明</strong> = 模板，规定<em>什么</em>必须为真。</li>
 <li><strong>编排器</strong> = 执行器，负责<em>怎样</em>让这些条件成立。</li>
 <li><strong>计划</strong> = 决策理由，形成审计轨迹。</li>
 <li><strong>会话日志</strong> = 推理过程记录。</li>
@@ -6537,7 +6540,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
                                   /checkpoint preregistration-submitted
                                        ↓
                                   data collection begins</code></pre>
-<p><code>/preregister --input &lt;spec&gt;</code> 会读取 <code>/interview-me</code> 生成的规格。规格在 <code>**Paper type:**</code> 行记录的论文类型，例如 <code>survey-experiment</code>，会影响风格选择。技能生成符合登记处格式的草稿，并为每节标注 <strong>MUST / SHOULD / MAY</strong>。起飞前检查会确认方向性假设、具体估计量、事前排除规则和样本量停止规则是否已经写明。</p>
+<p><code>/preregister --input &lt;spec&gt;</code> 会读取 <code>/interview-me</code> 生成的研究需求说明。其中 <code>**Paper type:**</code> 行记录的论文类型，例如 <code>survey-experiment</code>，会影响风格选择。技能生成符合登记处格式的草稿，并为每节标注 <strong>MUST / SHOULD / MAY</strong>。起飞前检查会确认方向性假设、具体估计量、事前排除规则和样本量停止规则是否已经写明。</p>
 </section>
 <section id="各登记风格下的必填字段" class="level4" data-number="5.10.4.4">
 <h4 data-number="5.10.4.4" class="anchored" data-anchor-id="各登记风格下的必填字段"><span class="header-section-number">5.10.4.4</span> 各登记风格下的必填字段</h4>
@@ -6621,7 +6624,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <h4 data-number="5.10.4.5" class="anchored" data-anchor-id="与-checkpoint-配合"><span class="header-section-number">5.10.4.5</span> 与 <code>/checkpoint</code> 配合</h4>
 <p><code>/checkpoint</code> 为叙事式会话日志提供结构化补充。用于预注册时，有三个关键时点：</p>
 <ul>
-<li><strong>提交到登记处之前</strong>：运行 <code>/checkpoint preregistration-pre-submit</code>，保存草稿状态、所依据的规格和下一步动作，例如「上传到 OSF 并记录登记 ID」。</li>
+<li><strong>提交到登记处之前</strong>：运行 <code>/checkpoint preregistration-pre-submit</code>，保存草稿状态、所依据的研究需求说明和下一步动作，例如「上传到 OSF 并记录登记 ID」。</li>
 <li><strong>提交之后</strong>：运行 <code>/checkpoint preregistration-submitted</code>，保存上传后的状态，<code>date:</code> frontmatter 会记录当天日期。检查点没有专门的登记 ID 字段，<code>/checkpoint</code> 之后输入的内容也只会成为文件名 slug，因此应自行把 ID 写入快照的「近期决策」。检查点会被 gitignore，而且由检查点指向计划与会话日志，而不是反向引用。为长期保留登记 ID，还要把它写进一份已提交文件。可以使用受跟踪的项目文件，也可以用 <code>git add -f</code> 强制添加计划或会话日志，因为这两个目录默认都被 gitignore。</li>
 <li><strong>数据到手时</strong>：运行 <code>/checkpoint data-arrived</code>，标明「我本来可以正当承诺的东西」与「我看了才知道的东西」之间的边界。此后的分析都属于探索性分析，除非明确锚定到预注册计划。</li>
 </ul>
@@ -6645,7 +6648,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="pattern-17-vaccinate" class="level3" data-number="5.10.5">
 <h3 data-number="5.10.5" class="anchored" data-anchor-id="pattern-17-vaccinate"><span class="header-section-number">5.10.5</span> Pattern 17 — 给你的审阅者打疫苗</h3>
-<p><strong>问题。</strong> 你搭好了一条审读流水线，它会报告发现，看起来也很彻底，但你无法确定它是否有效。曾有一次，二十个预先埋入的 bug 全部逃过一组审阅者，最终得到一份合格报告；仅从输出看，这次运行与一次真正无缺陷的运行没有区别。</p>
+<p><strong>问题。</strong> 你搭好了一条审读流水线，它会报告发现，看起来也很彻底，但你无法确定它是否有效。<a href="#sec-vaccinate">前文的上游事故</a>就是一个例子：二十个预先埋入的 bug 全部逃过审阅，最后却得到一份合格报告；仅从输出看，这次运行与真正无缺陷的运行没有区别。</p>
 <p><strong>模式。</strong> 在一道检查或一位审阅者获准放行任何内容之前，先向它展示一个你埋入的缺陷，确认检查会失败。</p>
 <pre><code>/vaccinate check-model-versions.sh</code></pre>
 <ol type="1">
@@ -6687,7 +6690,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>给每个分叉标上 <code>estimand</code> 或 <code>estimate</code>。</strong> 有些选择会改变<em>被估计的对象</em>，而不只是估计值，对这些分叉求平均没有意义。估计目标类分叉应单独记录，并在报告中说明。</li>
 <li><strong>只有当你愿意在研讨会上为分叉的两个分支辩护时，才把它纳入网格。</strong> 加入无法辩护的备选，只会稀释那些脆弱的格子。</li>
 <li><strong>报告哪个分叉驱动了离散度。</strong> 「除了美元成交量与份额成交量之间的选择之外都稳健」，比一整段笼统的稳健性说明更有信息量。</li>
-<li><strong>规格曲线用于描述结果分布；具名敏感性统计量用于评估结果对识别假设的敏感性并为其划界</strong>，例如 E-value、Cinelli–Hazlett RV、Oster δ。</li>
+<li><strong>设定曲线用于描述结果分布；具名敏感性统计量用于评估结果对识别假设的敏感性并为其划界</strong>，例如 E-value、Cinelli–Hazlett RV、Oster δ。</li>
 <li><strong>预先承诺解读。</strong> 在运行网格<strong>之前</strong>，写下什么结果会支持或削弱这条断言。</li>
 </ul>
 <p><strong>分布曲线较宽是一项发现，不是失败。</strong> 应把它写进论文，并说明离散度由什么驱动。稳健性一节中最有价值的一句话，往往正是迫使你放弃偏好解读的那句话。</p>
@@ -6771,7 +6774,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td>模板-执行器分离</td>
 <td>Xu &amp; Yang</td>
-<td>规格规定量什么，编排器负责怎么执行</td>
+<td>任务要求规定量什么，编排器负责怎么执行</td>
 </tr>
 <tr class="even">
 <td>自我改进的配置</td>
@@ -6817,7 +6820,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p>下面分别介绍各项目的用途和适用场景。</p>
 <section id="clo-author以论文为中心的研究工作流" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="clo-author以论文为中心的研究工作流"><span class="header-section-number">7.1</span> clo-author：以论文为中心的研究工作流</h2>
-<p><strong>仓库：</strong> <a href="https://github.com/hugosantanna/clo-author">hugosantanna/clo-author</a> <strong>作者：</strong> Hugo Sant’Anna（UAB） <strong>建于：</strong> 本仓库的 fork</p>
+<p><strong>仓库：</strong> <a href="https://github.com/hugosantanna/clo-author">hugosantanna/clo-author</a> <strong>作者：</strong> Hugo Sant’Anna（UAB） <strong>来源：</strong> 上游原项目的 fork</p>
 <p>clo-author 将整套工作流的重心从幻灯片转向<strong>研究论文</strong>，以论文（<code>Paper/main.tex</code>）为单一真源，并从中生成报告和附录。它的关键架构设计是<strong>对抗式 worker-critic 代理配对</strong>：每个创作型代理都配一名专职批评代理，两者职责严格分开，批评代理不负责创作，创作代理也不评价自己的成果。</p>
 <p><strong>主要新增能力：</strong></p>
 <ul>
@@ -6873,7 +6876,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p>这篇论文将本工作流中一些凭直觉采用的原则形式化。论文报告的 AI 辅助流水线处理了 92 篇论文、215 个设定；在数据和代码均可获取的条件下，可复现率达到 <strong>100%</strong>，每篇论文的处理时间不到四分钟。</p>
 <p><strong>关键原则：</strong></p>
 <ul>
-<li><strong>模板-执行器分离</strong>：人设计诊断模板，明确量什么；AI 负责执行，决定怎么跑。这对应本模板的先规格后计划工作流。</li>
+<li><strong>模板-执行器分离</strong>：人设计诊断模板，明确量什么；AI 负责执行，决定怎么跑。这对应本模板的先需求说明后计划工作流。</li>
 <li><strong>三层架构</strong>：LLM 编排器负责协调，技能描述与知识库提供契约和累积经验，确定性代理代码处理数值工作。这对应本模板的编排器 → 技能/规则 → 代理。</li>
 <li><strong>结构化的中间文件</strong>：代理通过磁盘上的标准化文件（JSON、CSV、日志）通信，不使用隐藏状态，因此每一步都可查看、可重跑。</li>
 <li><strong>受版本控制的知识累积</strong>：使用 Context/Problem/Fix/Impact 格式的 SKILL.md 文件，对应本模板的 <code>/learn</code> 技能。</li>
@@ -6952,12 +6955,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="sec-community" class="level2" data-number="7.10">
 <h2 data-number="7.10" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">7.10</span> 社区采用情况</h2>
-<p>多个学科的研究组曾 fork 并改造这套工作流，用于自己的项目。<strong>2026 年 3 月调研时，这类研究组有 15+ 个</strong>；此后仓库累计超过 <strong>2,900 个 fork</strong> 和 1,500 个 star（GitHub，2026-08-24）。fork 数不等于研究组数：调研数字与 fork 数衡量的是不同对象，而且只有前者经过手工核对：</p>
-<ul>
-<li><strong>经济学</strong>：中国创新政策、心理健康与裁员、AIGC 与股价、医疗领域的资本/劳动份额</li>
-<li><strong>能源</strong>：尼泊尔与全球能源经济学、光伏组件可靠性</li>
-<li><strong>教学</strong>：ECN 152 课程开发、Econ 730 因果面板数据</li>
-</ul>
+<p>上游项目的 2026 年 3 月调研经手工核对，记录了 <strong>15+ 个研究组</strong>；截至 2026-08-24，原仓库累计超过 <strong>2,900 个 fork</strong> 和 1,500 个 star（GitHub）。这些研究组曾 fork 并改造上游工作流，用于自己的项目。调研数字与 fork 数不能混为一谈：一次 fork 不等于一个研究组，这两个数字也都不是本移植的采用数据。例子包括经济学、能源、政治学与工程学。</p>
 <p>这些改造遵循同一流程：fork 模板、填写 <code>CODEBUDDY.md</code> 占位符、自定义领域审阅者，以及添加领域专属技能。编排器、钩子和质量门禁等基础设施无需修改即可沿用。</p>
 <hr>
 </section>
@@ -7240,7 +7238,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p><strong>实验方案校验器</strong></p>
-<p>根据安全与可复现标准检查实验室方案，确认材料、步骤和安全等必需章节是否齐全，并检查定量规格、对照组和复现细节。</p>
+<p>根据安全与可复现标准检查实验室方案，确认材料、步骤和安全等必需章节是否齐全，并检查定量参数、对照组和复现细节。</p>
 <p><strong>触发：</strong> 用户提供方案文档，并说「检查方案」（“check protocol”）或「验证流程」（“validate procedure”）</p>
 <p><strong>工具：</strong> <code>Read</code>、<code>Write</code></p>
 </div>
@@ -7667,7 +7665,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td><code>/preregister</code></td>
 <td><code>.codebuddy/skills/preregister/</code></td>
-<td>根据研究规格生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0）</td>
+<td>根据研究需求说明生成预注册文档（OSF / AsPredicted / AEA RCT Registry）（v1.8.0）</td>
 </tr>
 <tr class="even">
 <td><code>/humanize</code></td>
@@ -7707,7 +7705,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td><code>/challenge</code></td>
 <td><code>.codebuddy/skills/challenge/</code></td>
-<td>用尚未采用的选择压测一个发现：沿各项离散分析选择绘制规格曲线以描述结果分布，再用 E-value、Cinelli–Hazlett RV、Oster δ 等具名敏感性统计量评估结果对识别假设的敏感性并为其划界</td>
+<td>用尚未采用的选择压测一个发现：沿各项离散分析选择绘制设定曲线以描述结果分布，再用 E-value、Cinelli–Hazlett RV、Oster δ 等具名敏感性统计量评估结果对识别假设的敏感性并为其划界</td>
 </tr>
 <tr class="even">
 <td><code>/capture-environment</code></td>
@@ -7727,7 +7725,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <tr class="odd">
 <td><code>/grant-proposal</code></td>
 <td><code>.codebuddy/skills/grant-proposal/</code></td>
-<td>根据 <code>/interview-me</code> 的规格撰写基金申请书（NSF/NIH/ERC/基金会），委派 DMP 与设施部分，并检查目标↔︎方法↔︎预算是否一致（v2.0）</td>
+<td>根据 <code>/interview-me</code> 的研究需求说明撰写基金申请书（NSF/NIH/ERC/基金会），委派 DMP 与设施部分，并检查目标↔︎方法↔︎预算是否一致（v2.0）</td>
 </tr>
 <tr class="even">
 <td><code>/data-management-plan</code></td>
@@ -8226,7 +8224,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p><strong>源起：</strong></p>
 <ul>
 <li>Pedro Sant’Anna 在 Emory 大学开设的 <strong>Econ 730: Causal Panel Data</strong> 课程催生了这套工作流。计量经济学只是其中一个应用领域，这些模式不依赖具体学科，后来已被他人扩展到多个领域。</li>
-<li>本页是原指南的<strong>中文移植版</strong>，将同一套基础设施迁移到 WorkBuddy 平台，并根据平台能力逐节校订。本平台没有的机制都会明确说明，不会留下照抄后必然失败的命令。作者署名仍归原作者；本页仅为个人学习而维护，引用时请使用<a href="https://github.com/pedrohcgs/claude-code-my-workflow">原始仓库</a>。</li>
+<li>本页来源为<a href="https://github.com/pedrohcgs/claude-code-my-workflow">原始仓库</a>，引用原工作流时请使用该仓库。中文内容已按 WorkBuddy 的平台能力校订；平台没有的机制会明确说明。</li>
 </ul>
 </section>
 

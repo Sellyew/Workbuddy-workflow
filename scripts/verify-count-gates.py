@@ -26,7 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # (说明, 文件, 原文, 植入后, 期望变红的门禁)
 CASES = [
     ("门禁总数（README）",
-     "README.md", "11 个门禁", "99 个门禁", "check-derived-counts.py"),
+     "README.md", "12 个门禁", "99 个门禁", "check-derived-counts.py"),
     ("翻译阶段数（README）",
      "README.md", "12 个翻译阶段", "99 个翻译阶段", "check-derived-counts.py"),
     ("期刊画像数（README）",
@@ -52,7 +52,7 @@ CASES = [
      "guide/workflow-guide.qmd", "8 个开箱即用的 TikZ 片段", "99 个开箱即用的 TikZ 片段",
      "check-derived-counts.py"),
     ("落地页门禁数（docs/index.html）",
-     "docs/index.html", "11 个门禁", "99 个门禁", "check-derived-counts.py"),
+     "docs/index.html", "12 个门禁", "99 个门禁", "check-derived-counts.py"),
 ]
 
 

@@ -1,14 +1,16 @@
-# 我的 WorkBuddy 配置
+# WorkBuddy 学术工作流：非官方中文移植
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Changelog](https://img.shields.io/badge/See-CHANGELOG-blue.svg)](CHANGELOG.md)
-[![Contributing](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
-> **持续维护中。** 这个仓库把我用 WorkBuddy 完成学术工作的配置整理成可直接 fork 的模板，涵盖幻灯片、论文和数据分析等任务。你可以用它搭建自己的研究流程。最新变更见 [CHANGELOG.md](CHANGELOG.md)。
+![Changelog](https://img.shields.io/badge/See-CHANGELOG-blue.svg)
+
+![Contributing](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+
+> **持续维护中。** 本仓库是 [pedrohcgs/claude-code-my-workflow](https://github.com/pedrohcgs/claude-code-my-workflow) 的非官方 WorkBuddy 中文移植。上游工作流的方法与设计来自 Pedro H. C. Sant'Anna；Sellyew 负责中文翻译、WorkBuddy 适配和维护。这个可直接 fork 的模板涵盖幻灯片、论文和数据分析等任务，你可以用它搭建自己的研究流程。最新变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 **在线站点：** [sellyew.github.io/Workbuddy-workflow](https://sellyew.github.io/Workbuddy-workflow/)
 
-你可以 fork 这个模板，用 AI 辅助学术研究。无论是讲义幻灯片、研究论文、数据分析还是复现包，你只需说明目标，WorkBuddy 就会规划步骤、调度专职代理、修复问题并核验质量。你负责审查结果，裁决审读中暴露的分歧。模板源自一门实际开设的博士课程，也由不断壮大的[社区](#社区与扩展)持续扩展。
+你可以 fork 这个模板，用 AI 辅助学术研究。无论是讲义幻灯片、研究论文、数据分析还是复现包，你只需说明目标，WorkBuddy 就会规划步骤、调度专职代理、修复问题并核验质量。你负责审查结果，裁决审读中暴露的分歧。原工作流来自原作者开设的一门博士课程，上游[社区](#社区与扩展)也在持续扩展它。
 
 ---
 
@@ -36,7 +38,7 @@ cd my-project
 
 新建任务，点击输入框左下角的**选择工作空间**，选中刚才克隆的 `my-project` 目录，再把下面的提示词粘进输入框。WorkBuddy 只从工作空间根目录读取 `.codebuddy/` 与 `CODEBUDDY.md`。如果你在父目录中开会话，这些配置就不会加载。
 
-**用 VS Code？** 改用 WorkBuddy 面板打开即可，行为相同。细节见[完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-setup)。
+**用 VS Code？** 可以用 VS Code 编辑项目文件，但 WorkBuddy 会话要在桌面客户端新建，并选择同一个项目目录。这里只给出桌面客户端的操作步骤。CodeBuddy 的 VS Code 插件是另一套产品。细节见[完整指南](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html#sec-setup)。
 
 > **减少权限询问。** WorkBuddy 桌面端只有两档权限，可在输入框旁的选择器中切换。**默认权限**按照 `.codebuddy/settings.json` 的 `permissions.allow` 放行常规操作，超出范围时仍会询问。**完全访问权限**跳过询问与安全检查，但 `deny` 规则与钩子仍然生效。只有在仓库可信且你清楚后果时，才使用后者。上游 Claude Code / CLI 文档里的「自动」「接受编辑」「Bypass」等属于另一产品线，不是桌面端的档位或操作步骤。本模板附带宽泛的兜底放行，包括 `Bash(*)`、`Edit(**)`、`Write(**)` 等 7 条通配符规则，所以默认权限下多数常规工作也不会询问。处理受限数据时，请另加拒绝规则，见 [TROUBLESHOOTING](TROUBLESHOOTING.md#让受限数据不进入模型)。
 
@@ -73,7 +75,8 @@ cd my-project
 
 `.codebuddy/skills/` 是 WorkBuddy 官方支持的**项目技能**目录，其中的技能随仓库共享。项目级技能优先于用户级技能，用户技能库则可跨项目复用。本模板的项目技能位于 `.codebuddy/skills/<name>/SKILL.md`，fork 仓库后会一并获得。
 
-- **怎么用**：输入 `/name` 显式触发，如 `/compile-latex HelloWorld`；也可以直接描述需求，让 WorkBuddy 自动匹配并调用。界面或菜单没有列出某项，不代表 WorkBuddy 没有发现它，也不代表 `/name` 无法调用。
+- **怎么用（含本机 GUI 观察）**：输入 `/name` 显式触发，如 `/compile-latex HelloWorld`；也可以直接描述需求，让 WorkBuddy 自动匹配并调用。本机 GUI 观察中，自动补全列表未列出项目技能，但完整输入 `/hello` 后返回 `SKILL-SMOKE-OK`，并写出核验文件。列表不显示时仍可直接输入，无需重复安装，也无需把项目技能复制到用户技能库。
+- **怎么自动匹配**：在本机 `.codebuddy/settings.local.json` 顶层设置 `"enableAllProjectSkills": true`，重新打开项目并新建会话；出现项目信任或技能批准提示时先完成批准。标有 `disable-model-invocation: true` 的技能只能显式调用。
 - **有哪些**：下方「技能」总表逐项说明。
 - **怎么新建**：本仓库的 `/new-skill` 是项目技能，负责按本仓库约定生成项目技能；WorkBuddy 内置的 `/skill-creator` 则是通用创建器，GUI 入口为**技能 → 添加技能 → 创建技能**。也可以把 `templates/skill-template.md` 复制到 `.codebuddy/skills/<name>/SKILL.md`。
 - **怎么导入第三方**：从市场安装、上传或用通用创建器创建的技能，默认进入用户技能库，不会自动进入当前项目的 `.codebuddy/skills/`。若要随仓库共享，必须显式把技能放进项目目录。
@@ -102,15 +105,15 @@ cd my-project
   `root-of-trust-guard` 会拒绝常见的 shell 写入路径，防止这些命令直接改写定义门禁的文件：`.codebuddy/settings*.json`、`.codebuddy/hooks/`、`.githooks/`。受拦截的写入方式包括重定向、`tee`、`cp`/`mv`/`rm` 和就地 `sed`。它还会拆分 `bash -c` 与 `env -S` 的载荷，并把拆出的命令交给*同一份*破坏性 git 拒绝清单，因此 `bash -c 'git reset --hard'` 与 `bash -c 'git clean -fdx'` 不会再漏过这两道防线。
 
   **请把它看作尽力而为的文本检查，不要把它当作无法绕过的锁。** 它自身出错时会放行；受保护的文件仍可能通过模板明确允许的通道被替换，例如 `Edit`/`Write`/`MultiEdit`、分支切换、没有未提交改动的合并，或钩子自身的 bug。它真正改变的是修改通道：门禁改动会以可审读的 diff 出现，而不是被一次看不见的覆盖替换。它并不保证门禁无法禁用，也不提供恢复功能。转录和 `git reflog` 只能辅助审计轨迹和提交历史，两者都不保存未提交编辑或未跟踪文件的字节。评审运行时还会重新核验审阅者引入的任何「fatal」发现，确认后才计入。
-- **每个门禁都验证过有效性，台账本身也受检查。** 维护者曾向每个门禁植入缺陷，确认它会失败，并把召回率与误报率记录在 [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md)。这份台账会实际影响构建：已登记的检查在台账中没有对应行，构建就会失败；台账行点名不存在的检查器，也会失败。*尚未*验证的检查会按名列出，明确显示哪些验证还没完成。未经有效性验证的检查不是弱证据，而是没有证据。运行 [`/vaccinate`](.codebuddy/skills/vaccinate/SKILL.md) 可以验证一个检查。
+- **每个门禁都验证过有效性，台账本身也受检查。** 在 [`quality_reports/qualification/LEDGER.md`](quality_reports/qualification/LEDGER.md) 中可查到每项资格认定植入了什么缺陷、检查是否按预期失败，以及召回率和误报率。这份台账会实际影响构建：已登记的检查在台账中没有对应行，构建就会失败；台账行点名不存在的检查器，也会失败。*尚未*验证的检查会按名列出，明确显示哪些验证还没完成。未经有效性验证的检查不是弱证据，而是没有证据。运行 [`/vaccinate`](.codebuddy/skills/vaccinate/SKILL.md) 可以验证一个检查。
 - **编排运行时会实际调度审读。** 审读任务会通过相互独立的 Agent 调用并行派发给专职子代理，再按共享的发现 schema 归并，经幻觉门禁裁定，循环到空轮为止。详见 [`orchestrator-protocol.md`](.codebuddy/rules/orchestrator-protocol.md)。
 - **错误和有依据的差异会区别处理。** 不一致并不总是失败。有据可依且*明确列出*的替代做法记为 `EXPLAINED`，并写入回复审稿人函；真正的错误仍按失败处理，必须解决后才能关闭。
 
 这**不是**一个自主守护进程。每轮循环都由你或某项技能发起，你始终负责审计。定时自动化只处理周期性任务，并且只在有发现时通知。需要日程、指定目录与权限档位的作业使用 [automation](.codebuddy/references/scheduled-routines.md)，例如收件箱分诊和夜间可复现性检查；会话内的短轮询使用 `CronCreate`；需要跨晚持续运行的任务使用它的 `durable: true`。这三种原语都在你的机器上运行，因此机器必须保持开机。
 
-### 承包商模式
+### 任务托管模式
 
-你先描述任务。对于复杂或含糊的请求，WorkBuddy 会先写需求规格，标明 MUST/SHOULD/MAY 优先级和 CLEAR/ASSUMED/BLOCKED 清晰度状态。你批准规格后，WorkBuddy 规划步骤并调用合适的技能。对于 `/create-lecture` 这类需要用户调用的技能，它会告诉你该运行哪一个，例如 `/create-lecture`、`/qa-quarto`、`/review-paper --adversarial`。技能内部会依次实施、核验、审读、修复、再次核验并打分，达到质量标准后返回总结。你说「直接干」，它就运行完整循环；提交仍须显式调用 `/commit`，随后由 pre-commit 钩子检查。
+你先描述任务。对于复杂或含糊的请求，WorkBuddy 会先通过提问澄清目标，再把任务要求整理成需求说明，标明 MUST/SHOULD/MAY 优先级和 CLEAR/ASSUMED/BLOCKED 清晰度状态。你批准需求说明后，WorkBuddy 才规划步骤并调用合适的技能。对于 `/create-lecture` 这类需要用户调用的技能，它会告诉你该运行哪一个，例如 `/create-lecture`、`/qa-quarto`、`/review-paper --adversarial`。技能内部会依次实施、核验、审读、修复、再次核验并打分，达到质量标准后返回总结。你说「直接干」，它就运行完整循环；提交仍须显式调用 `/commit`，随后由 pre-commit 钩子检查。
 
 ### 专职代理
 
@@ -141,7 +144,7 @@ cd my-project
 
 ### 上下文存活
 
-计划、规格与会话日志都保存在磁盘上，自动压缩或新会话不会抹掉它们。PreCompact 钩子会在 WorkBuddy 自动压缩前保存上下文快照，避免关键决策在压缩时丢失。MEMORY.md 则跨会话累积经验，让后续工作可以复用此前发现的模式。
+计划、需求说明与会话日志都保存在磁盘上，自动压缩或新会话不会抹掉它们。PreCompact 钩子会在 WorkBuddy 自动压缩前保存上下文快照，避免关键决策在压缩时丢失。MEMORY.md 则跨会话累积经验，让后续工作可以复用此前发现的模式。
 
 遇到长流水线或计划中途交接等需要*主动*压缩的情况，`/compress-session`（v1.9.0）会把对话整理成结构化笔记，记录决策、下一步动作和**作为噪声丢弃的内容**，而不是让自动压缩直接截断。`/promote-memory`（v1.9.0）定期由五位评审筛选原生自动记忆中的候选条目，经你批准后，把通用经验写入已提交的 MEMORY.md。
 
@@ -161,6 +164,7 @@ cd my-project
 完整说明见[**完整指南**](https://sellyew.github.io/Workbuddy-workflow/workflow-guide.html)，也可以直接阅读[源码](guide/workflow-guide.qmd)。
 
 指南包括：
+
 1. **这套工作流为什么存在**：要解决的问题与设计目标
 2. **上手**：fork 仓库、粘贴提示词，再由 WorkBuddy 完成配置
 3. **系统如何运作**：专职代理、对抗式 QA 与质量打分
@@ -168,6 +172,7 @@ cd my-project
 5. **工作流模式**：幻灯片、研究、可复现性、演示修辞、顺序对抗式审计等
 6. **生态**：clo-author、claudeblattman、MixtapeTools、autoresearch、ClaudeCodeTools 的扩展，以及不断壮大的社区
 7. **按你的领域定制**：创建自己的审阅者与知识库
+
 
 ### 2026 年的能力
 
@@ -196,18 +201,18 @@ cd my-project
 
 ## 用例
 
-| 学术任务 | 这套工作流如何帮忙 |
-|---------------|----------------------|
-| 讲义幻灯片（Beamer/Quarto） | 从创建、翻译、多代理审读到部署，全流程 |
-| 研究论文 | 文献综述、稿件审读、模拟同行评审（`/review-paper --peer [journal]`）、审稿取向方差报告（`--variance N`） |
-| 数据分析 | 端到端 R 流水线（`/data-analysis`），或经 `stata-mcp` 的 Stata 流水线（`/stata-replication`，v1.9.0）、复现核验、可直接发表的输出 |
-| 蒙特卡洛模拟 | 可复现的模拟研究（`/simulation-study`，v1.10.0）——参数化 DGP、估计量网格、带蒙特卡洛标准误的偏差/RMSE/覆盖率/水平/功效，以及专门的 `sim-reviewer` 审读轮 |
-| 包开发 | R 包发布门禁（`/r-package-check`，v1.10.0）——`devtools::document()` + 测试 + `R CMD check --as-cran` + CRAN 政策分诊 + `r-package-reviewer`（Stata / Python 检查在路线图上） |
-| 复现包 | 符合 AEA 要求的打包、可复现性审计轨迹、`passport.yaml` 断言溯源（v1.9.0） |
-| 演示 | 演示修辞原则、视觉审计、认知负荷审读 |
-| 研究计划书 | 结构化起草，配对抗式批评 |
-| 预注册 | 可直接提交 OSF / AsPredicted / AEA RCT Registry 的文档（`/preregister --style`）——完整工作流见模式 16 |
-| 投稿纪律 | `/humanize`（检测 AI 腔）、`/verify-claims` 将 HIGH-WARN 发现按失败处理且必须解决后才能关闭（伪造引用不会被报告为已核验）、审稿取向方差 |
+| 学术任务                 | 这套工作流如何帮忙                                                                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 讲义幻灯片（Beamer/Quarto） | 从创建、翻译、多代理审读到部署，全流程                                                                                                                                   |
+| 研究论文                 | 文献综述、稿件审读、模拟同行评审（`/review-paper --peer [journal]`）、审稿取向方差报告（`--variance N`）                                                                           |
+| 数据分析                 | 端到端 R 流水线（`/data-analysis`），或经 `stata-mcp` 的 Stata 流水线（`/stata-replication`，v1.9.0）、复现核验、可直接发表的输出                                                     |
+| 蒙特卡洛模拟               | 可复现的模拟研究（`/simulation-study`，v1.10.0）——参数化 DGP、估计量网格、带蒙特卡洛标准误的偏差/RMSE/覆盖率/水平/功效，以及专门的 `sim-reviewer` 审读轮                                              |
+| 包开发                  | R 包发布门禁（`/r-package-check`，v1.10.0）——`devtools::document()` + 测试 + `R CMD check --as-cran` + CRAN 政策分诊 + `r-package-reviewer`（Stata / Python 检查在路线图上） |
+| 复现包                  | 符合 AEA 要求的打包、可复现性审计轨迹、`passport.yaml` 断言溯源（v1.9.0）                                                                                                    |
+| 演示                   | 演示修辞原则、视觉审计、认知负荷审读                                                                                                                                    |
+| 研究计划书                | 结构化起草，配对抗式批评                                                                                                                                          |
+| 预注册                  | 可直接提交 OSF / AsPredicted / AEA RCT Registry 的文档（`/preregister --style`）——完整工作流见模式 16                                                                   |
+| 投稿纪律                 | `/humanize`（检测 AI 腔）、`/verify-claims` 将 HIGH-WARN 发现按失败处理且必须解决后才能关闭（伪造引用不会被报告为已核验）、审稿取向方差                                                             |
 
 **预置学科：** 经济学提供 Top-5 期刊画像和 R 惯例；政治学提供 APSR / AJPS / JOP 画像、形式理论与调查实验两类论文，以及 conjoint/`cjoint` 惯例。模板使用者可以组合期刊画像、论文类型和学科卡片，扩展到心理学、社会学或公共卫生。
 
@@ -226,97 +231,96 @@ cd my-project
 
 ### 代理（`.codebuddy/agents/`）
 
-<!-- surface-sync-table: agents -->
-| 代理 | 它做什么 |
-|-------|-------------|
-| `proofreader` | 审查语法、错字、溢出与一致性 |
-| `slide-auditor` | 审计视觉布局，包括溢出、字体一致性与间距 |
-| `pedagogy-reviewer` | 从 13 种模式审读教学法，包括叙事弧、记号密度与节奏 |
-| `r-reviewer` | 审查 R 代码质量、可复现性与领域正确性 |
-| `tikz-reviewer` | 严格审查 TikZ 图的视觉效果 |
-| `beamer-translator` | 把 Beamer 翻译成 Quarto |
-| `quarto-critic` | 以 Beamer 为基准，对 Quarto 做对抗式 QA |
-| `quarto-fixer` | 按 critic 代理的发现逐项修复 |
-| `verifier` | 端到端核验任务是否完成 |
-| `domain-reviewer` | 领域实质审阅者的**模板**，需按你的领域定制 |
-| `claim-verifier` (v1.7.0) | 在独立上下文中进行链式核验的事实核查者，永远不是对话的 fork |
-| `editor` (v1.5.0) | 供 `/review-paper --peer` 使用的期刊编辑，负责初审、选择审稿人与综合意见 |
-| `domain-referee` (v1.5.0) | 在 `--peer` 模式下按审稿取向预设进行实质审稿 |
-| `methods-referee` (v1.5.0+) | 按 6 种论文类型审查方法论 |
-| `humanize-auditor` (v1.9.0) | 供 `/humanize` 调用的只读 AI 腔审计者 |
-| `promote-memory-council` (v1.9.0) | 由五位评审决定是否把 `[LEARN]` 条目写入 MEMORY.md |
-| `sim-reviewer` (v1.10.0) | 审查蒙特卡洛模拟：DGP/估计目标匹配、蒙特卡洛标准误、以真值计算覆盖率、断言↔表格一致 |
-| `r-package-reviewer` (v1.10.0) | 审查 R 包源码：DESCRIPTION/NAMESPACE 卫生、roxygen 完整性、testthat 覆盖率、CRAN 政策红旗 |
-| `ping` | **Harness 自检**子代理：被派发时回传固定标记，用于确认 `.codebuddy/agents/` 会被发现并加载 |
+| 代理                                | 它做什么                                                                 |
+| --------------------------------- | -------------------------------------------------------------------- |
+| `proofreader`                     | 审查语法、错字、溢出与一致性                                                       |
+| `slide-auditor`                   | 审计视觉布局，包括溢出、字体一致性与间距                                                 |
+| `pedagogy-reviewer`               | 从 13 种模式审读教学法，包括叙事弧、记号密度与节奏                                          |
+| `r-reviewer`                      | 审查 R 代码质量、可复现性与领域正确性                                                 |
+| `tikz-reviewer`                   | 严格审查 TikZ 图的视觉效果                                                     |
+| `beamer-translator`               | 把 Beamer 翻译成 Quarto                                                  |
+| `quarto-critic`                   | 以 Beamer 为基准，对 Quarto 做对抗式 QA                                        |
+| `quarto-fixer`                    | 按 critic 代理的发现逐项修复                                                   |
+| `verifier`                        | 端到端核验任务是否完成                                                          |
+| `domain-reviewer`                 | 领域实质审阅者的**模板**，需按你的领域定制                                              |
+| `claim-verifier` (v1.7.0)         | 在独立上下文中进行链式核验的事实核查者，永远不是对话的 fork                                     |
+| `editor` (v1.5.0)                 | 供 `/review-paper --peer` 使用的期刊编辑，负责初审、选择审稿人与综合意见                     |
+| `domain-referee` (v1.5.0)         | 在 `--peer` 模式下按审稿取向预设进行实质审稿                                          |
+| `methods-referee` (v1.5.0+)       | 按 6 种论文类型审查方法论                                                       |
+| `humanize-auditor` (v1.9.0)       | 供 `/humanize` 调用的只读 AI 腔审计者                                          |
+| `promote-memory-council` (v1.9.0) | 由五位评审决定是否把 `[LEARN]` 条目写入 MEMORY.md                                  |
+| `sim-reviewer` (v1.10.0)          | 审查蒙特卡洛模拟：DGP/估计目标匹配、蒙特卡洛标准误、以真值计算覆盖率、断言↔表格一致                         |
+| `r-package-reviewer` (v1.10.0)    | 审查 R 包源码：DESCRIPTION/NAMESPACE 卫生、roxygen 完整性、testthat 覆盖率、CRAN 政策红旗 |
+| `ping`                            | **Harness 自检**子代理：被派发时回传固定标记，用于确认 `.codebuddy/agents/` 会被发现并加载       |
 
 ### 技能（`.codebuddy/skills/`）
 
-<!-- surface-sync-table: skills -->
-| 技能 | 它做什么 |
-|-------|-------------|
-| `/init-research-project` | 把一个 fork 下来的模板初始化成真实项目：收齐项目信息、替换占位符、按学科裁剪规则、跑通环境自检、交出起步计划 |
-| `/compile-latex` | 3 遍 XeLaTeX 编译，配 bibtex |
-| `/deploy` | 渲染 Quarto + 同步到 GitHub Pages |
-| `/extract-tikz` | TikZ 图到 PDF 再到 SVG 的流水线 |
-| `/proofread` | 对某个文件启动 proofreader |
-| `/visual-audit` | 对一套幻灯片做视觉布局审计（行内跑 `slide-auditor` 的那些检查） |
-| `/pedagogy-review` | 对某个文件启动 pedagogy-reviewer |
-| `/review-r` | 启动 R 代码审阅者 |
-| `/qa-quarto` | 对抗式 critic-fixer 循环（循环到空轮；5 轮上限是退路） |
-| `/slide-excellence` | 多代理联合审读 |
-| `/translate-to-quarto` | 完整翻译 Beamer 到 Quarto：先运行 Phase 0 开始前检查，再经过 12 个翻译阶段（1–11 以及一个 6.5 教学法审读） |
-| `/vaccinate` | 验证检查、门禁或 AI 审阅者能否检出目标失败：植入缺陷并设置无缺陷对照，再把召回率与误报率写入资格台账 |
-| `/adjudicate-review` | 把 AI 审读、审稿意见、linter 或第二个模型给出的审查发现转化为经过核验的修复。对照源头核实前，每条发现都只是 CANDIDATE |
-| `/blast-radius` | 修改共享内容（返回值、schema、默认值、单位）前后，列出所有使用方并逐一运行 |
-| `/credible-claims` | 委派前写研究简报，委派后写断言记录，避免把「跑得更快」误当成「证据可信」 |
-| `/differential-audit` | 比较两套实现，适用于移植、复现、重构和版本升级，具体说明二者在哪些方面一致 |
-| `/oracle-review` | 通过 Oracle CLI 调用另一家供应商的前沿模型作为外部审稿人，并裁决返回的审查发现 |
-| `/verify-artifact` | 确认待发送文件与预期一致：重新构建、核验完整性并与源头比对 |
-| `/voice-profile` | 从你以往的论文中归纳写作风格画像，再据此审读草稿；它关注作者风格，`/humanize` 只检测 AI 痕迹 |
-| `/validate-bib` | 把引用与参考文献表交叉核对 |
-| `/devils-advocate` | 在确定设计决策前先质疑它 |
-| `/create-lecture` | 完整的讲义创建工作流 |
-| `/commit` | 运行门禁后在分支上提交；`--pr` 还会推送并创建 PR。不会自动合并，合并需经你批准 |
-| `/lit-review` | 文献检索、综合与缺口识别 |
-| `/research-ideation` | 生成研究问题与实证策略 |
-| `/interview-me` | 通过交互式访谈把一个研究想法正式化 |
-| `/review-paper` | 稿件审读：结构、计量、审稿人可能提的反对意见 |
-| `/data-analysis` | 端到端 R 分析，输出可直接发表 |
-| `/learn` | 把非显然的发现沉淀为可长期复用的技能 |
-| `/context-status` | 显示会话健康度与上下文用量 |
-| `/deep-audit` | 对一个理论、一个证明、一篇论文、一个代码库或一组断言做对抗式审计——拆解、独立怀疑者、每条发现配一位独立裁判、修复、再核验；全仓库一致性是它的一个应用 |
-| `/permission-check` | 当询问或拦截意外出现时，读钩子链与本地覆盖，指出是哪条守卫拦的以及哪些照上游写的开关在本平台根本不生效 |
-| `/audit-reproducibility` | 对论文 ↔ 代码的数值断言强制执行容差阈值 |
-| `/new-diagram` | 从片段库里搭一张 TikZ 图，带预防检查 + 审读 |
-| `/respond-to-referees` | R&R 回复函生成器（把审稿意见映射到修改） |
-| `/seven-pass-review` | 七遍对抗式稿件审读（通过相互独立的 Agent 调用并行派发给专职子代理） |
-| `/checkpoint` | 结构化的会话交接快照（状态 + 计划指针 + 下一步动作）。叙述式会话日志的搭档。 |
-| `/preregister` | 从研究规格生成一份预注册文档（OSF / AsPredicted / AEA RCT Registry 风格） |
-| `/verify-claims` (v1.7.0) | 链式核验式事实核查（独立上下文的核验者）。HIGH/MED/LOW-WARN 严重度分级（v1.9.0）；HIGH-WARN 发现按失败处理，必须解决后才能关闭；在此之前，草稿不会被报告为已核验。 |
-| `/humanize` (v1.9.0) | 检测学术散文里的 AI 腔痕迹（10 个检测类别；只读，不重写） |
-| `/compress-session` (v1.9.0) | 在自动压缩之前，把当前会话提炼成结构化笔记（决策、下一步动作、*按噪声丢弃的东西*） |
-| `/promote-memory` (v1.9.0) | 由五位评审投票决定哪些 `[LEARN]` 条目可以从原生自动记忆写入 MEMORY.md |
-| `/stata-replication` (v1.9.0) | 经 `stata-mcp` MCP 服务器的端到端 Stata 流水线（为 R 优先的项目镜像 `/data-analysis`） |
-| `/simulation-study` (v1.10.0) | 搭建并跑一项可复现的蒙特卡洛研究——参数化 DGP、估计量网格、带种子的重复、带蒙特卡洛标准误的偏差/RMSE/覆盖率/水平/功效 |
-| `/r-package-check` (v1.10.0) | R 包发布门禁——`devtools::document()` + 测试 + `R CMD check --as-cran`，把 ERROR/WARNING/NOTE 对照 CRAN 政策分诊，再跑 `r-package-reviewer` |
-| `/replication-package` (v2.0) | 组装一份可直接投稿的 DCAS / openICPSR 复现包——标准 README、数据集清单、计算环境要求留存、表／图到脚本及行号的映射、受限数据存缴说明（`/audit-reproducibility` 为 FAIL 时阻塞） |
-| `/challenge` | 用你没做的那些选择去压测一个发现——在离散分叉上做设定曲线，再用具名敏感性统计量（E-value、Cinelli–Hazlett RV、Oster δ）检验识别假设 |
-| `/capture-environment` (v2.0) | 为复现包记录计算环境：renv.lock + sessionInfo.txt（R）、requirements.txt / environment.yml / uv.lock（Python）、Stata 版本 + ado 清单、种子/RNG，以及可选的固定版本 Dockerfile |
-| `/power-analysis` (v2.0) | 计算研究设计的功效 / 所需样本量 / 最小可检出效应——两臂 RCT（聚类/ICC、不等分配）、多臂校正、对非标准设计进行基于模拟的功效分析；喂给 `/preregister` |
-| `/disclosure-check` (v2.0) | 对受限/保密数据产出的统计披露限制预筛（小格子、互补抑制缺口、支配性、PII）；CRITICAL/WARNING/OK + 门禁 |
-| `/grant-proposal` (v2.0) | 通过组合基元搭一份 NSF/NIH/ERC/基金会的项目申请书（规格 → 目标/方法，委派 DMP + 设施，一致性通读 + 要求清单） |
-| `/data-management-plan` (v2.0) | 符合资助方要求的数据管理计划（NSF / NIH DMS 2023 / ERC / Horizon Europe）——并入披露风险防控 + IRB 约束，以及一份复现包/环境计划；输出草稿 + 资助方清单 |
-| `/coauthor-brief` (v2.0) | 合作者交接简报——自上次简报以来改了什么、逐产物状态、未决问题、本地复现 + 受限数据获取步骤 |
-| `/triage-inbox` (v2.0) | 可定时的学术收件箱 + 日历分诊，经 Gmail/Calendar MCP——把审稿邀请、R&R/编辑、合作者往来、研讨会/会议邀请、经费与行政截止分类；每条各提一个需人放行的动作（起草回复、占用日历、搭一个审稿项目、`/coauthor-brief`、稍后提醒）；输出一份摘要 + 审稿义务跟踪表；MCP 缺席时优雅降级；永不自动发送 |
-| `/diagnose` (v2.0) | 给一个错误/失败的实证结果找根因——有纪律的复现 → 最小化 → 提出假设 → 插桩 → 修复循环；为研究代码的 bug 调校（类型转换、NA/合并爆炸、聚类/标准误选择、种子/包版本漂移）；`--no-fix` 只定位不改动 |
-| `/submission-disclosures` (v2.1) | 投稿时的披露段落：与目标期刊「已核验现行」政策匹配的 AI 使用披露、CRediT 贡献者角色、利益冲突、数据可得性声明（不是统计披露——那是 `/disclosure-check`） |
-| `/syllabus` (v2.0) | 从一个主题或书单搭/重构一份课程大纲——课程描述 + 先修要求、逐周日程（主题→阅读→交付物）、可度量的学习目标、考核方案 + 评分细则、标准政策（迟交 / AI 使用 / 学术诚信 / 无障碍）、以及一份把各周映射到 `/create-lecture` 讲义的逐周工作表；懂经济学（博士计量/微观/宏观序列、本科） |
-| `/teach-from-paper` (v2.0) | 端到端读一篇论文，并按指定受众的知识层级讲解这篇论文——讲义大纲（动机 → 设定 → 关键结果 → 方法 → 要点）、值得讲的 3-5 个结果及直觉、给 `/create-lecture` 的幻灯片骨架、讨论问题，以及给 `/scaffold-exercises` 的习题集简报 |
-| `/respond-to-eval` (v2.0) | `/respond-to-referees` 的教学版——把课程评价意见聚类成主题，按频次加权（信号 vs 噪声），分为 Keep / Change / Investigate / Out-of-scope，并起草映射到大纲 + 讲义的具体改动；把方案存到 `quality_reports/teaching/` |
-| `/scaffold-exercises` (v2.0) | 跨解析/实证/编程三类题型搭一套计分习题集，带详解与「这为什么重要」的说明，输出到单独的答案册 |
-| `/new-skill` (v2.0) | 搭一个遵循本仓库约定的新技能——就用途、触发词与工具做访谈，按模板写出 `.codebuddy/skills/<name>/SKILL.md` 并运行 `check-skill-integrity.py`；README 行、计数与指南更新及复跑是独立的最终验收步骤 |
-| `/issues` (v2.6) | 把 GitHub issues 当作项目的待办清单与记忆——每条已确认的发现，先在开着的与已关闭的 issue 里查重，再各自立一条；列出当前手头工作的未决项；关闭一条 issue 时用评论记下哪里错了、试过什么、怎么修的；每个草稿都先给你看，没有你的「可以」就什么都不发；往公开仓库发之前会警告 |
-| `/hello` | **Harness 自检**技能：被调用时回传固定标记并写出 `quality_reports/checkpoints/_SMOKE_HELLO.md`；由调用方用随机标记、调用前文件不存在检查与调用后内容/cwd/参数核验来判定发现和调用是否成功 |
+| 技能                               | 它做什么                                                                                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/init-research-project`         | 把一个 fork 下来的模板初始化成真实项目：收齐项目信息、替换占位符、按学科裁剪规则、跑通环境自检、交出起步计划                                                                                                                 |
+| `/compile-latex`                 | 3 遍 XeLaTeX 编译，配 bibtex                                                                                                                                                   |
+| `/deploy`                        | 渲染 Quarto + 同步到 GitHub Pages                                                                                                                                              |
+| `/extract-tikz`                  | TikZ 图到 PDF 再到 SVG 的流水线                                                                                                                                                   |
+| `/proofread`                     | 对某个文件启动 proofreader                                                                                                                                                       |
+| `/visual-audit`                  | 对一套幻灯片做视觉布局审计（行内跑 `slide-auditor` 的那些检查）                                                                                                                                  |
+| `/pedagogy-review`               | 对某个文件启动 pedagogy-reviewer                                                                                                                                                 |
+| `/review-r`                      | 启动 R 代码审阅者                                                                                                                                                                |
+| `/qa-quarto`                     | 对抗式 critic-fixer 循环（循环到空轮；5 轮上限是退路）                                                                                                                                       |
+| `/slide-excellence`              | 多代理联合审读                                                                                                                                                                   |
+| `/translate-to-quarto`           | 完整翻译 Beamer 到 Quarto：先运行 Phase 0 开始前检查，再经过 12 个翻译阶段（1–11 以及一个 6.5 教学法审读）                                                                                                  |
+| `/vaccinate`                     | 验证检查、门禁或 AI 审阅者能否检出目标失败：植入缺陷并设置无缺陷对照，再把召回率与误报率写入资格台账                                                                                                                      |
+| `/adjudicate-review`             | 把 AI 审读、审稿意见、linter 或第二个模型给出的审查发现转化为经过核验的修复。对照源头核实前，每条发现都只是 CANDIDATE                                                                                                     |
+| `/blast-radius`                  | 修改共享内容（返回值、schema、默认值、单位）前后，列出所有使用方并逐一运行                                                                                                                                  |
+| `/credible-claims`               | 委派前写研究简报，委派后写断言记录，避免把「跑得更快」误当成「证据可信」                                                                                                                                      |
+| `/differential-audit`            | 比较两套实现，适用于移植、复现、重构和版本升级，具体说明二者在哪些方面一致                                                                                                                                     |
+| `/oracle-review`                 | 通过 Oracle CLI 调用另一家供应商的前沿模型作为外部审稿人，并裁决返回的审查发现                                                                                                                             |
+| `/verify-artifact`               | 确认待发送文件与预期一致：重新构建、核验完整性并与源头比对                                                                                                                                             |
+| `/voice-profile`                 | 从你以往的论文中归纳写作风格画像，再据此审读草稿；它关注作者风格，`/humanize` 只检测 AI 痕迹                                                                                                                    |
+| `/validate-bib`                  | 把引用与参考文献表交叉核对                                                                                                                                                             |
+| `/devils-advocate`               | 在确定设计决策前先质疑它                                                                                                                                                              |
+| `/create-lecture`                | 完整的讲义创建工作流                                                                                                                                                                |
+| `/commit`                        | 运行门禁后在分支上提交；`--pr` 还会推送并创建 PR。不会自动合并，合并需经你批准                                                                                                                              |
+| `/lit-review`                    | 文献检索、综合与缺口识别                                                                                                                                                              |
+| `/research-ideation`             | 生成研究问题与实证策略                                                                                                                                                               |
+| `/interview-me`                  | 通过交互式访谈把一个研究想法正式化                                                                                                                                                         |
+| `/review-paper`                  | 稿件审读：结构、计量、审稿人可能提的反对意见                                                                                                                                                    |
+| `/data-analysis`                 | 端到端 R 分析，输出可直接发表                                                                                                                                                          |
+| `/learn`                         | 把非显然的发现沉淀为可长期复用的技能                                                                                                                                                        |
+| `/context-status`                | 显示会话健康度与上下文用量                                                                                                                                                             |
+| `/deep-audit`                    | 对一个理论、一个证明、一篇论文、一个代码库或一组断言做对抗式审计——拆解、独立怀疑者、每条发现配一位独立裁判、修复、再核验；全仓库一致性是它的一个应用                                                                                               |
+| `/permission-check`              | 当询问或拦截意外出现时，读钩子链与本地覆盖，指出是哪条守卫拦的以及哪些照上游写的开关在本平台根本不生效                                                                                                                       |
+| `/audit-reproducibility`         | 对论文 ↔ 代码的数值断言强制执行容差阈值                                                                                                                                                     |
+| `/new-diagram`                   | 从片段库里搭一张 TikZ 图，带预防检查 + 审读                                                                                                                                                |
+| `/respond-to-referees`           | R\&R 回复函生成器（把审稿意见映射到修改）                                                                                                                                                   |
+| `/seven-pass-review`             | 七遍对抗式稿件审读（通过相互独立的 Agent 调用并行派发给专职子代理）                                                                                                                                     |
+| `/checkpoint`                    | 结构化的会话交接快照（状态 + 计划指针 + 下一步动作）。叙述式会话日志的搭档。                                                                                                                                 |
+| `/preregister`                   | 从研究需求说明生成一份预注册文档（OSF / AsPredicted / AEA RCT Registry 风格）                                                                                                                 |
+| `/verify-claims` (v1.7.0)        | 链式核验式事实核查（独立上下文的核验者）。HIGH/MED/LOW-WARN 严重度分级（v1.9.0）；HIGH-WARN 发现按失败处理，必须解决后才能关闭；在此之前，草稿不会被报告为已核验。                                                                        |
+| `/humanize` (v1.9.0)             | 检测学术散文里的 AI 腔痕迹（10 个检测类别；只读，不重写）                                                                                                                                          |
+| `/compress-session` (v1.9.0)     | 在自动压缩之前，把当前会话提炼成结构化笔记（决策、下一步动作、*按噪声丢弃的东西*）                                                                                                                                |
+| `/promote-memory` (v1.9.0)       | 由五位评审投票决定哪些 `[LEARN]` 条目可以从原生自动记忆写入 MEMORY.md                                                                                                                             |
+| `/stata-replication` (v1.9.0)    | 经 `stata-mcp` MCP 服务器的端到端 Stata 流水线（为 R 优先的项目镜像 `/data-analysis`）                                                                                                         |
+| `/simulation-study` (v1.10.0)    | 搭建并跑一项可复现的蒙特卡洛研究——参数化 DGP、估计量网格、带种子的重复、带蒙特卡洛标准误的偏差/RMSE/覆盖率/水平/功效                                                                                                         |
+| `/r-package-check` (v1.10.0)     | R 包发布门禁——`devtools::document()` + 测试 + `R CMD check --as-cran`，把 ERROR/WARNING/NOTE 对照 CRAN 政策分诊，再跑 `r-package-reviewer`                                                  |
+| `/replication-package` (v2.0)    | 组装一份可直接投稿的 DCAS / openICPSR 复现包——标准 README、数据集清单、计算环境要求留存、表／图到脚本及行号的映射、受限数据存缴说明（`/audit-reproducibility` 为 FAIL 时阻塞）                                                      |
+| `/challenge`                     | 用你没做的那些选择去压测一个发现——在离散分叉上做设定曲线，再用具名敏感性统计量（E-value、Cinelli–Hazlett RV、Oster δ）检验识别假设                                                                                        |
+| `/capture-environment` (v2.0)    | 为复现包记录计算环境：renv.lock + sessionInfo.txt（R）、requirements.txt / environment.yml / uv.lock（Python）、Stata 版本 + ado 清单、种子/RNG，以及可选的固定版本 Dockerfile                              |
+| `/power-analysis` (v2.0)         | 计算研究设计的功效 / 所需样本量 / 最小可检出效应——两臂 RCT（聚类/ICC、不等分配）、多臂校正、对非标准设计进行基于模拟的功效分析；喂给 `/preregister`                                                                                 |
+| `/disclosure-check` (v2.0)       | 对受限/保密数据产出的统计披露限制预筛（小格子、互补抑制缺口、支配性、PII）；CRITICAL/WARNING/OK + 门禁                                                                                                          |
+| `/grant-proposal` (v2.0)         | 通过组合基元搭一份 NSF/NIH/ERC/基金会的项目申请书（项目需求说明 → 目标/方法，委派 DMP + 设施，一致性通读 + 要求清单）                                                                                                  |
+| `/data-management-plan` (v2.0)   | 符合资助方要求的数据管理计划（NSF / NIH DMS 2023 / ERC / Horizon Europe）——并入披露风险防控 + IRB 约束，以及一份复现包/环境计划；输出草稿 + 资助方清单                                                                    |
+| `/coauthor-brief` (v2.0)         | 合作者交接简报——自上次简报以来改了什么、逐产物状态、未决问题、本地复现 + 受限数据获取步骤                                                                                                                           |
+| `/triage-inbox` (v2.0)           | 可定时的学术收件箱 + 日历分诊，经 Gmail/Calendar MCP——把审稿邀请、R\&R/编辑、合作者往来、研讨会/会议邀请、经费与行政截止分类；每条各提一个需人放行的动作（起草回复、占用日历、搭一个审稿项目、`/coauthor-brief`、稍后提醒）；输出一份摘要 + 审稿义务跟踪表；MCP 缺席时优雅降级；永不自动发送 |
+| `/diagnose` (v2.0)               | 给一个错误/失败的实证结果找根因——有纪律的复现 → 最小化 → 提出假设 → 插桩 → 修复循环；为研究代码的 bug 调校（类型转换、NA/合并爆炸、聚类/标准误选择、种子/包版本漂移）；`--no-fix` 只定位不改动                                                         |
+| `/submission-disclosures` (v2.1) | 投稿时的披露段落：与目标期刊「已核验现行」政策匹配的 AI 使用披露、CRediT 贡献者角色、利益冲突、数据可得性声明（不是统计披露——那是 `/disclosure-check`）                                                                              |
+| `/syllabus` (v2.0)               | 从一个主题或书单搭/重构一份课程大纲——课程描述 + 先修要求、逐周日程（主题→阅读→交付物）、可度量的学习目标、考核方案 + 评分细则、标准政策（迟交 / AI 使用 / 学术诚信 / 无障碍）、以及一份把各周映射到 `/create-lecture` 讲义的逐周工作表；懂经济学（博士计量/微观/宏观序列、本科）            |
+| `/teach-from-paper` (v2.0)       | 端到端读一篇论文，并按指定受众的知识层级讲解这篇论文——讲义大纲（动机 → 设定 → 关键结果 → 方法 → 要点）、值得讲的 3-5 个结果及直觉、给 `/create-lecture` 的幻灯片骨架、讨论问题，以及给 `/scaffold-exercises` 的习题集简报                               |
+| `/respond-to-eval` (v2.0)        | `/respond-to-referees` 的教学版——把课程评价意见聚类成主题，按频次加权（信号 vs 噪声），分为 Keep / Change / Investigate / Out-of-scope，并起草映射到大纲 + 讲义的具体改动；把方案存到 `quality_reports/teaching/`              |
+| `/scaffold-exercises` (v2.0)     | 跨解析/实证/编程三类题型搭一套计分习题集，带详解与「这为什么重要」的说明，输出到单独的答案册                                                                                                                           |
+| `/new-skill` (v2.0)              | 搭一个遵循本仓库约定的新技能——就用途、触发词与工具做访谈，按模板写出 `.codebuddy/skills/<name>/SKILL.md` 并运行 `check-skill-integrity.py`；README 行、计数与指南更新及复跑是独立的最终验收步骤                                      |
+| `/issues` (v2.6)                 | 把 GitHub issues 当作项目的待办清单与记忆——每条已确认的发现，先在开着的与已关闭的 issue 里查重，再各自立一条；列出当前手头工作的未决项；关闭一条 issue 时用评论记下哪里错了、试过什么、怎么修的；每个草稿都先给你看，没有你的「可以」就什么都不发；往公开仓库发之前会警告                      |
+| `/hello`                         | **Harness 自检**技能：被调用时回传固定标记并写出 `quality_reports/checkpoints/_SMOKE_HELLO.md`；由调用方用随机标记、调用前文件不存在检查与调用后内容/cwd/参数核验来判定发现和调用是否成功                                              |
+
 
 ### 研究工作流
 
@@ -446,13 +450,13 @@ cd my-project
 
 ## 由来
 
-本仓库基于 [`pedrohcgs/claude-code-my-workflow`](https://github.com/pedrohcgs/claude-code-my-workflow)，改用 WorkBuddy 平台并翻成中文。方法、设计与原创内容归原作者 Pedro H. C. Sant'Anna；引用见 `CITATION.cff`。
+原工作流见 [`pedrohcgs/claude-code-my-workflow`](https://github.com/pedrohcgs/claude-code-my-workflow)，引用信息见 `CITATION.cff`。
 
 ---
 
 ## 社区与扩展
 
-经济学、能源、政治学与工程学的研究组都 fork 并改造过这套工作流。**2026 年 3 月的调查记录了 15+ 个研究组**；截至 2026-08-24，**上游仓库**已有 **2,900 多次 fork** 和 1,500 多颗星。一次 fork 不等于一个研究组，因此调查数字与 fork 数不能混为一谈。编排器、钩子、质量门禁等基础设施无需改动即可迁移。
+上游项目的采用记录显示，经济学、能源、政治学与工程学等领域的研究组曾 fork 并改造这套工作流。2026 年 3 月的调查记录了 **15+ 个研究组**；截至 2026-08-24，原仓库已有 **2,900 多次 fork** 和 1,500 多颗星。一次 fork 不等于一个研究组，调查数字与 fork 数不能混为一谈，也都不是本移植的采用数据。编排器、钩子、质量门禁等基础设施无需改动即可迁移。
 
 **扩展工作流：**
 

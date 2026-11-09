@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 # /new-skill —— 编写符合约定的技能
 
-按本仓库约定创建新技能，做到**简单接口背后的深模块**。这一说法来自 Ousterhout 的《A Philosophy of Software Design》：用较小的外部接口承载充分的实现。本技能通过访谈把用户的模糊意图整理成紧凑规格，写出 `.codebuddy/skills/<name>/SKILL.md`，再运行 `check-skill-integrity.py` 核验 frontmatter 和正文。技能文件创建与表面登记是两个不同的完成状态；完整性检查通过，不代表 `check-surface-sync.sh` 或全部门禁已经通过。
+按本仓库约定创建新技能，做到**简单接口背后的深模块**。这一说法来自 Ousterhout 的《A Philosophy of Software Design》：用较小的外部接口承载充分的实现。本技能通过访谈把用户的模糊意图整理成紧凑任务要求，写出 `.codebuddy/skills/<name>/SKILL.md`，再运行 `check-skill-integrity.py` 核验 frontmatter 和正文。技能文件创建与表面登记是两个不同的完成状态；完整性检查通过，不代表 `check-surface-sync.sh` 或全部门禁已经通过。
 
 `/new-skill` 是本仓库的项目技能，只负责按本仓库的字段、章节和门禁约定生成项目技能。WorkBuddy 内置的 `/skill-creator` 是通用创建器，GUI 入口为「技能 → 添加技能 → 创建技能」。项目技能写入 `.codebuddy/skills/` 并随仓库共享；通用创建器生成的技能默认进入可跨项目使用的用户技能库，不会自动写入当前项目。项目级技能优先于用户级技能，不要用其中一个入口的行为推断另一个。
 

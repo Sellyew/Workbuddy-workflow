@@ -44,7 +44,7 @@ WorkBuddy 读取的任何内容都会发送给模型提供方，所以「永不�
 
 ## 人类受试者 / IRB
 
-数据涉及人类受试者时，在项目规格中记录 IRB 方案编号、获批用途和任何知情同意限制，不得分析超出获批范围的内容。[`/data-management-plan`](../skills/data-management-plan/SKILL.md) 会记录存储、保留和销毁条款。
+数据涉及人类受试者时，在项目需求说明中记录 IRB 方案编号、获批用途和任何知情同意限制，不得分析超出获批范围的内容。[`/data-management-plan`](../skills/data-management-plan/SKILL.md) 会记录存储、保留和销毁条款。
 
 ## 多作者 git 拓扑（受限数据安全的协作方式）
 

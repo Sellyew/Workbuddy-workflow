@@ -24,7 +24,7 @@ alwaysApply: false
 | `/research-ideation` | 「有人检验过这个吗？」这类否定性文献断言；数据集结构断言；估计量可行性断言 |
 | `/respond-to-referees` | 关于实际修订的「我们在第 Y 页加了 X」这类断言 |
 | `/review-paper`（`--peer` 模式） | 来自 WebSearch 的新颖性探查断言（「这篇论文的贡献是新的」／「与 Jones 2020 相似」） |
-| `/interview-me` | 研究规格中提到的论文（如果有引用） |
+| `/interview-me` | 研究需求说明中提到的论文（如果有引用） |
 
 本规则**不**适用于机械型技能，包括 `/compile-latex`、`/deploy`、`/extract-tikz`、`/commit`。这些技能的产出是编译结果，应由编译器等外部过程核验，而不是作为事实性文字核验。
 

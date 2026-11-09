@@ -1,14 +1,14 @@
 ---
 name: interview-me
-description: 通过互动访谈，把模糊的研究想法整理成结构化规格，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把规格保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
-description_zh: 通过互动访谈，把模糊的研究想法整理成结构化规格，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把规格保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
+description: 通过互动访谈，把模糊的研究想法整理成结构化研究需求说明，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把研究需求说明保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
+description_zh: 通过互动访谈，把模糊的研究想法整理成结构化研究需求说明，涵盖研究问题、假设、识别、数据需求和实证策略。用户说 "interview me"、"help me think through this idea"、"I have a half-baked idea"、"formalize this into a project"、"walk me through framing a study"、"访谈我"、"帮我理清研究想法" 或 "把想法变成研究方案" 时使用。技能会多轮问答并把研究需求说明保存到磁盘。不用于文献综述（`/lit-review`），也不用于从零构想（`/research-ideation`）。
 argument-hint: "[brief topic or 'start fresh'] [--no-verify]"
 allowed-tools: ["Read", "Write", "Agent", "Task"]
 ---
 
 # 研究访谈
 
-本技能通过结构化访谈，帮助研究者把研究想法转化为具体规格。
+本技能通过结构化访谈，帮助研究者把研究想法转化为具体研究需求说明。
 
 **输入：** `$ARGUMENTS` 可以是一段简短的主题描述，也可以是 "start fresh"，表示开放式探索。
 
@@ -16,7 +16,7 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 
 ## 它如何运作
 
-这是一项**对话式**技能，不会立刻生成报告。它每次问一两个问题，再根据回答追问，逐步形成结构化研究规格。
+这是一项**对话式**技能，不会立刻生成报告。它每次问一两个问题，再根据回答追问，逐步形成结构化研究需求说明。
 
 **不要用 AskUserQuestion。**直接在文字回复中提问，每次一两个，等用户回答后再继续。
 
@@ -27,7 +27,7 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 ### Phase 1: 全局图景（1-2 个问题）
 - "你想理解的是什么现象或谜题？"
 - "这件事为什么重要？谁应当关心答案？"
-- 用户回答后，可以追问："你对这篇论文*属于哪一类*有想法吗：reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment / unsure？"类型定义见 `.codebuddy/agents/methods-referee.md`，领域默认频率见 `.codebuddy/references/discipline-cards.md`。把答案写入规格的 `**Paper type:**` 表头字段。"unsure" 也是有效答案，记为 `**Paper type:** unsure`。
+- 用户回答后，可以追问："你对这篇论文*属于哪一类*有想法吗：reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment / unsure？"类型定义见 `.codebuddy/agents/methods-referee.md`，领域默认频率见 `.codebuddy/references/discipline-cards.md`。把答案写入研究需求说明的 `**Paper type:**` 表头字段。"unsure" 也是有效答案，记为 `**Paper type:** unsure`。
 
 ### Phase 2: 理论动机（1-2 个问题）
 - "对 X 为什么会发生 / 是什么驱动了 Y，你的直觉是什么？"
@@ -52,10 +52,10 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 
 ## 访谈之后
 
-信息足够时，通常是 5-8 轮往复，生成一份**研究规格文档**：
+信息足够时，通常是 5-8 轮往复，生成一份**研究需求说明**：
 
 ```markdown
-# Research Specification: [Title]
+# Research Requirements: [Title]
 
 **Date:** [YYYY-MM-DD]
 **Researcher:** [from conversation context]
@@ -100,25 +100,25 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 [Issues raised during the interview that need further thought]
 ```
 
-**保存到：** `quality_reports/specs/research_spec_[sanitized_topic].md`。`/grant-proposal`、`/data-management-plan`、`/power-analysis` 与 `/preregister` 都从这个目录读取规格。
+**保存到：** `quality_reports/specs/research_spec_[sanitized_topic].md`。`/grant-proposal`、`/data-management-plan`、`/power-analysis` 与 `/preregister` 都从这个目录读取研究需求说明。
 
 ---
 
-## 落地后核验（Post-Flight，强制，CoVe —— 规格含可独立核验的事实断言时适用）
+## 落地后核验（Post-Flight，强制，CoVe —— 研究需求说明含可独立核验的事实断言时适用）
 
-研究规格可能包含论文引文、数据集结构、命名实体、数值或否定性文献论断，这些都容易编造。只要规格含有任何可依据来源独立核验的事实断言，保存前就必须执行 [`.codebuddy/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) 的落地后核验协议；没有论文引文并不等于没有待核验断言。
+研究需求说明可能包含论文引文、数据集结构、命名实体、数值或否定性文献论断，这些都容易编造。只要研究需求说明含有任何可依据来源独立核验的事实断言，保存前就必须执行 [`.codebuddy/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) 的落地后核验协议；没有论文引文并不等于没有待核验断言。
 
-### 步骤（仅规格不含任何可独立核验的事实断言时默认跳过）
+### 步骤（仅研究需求说明不含任何可独立核验的事实断言时默认跳过）
 
-1. **抽取断言：**检查整份规格，找出每条论文引文（"Smith 2019 shows X"）、每项数据集结构断言（"the CPS has field `educ_attain`"）、每项否定性文献断言（"nobody has studied Y"），以及其他可独立核验的数值事实和命名实体；不能只扫描动机／贡献中的引文。
+1. **抽取断言：**检查整份研究需求说明，找出每条论文引文（"Smith 2019 shows X"）、每项数据集结构断言（"the CPS has field `educ_attain`"）、每项否定性文献断言（"nobody has studied Y"），以及其他可独立核验的数值事实和命名实体；不能只扫描动机／贡献中的引文。
 2. **生成核验问题：**为每条断言写出具体、可回答的问题，例如 "Does Smith (2019, *JEL*) Section 3 report finding X? Is the venue correct?"
-3. **生成 `claim-verifier`**：用 `Agent` 工具设置 `subagent_type=claim-verifier`，发起一次使用独立上下文的具名调用，不能使用会继承草稿的对话分叉。只提供断言 + 问题 + 来源指针，包括 DOI、arXiv 链接和访谈中用户提供的 `master_supporting_docs/` PDF，不要提供已起草的规格。
-4. **对账：**PASS 时，把绿色块附到规格上；PARTIAL 时，给无法核验的断言标出不确定性；FAIL 时，先根据核验者提供的证据重写受影响段落，再保存规格。
+3. **生成 `claim-verifier`**：用 `Agent` 工具设置 `subagent_type=claim-verifier`，发起一次使用独立上下文的具名调用，不能使用会继承草稿的对话分叉。只提供断言 + 问题 + 来源指针，包括 DOI、arXiv 链接和访谈中用户提供的 `master_supporting_docs/` PDF，不要提供已起草的研究需求说明。
+4. **对账：**PASS 时，把绿色块附到研究需求说明上；PARTIAL 时，给无法核验的断言标出不确定性；FAIL 时，先根据核验者提供的证据重写受影响段落，再保存研究需求说明。
 
 ### 跳过条件
 
-- **默认跳过：**仅当整份规格不含任何可独立核验的事实断言。
-- **单独例外：**用户显式使用 `--no-verify` 参数；即使规格含有事实断言，也可按该旗标跳过，但必须说明未经独立核验。
+- **默认跳过：**仅当整份研究需求说明不含任何可独立核验的事实断言。
+- **单独例外：**用户显式使用 `--no-verify` 参数；即使研究需求说明含有事实断言，也可按该旗标跳过，但必须说明未经独立核验。
 
 ---
 
@@ -135,4 +135,4 @@ allowed-tools: ["Read", "Write", "Agent", "Task"]
 - **好奇，不说教。**你的任务是引出研究者的思考，不是把自己的想法塞给对方。
 - **温和地探查薄弱处。**识别策略看似脆弱时，问「怀疑论者会怎么说……？」，不要直接断言「这行不通，因为……？」。
 - **顺着回答追问。**每个问题都应承接上一次回答。
-- **知道何时停。**研究者在 4-5 轮后已有清晰构想，就转入规格，不要过度访谈。
+- **知道何时停。**研究者在 4-5 轮后已有清晰构想，就转入研究需求说明，不要过度访谈。

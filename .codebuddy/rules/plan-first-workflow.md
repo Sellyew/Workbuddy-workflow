@@ -6,7 +6,7 @@
 
 1. **进入计划模式**：使用 `EnterPlanMode`。
 2. **查 MEMORY.md**：阅读与本任务相关的 `[LEARN]` 条目。
-3. **需求规格（用于复杂／含糊的任务）**：见下文。
+3. **整理需求说明（用于复杂／含糊的任务）**：见下文。
 4. **起草计划**：写明改什么、涉及哪些文件、按什么顺序执行。
 5. **存到磁盘**：写入 `quality_reports/plans/YYYY-MM-DD_short-description.md`。
 6. **呈现给用户**：等待批准。
@@ -14,7 +14,7 @@
 8. **保存初始会话日志**：趁记忆清晰，记录目标和关键上下文。
 9. **通过编排器实施**：见 `orchestrator-protocol.md`。
 
-## Step 3：需求规格（用于复杂／含糊的任务）
+## Step 3：整理需求说明（用于复杂／含糊的任务）
 
 **何时使用：**
 - 任务比较高层或含糊，例如「改进这一讲」「分析这份数据」。
@@ -24,21 +24,21 @@
 **何时跳过：**
 - 任务清楚具体，例如「修掉第 42 行的错字」。
 - 只需简单的单文件编辑。
-- 用户已经给出详细需求。
+- 用户已经给出详细的任务要求。
 
 **流程：**
 1. 用 AskUserQuestion 澄清含糊之处，最多问 3-5 个问题。
-2. 用 `templates/requirements-spec.md` 创建 `quality_reports/specs/YYYY-MM-DD_description.md`。
-3. 为每条需求标注优先级：
+2. 根据澄清结果整理任务要求，用 `templates/requirements-spec.md` 创建 `quality_reports/specs/YYYY-MM-DD_description.md`。
+3. 为每条任务要求标注优先级：
    - **MUST**（不可让步）
    - **SHOULD**（优先）
    - **MAY**（可选）
 4. 为每个主要方面声明清晰度状态：
-   - **CLEAR：**已完全规定。
+   - **CLEAR：**已完全说明。
    - **ASSUMED：**采用合理假设，用户可以否决。
    - **BLOCKED：**未获答复前无法推进。
-5. 请用户批准规格。
-6. 获批后才进入 Step 4，以规格为输入起草计划。
+5. 把整理好的需求说明呈现给用户，等待批准。
+6. 需求说明获批后，才进入 Step 4，并以其为输入起草计划。
 
 **模板：** `templates/requirements-spec.md`
 

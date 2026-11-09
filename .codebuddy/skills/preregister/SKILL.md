@@ -1,7 +1,7 @@
 ---
 name: preregister
-description: 根据研究规格或自由撰写的研究描述，起草 OSF、AsPredicted 或 AEA RCT Registry 样式的结构化预注册文档。Markdown 输出包含假设、设计、抽样计划、分析计划、排除项和推断标准，并用 MUST / SHOULD / MAY 标记清晰度。用户说 "preregister"、"draft a preregistration"、"OSF preregistration"、"AsPredicted"、"AEA RCT registry"、"PAP"、"preanalysis plan"、"预注册这项研究"、"写预分析计划" 时，或在启动实验、收集数据、分析研究者尚未见过的数据之前使用。本技能不向注册平台投稿，只生成由用户自行上传到 OSF / AsPredicted / AEA 的文档。
-description_zh: 根据研究规格或自由撰写的研究描述，起草 OSF、AsPredicted 或 AEA RCT Registry 样式的结构化预注册文档。Markdown 输出包含假设、设计、抽样计划、分析计划、排除项和推断标准，并用 MUST / SHOULD / MAY 标记清晰度。用户说 "preregister"、"draft a preregistration"、"OSF preregistration"、"AsPredicted"、"AEA RCT registry"、"PAP"、"preanalysis plan"、"预注册这项研究"、"写预分析计划" 时，或在启动实验、收集数据、分析研究者尚未见过的数据之前使用。本技能不向注册平台投稿，只生成由用户自行上传到 OSF / AsPredicted / AEA 的文档。
+description: 根据研究需求说明或自由撰写的研究描述，起草 OSF、AsPredicted 或 AEA RCT Registry 样式的结构化预注册文档。Markdown 输出包含假设、设计、抽样计划、分析计划、排除项和推断标准，并用 MUST / SHOULD / MAY 标记清晰度。用户说 "preregister"、"draft a preregistration"、"OSF preregistration"、"AsPredicted"、"AEA RCT registry"、"PAP"、"preanalysis plan"、"预注册这项研究"、"写预分析计划" 时，或在启动实验、收集数据、分析研究者尚未见过的数据之前使用。本技能不向注册平台投稿，只生成由用户自行上传到 OSF / AsPredicted / AEA 的文档。
+description_zh: 根据研究需求说明或自由撰写的研究描述，起草 OSF、AsPredicted 或 AEA RCT Registry 样式的结构化预注册文档。Markdown 输出包含假设、设计、抽样计划、分析计划、排除项和推断标准，并用 MUST / SHOULD / MAY 标记清晰度。用户说 "preregister"、"draft a preregistration"、"OSF preregistration"、"AsPredicted"、"AEA RCT registry"、"PAP"、"preanalysis plan"、"预注册这项研究"、"写预分析计划" 时，或在启动实验、收集数据、分析研究者尚未见过的数据之前使用。本技能不向注册平台投稿，只生成由用户自行上传到 OSF / AsPredicted / AEA 的文档。
 argument-hint: "[--style osf|aspredicted|aea-rct] [--input <spec-or-description>] [--no-verify]"
 disable-model-invocation: true
 allowed-tools: ["Read", "Write", "Agent", "Task"]
@@ -41,7 +41,7 @@ metadata:
 
 支持两种输入模式：
 
-1. **`--input <path>`**：读取 `/interview-me` 生成的研究规格，通常保存在 `quality_reports/specs/`，也可读取任何结构化 Markdown 文件。提取研究问题、假设（必须有方向）、数据来源、设计、样本和分析路径。如果规格记录论文类型，`/interview-me` 会写在 `**Paper type:**` 行，例如 `survey-experiment`，可据此选择样式。
+1. **`--input <path>`**：读取 `/interview-me` 生成的研究需求说明，通常保存在 `quality_reports/specs/`，也可读取任何结构化 Markdown 文件。提取研究问题、假设（必须有方向）、数据来源、设计、样本和分析路径。如果研究需求说明记录论文类型，`/interview-me` 会写在 `**Paper type:**` 行，例如 `survey-experiment`，可据此选择样式。
 2. **没有 `--input`**：请用户提供 1–3 段研究描述后继续。如果缺少有方向的假设，只询问一次，不要编造。
 
 起草前必须检查以下拒绝条件：
@@ -70,7 +70,7 @@ metadata:
 
 - 标题和作者。
 - 日期和版本。
-- 如果提供了 `--input`，还要包含指回来源规格的指针，保留可追溯性。
+- 如果提供了 `--input`，还要包含指回来源研究需求说明的指针，保留可追溯性。
 
 各样式的专属小节如下：
 
@@ -132,14 +132,14 @@ metadata:
 | 参数 | 作用 |
 |---|---|
 | `--style` | 选注册样式：`osf`、`aspredicted` 或 `aea-rct`；不给则按领域信号取默认。 |
-| `--input` | 读一份研究规格或结构化 Markdown 作为输入，而不是靠对话里的描述。 |
+| `--input` | 读一份研究需求说明或结构化 Markdown 作为输入，而不是靠对话里的描述。 |
 | `--no-verify` | 跳过 PHASE 5 的引文落地后核验。 |
 
 ## 交叉引用
 
 - `templates/preregistration-template.md` —— 本技能使用的三份样式模板。
 - `templates/requirements-spec.md` —— 这里复用的 MUST/SHOULD/MAY 标注语言。
-- `.codebuddy/skills/interview-me/SKILL.md` —— 产出本技能经 `--input` 使用的那份规格。
+- `.codebuddy/skills/interview-me/SKILL.md` —— 产出本技能经 `--input` 使用的那份研究需求说明。
 - `.codebuddy/skills/power-analysis/SKILL.md` —— 被遵循（而非被调用）以提供样本计划字段（RCT）的 MDE / 所需 N + 功效段落。
 - [`.codebuddy/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) —— PHASE 5 的内存草稿 CoVe 与独立 `claim-verifier` 交接契约。
 - `.codebuddy/references/discipline-cards.md` —— 驱动 `--style` 选择的领域默认值。
@@ -147,20 +147,20 @@ metadata:
 
 ## 示例
 
-### 示例 1 —— 从规格出发的政治学问卷实验
+### 示例 1 —— 从研究需求说明出发的政治学问卷实验
 **用户说：** "Preregister this study"（附带 `--input quality_reports/specs/2026-04-15_priming-effects.md`）
 **动作：**
-1. 读取规格，发现 `**Paper type:** survey-experiment`，因此默认使用 `osf`。
+1. 读取研究需求说明，发现 `**Paper type:** survey-experiment`，因此默认使用 `osf`。
 2. 提取 2 条有方向的假设、MTurk N=1,200，以及带处理虚拟变量的 OLS。
 3. 生成 OSF 文档，填好所有 MUST 小节，留 1 个 MAY 为空。
-4. 除规格外没有既有文献引用，因此跳过落地后核验。
+4. 除研究需求说明外没有既有文献引用，因此跳过落地后核验。
 **结果：** 保存到 `quality_reports/preregistrations/2026-04-15_priming-effects.md`，由用户上传到 OSF。
 
 ### 示例 2 —— 经济学田野实验，AEA RCT Registry
 **用户说：** "Draft an AEA RCT preregistration for the cash-transfer pilot"（附带 `--style aea-rct --input quality_reports/specs/2026-03-10_ct-pilot.md`）
 **动作：**
-1. 读取规格：随机化单位 = village，主要结果 = consumption。
-2. 生成 AEA RCT 字段；规格缺少 IRB 编号，因此写 `[CLARIFY: IRB approval number]`。
+1. 读取研究需求说明：随机化单位 = village，主要结果 = consumption。
+2. 生成 AEA RCT 字段；研究需求说明缺少 IRB 编号，因此写 `[CLARIFY: IRB approval number]`。
 3. 交叉核对估计量（cluster-robust OLS）、主要结果和排除规则（intent-to-treat），均已写明，通过。
 4. 没有既有文献引用，因此跳过落地后核验。
 **结果：** 文档已写出；输出摘要标出 1 个 `[CLARIFY:]` 项，投 AEA 前必须填好。

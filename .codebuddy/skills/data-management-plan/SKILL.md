@@ -28,7 +28,7 @@ allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
 按 shell 引号规则对 `$ARGUMENTS` 分词，再只解析以下三个明确选项，不接受位置参数形式的资助方。含空格的 `--input` 等选项值必须作为单个带引号参数传入，例如 `--input "quality_reports/specs/my study.md"`；解析后，所有路径都必须以加引号的完整路径使用，不得再次分词。未知选项、缺少选项值、重复给出不一致的 `--funder` 或 `--input` 时，停止并报告用法错误，不要猜测：
 
 - `--funder nsf|nih|erc|horizon`：目标资助方画像。省略时，Phase 0 从 `--input` 检测，或询问一次。
-- `--input <path>`：研究规格（`/interview-me` 输出，位于 `quality_reports/specs/`）、申请书草稿或近似 `passport` 的描述。本技能从中提取数据类型、样本和识别策略。
+- `--input <path>`：研究需求说明（`/interview-me` 输出，位于 `quality_reports/specs/`）、申请书草稿或近似 `passport` 的描述。本技能从中提取数据类型、样本和识别策略。
 - `--no-verify`：跳过 Phase 4 的引文/标准落地后核验，该选项继承自 `/preregister`。
 
 ## 工作流

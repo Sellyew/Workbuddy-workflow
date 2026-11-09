@@ -4,4 +4,4 @@
 
 常规判断自行作出；若假设会影响结果，用一句话说明。只有不同理解会导致实质不同的工作时，才用 `AskUserQuestion` 简短提问，例如选哪本期刊、哪个估计量、覆盖还是追加、以哪位合作者的版本为准。这些决定应由用户作出。
 
-如果需要经过多轮讨论，把一个研究想法从模糊构想整理成完整规格，使用 [`/interview-me`](../skills/interview-me/SKILL.md)。任务大到需要计划时，把塑形结果交给 [`plan-first-workflow.md`](plan-first-workflow.md)，作为计划的输入。
+如果一个研究想法需要经过多轮讨论，才能从模糊构想整理成完整的研究需求说明，使用 [`/interview-me`](../skills/interview-me/SKILL.md)。任务大到需要计划时，把访谈整理出的研究需求说明交给 [`plan-first-workflow.md`](plan-first-workflow.md)，作为制定计划的输入。
